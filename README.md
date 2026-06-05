@@ -33,16 +33,23 @@ dave-the-diver-archipelago/
 
 ### Prerequisites
 
-1. **Python 3.10+** ✓ (You have 3.14.3)
-2. **Git** ✓ (You have 2.53.0)
-3. **.NET SDK 8.0+** (Need to install)
+1. **Python 3.10+**
+2. **Git**
+3. **.NET SDK 8.0+**
 4. **Visual Studio Code** (Recommended) or Visual Studio
 5. **Dave the Diver** (Steam version)
 
-### Quick Setup
+### Quick Setup (New Machine)
 
-Run the setup script:
+**See SETUP_ON_NEW_MACHINE.md for complete instructions!**
+
+Quick version:
 ```powershell
+# Clone the repository
+git clone https://github.com/AronTheunissen/dave-the-diver-archipelago.git
+cd dave-the-diver-archipelago
+
+# Run the setup script
 .\tools\setup\setup-dev-environment.ps1
 ```
 
