@@ -1,0 +1,47 @@
+# Python
+apworld/venv/
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+dist/
+build/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# C# / .NET
+client/bin/
+client/obj/
+client/*.user
+client/*.suo
+client/.vs/
+client/packages/
+
+# Game-specific
+client/lib/*.dll
+client/GamePath.props
+client/GamePath.user.props
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Archipelago
+tools/Archipelago/
+
+# Logs
+*.log
+
+# Temporary files
+tmp_rovodev_*
