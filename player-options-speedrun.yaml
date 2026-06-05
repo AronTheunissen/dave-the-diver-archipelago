@@ -1,0 +1,35 @@
+# Dave the Diver - Speedrun Configuration
+# Beat Chapter 6 as fast as possible!
+
+name: SpeedRunner
+
+game: Dave the Diver
+
+Dave the Diver:
+  # Goal: Just beat final chapter
+  goal: final_chapter_only
+  
+  # Minimal checks for faster completion
+  fish_checks: rare_only
+  dish_upgrades: none
+  recipe_checks: key_only
+  
+  # Skip most side content
+  include_cooksta: false
+  include_ecowatcher: false
+  include_photography: false
+  include_challenges: false
+  include_farming: false
+  include_fish_farm: false
+  include_minigames: false
+  
+  # Start with better equipment for faster progression
+  starting_oxygen_level: 2
+  starting_harpoon_level: 2
+  starting_diving_suit_level: 1
+  
+  # Lenient difficulty
+  oxygen_requirement: lenient
+  
+  # No death link for speedruns
+  death_link: false

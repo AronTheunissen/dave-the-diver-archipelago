@@ -1,0 +1,102 @@
+# Dave the Diver - Example Player Options
+# Copy this file and customize it for your multiworld game!
+
+# Your player name (what others will see)
+name: YourName
+
+# The game you're playing
+game: Dave the Diver
+
+# Accessibility options (for all games)
+accessibility: items
+
+# ====================
+# DAVE THE DIVER OPTIONS
+# ====================
+
+Dave the Diver:
+  # ==================== GOAL ====================
+  # What you need to do to complete the game
+  # Options: final_chapter_only, all_chapters, chapters_plus_cooksta, 
+  #          restaurant_tycoon, master_diver, hundred_percent
+  # Time estimates: 5-10h, 15-25h, 30-40h, 30-40h, 50-70h, 100+h
+  goal: all_chapters  # Default - recommended for first playthrough
+  
+  # ==================== FISH ====================
+  # Which fish catches count as location checks?
+  # Options: none, rare_only, all
+  fish_checks: all
+  
+  # Require catching ALL fish species for victory?
+  # Only applies if goal includes it (master_diver or hundred_percent)
+  require_all_fish: false
+  
+  # ==================== RESTAURANT ====================
+  # Which dish upgrades count as location checks?
+  # Options: none, key_dishes, popular, all
+  # Locations: 0, ~80, ~200, ~400+
+  dish_upgrades: key_dishes
+  
+  # Which recipe unlocks count as checks?
+  # Options: key_only, all
+  recipe_checks: all
+  
+  # Require unlocking ALL recipes for victory?
+  require_all_recipes: false
+  
+  # Minimum restaurant star rating (0-5)
+  restaurant_rating_required: 5
+  
+  # ==================== SIDE CONTENT ====================
+  # Include Cooksta (social media) checks?
+  include_cooksta: true
+  
+  # Cooksta followers needed (0-10000)
+  cooksta_followers_required: 10000
+  
+  # Include Ecowatcher (marine database) checks?
+  include_ecowatcher: true
+  
+  # Include Tako's photography missions?
+  include_photography: true
+  
+  # Include in-game challenges? (Can be difficult!)
+  include_challenges: false
+  
+  # Include vegetable garden farming?
+  include_farming: true
+  
+  # Include fish farm breeding/raising?
+  include_fish_farm: true
+  
+  # Include minigame completions?
+  include_minigames: true
+  
+  # ==================== STARTING EQUIPMENT ====================
+  # How many progressive oxygen tank upgrades to start with (0-5)
+  starting_oxygen_level: 1
+  
+  # Which progressive harpoon to start with (0-3)
+  # 0 = none, 1 = basic, 2 = enhanced, 3 = advanced
+  starting_harpoon_level: 1
+  
+  # Which progressive diving suit to start with (0-3)
+  # 0 = none, 1 = basic, 2 = enhanced, 3 = deep sea
+  starting_diving_suit_level: 1
+  
+  # ==================== DIFFICULTY ====================
+  # How many oxygen upgrades needed for deep areas?
+  # Options: lenient (3), normal (4), strict (5)
+  oxygen_requirement: normal
+  
+  # ==================== SPECIAL OPTIONS ====================
+  # Death Link: When you die, everyone dies
+  death_link: false
+  
+  # How teleport mirrors work
+  # Options: required, fast_travel_only
+  teleport_behavior: required
+  
+  # Trap item frequency (not implemented yet)
+  # Options: none, low, medium, high
+  trap_frequency: none
