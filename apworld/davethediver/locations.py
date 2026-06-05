@@ -144,9 +144,12 @@ boss_locations: Dict[str, LocationData] = {
 
 # === QUEST COMPLETION ===
 quest_locations: Dict[str, LocationData] = {
-    "Complete Duff's First Request": LocationData(BASE_ID + 400, "Blue Hole"),
-    "Complete Dr. Bacon's Quest": LocationData(BASE_ID + 401, "Blue Hole"),
-    "Complete Sea People Quest 1": LocationData(BASE_ID + 410, "Sea People Village"),
+    "Complete Duff's First Request": LocationData(BASE_ID + 380, "Blue Hole"),
+    "Complete Dr. Bacon's Quest": LocationData(BASE_ID + 381, "Blue Hole"),
+    "Complete Sea People Quest 1": LocationData(BASE_ID + 382, "Sea People Village"),
+    "Complete Sea People Quest 2": LocationData(BASE_ID + 383, "Sea People Village"),
+    "Complete Cobra's Quest": LocationData(BASE_ID + 384, "Blue Hole"),
+    "Complete Niamo's Quest": LocationData(BASE_ID + 385, "Sea People Village"),
     # TODO: Add all side quests
 }
 
@@ -168,14 +171,164 @@ minigame_locations: Dict[str, LocationData] = {
     # TODO: Add other minigames
 }
 
+# === COOKSTA (Social Media App) ===
+# Cooksta posts and follower milestones
+cooksta_locations: Dict[str, LocationData] = {
+    # Follower milestones
+    "Cooksta: 100 Followers": LocationData(BASE_ID + 400, "Bancho Sushi"),
+    "Cooksta: 500 Followers": LocationData(BASE_ID + 401, "Bancho Sushi"),
+    "Cooksta: 1000 Followers": LocationData(BASE_ID + 402, "Bancho Sushi"),
+    "Cooksta: 2500 Followers": LocationData(BASE_ID + 403, "Bancho Sushi"),
+    "Cooksta: 5000 Followers": LocationData(BASE_ID + 404, "Bancho Sushi"),
+    "Cooksta: 10000 Followers": LocationData(BASE_ID + 405, "Bancho Sushi"),
+    
+    # Special Cooksta achievements
+    "Cooksta: First Viral Post": LocationData(BASE_ID + 410, "Bancho Sushi"),
+    "Cooksta: Post 10 Times": LocationData(BASE_ID + 411, "Bancho Sushi"),
+    "Cooksta: Post 25 Times": LocationData(BASE_ID + 412, "Bancho Sushi"),
+    "Cooksta: Post 50 Times": LocationData(BASE_ID + 413, "Bancho Sushi"),
+    "Cooksta: Max Likes on a Post": LocationData(BASE_ID + 414, "Bancho Sushi"),
+    
+    # TODO: Add more Cooksta milestones
+}
+
+# === ECOWATCHER (Marine Life App) ===
+# Ecowatcher entries and research completion
+ecowatcher_locations: Dict[str, LocationData] = {
+    # Research completion by category
+    "Ecowatcher: Complete All Shallow Fish": LocationData(BASE_ID + 450, "Blue Hole - Shallow"),
+    "Ecowatcher: Complete All Mid Fish": LocationData(BASE_ID + 451, "Blue Hole - Mid"),
+    "Ecowatcher: Complete All Deep Fish": LocationData(BASE_ID + 452, "Blue Hole - Deep"),
+    "Ecowatcher: Complete All Glacier Fish": LocationData(BASE_ID + 453, "Glacier"),
+    
+    # Marinca entries (marine life)
+    "Ecowatcher: Log 25 Marinca": LocationData(BASE_ID + 460, "Blue Hole"),
+    "Ecowatcher: Log 50 Marinca": LocationData(BASE_ID + 461, "Blue Hole"),
+    "Ecowatcher: Log 100 Marinca": LocationData(BASE_ID + 462, "Blue Hole"),
+    "Ecowatcher: Complete All Marinca": LocationData(BASE_ID + 463, "Blue Hole"),
+    
+    # Fish entries
+    "Ecowatcher: Log 50 Fish Species": LocationData(BASE_ID + 470, "Blue Hole"),
+    "Ecowatcher: Log 100 Fish Species": LocationData(BASE_ID + 471, "Blue Hole"),
+    "Ecowatcher: Log 150 Fish Species": LocationData(BASE_ID + 472, "Blue Hole"),
+    "Ecowatcher: Complete All Fish": LocationData(BASE_ID + 473, "Blue Hole"),
+    
+    # TODO: Add specific Marinca entries if desired
+}
+
+# === PHOTOGRAPHY / PICTURES ===
+# Tako's photography missions and special photo spots
+photography_locations: Dict[str, LocationData] = {
+    # Tako's photography missions
+    "Photography: Complete Mission 1": LocationData(BASE_ID + 500, "Blue Hole"),
+    "Photography: Complete Mission 2": LocationData(BASE_ID + 501, "Blue Hole"),
+    "Photography: Complete Mission 3": LocationData(BASE_ID + 502, "Blue Hole"),
+    "Photography: Complete Mission 4": LocationData(BASE_ID + 503, "Blue Hole"),
+    "Photography: Complete Mission 5": LocationData(BASE_ID + 504, "Blue Hole"),
+    
+    # Special photo spots
+    "Photo: Giant Squid": LocationData(BASE_ID + 510, "Blue Hole - Deep"),
+    "Photo: Whale Shark": LocationData(BASE_ID + 511, "Blue Hole - Deep"),
+    "Photo: Sea People Elder": LocationData(BASE_ID + 512, "Sea People Village"),
+    "Photo: Glacier Scenery": LocationData(BASE_ID + 513, "Glacier"),
+    
+    # Photography milestones
+    "Photography: Take 50 Photos": LocationData(BASE_ID + 520, "Blue Hole"),
+    "Photography: Take 100 Photos": LocationData(BASE_ID + 521, "Blue Hole"),
+    "Photography: Perfect Score on 10 Missions": LocationData(BASE_ID + 522, "Blue Hole"),
+    
+    # TODO: Add all Tako photography missions
+}
+
+# === CHALLENGES ===
+# In-game challenges and special objectives
+challenge_locations: Dict[str, LocationData] = {
+    # Time attack challenges
+    "Challenge: Catch 5 Fish in 60 Seconds": LocationData(BASE_ID + 550, "Blue Hole"),
+    "Challenge: Earn 1000g in One Dive": LocationData(BASE_ID + 551, "Blue Hole"),
+    "Challenge: Defeat 3 Sharks Without Taking Damage": LocationData(BASE_ID + 552, "Blue Hole - Deep"),
+    
+    # Weapon challenges
+    "Challenge: Kill 10 Fish with Harpoon Only": LocationData(BASE_ID + 560, "Blue Hole"),
+    "Challenge: Kill 10 Fish with Melee Only": LocationData(BASE_ID + 561, "Blue Hole"),
+    "Challenge: Net Gun 20 Fish Alive": LocationData(BASE_ID + 562, "Blue Hole"),
+    
+    # Special challenges
+    "Challenge: Serve 10 Customers with Perfect Timing": LocationData(BASE_ID + 570, "Bancho Sushi"),
+    "Challenge: Complete a Dive Without Using Oxygen Refills": LocationData(BASE_ID + 571, "Blue Hole"),
+    "Challenge: Reach Max Depth Without Equipment Damage": LocationData(BASE_ID + 572, "Blue Hole - Deep"),
+    
+    # TODO: Add all in-game challenges
+}
+
+# === FARMING (VEG GARDEN) ===
+# Vegetable garden farming milestones
+farming_locations: Dict[str, LocationData] = {
+    # Garden unlocks and upgrades
+    "Farming: Unlock Vegetable Garden": LocationData(BASE_ID + 600, "Bancho Sushi"),
+    "Farming: Upgrade Garden Tier 1": LocationData(BASE_ID + 601, "Bancho Sushi"),
+    "Farming: Upgrade Garden Tier 2": LocationData(BASE_ID + 602, "Bancho Sushi"),
+    "Farming: Upgrade Garden Tier 3": LocationData(BASE_ID + 603, "Bancho Sushi"),
+    
+    # Crop unlocks (first harvest of each crop)
+    "Farming: First Harvest - Tomato": LocationData(BASE_ID + 610, "Bancho Sushi"),
+    "Farming: First Harvest - Lettuce": LocationData(BASE_ID + 611, "Bancho Sushi"),
+    "Farming: First Harvest - Cucumber": LocationData(BASE_ID + 612, "Bancho Sushi"),
+    "Farming: First Harvest - Onion": LocationData(BASE_ID + 613, "Bancho Sushi"),
+    "Farming: First Harvest - Wasabi": LocationData(BASE_ID + 614, "Bancho Sushi"),
+    "Farming: First Harvest - Ginger": LocationData(BASE_ID + 615, "Bancho Sushi"),
+    "Farming: First Harvest - Seaweed": LocationData(BASE_ID + 616, "Bancho Sushi"),
+    
+    # Farming milestones
+    "Farming: Harvest 50 Total Crops": LocationData(BASE_ID + 620, "Bancho Sushi"),
+    "Farming: Harvest 100 Total Crops": LocationData(BASE_ID + 621, "Bancho Sushi"),
+    "Farming: Harvest 250 Total Crops": LocationData(BASE_ID + 622, "Bancho Sushi"),
+    "Farming: Grow All Crop Types": LocationData(BASE_ID + 623, "Bancho Sushi"),
+    
+    # TODO: Add all crop types and farming achievements
+}
+
+# === FISH FARM ===
+# Fish farm management and breeding
+fish_farm_locations: Dict[str, LocationData] = {
+    # Fish farm unlocks
+    "Fish Farm: Unlock Fish Farm": LocationData(BASE_ID + 650, "Fish Farm"),
+    "Fish Farm: Upgrade Tank 1": LocationData(BASE_ID + 651, "Fish Farm"),
+    "Fish Farm: Upgrade Tank 2": LocationData(BASE_ID + 652, "Fish Farm"),
+    "Fish Farm: Upgrade Tank 3": LocationData(BASE_ID + 653, "Fish Farm"),
+    
+    # Breed/raise specific fish types
+    "Fish Farm: First Breed - Tuna": LocationData(BASE_ID + 660, "Fish Farm"),
+    "Fish Farm: First Breed - Salmon": LocationData(BASE_ID + 661, "Fish Farm"),
+    "Fish Farm: First Breed - Squid": LocationData(BASE_ID + 662, "Fish Farm"),
+    "Fish Farm: First Breed - Octopus": LocationData(BASE_ID + 663, "Fish Farm"),
+    "Fish Farm: First Breed - Rare Species": LocationData(BASE_ID + 664, "Fish Farm"),
+    
+    # Fish farm milestones
+    "Fish Farm: Raise 10 Fish to Adulthood": LocationData(BASE_ID + 670, "Fish Farm"),
+    "Fish Farm: Raise 25 Fish to Adulthood": LocationData(BASE_ID + 671, "Fish Farm"),
+    "Fish Farm: Raise 50 Fish to Adulthood": LocationData(BASE_ID + 672, "Fish Farm"),
+    "Fish Farm: Raise 5 Different Species": LocationData(BASE_ID + 673, "Fish Farm"),
+    "Fish Farm: Raise 10 Different Species": LocationData(BASE_ID + 674, "Fish Farm"),
+    "Fish Farm: Max Out Fish Quality": LocationData(BASE_ID + 675, "Fish Farm"),
+    
+    # TODO: Add all farmable fish species
+}
+
 # === ACHIEVEMENTS / MILESTONES ===
 achievement_locations: Dict[str, LocationData] = {
     "Catch 50 Different Fish Species": LocationData(BASE_ID + 700, "Blue Hole"),
     "Catch 100 Different Fish Species": LocationData(BASE_ID + 701, "Blue Hole"),
     "Earn 10,000 Gold": LocationData(BASE_ID + 710, "Bancho Sushi"),
     "Earn 50,000 Gold": LocationData(BASE_ID + 711, "Bancho Sushi"),
+    "Earn 100,000 Gold": LocationData(BASE_ID + 712, "Bancho Sushi"),
     "Max Upgrade All Equipment": LocationData(BASE_ID + 720, "Bancho Sushi"),
-    # TODO: Add achievement-style milestones
+    
+    # Gameplay milestones
+    "Play for 10 Hours": LocationData(BASE_ID + 730, "Bancho Sushi"),
+    "Play for 25 Hours": LocationData(BASE_ID + 731, "Bancho Sushi"),
+    "Complete 50 Dives": LocationData(BASE_ID + 732, "Blue Hole"),
+    "Complete 100 Dives": LocationData(BASE_ID + 733, "Blue Hole"),
 }
 
 # Combine all locations
@@ -189,6 +342,12 @@ location_table: Dict[str, LocationData] = {
     **recipe_unlock_locations,
     **boss_locations,
     **quest_locations,
+    **cooksta_locations,
+    **ecowatcher_locations,
+    **photography_locations,
+    **challenge_locations,
+    **farming_locations,
+    **fish_farm_locations,
     **collectible_locations,
     **minigame_locations,
     **achievement_locations,
@@ -200,5 +359,18 @@ location_name_to_id: Dict[str, int] = {
 }
 
 # TODO: This needs significant expansion with actual game analysis
-# Current count: ~40 locations, target: 150-300 locations
-# Goal is to match the number of items roughly
+# Current count: ~150 locations defined, target: 300-500+ locations
+# With all systems (fish, dishes, Cooksta, farming, etc.) we can easily hit 750+ locations
+# 
+# Breakdown by category:
+# - Fish first catch: 100+ potential
+# - Dish upgrades: 400+ potential (if all dishes included)
+# - Recipe unlocks: 100+ potential
+# - Cooksta: 15 defined
+# - Ecowatcher: 12 defined
+# - Photography: 12 defined
+# - Challenges: 10 defined
+# - Farming: 15 defined
+# - Fish Farm: 16 defined
+# - Story/Bosses/Quests: 20+ potential
+# - Minigames/Collectibles: 30+ potential
