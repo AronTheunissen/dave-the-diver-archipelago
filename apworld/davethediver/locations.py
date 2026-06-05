@@ -150,6 +150,10 @@ quest_locations: Dict[str, LocationData] = {
     "Complete Sea People Quest 2": LocationData(BASE_ID + 383, "Sea People Village"),
     "Complete Cobra's Quest": LocationData(BASE_ID + 384, "Blue Hole"),
     "Complete Niamo's Quest": LocationData(BASE_ID + 385, "Sea People Village"),
+    
+    # IMPORTANT: This check grants Teleport Mirror (required for Glacier access)
+    "Sea People Village: Obtain Teleport Mirror": LocationData(BASE_ID + 386, "Sea People Village"),
+    
     # TODO: Add all side quests
 }
 

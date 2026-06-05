@@ -54,9 +54,9 @@ weapon_items: Dict[str, ItemData] = {
 # === AREA UNLOCK ITEMS (Specific Items) ===
 # These are NOT progressive - you get them once and unlock specific areas
 area_unlock_items: Dict[str, ItemData] = {
-    # Glacier access
+    # Glacier access (requires ALL of these)
     "Cold Protection Suit": ItemData(BASE_ID + 100, ItemClassification.progression),
-    "Glacier Access Permit": ItemData(BASE_ID + 101, ItemClassification.progression),
+    "Teleport Mirror": ItemData(BASE_ID + 102, ItemClassification.progression),  # From Sea People Village quest
     
     # Sea People Village access
     "Sea People Gloves": ItemData(BASE_ID + 105, ItemClassification.progression),
