@@ -84,15 +84,8 @@ def set_rules(world):
     # For now, assume always accessible from surface
     
     # === VICTORY CONDITION ===
-    # Must complete all 6 chapters (can be done in any order)
-    multiworld.completion_condition[player] = lambda state: (
-        state.has("Chapter 1 Complete", player) and
-        state.has("Chapter 2 Complete", player) and
-        state.has("Chapter 3 Complete", player) and
-        state.has("Chapter 4 Complete", player) and
-        state.has("Chapter 5 Complete", player) and
-        state.has("Chapter 6 Complete", player)
-    )
+    # Set based on player's chosen goal
+    set_completion_condition(world)
 
 
 # === HELPER FUNCTIONS ===
@@ -150,3 +143,60 @@ def has_weapon_tier(state: CollectionState, player: int, tier: int) -> bool:
         tier: 1 = Basic, 2 = Enhanced, 3 = Advanced
     """
     return state.has("Progressive Harpoon", player, tier)
+
+
+def set_completion_condition(world):
+    """Set victory condition based on player's goal option"""
+    player = world.player
+    goal = world.options.goal.value
+    
+    if goal == 0:  # Final chapter only
+        world.multiworld.completion_condition[player] = lambda state: \
+            state.has("Chapter 6 Complete", player)
+    
+    elif goal == 1:  # All chapters (default)
+        world.multiworld.completion_condition[player] = lambda state: (
+            has_all_chapters(state, player)
+        )
+    
+    elif goal == 2:  # Chapters + Cooksta
+        world.multiworld.completion_condition[player] = lambda state: (
+            has_all_chapters(state, player) and
+            state.has("Cooksta: 10000 Followers", player)
+        )
+    
+    elif goal == 3:  # Restaurant Tycoon
+        world.multiworld.completion_condition[player] = lambda state: (
+            has_all_chapters(state, player) and
+            state.has("Restaurant Rating: 5 Stars", player)
+            # TODO: Add "has all key recipes" check
+        )
+    
+    elif goal == 4:  # Master Diver
+        world.multiworld.completion_condition[player] = lambda state: (
+            has_all_chapters(state, player) and
+            state.has("Ecowatcher: Complete All Fish", player)
+            # TODO: Add "caught all fish species" check
+        )
+    
+    elif goal == 5:  # 100% Completion
+        world.multiworld.completion_condition[player] = lambda state: (
+            has_all_chapters(state, player) and
+            state.has("Ecowatcher: Complete All Fish", player) and
+            state.has("Ecowatcher: Complete All Marinca", player) and
+            state.has("Cooksta: 10000 Followers", player) and
+            state.has("Restaurant Rating: 5 Stars", player)
+            # TODO: Add all completion checks
+        )
+
+
+def has_all_chapters(state: CollectionState, player: int) -> bool:
+    """Check if all chapters are complete"""
+    return (
+        state.has("Chapter 1 Complete", player) and
+        state.has("Chapter 2 Complete", player) and
+        state.has("Chapter 3 Complete", player) and
+        state.has("Chapter 4 Complete", player) and
+        state.has("Chapter 5 Complete", player) and
+        state.has("Chapter 6 Complete", player)
+    )
