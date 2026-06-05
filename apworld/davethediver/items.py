@@ -51,23 +51,35 @@ weapon_items: Dict[str, ItemData] = {
     # TODO: Add all melee weapons
 }
 
-# === DIVING EQUIPMENT ===
+# === AREA UNLOCK ITEMS (Specific Items) ===
+# These are NOT progressive - you get them once and unlock specific areas
+area_unlock_items: Dict[str, ItemData] = {
+    # Glacier access
+    "Cold Protection Suit": ItemData(BASE_ID + 100, ItemClassification.progression),
+    "Glacier Access Permit": ItemData(BASE_ID + 101, ItemClassification.progression),
+    
+    # Sea People Village access
+    "Sea People Gloves": ItemData(BASE_ID + 105, ItemClassification.progression),
+    "Mermaid Suit": ItemData(BASE_ID + 106, ItemClassification.progression),  # Alternative to gloves
+    
+    # Key items
+    "VIP Card": ItemData(BASE_ID + 110, ItemClassification.progression),
+}
+
+# === DIVING EQUIPMENT (Non-Progressive) ===
 diving_equipment: Dict[str, ItemData] = {
-    # Oxygen
-    "Oxygen Tank +1": ItemData(BASE_ID + 100, ItemClassification.progression, count=5),
-    "Oxygen Efficiency Upgrade": ItemData(BASE_ID + 105, ItemClassification.useful, count=3),
+    # Oxygen efficiency (multiplies oxygen duration)
+    "Oxygen Efficiency Upgrade": ItemData(BASE_ID + 120, ItemClassification.useful, count=2),
     
-    # Weight Capacity
-    "Cargo Expansion +1": ItemData(BASE_ID + 110, ItemClassification.progression, count=5),
-    
-    # Diving Suit Upgrades
-    "Diving Suit Durability +1": ItemData(BASE_ID + 120, ItemClassification.useful, count=3),
-    "Cold Protection Suit": ItemData(BASE_ID + 125, ItemClassification.progression),
+    # Durability
+    "Diving Suit Durability +1": ItemData(BASE_ID + 125, ItemClassification.useful, count=3),
     
     # Tools
-    "Drone": ItemData(BASE_ID + 130, ItemClassification.useful),
-    "Enhanced Drone": ItemData(BASE_ID + 131, ItemClassification.useful),
-    # TODO: Add drone upgrades, crab traps, etc.
+    "Fish Radar": ItemData(BASE_ID + 130, ItemClassification.useful),
+    "Enhanced Night Vision": ItemData(BASE_ID + 131, ItemClassification.useful),
+    "Crab Trap": ItemData(BASE_ID + 135, ItemClassification.useful),
+    "Enhanced Crab Trap": ItemData(BASE_ID + 136, ItemClassification.useful),
+    # TODO: Add more tools
 }
 
 # === RESTAURANT & RECIPES ===
@@ -86,13 +98,15 @@ restaurant_items: Dict[str, ItemData] = {
     "Kitchen Upgrade": ItemData(BASE_ID + 310, ItemClassification.useful, count=3),
 }
 
-# === KEY ITEMS (PROGRESSION) ===
-key_items: Dict[str, ItemData] = {
-    # Story progression items
-    "VIP Card": ItemData(BASE_ID + 400, ItemClassification.progression),
-    "Sea People Access": ItemData(BASE_ID + 401, ItemClassification.progression),
-    "Glacier Access": ItemData(BASE_ID + 402, ItemClassification.progression),
-    # TODO: Add all key progression items
+# === STORY KEY ITEMS ===
+# Items granted by completing story chapters
+story_key_items: Dict[str, ItemData] = {
+    "Chapter 1 Complete": ItemData(BASE_ID + 400, ItemClassification.progression),
+    "Chapter 2 Complete": ItemData(BASE_ID + 401, ItemClassification.progression),
+    "Chapter 3 Complete": ItemData(BASE_ID + 402, ItemClassification.progression),
+    "Chapter 4 Complete": ItemData(BASE_ID + 403, ItemClassification.progression),
+    "Chapter 5 Complete": ItemData(BASE_ID + 404, ItemClassification.progression),
+    "Chapter 6 Complete": ItemData(BASE_ID + 405, ItemClassification.progression),
 }
 
 # === ABILITIES & UPGRADES ===
@@ -121,10 +135,12 @@ trap_items: Dict[str, ItemData] = {
 
 # Combine all items
 item_table: Dict[str, ItemData] = {
+    **progressive_equipment,
     **weapon_items,
+    **area_unlock_items,
     **diving_equipment,
     **restaurant_items,
-    **key_items,
+    **story_key_items,
     **ability_items,
     **filler_items,
     **trap_items,
