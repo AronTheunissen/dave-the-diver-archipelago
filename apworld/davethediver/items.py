@@ -54,16 +54,18 @@ weapon_items: Dict[str, ItemData] = {
 # === AREA UNLOCK ITEMS (Specific Items) ===
 # These are NOT progressive - you get them once and unlock specific areas
 area_unlock_items: Dict[str, ItemData] = {
-    # Glacier access (requires ALL of these)
+    # Physical access items
     "Cold Protection Suit": ItemData(BASE_ID + 100, ItemClassification.progression),
-    "Teleport Mirror": ItemData(BASE_ID + 102, ItemClassification.progression),  # From Sea People Village quest
-    
-    # Sea People Village access
     "Sea People Gloves": ItemData(BASE_ID + 105, ItemClassification.progression),
-    "Mermaid Suit": ItemData(BASE_ID + 106, ItemClassification.progression),  # Alternative to gloves
+    
+    # Teleport system - allows bypassing physical routes
+    "Teleport Mirror": ItemData(BASE_ID + 102, ItemClassification.progression),  # Base teleport ability
+    "Teleport to Glacier": ItemData(BASE_ID + 120, ItemClassification.progression),  # Bypass Sea People Village!
+    "Teleport to Sea People Village": ItemData(BASE_ID + 121, ItemClassification.progression),  # Alternative route
+    "Teleport to Deep Blue Hole": ItemData(BASE_ID + 122, ItemClassification.useful),  # Backtracking QoL
     
     # Key items
-    "VIP Card": ItemData(BASE_ID + 110, ItemClassification.progression),
+    "VIP Card": ItemData(BASE_ID + 110, ItemClassification.useful),  # Might unlock special areas/quests
 }
 
 # === DIVING EQUIPMENT (Non-Progressive) ===

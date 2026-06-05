@@ -151,10 +151,23 @@ quest_locations: Dict[str, LocationData] = {
     "Complete Cobra's Quest": LocationData(BASE_ID + 384, "Blue Hole"),
     "Complete Niamo's Quest": LocationData(BASE_ID + 385, "Sea People Village"),
     
-    # IMPORTANT: This check grants Teleport Mirror (required for Glacier access)
+    # IMPORTANT: This check grants Teleport Mirror (base item for teleport system)
     "Sea People Village: Obtain Teleport Mirror": LocationData(BASE_ID + 386, "Sea People Village"),
     
     # TODO: Add all side quests
+}
+
+# === TELEPORT POINTS ===
+# Activating these unlocks teleport destinations (requires visiting the area first)
+teleport_locations: Dict[str, LocationData] = {
+    # Unlock glacier teleport (allows bypassing Sea People Village!)
+    "Glacier: Activate Glacier Teleport Point": LocationData(BASE_ID + 750, "Glacier"),
+    
+    # Unlock village teleport (alternative route to village)
+    "Sea People Village: Activate Village Teleport Point": LocationData(BASE_ID + 751, "Sea People Village"),
+    
+    # Unlock deep blue hole teleport (useful for backtracking)
+    "Deep Blue Hole: Activate Deep Teleport Point": LocationData(BASE_ID + 752, "Blue Hole - Deep"),
 }
 
 # === COLLECTIBLES & UPGRADES ===
@@ -346,6 +359,7 @@ location_table: Dict[str, LocationData] = {
     **recipe_unlock_locations,
     **boss_locations,
     **quest_locations,
+    **teleport_locations,
     **cooksta_locations,
     **ecowatcher_locations,
     **photography_locations,
