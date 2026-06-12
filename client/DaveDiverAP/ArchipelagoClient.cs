@@ -83,6 +83,9 @@ namespace DaveDiverAP
                     // Reset goal tracker for new session
                     GoalTracker.Reset();
 
+                    // Initialize progress tracker
+                    ProgressUI.Initialize();
+
                     // Sync already-checked locations
                     SyncCheckedLocations();
 

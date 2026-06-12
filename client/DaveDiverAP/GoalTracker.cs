@@ -29,11 +29,17 @@ namespace DaveDiverAP
         private static int  _cookstaFollowers        = 0;
         private static int  _cookstaBestTaste        = 0;
         private static int  _cookstaResearchedRecipes = 0;
-        // Note: Restaurant stars are not tracked — Restaurant Tycoon goal was removed
         private static bool _allFishComplete         = false;
-        private static bool _allMarincaComplete      = false;
 
         private static readonly HashSet<string> _defeatedBosses = new();
+
+        // ── Public read-only properties for ProgressUI ───────────────────────
+        public static bool YawieDefeated          => _yawieDefeated;
+        public static bool AllFishComplete        => _allFishComplete;
+        public static int  DefeatedBossCount      => _defeatedBosses.Count;
+        public static int  CookstaFollowers       => _cookstaFollowers;
+        public static int  CookstaBestTaste       => _cookstaBestTaste;
+        public static int  CookstaResearchedRecipes => _cookstaResearchedRecipes;
 
         // All 15 story + optional bosses required for goal 1
         private static readonly HashSet<string> AllBossNames = new()

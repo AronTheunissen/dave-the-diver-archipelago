@@ -139,6 +139,13 @@ namespace DaveDiverAP.UI
                         HintUI.Draw();
                         ImGui.EndTabItem();
                     }
+
+                    // Progress tab
+                    if (ImGui.BeginTabItem("Progress"))
+                    {
+                        ProgressUI.Draw();
+                        ImGui.EndTabItem();
+                    }
                 }
 
                 ImGui.EndTabBar();
