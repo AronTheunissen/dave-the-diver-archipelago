@@ -4,6 +4,13 @@ using System.IO;
 using System.Text.Json;
 using BepInEx;
 
+// NOTE on game's SaveSystem:
+// The game uses SaveSystem → PlayerInfoSave with ObscuredInt encryption.
+// Do NOT try to directly read/write PlayerInfoSave values — use the game's
+// own setter methods (PlayerInfoSave.set_bei, etc.) found via Il2CppDumper.
+// Our SaveData class is SEPARATE from the game's save system — it only
+// stores Archipelago state (checked locations, item index, connection info).
+
 namespace DaveDiverAP
 {
     /// <summary>
