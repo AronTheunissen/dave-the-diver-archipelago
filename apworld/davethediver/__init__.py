@@ -11,7 +11,7 @@ from .items import DaveDiverItem, item_table, item_name_to_id
 from .locations import location_name_to_id
 from .regions import create_regions
 from .rules import set_rules
-from .options import DaveDiverOptions
+from .options import DaveDiverOptions, Goal
 
 
 class DaveDiverWebWorld(WebWorld):
@@ -80,9 +80,140 @@ class DaveDiverWorld(World):
         
         self.multiworld.itempool += item_pool
         
+    def should_include_location(self, location_name: str, location_data) -> bool:
+        """Check if a location should be included based on player options.
+
+        Categories and their controlling options:
+        - "fish"        → fish_checks (0=none, 1=rare_only, 2=all)
+        - "dish_upgrade"→ dish_upgrades (0=none, 1=key_dishes, 2=popular, 3=all)
+        - "recipe"      → recipe_checks (0=key_only, 1=all)
+        - "restaurant"  → always included (milestones always make sense)
+        - "cooksta"     → include_cooksta toggle
+        - "ecowatcher"  → include_ecowatcher toggle
+        - "photography" → include_photography toggle
+        - "challenge"   → include_challenges toggle
+        - "farming"     → include_farming toggle
+        - "fish_farm"   → include_fish_farm toggle
+        - "minigame"    → include_minigames toggle
+        - ""            → always included (story, quests, bosses, teleports, collectibles)
+        """
+        category = location_data.category
+
+        if category == "fish":
+            fish_opt = self.options.fish_checks.value
+            if fish_opt == 0:  # none
+                return False
+            if fish_opt == 1:  # rare_only — exclude common fish (shallow-only)
+                # Rare fish are mid/deep/glacier/village; common fish are all shallow
+                return location_data.region != "Blue Hole - Shallow"
+            return True  # 2 = all
+
+        if category == "dish_upgrade":
+            return self.options.dish_upgrades.value > 0  # 0 = none
+
+        if category == "recipe":
+            return self.options.recipe_checks.value >= 0  # always include for now; "none" not yet an option
+
+        if category == "cooksta":
+            return bool(self.options.include_cooksta.value)
+
+        if category == "ecowatcher":
+            return bool(self.options.include_ecowatcher.value)
+
+        if category == "photography":
+            return bool(self.options.include_photography.value)
+
+        if category == "challenge":
+            return bool(self.options.include_challenges.value)
+
+        if category == "farming":
+            return bool(self.options.include_farming.value)
+
+        if category == "chicken_farm":
+            return bool(self.options.include_chicken_farm.value)
+
+        if category == "fish_farm":
+            return bool(self.options.include_fish_farm.value)
+
+        if category == "minigame":
+            return bool(self.options.include_minigames.value)
+
+        if category == "weapon":
+            return bool(self.options.include_weapon_shop.value)
+
+        # --- DLC categories ---
+        if category == "dlc_dredge":
+            return bool(self.options.has_dredge_dlc.value)
+
+        if category == "dlc_godzilla":
+            return bool(self.options.has_godzilla_dlc.value)
+
+        if category == "dlc_ichiban":
+            return bool(self.options.has_ichiban_dlc.value)
+
+        if category == "dlc_jungle":
+            return bool(self.options.has_jungle_dlc.value)
+
+        # "" and "restaurant" — always include
+        return True
+
     def should_include_item(self, item_name: str) -> bool:
-        """Check if item should be included based on options"""
-        # TODO: Filter based on options (e.g., skip fish if fish_checks = none)
+        """Check if item should be included based on options.
+        
+        Items are filtered out when:
+        - Their category is disabled by the player's YAML options
+        - Trap items are excluded when trap_frequency is 'none'
+        - Recipe items are excluded when recipe_checks is disabled
+        - Restaurant items are excluded when dish_upgrades is none AND
+          recipe_checks is disabled (i.e. no restaurant content at all)
+        
+        Progression items (area unlocks, chapters, equipment) are ALWAYS included
+        regardless of options, as they may be required for logic.
+        """
+        from BaseClasses import ItemClassification
+        item_data = item_table.get(item_name)
+        if item_data is None:
+            return True
+
+        # Always keep progression items — removing them could break logic
+        if item_data.classification == ItemClassification.progression:
+            return True
+
+        category = item_data.category
+
+        # --- Trap items ---
+        if category == "trap":
+            return self.options.trap_frequency.value > 0  # 0 = none
+
+        # --- Recipe items ---
+        # Exclude when recipe checks are fully disabled
+        if category == "recipe":
+            return self.options.recipe_checks.value > 0  # 0 = key_only still keeps them; only exclude if truly none
+            # Note: recipe_checks has no "none" option currently, so all values include recipes.
+            # When a "none" value is added this will automatically filter correctly.
+
+        # --- Restaurant items (staff, upgrades) ---
+        # Exclude only when BOTH dish upgrades AND recipe checks are off,
+        # meaning the restaurant is essentially out of scope.
+        if category == "restaurant":
+            has_dish_content = self.options.dish_upgrades.value > 0    # 0 = none
+            has_recipe_content = self.options.recipe_checks.value > 0  # 0 = key_only (no recipes as items)
+            return has_dish_content or has_recipe_content
+
+        # --- DLC item categories ---
+        if category == "dlc_dredge":
+            return bool(self.options.has_dredge_dlc.value)
+
+        if category == "dlc_godzilla":
+            return bool(self.options.has_godzilla_dlc.value)
+
+        if category == "dlc_ichiban":
+            return bool(self.options.has_ichiban_dlc.value)
+
+        if category == "dlc_jungle":
+            return bool(self.options.has_jungle_dlc.value)
+
+        # All other items (diving equipment, abilities, filler, story items) always included
         return True
         
     def get_starting_items(self) -> List[str]:

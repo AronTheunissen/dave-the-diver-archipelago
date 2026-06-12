@@ -20,29 +20,31 @@ from Options import (
 class Goal(Choice):
     """What is required to complete the game?
     
-    - Complete Final Chapter: Beat Chapter 6 only (fastest, ~5-10 hours)
-    - Complete All Chapters: Beat all 6 chapters in any order (medium, ~15-25 hours)
-    - Complete Main Story + Cooksta: All chapters + 10,000 Cooksta followers (long, ~30-40 hours)
-    - Restaurant Tycoon: All chapters + 5-star restaurant + all key recipes (long, ~30-40 hours)
-    - Master Diver: All chapters + all Ecowatcher entries + catch all fish species (very long, ~50-70 hours)
-    - 100% Completion: Everything - all chapters, all fish, all recipes, all farms, all photos (extreme, 100+ hours)
+    - Defeat Yawie: Defeat the final boss (fastest, ~15-25 hours)
+    - Defeat All Bosses: Defeat Yawie + all optional bosses including vortex fights (~25-35 hours)
+    - Defeat Yawie + Cooksta: Defeat Yawie + reach 10,000 Cooksta followers (long, ~30-40 hours)
+    - Restaurant Tycoon: Defeat Yawie + achieve 5-star restaurant rating (long, ~30-40 hours)
+    - Master Diver: Defeat Yawie + complete all Ecowatcher entries (very long, ~50-70 hours)
+    - Complete MarinCa Collection: Defeat Yawie + log all Marinca entries in Ecowatcher (long, ~40-60 hours)
+    - 100% Completion: Everything - all bosses, all fish, all Cooksta, all farms, all photos (extreme, 100+ hours)
     """
     display_name = "Victory Condition"
-    option_final_chapter_only = 0
-    option_all_chapters = 1
-    option_chapters_plus_cooksta = 2
+    option_defeat_yawie = 0
+    option_defeat_all_bosses = 1
+    option_defeat_yawie_plus_cooksta = 2
     option_restaurant_tycoon = 3
     option_master_diver = 4
-    option_hundred_percent = 5
-    default = 1  # All chapters
+    option_complete_marinca_collection = 5
+    option_hundred_percent = 6
+    default = 0  # Defeat Yawie
 
 
 class ChaptersRequired(Range):
     """How many chapters must be completed (if using specific count goal)"""
     display_name = "Chapters Required"
     range_start = 1
-    range_end = 6
-    default = 6
+    range_end = 7
+    default = 7
 
 
 # === FISH CATCHING OPTIONS ===
@@ -143,8 +145,15 @@ class IncludeChallenges(Toggle):
 
 
 class IncludeFarming(DefaultOnToggle):
-    """Include vegetable garden farming as checks"""
-    display_name = "Include Farming Checks"
+    """Include vegetable garden farming milestones as check locations"""
+    display_name = "Include Vegetable Farming"
+
+
+class IncludeChickenFarm(DefaultOnToggle):
+    """Include chicken farm milestones as check locations.
+    Note: The chicken farm is at the same physical location as the vegetable farm
+    but is a separate unlockable system."""
+    display_name = "Include Chicken Farm"
 
 
 class IncludeFishFarm(DefaultOnToggle):
@@ -155,6 +164,43 @@ class IncludeFishFarm(DefaultOnToggle):
 class IncludeMinigames(DefaultOnToggle):
     """Include minigame completions as checks"""
     display_name = "Include Minigame Checks"
+
+
+class IncludeWeaponShop(DefaultOnToggle):
+    """Include Duff's Weapon Shop crafting as check locations.
+    Each named weapon variant (e.g. Flame Rifle I, Thunderbolt Sniper Rifle) is a
+    separate check — crafting it gives an AP reward."""
+    display_name = "Include Weapon Shop"
+
+
+# === DLC OPTIONS ===
+# Each DLC adds new content — only include it if the player actually owns it.
+# DREDGE DLC is free; Godzilla was free but time-limited; others are paid.
+
+class HasDredgeDLC(Toggle):
+    """Enable content from the DREDGE Content Pack (free DLC).
+    Adds: aberrant fish vortex regions (Jellyfish Basin, Fog Coast, Black Cliff),
+    the Drain Gun weapon tree, and aberration sushi recipes."""
+    display_name = "Has DREDGE DLC"
+
+
+class HasGodzillaDLC(Toggle):
+    """Enable content from the Godzilla Content Pack (free, time-limited DLC).
+    Adds: Godzilla boss fight, monster figures collectibles, and Godzilla-themed recipes."""
+    display_name = "Has Godzilla DLC"
+
+
+class HasIchibanDLC(Toggle):
+    """Enable content from the Ichiban's Holiday Content Pack (paid, time-limited DLC).
+    Adds: Ichiban minigames and new sushi bar staff."""
+    display_name = "Has Ichiban's Holiday DLC"
+
+
+class HasJungleDLC(Toggle):
+    """Enable content from the In the Jungle Content Pack (paid expansion, June 2026).
+    Adds: jungle lake region, Bancho Grill restaurant, Utara Village, and new story content.
+    Note: This DLC released June 18, 2026 — enable only if you own it."""
+    display_name = "Has In the Jungle DLC"
 
 
 # === PROGRESSION DIFFICULTY ===
@@ -260,9 +306,17 @@ class DaveDiverOptions(PerGameCommonOptions):
     include_photography: IncludePhotography
     include_challenges: IncludeChallenges
     include_farming: IncludeFarming
+    include_chicken_farm: IncludeChickenFarm
     include_fish_farm: IncludeFishFarm
     include_minigames: IncludeMinigames
-    
+    include_weapon_shop: IncludeWeaponShop
+
+    # DLC ownership
+    has_dredge_dlc: HasDredgeDLC
+    has_godzilla_dlc: HasGodzillaDLC
+    has_ichiban_dlc: HasIchibanDLC
+    has_jungle_dlc: HasJungleDLC
+
     # Progression difficulty
     starting_oxygen_level: StartingOxygenLevel
     starting_harpoon_level: StartingHarpoonLevel
