@@ -191,6 +191,39 @@ namespace DaveDiverAP
             GoalTracker.OnCookstaFollowersChanged(followers);
         }
 
+        // Total post count — checked against milestones
+        private static int _cookstaPostCount = 0;
+        private static bool _hadViralPost = false;
+
+        /// <summary>
+        /// Call this each time the player makes a Cooksta post.
+        /// </summary>
+        public static void OnCookstaPostMade(bool isViral = false)
+        {
+            _cookstaPostCount++;
+
+            // First viral post
+            if (isViral && !_hadViralPost)
+            {
+                _hadViralPost = true;
+                ArchipelagoClient.CheckLocation("Cooksta: First Viral Post");
+            }
+
+            // Post count milestones
+            var postMilestones = new[] { 10, 25, 50 };
+            foreach (var m in postMilestones)
+                if (_cookstaPostCount == m)
+                    ArchipelagoClient.CheckLocation($"Cooksta: Post {m} Times");
+        }
+
+        /// <summary>
+        /// Call this when the player achieves maximum likes on a Cooksta post.
+        /// </summary>
+        public static void OnCookstaMaxLikes()
+        {
+            ArchipelagoClient.CheckLocation("Cooksta: Max Likes on a Post");
+        }
+
         // ── Ingredient first finds ────────────────────────────────────────────
 
         public static void OnIngredientFirstFound(string ingredientName)
