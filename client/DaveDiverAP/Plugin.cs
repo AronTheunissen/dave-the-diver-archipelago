@@ -35,6 +35,7 @@ namespace DaveDiverAP
             _harmony.PatchAll(typeof(StoryProgressPatch));
             _harmony.PatchAll(typeof(WeaponCraftPatch));
             _harmony.PatchAll(typeof(PlayerDeathPatch));
+            _harmony.PatchAll(typeof(GameStatePatch));
 
             Log.LogInfo("Harmony patches applied.");
 

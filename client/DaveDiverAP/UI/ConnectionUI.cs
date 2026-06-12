@@ -196,10 +196,20 @@ namespace DaveDiverAP.UI
         private void DrawConnectedPanel()
         {
             // Slot info
-            ImGui.Text($"Game:  Dave the Diver");
-            ImGui.Text($"Slot:  {_slotName}");
+            ImGui.Text($"Game:   Dave the Diver");
+            ImGui.Text($"Slot:   {_slotName}");
             ImGui.Text($"Server: {_server}:{_port}");
             ImGui.Spacing();
+
+            // Pending items indicator
+            int pending = ItemQueue.PendingCount;
+            if (pending > 0)
+            {
+                ImGui.TextColored(new System.Numerics.Vector4(1f, 0.85f, 0.1f, 1f),
+                    $"⏳ {pending} item{(pending == 1 ? "" : "s")} waiting");
+                ImGui.TextDisabled("  (items are delivered on the boat)");
+                ImGui.Spacing();
+            }
 
             // Disconnect button
             if (ImGui.Button("Disconnect", new System.Numerics.Vector2(120, 0)))

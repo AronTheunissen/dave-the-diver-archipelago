@@ -23,9 +23,13 @@ namespace DaveDiverAP
         private static readonly ConcurrentQueue<NetworkItem> _queue = new();
         private static ManualLogSource Log => Plugin.Log;
 
-        // Only process items when the game is in a playable state
-        // (not during loading screens or cutscenes)
+        // Only process items when Dave is standing on the boat.
+        // NOT while diving, in the restaurant, on farms, or in loading screens.
+        // GameStatePatch sets this flag via SetGameReady().
         private static bool _isGameReady = false;
+
+        // Track how many items are waiting so the UI can show a badge
+        public static int PendingCount => _queue.Count;
 
         public void Awake()
         {
