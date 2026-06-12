@@ -2,7 +2,9 @@ using BepInEx;
 using BepInEx.Unity.IL2CPP;
 using BepInEx.Logging;
 using HarmonyLib;
+using UnityEngine;
 using DaveDiverAP.Patches;
+using DaveDiverAP.UI;
 
 namespace DaveDiverAP
 {
@@ -13,6 +15,7 @@ namespace DaveDiverAP
         public static Plugin Instance { get; private set; } = null!;
 
         private Harmony? _harmony;
+        private GameObject? _uiObject;
 
         public override void Load()
         {
@@ -31,9 +34,15 @@ namespace DaveDiverAP
 
             Log.LogInfo("Harmony patches applied.");
 
-            // Initialize the Archipelago client (connects when the player starts a game)
+            // Initialize the Archipelago client
             ArchipelagoClient.Initialize();
 
+            // Create persistent UI GameObject (survives scene changes)
+            _uiObject = new GameObject("ArchipelagoUI");
+            Object.DontDestroyOnLoad(_uiObject);
+            _uiObject.AddComponent<ConnectionUI>();
+
+            Log.LogInfo("Connection UI created. Press F9 to open.");
             Log.LogInfo("Dave the Diver Archipelago loaded successfully!");
         }
 
@@ -41,6 +50,8 @@ namespace DaveDiverAP
         {
             _harmony?.UnpatchSelf();
             ArchipelagoClient.Disconnect();
+            if (_uiObject != null)
+                Object.Destroy(_uiObject);
             return base.Unload();
         }
     }

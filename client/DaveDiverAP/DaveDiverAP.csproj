@@ -25,6 +25,8 @@
   <ItemGroup>
     <PackageReference Include="Archipelago.MultiClient.Net" Version="6.*" />
     <PackageReference Include="Newtonsoft.Json" Version="13.*" />
+    <!-- ImGui for in-game UI — widely used in BepInEx mods -->
+    <PackageReference Include="ImGui.NET" Version="1.*" />
   </ItemGroup>
 
   <!-- BepInEx references — copy from your BepInEx installation into client/lib/ -->
