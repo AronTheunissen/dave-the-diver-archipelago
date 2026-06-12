@@ -80,6 +80,9 @@ namespace DaveDiverAP
                     // Initialize hint manager
                     HintManager.Initialize();
 
+                    // Reset goal tracker for new session
+                    GoalTracker.Reset();
+
                     // Sync already-checked locations
                     SyncCheckedLocations();
 

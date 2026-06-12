@@ -91,11 +91,14 @@ namespace DaveDiverAP
             {
                 Log.LogInfo($"Boss defeated: {bossName}");
                 ArchipelagoClient.CheckLocation(locationName);
-
-                // Check goal completion
-                if (bossName == "Yawie")
-                    CheckYawieDefeated();
             }
+
+            // Update goal tracker for all bosses (including optional ones not in BossLocations)
+            GoalTracker.OnBossDefeated(bossName);
+
+            // Special handling for Yawie (final boss)
+            if (bossName == "Yawie")
+                GoalTracker.OnYawieDefeated();
         }
 
         // ── Recipe unlocks ────────────────────────────────────────────────────
@@ -127,6 +130,9 @@ namespace DaveDiverAP
         {
             if (stars >= 3)
                 ArchipelagoClient.CheckLocation($"Restaurant Rating: {stars} Stars");
+
+            // Update goal tracker
+            GoalTracker.OnRestaurantRatingAchieved(stars);
         }
 
         // ── Weapon crafting ───────────────────────────────────────────────────
@@ -150,6 +156,12 @@ namespace DaveDiverAP
         public static void OnEcowatcherMissionCompleted(string missionName)
         {
             ArchipelagoClient.CheckLocation($"Ecowatcher: {missionName}");
+
+            // Check if this completes the full collections
+            if (missionName == "Complete All Fish")
+                GoalTracker.OnAllFishComplete();
+            if (missionName == "Complete All Marinca")
+                GoalTracker.OnAllMarincaComplete();
         }
 
         public static void OnEcowatcherLevelUp(int newLevel)
@@ -174,6 +186,9 @@ namespace DaveDiverAP
             foreach (var m in milestones)
                 if (followers >= m)
                     ArchipelagoClient.CheckLocation($"Cooksta: {m} Followers");
+
+            // Update goal tracker
+            GoalTracker.OnCookstaFollowersChanged(followers);
         }
 
         // ── Ingredient first finds ────────────────────────────────────────────
@@ -190,13 +205,5 @@ namespace DaveDiverAP
             ArchipelagoClient.CheckLocation($"Charm: {charmName} ({sourceMission})");
         }
 
-        // ── Goal check ────────────────────────────────────────────────────────
-
-        private static void CheckYawieDefeated()
-        {
-            // Defeat Yawie is goal 0 — complete when boss is defeated
-            if (ArchipelagoClient.SlotData?.Goal == 0)
-                ArchipelagoClient.CompleteGoal();
-        }
     }
 }
