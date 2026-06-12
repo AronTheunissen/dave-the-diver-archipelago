@@ -28,18 +28,37 @@ namespace DaveDiverAP.Patches
     public static class CookstaPatch
     {
         // ── Follower count changed ────────────────────────────────────────────
-        // The only thing we need to track is follower count changes.
-        // Each Cooksta rank (Bronze/Silver/Gold/Platinum/Diamond) is a check.
-        // Thresholds: 10, 20, 100, 200, 720 followers.
-        //
         // PLACEHOLDER: Replace CookstaManager with real class name
-        // Look for: set_FollowerCount, OnFollowersChanged, or similar
         [HarmonyPatch(typeof(CookstaManager), "set_FollowerCount")]  // PLACEHOLDER
         [HarmonyPostfix]
         public static void FollowerCount_Postfix(int value)
         {
             if (!ArchipelagoClient.IsConnected) return;
             LocationTracker.OnCookstaFollowersChanged(value);
+        }
+
+        // ── Best Taste score changed ──────────────────────────────────────────
+        // Best Taste is the cumulative quality score of dishes served.
+        // PLACEHOLDER: Replace with real class/method name from Il2CppDumper
+        // Look for: set_BestTaste, OnBestTasteUpdated, or similar in CookstaManager
+        [HarmonyPatch(typeof(CookstaManager), "set_BestTaste")]  // PLACEHOLDER
+        [HarmonyPostfix]
+        public static void BestTaste_Postfix(int value)
+        {
+            if (!ArchipelagoClient.IsConnected) return;
+            LocationTracker.OnBestTasteChanged(value);
+        }
+
+        // ── Researched recipe count changed ───────────────────────────────────
+        // Tracks how many dish recipes have been researched using Artisan's Flame.
+        // PLACEHOLDER: Replace with real class/method name from Il2CppDumper
+        // Look for: set_ResearchedRecipeCount, OnRecipeResearched, or similar
+        [HarmonyPatch(typeof(CookstaManager), "set_ResearchedRecipeCount")]  // PLACEHOLDER
+        [HarmonyPostfix]
+        public static void ResearchedRecipeCount_Postfix(int value)
+        {
+            if (!ArchipelagoClient.IsConnected) return;
+            LocationTracker.OnResearchedRecipesChanged(value);
         }
     }
 }

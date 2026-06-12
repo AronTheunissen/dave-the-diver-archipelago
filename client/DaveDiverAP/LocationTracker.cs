@@ -184,29 +184,48 @@ namespace DaveDiverAP
 
         private static int _lastCookstaRank = -1; // -1 = no rank yet
 
-        private static readonly (int followers, string locationName)[] CookstaRanks =
+        // Follower milestone locations — each is a separate check
+        private static readonly (int followers, string locationName)[] CookstaFollowerMilestones =
         {
-            (10,  "Cooksta: Bronze Rank (10 Followers)"),
-            (20,  "Cooksta: Silver Rank (20 Followers)"),
-            (100, "Cooksta: Gold Rank (100 Followers)"),
-            (200, "Cooksta: Platinum Rank (200 Followers)"),
-            (720, "Cooksta: Diamond Rank (720 Followers)"),
+            (10,  "Cooksta: 10 Followers"),
+            (20,  "Cooksta: 20 Followers"),
+            (100, "Cooksta: 100 Followers"),
+            (200, "Cooksta: 200 Followers"),
+            (720, "Cooksta: 720 Followers"),
         };
 
         public static void OnCookstaFollowersChanged(int followers)
         {
-            // Check each rank threshold in order
-            for (int i = 0; i < CookstaRanks.Length; i++)
-            {
-                if (followers >= CookstaRanks[i].followers && i > _lastCookstaRank)
-                {
-                    _lastCookstaRank = i;
-                    ArchipelagoClient.CheckLocation(CookstaRanks[i].locationName);
-                }
-            }
+            // Check each follower milestone
+            foreach (var (threshold, locationName) in CookstaFollowerMilestones)
+                if (followers >= threshold)
+                    ArchipelagoClient.CheckLocation(locationName);
 
-            // Update goal tracker (Diamond rank = 720 followers max)
+            // Update goal tracker
             GoalTracker.OnCookstaFollowersChanged(followers);
+        }
+
+        // Best Taste score milestones
+        public static void OnBestTasteChanged(int bestTaste)
+        {
+            var milestones = new[] { (125, "Cooksta: 125 Best Taste"),
+                                     (250, "Cooksta: 250 Best Taste"),
+                                     (375, "Cooksta: 375 Best Taste") };
+            foreach (var (threshold, loc) in milestones)
+                if (bestTaste >= threshold)
+                    ArchipelagoClient.CheckLocation(loc);
+        }
+
+        // Researched recipe count milestones
+        public static void OnResearchedRecipesChanged(int count)
+        {
+            var milestones = new[] { (2,  "Cooksta: 2 Researched Recipes"),
+                                     (5,  "Cooksta: 5 Researched Recipes"),
+                                     (19, "Cooksta: 19 Researched Recipes"),
+                                     (32, "Cooksta: 32 Researched Recipes") };
+            foreach (var (threshold, loc) in milestones)
+                if (count >= threshold)
+                    ArchipelagoClient.CheckLocation(loc);
         }
 
         // ── Ingredient first finds ────────────────────────────────────────────

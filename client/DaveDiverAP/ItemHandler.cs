@@ -47,6 +47,9 @@ namespace DaveDiverAP
             if (name == "Unlock Vegetable Farm")      { UnlockFarm("vegetable"); return; }
             if (name == "Unlock Chicken Farm")        { UnlockFarm("chicken");  return; }
 
+            // ── Cooksta rank ──────────────────────────────────────────────────────
+            if (name == "Progressive Cooksta Rank") { UpgradeCookstaRank(); return; }
+
             // ── Chapter completion ───────────────────────────────────────────
             if (name.StartsWith("Chapter ") && name.EndsWith(" Complete"))
             {
@@ -177,6 +180,14 @@ namespace DaveDiverAP
         private static void CompleteChapter(int chapter)
         {
             Log.LogInfo($"Setting chapter {chapter} complete flag");
+        }
+
+        private static void UpgradeCookstaRank()
+        {
+            // TODO: Call game API to increment Cooksta rank
+            // Coal(0) -> Bronze(1) -> Silver(2) -> Gold(3) -> Platinum(4) -> Diamond(5)
+            // Find via Il2CppDumper: CookstaManager.set_Rank() or similar
+            Log.LogInfo("Upgrading Cooksta rank");
         }
 
         private static void UnlockCharm(string charmName)

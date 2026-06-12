@@ -571,12 +571,31 @@ minigame_locations: Dict[str, LocationData] = {
 # === COOKSTA (Social Media App) ===
 # Cooksta posts and follower milestones
 cooksta_locations: Dict[str, LocationData] = {
-    # Rank milestones — based on real Cooksta rank thresholds in the game
-    "Cooksta: Bronze Rank (10 Followers)":    LocationData(BASE_ID + 400, "Bancho Sushi", "cooksta"),
-    "Cooksta: Silver Rank (20 Followers)":    LocationData(BASE_ID + 401, "Bancho Sushi", "cooksta"),
-    "Cooksta: Gold Rank (100 Followers)":     LocationData(BASE_ID + 402, "Bancho Sushi", "cooksta"),
-    "Cooksta: Platinum Rank (200 Followers)": LocationData(BASE_ID + 403, "Bancho Sushi", "cooksta"),
-    "Cooksta: Diamond Rank (720 Followers)":  LocationData(BASE_ID + 404, "Bancho Sushi", "cooksta"),
+    # === COOKSTA RANK REQUIREMENTS ===
+    # Each individual requirement for a rank is a separate check.
+    # The RANK ITSELF is a Progressive Cooksta Rank item (received as AP reward).
+    #
+    # Bronze rank requirements:
+    "Cooksta: 10 Followers":                  LocationData(BASE_ID + 400, "Bancho Sushi", "cooksta"),
+
+    # Silver rank requirements:
+    "Cooksta: 20 Followers":                  LocationData(BASE_ID + 401, "Bancho Sushi", "cooksta"),
+    "Cooksta: 2 Researched Recipes":          LocationData(BASE_ID + 402, "Bancho Sushi", "cooksta"),
+
+    # Gold rank requirements:
+    "Cooksta: 100 Followers":                 LocationData(BASE_ID + 403, "Bancho Sushi", "cooksta"),
+    "Cooksta: 125 Best Taste":                LocationData(BASE_ID + 404, "Bancho Sushi", "cooksta"),
+    "Cooksta: 5 Researched Recipes":          LocationData(BASE_ID + 405, "Bancho Sushi", "cooksta"),
+
+    # Platinum rank requirements:
+    "Cooksta: 200 Followers":                 LocationData(BASE_ID + 406, "Bancho Sushi", "cooksta"),
+    "Cooksta: 250 Best Taste":                LocationData(BASE_ID + 407, "Bancho Sushi", "cooksta"),
+    "Cooksta: 19 Researched Recipes":         LocationData(BASE_ID + 408, "Bancho Sushi", "cooksta"),
+
+    # Diamond rank requirements:
+    "Cooksta: 720 Followers":                 LocationData(BASE_ID + 409, "Bancho Sushi", "cooksta"),
+    "Cooksta: 375 Best Taste":                LocationData(BASE_ID + 410, "Bancho Sushi", "cooksta"),
+    "Cooksta: 32 Researched Recipes":         LocationData(BASE_ID + 411, "Bancho Sushi", "cooksta"),
 }
 
 # === ECOWATCHER (Marine Life App) ===

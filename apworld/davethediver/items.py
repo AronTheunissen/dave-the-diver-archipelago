@@ -368,6 +368,14 @@ dish_upgrade_items: Dict[str, ItemData] = {
     "Progressive Yellowfin Tuna Steak":                    _prog_dish(_PD + 82,  9),
 }
 
+# === COOKSTA RANK ITEMS ===
+# Progressive Cooksta Rank: 5 copies (Coal→Bronze→Silver→Gold→Platinum→Diamond)
+# Each copy received = one rank up in Cooksta, unlocking new features.
+# Starting rank is Coal (no item needed), so 5 progressive items = 5 rank-ups.
+cooksta_rank_items: Dict[str, ItemData] = {
+    "Progressive Cooksta Rank": ItemData(BASE_ID + 535, ItemClassification.useful, count=5, category="cooksta"),
+}
+
 # === CHARMS ===
 # 12 charms total — each grants a passive bonus effect when equipped.
 # Obtained from story missions or Ecowatcher level-ups.
@@ -458,6 +466,7 @@ item_table: Dict[str, ItemData] = {
     **diving_equipment,
     **restaurant_items,
     **story_key_items,
+    **cooksta_rank_items,
     **charm_items,
     **ability_items,
     **dish_upgrade_items,
