@@ -332,25 +332,17 @@ def set_completion_condition(world):
             state.has("Cooksta: 32 Researched Recipes", player)
         )
 
-    elif goal == 3:  # Master Diver
+    elif goal == 3:  # Master Diver — catch every fish (= complete MarinCa collection)
         world.multiworld.completion_condition[player] = lambda state: (
             defeated_yawie(state, player) and
-            state.has("Ecowatcher: Complete All Fish", player) and
-            state.has("Ecowatcher: Complete All Marinca", player)
+            state.has("Ecowatcher: Complete All Fish", player)
         )
 
-    elif goal == 4:  # Complete MarinCa Collection
-        world.multiworld.completion_condition[player] = lambda state: (
-            defeated_yawie(state, player) and
-            state.has("Ecowatcher: Complete All Marinca", player)
-        )
-
-    elif goal == 5:  # 100% Completion
+    elif goal == 4:  # 100% Completion
         world.multiworld.completion_condition[player] = lambda state: (
             defeated_yawie(state, player) and
             defeated_all_bosses(state, player) and
             state.has("Ecowatcher: Complete All Fish", player) and
-            state.has("Ecowatcher: Complete All Marinca", player) and
             state.has("Cooksta: 720 Followers", player) and
             state.has("Cooksta: 375 Best Taste", player) and
             state.has("Cooksta: 32 Researched Recipes", player)

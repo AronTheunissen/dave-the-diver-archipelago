@@ -23,17 +23,15 @@ class Goal(Choice):
     - Defeat Yawie: Defeat the final boss (fastest, ~15-25 hours)
     - Defeat All Bosses: Defeat Yawie + all optional bosses including vortex fights (~25-35 hours)
     - Diamond Rank: Defeat Yawie + reach Cooksta Diamond rank (720 followers, 375 best taste, 32 researched recipes) (long, ~30-40 hours)
-    - Master Diver: Defeat Yawie + complete all Ecowatcher entries (very long, ~50-70 hours)
-    - Complete MarinCa Collection: Defeat Yawie + log all Marinca entries in Ecowatcher (long, ~40-60 hours)
-    - 100% Completion: Everything - all bosses, all fish, Diamond rank Cooksta, all Ecowatcher (extreme, 100+ hours)
+    - Master Diver: Defeat Yawie + catch every fish species (complete MarinCa collection) (very long, ~50-70 hours)
+    - 100% Completion: Everything - all bosses, Diamond rank, all fish caught (extreme, 100+ hours)
     """
     display_name = "Victory Condition"
     option_defeat_yawie = 0
     option_defeat_all_bosses = 1
     option_diamond_rank = 2
     option_master_diver = 3
-    option_complete_marinca_collection = 4
-    option_hundred_percent = 5
+    option_hundred_percent = 4
     default = 0  # Defeat Yawie
 
 

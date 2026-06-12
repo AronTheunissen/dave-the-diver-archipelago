@@ -146,14 +146,12 @@ namespace DaveDiverAP
                  && _cookstaFollowers >= 720
                  && _cookstaBestTaste >= 375
                  && _cookstaResearchedRecipes >= 32,
-            3 => _yawieDefeated                          // Master Diver
-                 && _allFishComplete && _allMarincaComplete,
-            4 => _yawieDefeated && _allMarincaComplete,  // Complete MarinCa Collection
-            5 => _yawieDefeated && _allBossesDefeated    // 100% Completion
+            3 => _yawieDefeated && _allFishComplete,      // Master Diver (all fish = all Marinca)
+            4 => _yawieDefeated && _allBossesDefeated    // 100% Completion
                  && _cookstaFollowers >= 720
                  && _cookstaBestTaste >= 375
                  && _cookstaResearchedRecipes >= 32
-                 && _allFishComplete && _allMarincaComplete,
+                 && _allFishComplete,
             _ => false,
         };
 
@@ -162,9 +160,8 @@ namespace DaveDiverAP
             0 => "Defeat Yawie",
             1 => "Defeat All Bosses",
             2 => "Diamond Rank (720 Followers + 375 Best Taste + 32 Researched Recipes)",
-            3 => "Master Diver",
-            4 => "Complete MarinCa Collection",
-            5 => "100% Completion",
+            3 => "Master Diver (Catch Every Fish Species)",
+            4 => "100% Completion",
             _ => "Unknown Goal",
         };
 
