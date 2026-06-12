@@ -83,10 +83,13 @@ namespace DaveDiverAP.UI
             ImGuiUn.Layout("ArchipelagoConnection", DrawUI);
         }
 
+        // Active tab index
+        private int _activeTab = 0;
+
         private void DrawUI()
         {
             // ── Window setup ──────────────────────────────────────────────────
-            ImGui.SetNextWindowSize(new System.Numerics.Vector2(420, 0), ImGuiCond.FirstUseEver);
+            ImGui.SetNextWindowSize(new System.Numerics.Vector2(440, 0), ImGuiCond.FirstUseEver);
             ImGui.SetNextWindowPos(new System.Numerics.Vector2(20, 20), ImGuiCond.FirstUseEver);
 
             if (!ImGui.Begin("Archipelago - Dave the Diver",
@@ -105,24 +108,43 @@ namespace DaveDiverAP.UI
             DrawStatusIndicator();
             ImGui.Spacing();
             ImGui.Separator();
-            ImGui.Spacing();
 
-            if (ArchipelagoClient.IsConnected)
+            // ── Tab bar ───────────────────────────────────────────────────────
+            if (ImGui.BeginTabBar("APTabs"))
             {
-                DrawConnectedPanel();
+                // Connection tab
+                if (ImGui.BeginTabItem("Connection"))
+                {
+                    ImGui.Spacing();
+                    if (ArchipelagoClient.IsConnected)
+                        DrawConnectedPanel();
+                    else
+                        DrawConnectionForm();
+
+                    ImGui.Spacing();
+                    ImGui.Separator();
+                    DrawItemLog();
+                    ImGui.EndTabItem();
+                }
+
+                // Hints tab (only when connected)
+                if (ArchipelagoClient.IsConnected)
+                {
+                    // Show badge on tab if we have hints
+                    int hintCount = HintManager.ReceivedHints.Count;
+                    var hintLabel = hintCount > 0 ? $"Hints ({hintCount})" : "Hints";
+
+                    if (ImGui.BeginTabItem(hintLabel))
+                    {
+                        HintUI.Draw();
+                        ImGui.EndTabItem();
+                    }
+                }
+
+                ImGui.EndTabBar();
             }
-            else
-            {
-                DrawConnectionForm();
-            }
 
-            ImGui.Spacing();
-            ImGui.Separator();
-
-            // ── Item receive log ───────────────────────────────────────────────
-            DrawItemLog();
-
-            // ── Hint ──────────────────────────────────────────────────────────
+            // ── Footer ────────────────────────────────────────────────────────
             ImGui.Spacing();
             ImGui.TextDisabled("Press F9 to toggle this window");
 

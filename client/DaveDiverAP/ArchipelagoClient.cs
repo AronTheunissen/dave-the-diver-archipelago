@@ -77,6 +77,9 @@ namespace DaveDiverAP
                     // Initialize Death Link if enabled
                     DeathLinkHandler.Initialize(Session!);
 
+                    // Initialize hint manager
+                    HintManager.Initialize();
+
                     // Sync already-checked locations
                     SyncCheckedLocations();
 
