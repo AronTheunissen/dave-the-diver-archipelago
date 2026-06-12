@@ -37,6 +37,15 @@ namespace DaveDiverAP
             _harmony.PatchAll(typeof(PlayerDeathPatch));
             _harmony.PatchAll(typeof(GameStatePatch));
             _harmony.PatchAll(typeof(CookstaPatch));
+            _harmony.PatchAll(typeof(PhotographyPatch));
+            _harmony.PatchAll(typeof(ChallengePatch));
+            _harmony.PatchAll(typeof(EcowatcherPatch));
+            _harmony.PatchAll(typeof(FarmPatch));
+            _harmony.PatchAll(typeof(MinigamePatch));
+            _harmony.PatchAll(typeof(RestaurantPatch));
+            _harmony.PatchAll(typeof(CollectiblePatch));
+            _harmony.PatchAll(typeof(IngredientPatch));
+            _harmony.PatchAll(typeof(CharmPatch));
 
             Log.LogInfo("Harmony patches applied.");
 
