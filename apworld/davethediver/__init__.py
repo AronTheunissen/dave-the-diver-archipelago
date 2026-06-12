@@ -248,11 +248,50 @@ class DaveDiverWorld(World):
         pass
         
     def fill_slot_data(self) -> Dict[str, Any]:
-        """Fill slot data to be sent to the client"""
+        """Fill slot data to be sent to the client mod (SlotData.cs).
+        
+        Every key here must have a matching property in the C# SlotData class.
+        Keys use snake_case to match the Python option names exactly.
+        """
         return {
-            "death_link": self.options.death_link.value,
+            # ── Victory condition ────────────────────────────────────────────
             "goal": self.options.goal.value,
-            "starting_oxygen": self.options.starting_oxygen_level.value,
-            "starting_harpoon": self.options.starting_harpoon_level.value,
-            "starting_suit": self.options.starting_diving_suit_level.value,
+            # 0=defeat_yawie, 1=defeat_all_bosses, 2=defeat_yawie_plus_cooksta,
+            # 3=restaurant_tycoon, 4=master_diver, 5=complete_marinca_collection,
+            # 6=hundred_percent
+
+            # ── Fish checks ──────────────────────────────────────────────────
+            "fish_checks": self.options.fish_checks.value,
+            # 0=none, 1=rare_only, 2=all
+
+            # ── Restaurant options ───────────────────────────────────────────
+            "dish_upgrades": self.options.dish_upgrades.value,
+            # 0=none, 1=key_dishes, 2=popular, 3=all
+            "recipe_checks": self.options.recipe_checks.value,
+
+            # ── Optional systems (0=off, 1=on) ───────────────────────────────
+            "include_cooksta":      self.options.include_cooksta.value,
+            "include_ecowatcher":   self.options.include_ecowatcher.value,
+            "include_photography":  self.options.include_photography.value,
+            "include_challenges":   self.options.include_challenges.value,
+            "include_farming":      self.options.include_farming.value,
+            "include_chicken_farm": self.options.include_chicken_farm.value,
+            "include_fish_farm":    self.options.include_fish_farm.value,
+            "include_minigames":    self.options.include_minigames.value,
+            "include_weapon_shop":  self.options.include_weapon_shop.value,
+
+            # ── DLC ownership (0=no, 1=yes) ──────────────────────────────────
+            "has_dredge_dlc":   self.options.has_dredge_dlc.value,
+            "has_godzilla_dlc": self.options.has_godzilla_dlc.value,
+            "has_ichiban_dlc":  self.options.has_ichiban_dlc.value,
+            "has_jungle_dlc":   self.options.has_jungle_dlc.value,
+
+            # ── Starting equipment levels ─────────────────────────────────────
+            "starting_oxygen_level":      self.options.starting_oxygen_level.value,
+            "starting_harpoon_level":     self.options.starting_harpoon_level.value,
+            "starting_suit_level":        self.options.starting_diving_suit_level.value,
+
+            # ── Misc ──────────────────────────────────────────────────────────
+            "death_link":      self.options.death_link.value,
+            "trap_frequency":  self.options.trap_frequency.value,
         }
