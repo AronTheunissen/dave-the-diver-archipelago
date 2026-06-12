@@ -214,6 +214,9 @@ namespace DaveDiverAP
             foreach (var (threshold, loc) in milestones)
                 if (bestTaste >= threshold)
                     ArchipelagoClient.CheckLocation(loc);
+
+            // Update goal tracker
+            GoalTracker.OnBestTasteChanged(bestTaste);
         }
 
         // Researched recipe count milestones
@@ -226,6 +229,9 @@ namespace DaveDiverAP
             foreach (var (threshold, loc) in milestones)
                 if (count >= threshold)
                     ArchipelagoClient.CheckLocation(loc);
+
+            // Update goal tracker
+            GoalTracker.OnResearchedRecipesChanged(count);
         }
 
         // ── Ingredient first finds ────────────────────────────────────────────

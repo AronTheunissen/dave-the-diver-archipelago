@@ -27,7 +27,9 @@ namespace DaveDiverAP
         private static bool _yawieDefeated          = false;
         private static bool _allBossesDefeated      = false;
         private static int  _cookstaFollowers        = 0;
-        private static int  _restaurantStars         = 0;
+        private static int  _cookstaBestTaste        = 0;
+        private static int  _cookstaResearchedRecipes = 0;
+        // Note: Restaurant stars are not tracked — Restaurant Tycoon goal was removed
         private static bool _allFishComplete         = false;
         private static bool _allMarincaComplete      = false;
 
@@ -71,14 +73,28 @@ namespace DaveDiverAP
             CheckGoal();
         }
 
-        public static void OnRestaurantRatingAchieved(int stars)
+        public static void OnBestTasteChanged(int bestTaste)
         {
-            if (stars > _restaurantStars)
+            if (bestTaste > _cookstaBestTaste)
             {
-                _restaurantStars = stars;
-                Log.LogInfo($"GoalTracker: Restaurant rating {stars} stars.");
+                _cookstaBestTaste = bestTaste;
                 CheckGoal();
             }
+        }
+
+        public static void OnResearchedRecipesChanged(int count)
+        {
+            if (count > _cookstaResearchedRecipes)
+            {
+                _cookstaResearchedRecipes = count;
+                CheckGoal();
+            }
+        }
+
+        // Restaurant rating no longer used for any goal — method kept for location checks
+        public static void OnRestaurantRatingAchieved(int stars)
+        {
+            Log.LogInfo($"GoalTracker: Restaurant rating {stars} stars (not used for goal).");
         }
 
         public static void OnAllFishComplete()
@@ -126,13 +142,17 @@ namespace DaveDiverAP
         {
             0 => _yawieDefeated,
             1 => _yawieDefeated && _allBossesDefeated,
-            2 => _yawieDefeated && _cookstaFollowers >= 720,  // Diamond rank = max Cooksta
-            3 => _yawieDefeated && _restaurantStars >= 5,
-            4 => _yawieDefeated && _allFishComplete && _allMarincaComplete,
-            5 => _yawieDefeated && _allMarincaComplete,
-            6 => _yawieDefeated && _allBossesDefeated
-                 && _cookstaFollowers >= 720   // Diamond rank = max Cooksta
-                 && _restaurantStars >= 5
+            2 => _yawieDefeated                          // Diamond Rank
+                 && _cookstaFollowers >= 720
+                 && _cookstaBestTaste >= 375
+                 && _cookstaResearchedRecipes >= 32,
+            3 => _yawieDefeated                          // Master Diver
+                 && _allFishComplete && _allMarincaComplete,
+            4 => _yawieDefeated && _allMarincaComplete,  // Complete MarinCa Collection
+            5 => _yawieDefeated && _allBossesDefeated    // 100% Completion
+                 && _cookstaFollowers >= 720
+                 && _cookstaBestTaste >= 375
+                 && _cookstaResearchedRecipes >= 32
                  && _allFishComplete && _allMarincaComplete,
             _ => false,
         };
@@ -141,11 +161,10 @@ namespace DaveDiverAP
         {
             0 => "Defeat Yawie",
             1 => "Defeat All Bosses",
-            2 => "Defeat Yawie + 10,000 Cooksta Followers",
-            3 => "Defeat Yawie + 5-Star Restaurant",
-            4 => "Master Diver",
-            5 => "Complete MarinCa Collection",
-            6 => "100% Completion",
+            2 => "Diamond Rank (720 Followers + 375 Best Taste + 32 Researched Recipes)",
+            3 => "Master Diver",
+            4 => "Complete MarinCa Collection",
+            5 => "100% Completion",
             _ => "Unknown Goal",
         };
 
@@ -156,8 +175,9 @@ namespace DaveDiverAP
         {
             _yawieDefeated     = false;
             _allBossesDefeated = false;
-            _cookstaFollowers  = 0;
-            _restaurantStars   = 0;
+            _cookstaFollowers        = 0;
+            _cookstaBestTaste        = 0;
+            _cookstaResearchedRecipes = 0;
             _allFishComplete   = false;
             _allMarincaComplete = false;
             _goalCompleted     = false;
