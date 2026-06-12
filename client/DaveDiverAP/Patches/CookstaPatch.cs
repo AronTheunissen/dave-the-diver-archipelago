@@ -27,37 +27,19 @@ namespace DaveDiverAP.Patches
     [HarmonyPatch]
     public static class CookstaPatch
     {
-        // ── Post made ─────────────────────────────────────────────────────────
-        // PLACEHOLDER: Replace CookstaManager with real class name
-        // Look for a method called when the player submits a Cooksta post
-        [HarmonyPatch(typeof(CookstaManager), "OnPostSubmitted")]  // PLACEHOLDER
-        [HarmonyPostfix]
-        public static void OnPostSubmitted_Postfix(object __instance, bool isViral)
-        {
-            if (!ArchipelagoClient.IsConnected) return;
-            LocationTracker.OnCookstaPostMade(isViral);
-        }
-
         // ── Follower count changed ────────────────────────────────────────────
-        // PLACEHOLDER: Hook the follower count setter
-        // Fires whenever the follower count increases (after a successful post)
+        // The only thing we need to track is follower count changes.
+        // Each Cooksta rank (Bronze/Silver/Gold/Platinum/Diamond) is a check.
+        // Thresholds: 10, 20, 100, 200, 720 followers.
+        //
+        // PLACEHOLDER: Replace CookstaManager with real class name
+        // Look for: set_FollowerCount, OnFollowersChanged, or similar
         [HarmonyPatch(typeof(CookstaManager), "set_FollowerCount")]  // PLACEHOLDER
         [HarmonyPostfix]
         public static void FollowerCount_Postfix(int value)
         {
             if (!ArchipelagoClient.IsConnected) return;
             LocationTracker.OnCookstaFollowersChanged(value);
-        }
-
-        // ── Max likes on a post ───────────────────────────────────────────────
-        // PLACEHOLDER: Hook the max likes achievement trigger
-        // This may fire as part of the post result calculation
-        [HarmonyPatch(typeof(CookstaManager), "OnMaxLikesAchieved")]  // PLACEHOLDER
-        [HarmonyPostfix]
-        public static void OnMaxLikesAchieved_Postfix()
-        {
-            if (!ArchipelagoClient.IsConnected) return;
-            LocationTracker.OnCookstaMaxLikes();
         }
     }
 }

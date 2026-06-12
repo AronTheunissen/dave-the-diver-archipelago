@@ -22,7 +22,7 @@ class Goal(Choice):
     
     - Defeat Yawie: Defeat the final boss (fastest, ~15-25 hours)
     - Defeat All Bosses: Defeat Yawie + all optional bosses including vortex fights (~25-35 hours)
-    - Defeat Yawie + Cooksta: Defeat Yawie + reach 10,000 Cooksta followers (long, ~30-40 hours)
+    - Defeat Yawie + Cooksta: Defeat Yawie + reach Diamond rank (720 Cooksta followers) (long, ~30-40 hours)
     - Restaurant Tycoon: Defeat Yawie + achieve 5-star restaurant rating (long, ~30-40 hours)
     - Master Diver: Defeat Yawie + complete all Ecowatcher entries (very long, ~50-70 hours)
     - Complete MarinCa Collection: Defeat Yawie + log all Marinca entries in Ecowatcher (long, ~40-60 hours)

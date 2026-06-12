@@ -327,7 +327,7 @@ def set_completion_condition(world):
     elif goal == 2:  # Defeat Yawie + Cooksta
         world.multiworld.completion_condition[player] = lambda state: (
             defeated_yawie(state, player) and
-            state.has("Cooksta: 10000 Followers", player)
+            state.has("Cooksta: Diamond Rank (720 Followers)", player)
         )
 
     elif goal == 3:  # Restaurant Tycoon
@@ -355,7 +355,7 @@ def set_completion_condition(world):
             defeated_all_bosses(state, player) and
             state.has("Ecowatcher: Complete All Fish", player) and
             state.has("Ecowatcher: Complete All Marinca", player) and
-            state.has("Cooksta: 10000 Followers", player) and
+            state.has("Cooksta: Diamond Rank (720 Followers)", player) and
             state.has("Restaurant Rating: 5 Stars", player)
         )
 

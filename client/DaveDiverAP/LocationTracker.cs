@@ -178,50 +178,35 @@ namespace DaveDiverAP
                 ArchipelagoClient.CheckLocation(loc);
         }
 
-        // ── Cooksta milestones ────────────────────────────────────────────────
+        // ── Cooksta rank milestones ───────────────────────────────────────────
+        // Real Cooksta rank thresholds from the game:
+        // Bronze=10, Silver=20, Gold=100, Platinum=200, Diamond=720
+
+        private static int _lastCookstaRank = -1; // -1 = no rank yet
+
+        private static readonly (int followers, string locationName)[] CookstaRanks =
+        {
+            (10,  "Cooksta: Bronze Rank (10 Followers)"),
+            (20,  "Cooksta: Silver Rank (20 Followers)"),
+            (100, "Cooksta: Gold Rank (100 Followers)"),
+            (200, "Cooksta: Platinum Rank (200 Followers)"),
+            (720, "Cooksta: Diamond Rank (720 Followers)"),
+        };
 
         public static void OnCookstaFollowersChanged(int followers)
         {
-            var milestones = new[] { 100, 500, 1000, 2500, 5000, 10000 };
-            foreach (var m in milestones)
-                if (followers >= m)
-                    ArchipelagoClient.CheckLocation($"Cooksta: {m} Followers");
-
-            // Update goal tracker
-            GoalTracker.OnCookstaFollowersChanged(followers);
-        }
-
-        // Total post count — checked against milestones
-        private static int _cookstaPostCount = 0;
-        private static bool _hadViralPost = false;
-
-        /// <summary>
-        /// Call this each time the player makes a Cooksta post.
-        /// </summary>
-        public static void OnCookstaPostMade(bool isViral = false)
-        {
-            _cookstaPostCount++;
-
-            // First viral post
-            if (isViral && !_hadViralPost)
+            // Check each rank threshold in order
+            for (int i = 0; i < CookstaRanks.Length; i++)
             {
-                _hadViralPost = true;
-                ArchipelagoClient.CheckLocation("Cooksta: First Viral Post");
+                if (followers >= CookstaRanks[i].followers && i > _lastCookstaRank)
+                {
+                    _lastCookstaRank = i;
+                    ArchipelagoClient.CheckLocation(CookstaRanks[i].locationName);
+                }
             }
 
-            // Post count milestones
-            var postMilestones = new[] { 10, 25, 50 };
-            foreach (var m in postMilestones)
-                if (_cookstaPostCount == m)
-                    ArchipelagoClient.CheckLocation($"Cooksta: Post {m} Times");
-        }
-
-        /// <summary>
-        /// Call this when the player achieves maximum likes on a Cooksta post.
-        /// </summary>
-        public static void OnCookstaMaxLikes()
-        {
-            ArchipelagoClient.CheckLocation("Cooksta: Max Likes on a Post");
+            // Update goal tracker (Diamond rank = 720 followers max)
+            GoalTracker.OnCookstaFollowersChanged(followers);
         }
 
         // ── Ingredient first finds ────────────────────────────────────────────

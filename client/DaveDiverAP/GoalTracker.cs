@@ -126,12 +126,12 @@ namespace DaveDiverAP
         {
             0 => _yawieDefeated,
             1 => _yawieDefeated && _allBossesDefeated,
-            2 => _yawieDefeated && _cookstaFollowers >= 10000,
+            2 => _yawieDefeated && _cookstaFollowers >= 720,  // Diamond rank = max Cooksta
             3 => _yawieDefeated && _restaurantStars >= 5,
             4 => _yawieDefeated && _allFishComplete && _allMarincaComplete,
             5 => _yawieDefeated && _allMarincaComplete,
             6 => _yawieDefeated && _allBossesDefeated
-                 && _cookstaFollowers >= 10000
+                 && _cookstaFollowers >= 720   // Diamond rank = max Cooksta
                  && _restaurantStars >= 5
                  && _allFishComplete && _allMarincaComplete,
             _ => false,

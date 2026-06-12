@@ -571,22 +571,12 @@ minigame_locations: Dict[str, LocationData] = {
 # === COOKSTA (Social Media App) ===
 # Cooksta posts and follower milestones
 cooksta_locations: Dict[str, LocationData] = {
-    # Follower milestones
-    "Cooksta: 100 Followers": LocationData(BASE_ID + 400, "Bancho Sushi", "cooksta"),
-    "Cooksta: 500 Followers": LocationData(BASE_ID + 401, "Bancho Sushi", "cooksta"),
-    "Cooksta: 1000 Followers": LocationData(BASE_ID + 402, "Bancho Sushi", "cooksta"),
-    "Cooksta: 2500 Followers": LocationData(BASE_ID + 403, "Bancho Sushi", "cooksta"),
-    "Cooksta: 5000 Followers": LocationData(BASE_ID + 404, "Bancho Sushi", "cooksta"),
-    "Cooksta: 10000 Followers": LocationData(BASE_ID + 405, "Bancho Sushi", "cooksta"),
-    
-    # Special Cooksta achievements
-    "Cooksta: First Viral Post": LocationData(BASE_ID + 410, "Bancho Sushi", "cooksta"),
-    "Cooksta: Post 10 Times": LocationData(BASE_ID + 411, "Bancho Sushi", "cooksta"),
-    "Cooksta: Post 25 Times": LocationData(BASE_ID + 412, "Bancho Sushi", "cooksta"),
-    "Cooksta: Post 50 Times": LocationData(BASE_ID + 413, "Bancho Sushi", "cooksta"),
-    "Cooksta: Max Likes on a Post": LocationData(BASE_ID + 414, "Bancho Sushi", "cooksta"),
-    
-    # TODO: Add more Cooksta milestones
+    # Rank milestones — based on real Cooksta rank thresholds in the game
+    "Cooksta: Bronze Rank (10 Followers)":    LocationData(BASE_ID + 400, "Bancho Sushi", "cooksta"),
+    "Cooksta: Silver Rank (20 Followers)":    LocationData(BASE_ID + 401, "Bancho Sushi", "cooksta"),
+    "Cooksta: Gold Rank (100 Followers)":     LocationData(BASE_ID + 402, "Bancho Sushi", "cooksta"),
+    "Cooksta: Platinum Rank (200 Followers)": LocationData(BASE_ID + 403, "Bancho Sushi", "cooksta"),
+    "Cooksta: Diamond Rank (720 Followers)":  LocationData(BASE_ID + 404, "Bancho Sushi", "cooksta"),
 }
 
 # === ECOWATCHER (Marine Life App) ===
