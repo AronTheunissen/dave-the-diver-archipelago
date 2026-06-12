@@ -74,14 +74,24 @@ namespace DaveDiverAP
                     // Parse slot data from server
                     SlotData = new SlotData(result.SlotData);
 
+                    // Initialize Death Link if enabled
+                    DeathLinkHandler.Initialize(Session!);
+
                     // Sync already-checked locations
                     SyncCheckedLocations();
 
                     // Replay any items we haven't received yet
                     ReplayMissedItems();
 
+                    // Show connection notification
+                    NotificationManager.ShowNotification(
+                        "🔗 Connected!",
+                        $"Archipelago: {SlotName} @ {url}:{port}",
+                        NotificationManager.NotificationType.Connection
+                    );
+
                     OnConnected?.Invoke();
-                    OnConnectionStatusChanged?.Invoke("Connected");
+                    OnConnectionStatusChanged?.Invoke($"Connected as {SlotName}");
                     return true;
                 }
                 else
@@ -181,8 +191,8 @@ namespace DaveDiverAP
                 Log.LogInfo($"Item received: {item.ItemName} (ID: {item.ItemId}) from {item.Player}");
                 OnItemReceived?.Invoke(item);
 
-                // Route to ItemHandler for actual game effect
-                ItemHandler.ApplyItem(item);
+                // Queue for main-thread processing (game API calls must be on main thread)
+                ItemQueue.Enqueue(item);
             }
         }
 

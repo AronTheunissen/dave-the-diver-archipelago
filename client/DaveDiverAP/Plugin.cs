@@ -24,6 +24,9 @@ namespace DaveDiverAP
 
             Log.LogInfo($"Dave the Diver Archipelago v{MyPluginInfo.PLUGIN_VERSION} loading...");
 
+            // Load BepInEx config file
+            ModConfig.Initialize(Config);
+
             // Apply Harmony patches
             _harmony = new Harmony(MyPluginInfo.PLUGIN_GUID);
             _harmony.PatchAll(typeof(FishCatchPatch));
@@ -31,6 +34,7 @@ namespace DaveDiverAP
             _harmony.PatchAll(typeof(BossDefeatedPatch));
             _harmony.PatchAll(typeof(StoryProgressPatch));
             _harmony.PatchAll(typeof(WeaponCraftPatch));
+            _harmony.PatchAll(typeof(PlayerDeathPatch));
 
             Log.LogInfo("Harmony patches applied.");
 
@@ -38,11 +42,26 @@ namespace DaveDiverAP
             ArchipelagoClient.Initialize();
 
             // Create persistent UI GameObject (survives scene changes)
+            // All MonoBehaviours go on this single object
             _uiObject = new GameObject("ArchipelagoUI");
             Object.DontDestroyOnLoad(_uiObject);
             _uiObject.AddComponent<ConnectionUI>();
+            _uiObject.AddComponent<NotificationManager>();
+            _uiObject.AddComponent<ItemQueue>();
 
             Log.LogInfo("Connection UI created. Press F9 to open.");
+
+            // Auto-connect if configured
+            if (ModConfig.AutoConnectOnLaunch.Value)
+            {
+                var (url, port, slot, pass) = SaveData.LoadConnectionInfo();
+                if (!string.IsNullOrEmpty(url) && !string.IsNullOrEmpty(slot))
+                {
+                    Log.LogInfo("Auto-connecting to Archipelago...");
+                    _ = ArchipelagoClient.ConnectAsync(url, port, slot, pass);
+                }
+            }
+
             Log.LogInfo("Dave the Diver Archipelago loaded successfully!");
         }
 
@@ -50,6 +69,7 @@ namespace DaveDiverAP
         {
             _harmony?.UnpatchSelf();
             ArchipelagoClient.Disconnect();
+            DeathLinkHandler.Dispose();
             if (_uiObject != null)
                 Object.Destroy(_uiObject);
             return base.Unload();

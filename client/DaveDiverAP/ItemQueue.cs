@@ -1,0 +1,86 @@
+using System.Collections.Concurrent;
+using Archipelago.MultiClient.Net.Models;
+using BepInEx.Logging;
+using UnityEngine;
+
+namespace DaveDiverAP
+{
+    /// <summary>
+    /// Buffers received AP items and applies them safely on the Unity main thread.
+    ///
+    /// Items can arrive from the AP server at any time (including during loading screens
+    /// or cutscenes), but game API calls must happen on the Unity main thread.
+    /// This queue bridges the gap.
+    ///
+    /// Usage:
+    ///   - AP item callback enqueues items: ItemQueue.Enqueue(item)
+    ///   - MonoBehaviour Update() dequeues and applies: ItemQueue.ProcessPending()
+    /// </summary>
+    public class ItemQueue : MonoBehaviour
+    {
+        public static ItemQueue? Instance { get; private set; }
+
+        private static readonly ConcurrentQueue<NetworkItem> _queue = new();
+        private static ManualLogSource Log => Plugin.Log;
+
+        // Only process items when the game is in a playable state
+        // (not during loading screens or cutscenes)
+        private static bool _isGameReady = false;
+
+        public void Awake()
+        {
+            Instance = this;
+        }
+
+        public void OnDestroy()
+        {
+            Instance = null;
+        }
+
+        public void Update()
+        {
+            if (!_isGameReady) return;
+            ProcessPending();
+        }
+
+        /// <summary>
+        /// Enqueue an item for processing on the main thread.
+        /// Safe to call from any thread.
+        /// </summary>
+        public static void Enqueue(NetworkItem item)
+        {
+            _queue.Enqueue(item);
+        }
+
+        /// <summary>
+        /// Process all queued items on the main thread.
+        /// </summary>
+        public static void ProcessPending()
+        {
+            while (_queue.TryDequeue(out var item))
+            {
+                Log.LogInfo($"Processing queued item: {item.ItemName}");
+                ItemHandler.ApplyItem(item);
+
+                // Show notification
+                var sender = item.Player.Name ?? "Archipelago";
+                NotificationManager.ShowNotification(
+                    $"🎁 {item.ItemName}",
+                    $"Sent by {sender}",
+                    NotificationManager.NotificationType.ItemReceived
+                );
+            }
+        }
+
+        /// <summary>
+        /// Call this when the game is in a state where items can be safely applied.
+        /// (e.g., when Dave is standing on the boat, or when the dive starts)
+        /// </summary>
+        public static void SetGameReady(bool ready)
+        {
+            _isGameReady = ready;
+            if (ready)
+                Log.LogInfo("Game ready — processing queued items.");
+        }
+    }
+}
