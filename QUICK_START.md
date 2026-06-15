@@ -1,139 +1,81 @@
 # Quick Start Guide
 
-## 🎉 Your Development Environment is Ready!
+> **Current status:** APWorld complete, C# client skeleton complete.
+> The main remaining task is wiring up real game class names in the Harmony patches.
 
-I've set up a complete project structure for creating Dave the Diver Archipelago support.
+---
 
-## What's Been Done
+## For Players (Want to play the randomizer?)
 
-✅ **Project Structure Created**
-- APWorld Python package with starter code
-- Client mod C# project structure  
-- Documentation framework
-- Archipelago repository cloned for reference
+See **[docs/SETUP_GUIDE.md](docs/SETUP_GUIDE.md)** — it covers everything from
+BepInEx installation to connecting to your multiworld server.
 
-✅ **Python Environment Set Up**
-- Virtual environment created in `apworld/venv/`
-- Dependencies installed (pytest, black, pylint, etc.)
+**Minimum requirements:**
+- Dave the Diver (Steam)
+- BepInEx 6 IL2CPP (free)
+- An Archipelago server to connect to
 
-✅ **Starter Code Written**
-- ~50 example items defined
-- ~40 example locations defined
-- Basic APWorld class structure
-- Design document with implementation plan
+---
 
-## What You Need to Do Next
+## For Developers (Want to contribute?)
 
-### 1. Install .NET SDK (Required for C# client mod)
+### What's already done
+- ✅ Full APWorld: 1,134 locations, 276 items, logic rules, 5 goals, DLC support
+- ✅ C# client mod skeleton with 17 Harmony patches, in-game UI, Death Link, hints
+- ✅ Player setup guide
 
-Since `dotnet` is not installed, you need to:
+### What still needs doing
+See **[TODO.md](TODO.md)** for the full list. The most impactful tasks are:
 
-**Download and install .NET SDK 8.0:**
-👉 https://dotnet.microsoft.com/download/dotnet/8.0
+1. **Fill in Harmony patch class/method names** (see `docs/CLASS_NAME_CHEAT_SHEET.md`)
+   — needs `BepInEx/interop/Assembly-CSharp.dll` from a game installation
+2. **Implement `ItemHandler.cs` game API calls** — give items to the player in-game
+3. **Write unit tests** for APWorld logic
 
-Choose "Windows x64" installer and run it.
+### Quick setup
 
-### 2. Install BepInEx to Dave the Diver
-
-**Download BepInEx 6 IL2CPP (version 6.0.0-be.674):**
-👉 https://github.com/BepInEx/BepInEx/releases
-
-1. Extract the ZIP to your Dave the Diver game folder
-2. Run Dave the Diver once (it will take ~30 seconds to start)
-3. Close the game - BepInEx has generated interop assemblies
-
-**Find your game folder:**
-- Open Steam, right-click Dave the Diver
-- Manage → Browse local files
-
-### 3. Configure Your Game Path
-
-Create this file: `client/GamePath.props`
-
-```xml
-<Project>
-  <PropertyGroup>
-    <GamePath>YOUR_GAME_PATH_HERE</GamePath>
-  </PropertyGroup>
-</Project>
-```
-
-Replace `YOUR_GAME_PATH_HERE` with your actual path, like:
-`C:\Program Files (x86)\Steam\steamapps\common\Dave the Diver`
-
-## Development Workflow
-
-### Working on APWorld (Python)
+**Prerequisites:** Python 3.10+, .NET SDK 6+, Git
 
 ```powershell
-cd dave-the-diver-archipelago/apworld
+git clone https://github.com/AronTheunissen/dave-the-diver-archipelago.git
+cd dave-the-diver-archipelago
 
-# Activate virtual environment (use python.exe directly to avoid execution policy issues)
-# Or just use: .\venv\Scripts\python.exe
+# APWorld (Python)
+cd apworld
+python -m venv venv
+.\venv\Scripts\Activate.ps1
+pip install -r requirements.txt
 
-# Edit files in davethediver/ folder
-# - items.py: Add more items
-# - locations.py: Add more locations
-# - __init__.py: Implement world logic
+# C# Client
+cd ..\client
+dotnet build
 ```
 
-### Working on Client Mod (C#) - After .NET is installed
+### Key files to know
+
+| File | Purpose |
+|---|---|
+| `apworld/davethediver/__init__.py` | World class — start here for APWorld logic |
+| `apworld/davethediver/items.py` | All 276 items with IDs and categories |
+| `apworld/davethediver/locations.py` | All 1,134 locations with regions |
+| `apworld/davethediver/rules.py` | Region access logic |
+| `client/DaveDiverAP/Patches/` | 17 Harmony patches — needs real class names |
+| `client/DaveDiverAP/ItemHandler.cs` | Item delivery stubs — needs game API calls |
+| `docs/CLASS_NAME_CHEAT_SHEET.md` | What to search for in the decompiler |
+| `TODO.md` | Full task list with priorities |
+
+### Useful commands
 
 ```powershell
-cd dave-the-diver-archipelago/client
-dotnet new classlib -n DaveDiverAP -f net48
-dotnet add DaveDiverAP package BepInEx.Core
-dotnet add DaveDiverAP package BepInEx.IL2CPP
+# Validate the APWorld loads correctly
+cd apworld
+python -c "from davethediver import DaveDiverWorld; print('OK')"
+
+# Build the C# client
+cd client
+dotnet build DaveDiverAP/DaveDiverAP.csproj
+
+# Check git status
+git status
+git log --oneline -10
 ```
-
-## Project Files to Know
-
-📄 **SETUP_COMPLETE.md** - Detailed next steps and status
-📄 **README.md** - Full project documentation  
-📄 **docs/DESIGN.md** - Implementation design and decisions
-📄 **apworld/davethediver/items.py** - Item definitions (expand this!)
-📄 **apworld/davethediver/locations.py** - Location definitions (expand this!)
-
-## Your First Task: Game Analysis
-
-To create a good randomizer, you need to document everything in Dave the Diver:
-
-1. **Play through the game** (or watch a playthrough)
-2. **Document in a spreadsheet:**
-   - All weapons and equipment
-   - All recipes
-   - All story checkpoints  
-   - All side quests
-   - All bosses
-   - All minigames
-   - All collectibles
-
-3. **Categorize each as:**
-   - ✅ Location (gives you an item)
-   - 📦 Item (something you receive)
-   - 🔓 Progression (required to advance)
-   - 💡 Useful (helpful but not required)
-   - 🎁 Filler (common rewards)
-
-This will help you expand the ~50 items to 150-300 items needed for a good randomizer!
-
-## Need Help?
-
-- Read the **design document**: `docs/DESIGN.md`
-- Check **Archipelago Discord** for community help
-- Look at **similar games** already in Archipelago (Stardew Valley, Subnautica)
-- Reference the **example mod**: https://github.com/WhiteMinds/dave-diver-expansion
-
-## Next Steps Summary
-
-1. ✅ Project created
-2. ⏳ Install .NET SDK 8.0
-3. ⏳ Install BepInEx to game
-4. ⏳ Configure game path  
-5. ⏳ Do comprehensive game analysis
-6. ⏳ Expand items/locations to 150-300 each
-7. ⏳ Implement APWorld logic
-8. ⏳ Create C# client mod
-9. ⏳ Test and refine
-
-**You're on your way to creating an awesome Archipelago world! 🎮🌊🍣**
