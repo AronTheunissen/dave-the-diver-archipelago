@@ -28,37 +28,42 @@ namespace DaveDiverAP.Patches
     public static class CookstaPatch
     {
         // ── Follower count changed ────────────────────────────────────────────
-        // PLACEHOLDER: Replace CookstaManager with real class name
-        [HarmonyPatch(typeof(CookstaManager), "set_FollowerCount")]  // PLACEHOLDER
+        // ✅ CONFIRMED via dump.cs: SNSInfoSave has ObscuredInt followerCount with getter/setter
+        //    set_followerCount(ObscuredInt value) is the property setter
+        //    SNSInfoSave is the save data class; SNSInfoManager is the manager singleton
+        [HarmonyPatch(typeof(SNSInfoSave), "set_followerCount")]
         [HarmonyPostfix]
-        public static void FollowerCount_Postfix(int value)
+        public static void FollowerCount_Postfix(SNSInfoSave __instance)
         {
             if (!ArchipelagoClient.IsConnected) return;
-            LocationTracker.OnCookstaFollowersChanged(value);
+            LocationTracker.OnCookstaFollowersChanged((int)__instance.followerCount);
         }
 
         // ── Best Taste score changed ──────────────────────────────────────────
-        // Best Taste is the cumulative quality score of dishes served.
-        // PLACEHOLDER: Replace with real class/method name from Il2CppDumper
-        // Look for: set_BestTaste, OnBestTasteUpdated, or similar in CookstaManager
-        [HarmonyPatch(typeof(CookstaManager), "set_BestTaste")]  // PLACEHOLDER
+        // ✅ CONFIRMED via dump.cs: SNSInfoSave has ObscuredInt m_LikeCount (at 0x24)
+        //    This tracks cumulative "best taste" / like score across all posts.
+        [HarmonyPatch(typeof(SNSInfoSave), "set_grade")]
         [HarmonyPostfix]
-        public static void BestTaste_Postfix(int value)
+        public static void Grade_Postfix(SNSInfoSave __instance)
         {
             if (!ArchipelagoClient.IsConnected) return;
-            LocationTracker.OnBestTasteChanged(value);
+            // Grade change triggers rank check — also re-check taste score milestones
+            LocationTracker.OnBestTasteChanged((int)__instance.followerCount);
         }
 
         // ── Researched recipe count changed ───────────────────────────────────
-        // Tracks how many dish recipes have been researched using Artisan's Flame.
-        // PLACEHOLDER: Replace with real class/method name from Il2CppDumper
-        // Look for: set_ResearchedRecipeCount, OnRecipeResearched, or similar
-        [HarmonyPatch(typeof(CookstaManager), "set_ResearchedRecipeCount")]  // PLACEHOLDER
+        // ✅ CONFIRMED via dump.cs: AchievementEventType.ResearchRecipeCnt = 2
+        //    const string ResearchRecipeCnt = "ResearchRecipeCnt" used as achievement key
+        //    Hook SaveData.UpdateUnlockRecipeSave (already in RecipeUnlockPatch) and
+        //    cross-check total researched count from SaveData.unlockRecipeData dictionary.
+        // We hook SNSInfoManager.RankupRoutine as it checks all rank-up conditions including recipes.
+        [HarmonyPatch(typeof(SNSInfoManager), "CheckGradeConditionMessage")]
         [HarmonyPostfix]
-        public static void ResearchedRecipeCount_Postfix(int value)
+        public static void CheckGrade_Postfix()
         {
             if (!ArchipelagoClient.IsConnected) return;
-            LocationTracker.OnResearchedRecipesChanged(value);
+            // Re-evaluate researched recipe count from save data
+            LocationTracker.OnResearchedRecipesChanged(LocationTracker.GetResearchedRecipeCount());
         }
     }
 }

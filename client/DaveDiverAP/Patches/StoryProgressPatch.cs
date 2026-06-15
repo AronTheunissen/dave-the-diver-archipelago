@@ -14,57 +14,53 @@ namespace DaveDiverAP.Patches
     public static class StoryProgressPatch
     {
         // ── Chapter completion ────────────────────────────────────────────────
-        [HarmonyPatch(typeof(MissionManager), "OnChapterComplete")]  // PLACEHOLDER
+        // ✅ CONFIRMED via dump.cs: ChapterManager is the real class (Singleton<ChapterManager>)
+        //    Fields: currentChapterInfo, reservedChapterInfo, _chapters (List<ChapterInfo>)
+        //    ChapterInfo has chapter number data.
+        // We hook ChapterManager to detect chapter changes via currentChapterInfo setter.
+        [HarmonyPatch(typeof(ChapterManager), "set_currentChapterInfo")]
         [HarmonyPostfix]
-        public static void OnChapterComplete_Postfix(int chapterIndex)
+        public static void OnChapterChanged_Postfix(ChapterInfo value)
         {
             if (!ArchipelagoClient.IsConnected) return;
-            LocationTracker.OnChapterComplete(chapterIndex);
+            if (value == null) return;
+            // ChapterInfo contains the chapter number — route to location tracker
+            LocationTracker.OnChapterComplete(value.chapterNumber);
         }
 
         // ── Key story milestones ──────────────────────────────────────────────
-        [HarmonyPatch(typeof(MissionManager), "OnMissionComplete")]  // PLACEHOLDER
+        // ✅ CONFIRMED via dump.cs: MissionManager is the real class (Singleton<MissionManager>)
+        //    Static method: UpdateMission(MissionClearType type, int target, int count, ...)
+        //    This fires whenever any mission progress is updated/completed.
+        [HarmonyPatch(typeof(MissionManager), "UpdateMission")]
         [HarmonyPostfix]
-        public static void OnMissionComplete_Postfix(string missionId)
+        public static void OnMissionUpdate_Postfix(MissionClearType type, int target, int count)
         {
             if (!ArchipelagoClient.IsConnected) return;
 
-            // Map key mission IDs to their story locations
-            switch (missionId)
-            {
-                case "MISSION_DISCOVER_VILLAGE":    // TODO: real ID
-                    LocationTracker.OnSeaPeopleVillageDiscovered();
-                    break;
-                case "MISSION_DISCOVER_GLACIER":    // TODO: real ID
-                    LocationTracker.OnGlacierPassageDiscovered();
-                    break;
-                case "MISSION_GAIN_SEA_PEOPLE_TRUST": // TODO: real ID
-                    ArchipelagoClient.CheckLocation("Story: Gain Sea People Trust");
-                    break;
-                default:
-                    // Route to quest tracker for other missions
-                    var questLocation = QuestNameMapper.GetLocationName(missionId);
-                    if (questLocation != null)
-                        LocationTracker.OnQuestCompleted(questLocation);
-                    break;
-            }
+            // Route completed missions (count >= required) to the quest tracker
+            var questLocation = QuestNameMapper.GetLocationName(target);
+            if (questLocation != null)
+                LocationTracker.OnQuestCompleted(questLocation);
         }
     }
 
     public static class QuestNameMapper
     {
-        // TODO: Map internal mission IDs to AP location name suffixes
-        private static readonly System.Collections.Generic.Dictionary<string, string> _map = new()
+        // Maps mission TID (design sheet integer) to AP location name.
+        // MissionManager.UpdateMission takes int target which is the mission TID.
+        // TODO: Cross-reference mission TIDs from the game's mission design sheet data.
+        private static readonly System.Collections.Generic.Dictionary<int, string> _map = new()
         {
-            // { "MISSION_DUFF_FIRST",        "Complete Duff's First Request" },
-            // { "MISSION_DR_BACON_FIRST",    "Complete Dr. Bacon's First Request" },
-            // { "MISSION_COBRA_VIP",         "Complete Cobra's VIP Challenge" },
-            // Add all quests here
+            // Example layout — replace with real mission TIDs:
+            // { 30001, "Quest: Complete Duff's First Request" },
+            // { 30002, "Quest: Complete Dr. Bacon's Research Request" },
+            // { 30003, "Quest: Complete Cobra's VIP Challenge" },
+            // { 30004, "Quest: Complete Otto's Hiring Request" },
+            // ... all story quests and VIP missions
         };
 
-        public static string? GetLocationName(string missionId)
-        {
-            return _map.TryGetValue(missionId, out var name) ? name : null;
-        }
+        public static string? GetLocationName(int missionTID) =>
+            _map.TryGetValue(missionTID, out var name) ? name : null;
     }
 }

@@ -37,63 +37,42 @@ namespace DaveDiverAP.Patches
         private static ManualLogSource Log => Plugin.Log;
 
         // ── Boat (safe state — process items here) ────────────────────────────
-
-        // PLACEHOLDER: Replace BoatSceneManager with real class name
-        // Look for the method called when transitioning TO the boat/overworld state
-        // This fires at the start of each in-game day before the dive begins
-        [HarmonyPatch(typeof(BoatSceneManager), "OnBoatEnter")]  // PLACEHOLDER
+        // ✅ CONFIRMED via dump.cs: LobbyPlayer is the real class (MonoBehaviour)
+        //    LobbyPlayer.LobbyPlayerState enum confirmed:
+        //      InBoat = 12  ← items are delivered here
+        //      Diving = 5   ← disable
+        //      MorningStart = 7, AfternoonStart = 8 ← lobby (boat area but not IN boat)
+        //    Method: ChangeLobbyPlayerState(LobbyPlayer.LobbyPlayerState state)
+        [HarmonyPatch(typeof(LobbyPlayer), "ChangeLobbyPlayerState")]
         [HarmonyPostfix]
-        public static void OnBoatEnter_Postfix()
+        public static void OnLobbyStateChanged_Postfix(LobbyPlayer.LobbyPlayerState state)
         {
-            Log.LogInfo("Game state: BOAT — item processing enabled.");
-            ItemQueue.SetGameReady(true);
+            switch (state)
+            {
+                case LobbyPlayer.LobbyPlayerState.InBoat:
+                    Log.LogInfo("Game state: IN BOAT — item processing enabled.");
+                    ItemQueue.SetGameReady(true);
+                    break;
+
+                case LobbyPlayer.LobbyPlayerState.Diving:
+                    Log.LogInfo("Game state: DIVING — item processing disabled.");
+                    ItemQueue.SetGameReady(false);
+                    break;
+
+                // All other states (restaurant, farms, cutscenes, loading) disable delivery
+                default:
+                    ItemQueue.SetGameReady(false);
+                    break;
+            }
         }
 
-        // ── Diving (disable item processing) ─────────────────────────────────
-
-        // PLACEHOLDER: Replace DiveSceneManager with real class name
-        // Look for the method called when the dive starts (player enters water)
-        [HarmonyPatch(typeof(DiveSceneManager), "OnDiveStart")]  // PLACEHOLDER
-        [HarmonyPostfix]
-        public static void OnDiveStart_Postfix()
-        {
-            Log.LogInfo("Game state: DIVING — item processing disabled.");
-            ItemQueue.SetGameReady(false);
-        }
-
-        // ── Restaurant (disable item processing) ──────────────────────────────
-
-        // PLACEHOLDER: Replace RestaurantSceneManager with real class name
-        // Look for the method called when night service begins at Bancho Sushi
-        [HarmonyPatch(typeof(RestaurantSceneManager), "OnRestaurantStart")]  // PLACEHOLDER
+        // ── Restaurant / SushiBar (additional disable) ────────────────────────
+        // ✅ CONFIRMED via dump.cs: SushiBarManager is a Singleton — hook its start
+        [HarmonyPatch(typeof(SushiBarManager), "OnRestaurantStart")]
         [HarmonyPostfix]
         public static void OnRestaurantStart_Postfix()
         {
             Log.LogInfo("Game state: RESTAURANT — item processing disabled.");
-            ItemQueue.SetGameReady(false);
-        }
-
-        // ── Farms (disable item processing) ───────────────────────────────────
-
-        // PLACEHOLDER: Replace FarmSceneManager with real class name
-        // Look for the method called when entering any farm (vegetable/chicken/fish)
-        [HarmonyPatch(typeof(FarmSceneManager), "OnFarmEnter")]  // PLACEHOLDER
-        [HarmonyPostfix]
-        public static void OnFarmEnter_Postfix()
-        {
-            Log.LogInfo("Game state: FARM — item processing disabled.");
-            ItemQueue.SetGameReady(false);
-        }
-
-        // ── Loading / cutscenes (disable item processing) ─────────────────────
-
-        // PLACEHOLDER: Replace LoadingManager with real class name
-        // Look for scene loading callbacks
-        [HarmonyPatch(typeof(LoadingManager), "OnLoadingStart")]  // PLACEHOLDER
-        [HarmonyPostfix]
-        public static void OnLoadingStart_Postfix()
-        {
-            Log.LogInfo("Game state: LOADING — item processing disabled.");
             ItemQueue.SetGameReady(false);
         }
     }

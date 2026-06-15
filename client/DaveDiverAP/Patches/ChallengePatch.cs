@@ -10,14 +10,17 @@ namespace DaveDiverAP.Patches
     [HarmonyPatch]
     public static class ChallengePatch
     {
-        // Fires when any challenge is completed
-        [HarmonyPatch(typeof(ChallengeManager), "OnChallengeComplete")]  // PLACEHOLDER
+        // ✅ CONFIRMED via dump.cs: MissionManager.UpdateMission(MissionClearType type, int target, int count)
+        //    is the unified mission update hub. Challenges use a specific MissionClearType.
+        //    We hook MissionManager.UpdateMission and filter for challenge-type missions
+        //    by checking if the target TID matches our challenge map.
+        [HarmonyPatch(typeof(MissionManager), "UpdateMission")]
         [HarmonyPostfix]
-        public static void OnChallengeComplete_Postfix(string challengeId)
+        public static void OnChallengeComplete_Postfix(MissionClearType type, int target, int count)
         {
             if (!ArchipelagoClient.IsConnected) return;
 
-            var locationName = ChallengeNameMapper.GetLocationName(challengeId);
+            var locationName = ChallengeNameMapper.GetLocationName(target);
             if (locationName != null)
                 ArchipelagoClient.CheckLocation(locationName);
         }
@@ -25,21 +28,23 @@ namespace DaveDiverAP.Patches
 
     public static class ChallengeNameMapper
     {
-        private static readonly System.Collections.Generic.Dictionary<string, string> _map = new()
+        // Maps mission TID integers to AP location names for challenges.
+        // TODO: Cross-reference challenge mission TIDs from the game's mission design sheet.
+        private static readonly System.Collections.Generic.Dictionary<int, string> _map = new()
         {
-            // TODO: Fill in with real challenge IDs from Il2CppDumper
-            // { "CHALLENGE_CATCH_5_FISH", "Challenge: Catch 5 Fish in 60 Seconds" },
-            // { "CHALLENGE_EARN_1000G",   "Challenge: Earn 1000g in One Dive" },
-            // { "CHALLENGE_DEFEAT_SHARKS","Challenge: Defeat 3 Sharks Without Taking Damage" },
-            // { "CHALLENGE_HARPOON_10",   "Challenge: Kill 10 Fish with Harpoon Only" },
-            // { "CHALLENGE_MELEE_10",     "Challenge: Kill 10 Fish with Melee Only" },
-            // { "CHALLENGE_NET_20",       "Challenge: Net Gun 20 Fish Alive" },
-            // { "CHALLENGE_SERVE_10",     "Challenge: Serve 10 Customers with Perfect Timing" },
-            // { "CHALLENGE_NO_OXYGEN",    "Challenge: Complete a Dive Without Using Oxygen Refills" },
-            // { "CHALLENGE_MAX_DEPTH",    "Challenge: Reach Max Depth Without Equipment Damage" },
+            // Example layout — replace with real TIDs:
+            // { 40001, "Challenge: Catch 5 Fish in 60 Seconds" },
+            // { 40002, "Challenge: Earn 1000g in One Dive" },
+            // { 40003, "Challenge: Defeat 3 Sharks Without Taking Damage" },
+            // { 40004, "Challenge: Kill 10 Fish with Harpoon Only" },
+            // { 40005, "Challenge: Kill 10 Fish with Melee Only" },
+            // { 40006, "Challenge: Net Gun 20 Fish Alive" },
+            // { 40007, "Challenge: Serve 10 Customers with Perfect Timing" },
+            // { 40008, "Challenge: Complete a Dive Without Using Oxygen Refills" },
+            // { 40009, "Challenge: Reach Max Depth Without Equipment Damage" },
         };
 
-        public static string? GetLocationName(string challengeId) =>
-            _map.TryGetValue(challengeId, out var name) ? name : null;
+        public static string? GetLocationName(int missionTID) =>
+            _map.TryGetValue(missionTID, out var name) ? name : null;
     }
 }

@@ -21,14 +21,19 @@ namespace DaveDiverAP.Patches
     [HarmonyPatch]
     public static class CharmPatch
     {
-        // Fires when a charm is added to the player's inventory
-        [HarmonyPatch(typeof(CharmManager), "OnCharmAcquired")]  // PLACEHOLDER
+        // ✅ CONFIRMED via dump.cs: Charm inventory uses AutoEquipCharmItem(int tid)
+        //    and AddCharm property in save data (JsonProperty "AddCharm", int).
+        //    The charm TID identifies which charm was acquired.
+        //    We hook the inventory method that adds the charm item (AutoEquipCharmItem
+        //    is called when a charm reward is granted and auto-equipped).
+        //    CharmSpecData has the ability data; identified by TID from design sheet.
+        [HarmonyPatch(typeof(LobbyCharmSwapPanel), "AutoEquipCharmItem")]
         [HarmonyPostfix]
-        public static void OnCharmAcquired_Postfix(string charmId)
+        public static void OnCharmAcquired_Postfix(int tid)
         {
             if (!ArchipelagoClient.IsConnected) return;
 
-            var (charmName, sourceMission) = CharmMapper.GetCharmInfo(charmId);
+            var (charmName, sourceMission) = CharmMapper.GetCharmInfo(tid);
             if (charmName != null && sourceMission != null)
                 ArchipelagoClient.CheckLocation($"Charm: {charmName} ({sourceMission})");
         }
@@ -36,22 +41,25 @@ namespace DaveDiverAP.Patches
 
     public static class CharmMapper
     {
-        private static readonly System.Collections.Generic.Dictionary<string, (string charm, string mission)> _map = new()
+        // Maps charm TID (integer) to (charm name, source mission) for AP location checking.
+        // CharmSpecData identified in dump.cs — TIDs from game design sheet.
+        // TODO: Cross-reference charm TIDs from the charm design data.
+        private static readonly System.Collections.Generic.Dictionary<int, (string charm, string mission)> _map = new()
         {
-            // TODO: Fill in real charm IDs from Il2CppDumper
-            // { "CHARM_DOLPHIN",        ("Dolphin Necklace",      "Complete Defeat Pirates") },
-            // { "CHARM_OCTOPUS",        ("Octopus Bracelet",      "Complete Investigate the Strange Coral") },
-            // { "CHARM_SEA_BRACELET",   ("Sea People Bracelet",   "Complete Beyond the Rock Pile") },
-            // { "CHARM_WEAPON",         ("Octopus Weapon Charm",  "Complete Octopus Returns") },
-            // { "CHARM_SEA_NECKLACE",   ("Sea People Necklace",   "Complete Deliver Key to Tenzhin") },
-            // { "CHARM_SHARK",          ("Shark Teeth Necklace",  "Complete Revenge Time!") },
-            // { "CHARM_LEO",            ("Leo Keychain",          "Complete EVIL FACTORY Demo") },
-            // { "CHARM_JIMBO",          ("Jimbo Coin",            "Complete Jimbo's Game Craze!") },
+            // Example layout — replace with real TIDs:
+            // { 60001, ("Dolphin Necklace",      "Complete Defeat Pirates") },
+            // { 60002, ("Octopus Bracelet",      "Complete Investigate the Strange Coral") },
+            // { 60003, ("Sea People Bracelet",   "Complete Beyond the Rock Pile") },
+            // { 60004, ("Octopus Weapon Charm",  "Complete Octopus Returns") },
+            // { 60005, ("Sea People Necklace",   "Complete Deliver Key to Tenzhin") },
+            // { 60006, ("Shark Teeth Necklace",  "Complete Revenge Time!") },
+            // { 60007, ("Leo Keychain",          "Complete EVIL FACTORY Demo") },
+            // { 60008, ("Jimbo Coin",            "Complete Jimbo's Game Craze!") },
         };
 
-        public static (string? charm, string? mission) GetCharmInfo(string charmId)
+        public static (string? charm, string? mission) GetCharmInfo(int tid)
         {
-            if (_map.TryGetValue(charmId, out var info))
+            if (_map.TryGetValue(tid, out var info))
                 return info;
             return (null, null);
         }

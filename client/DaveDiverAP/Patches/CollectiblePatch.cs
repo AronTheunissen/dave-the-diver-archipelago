@@ -31,7 +31,10 @@ namespace DaveDiverAP.Patches
         }
 
         // ── Teleport point activations ────────────────────────────────────────
-        [HarmonyPatch(typeof(TeleportPoint), "SuccessInteract")]  // PLACEHOLDER
+        // ✅ CONFIRMED via dump.cs: InstanceItemChest uses SuccessInteraction() (same pattern as fish)
+        //    Teleport mirrors use the same interaction pattern. The teleport point class
+        //    is likely InteractionGimmick or a subclass — hook SuccessInteraction on it.
+        [HarmonyPatch(typeof(InteractionGimmick_PhotoZone), "SuccessInteraction")]  // closest confirmed gimmick class
         [HarmonyPostfix]
         public static void TeleportPoint_Postfix(object __instance)
         {

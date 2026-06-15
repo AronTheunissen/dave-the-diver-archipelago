@@ -12,9 +12,11 @@ namespace DaveDiverAP.Patches
     [HarmonyPatch]
     public static class MinigamePatch
     {
-        // ✅ CONFIRMED: SeahorseRaceSessionPlay is the real class (WhiteMinds mod)
-        // Method name still needs confirming — search for "OnRaceEnd", "OnRaceComplete", "RaceResult" in SeahorseRaceSessionPlay
-        [HarmonyPatch(typeof(SeahorseRaceSessionPlay), "OnRaceWon")]  // class confirmed, method still PLACEHOLDER
+        // ✅ CONFIRMED via dump.cs: SeahorseRaceSessionPlay is real (sealed class, implements ISessionPlay)
+        //    Methods confirmed: OnGoalPlayer (coroutine — fires when player reaches finish line)
+        //    SeahorseRacerState_Finish and SeahorseRacerState_Fail are the outcome states.
+        //    SeahorseRaceSession.Destination is the finish data class.
+        [HarmonyPatch(typeof(SeahorseRaceSessionPlay), "OnGoalPlayer")]
         [HarmonyPostfix]
         public static void OnSeahorseRaceWon_Postfix(string difficulty)
         {

@@ -27,24 +27,16 @@ namespace DaveDiverAP.Patches
     public static class PlayerDeathPatch
     {
         // ── Oxygen depletion death ────────────────────────────────────────────
-        // ✅ CONFIRMED: PlayerBreathHandler is the real oxygen system class (WhiteMinds mod)
-        // Still needed via Il2CppDumper: exact method name that fires on depletion
-        // Search for: "OnBreathDepleted", "OnOxygenEmpty", "OnSuffocate", "Die" in PlayerBreathHandler
-        [HarmonyPatch(typeof(PlayerBreathHandler), "OnOxygenDepleted")]  // class confirmed, method name still PLACEHOLDER
-        [HarmonyPostfix]
-        public static void OnOxygenDepleted_Postfix()
-        {
-            if (!ArchipelagoClient.IsConnected) return;
-            if (!ArchipelagoClient.SlotData?.DeathLink ?? true) return;
+        // ✅ CONFIRMED via dump.cs: PlayerBreathHandler is the class (field: m_HP at 0x9C)
+        // PlayerBreathHandler implements IHasHP — when HP hits 0 oxygen is gone.
+        // The player dies via PlayerCharacter.OnDie() which PlayerBreathHandler calls.
+        // We hook PlayerCharacter.OnDie() for both death causes below.
 
-            DeathLinkHandler.OnPlayerDied();
-        }
-
-        // ── Damage-based death ────────────────────────────────────────────────
-        // ✅ CONFIRMED: PlayerCharacter is the real class name (confirmed by multiple mods)
-        // Still needed via Il2CppDumper: exact death method name in PlayerCharacter
-        // Search for: "Die", "Death", "OnDeath", "Kill", "OnDamageKill" in PlayerCharacter
-        [HarmonyPatch(typeof(PlayerCharacter), "Die")]  // class confirmed, method name still PLACEHOLDER
+        // ── Damage-based AND oxygen death ─────────────────────────────────────
+        // ✅ CONFIRMED via dump.cs: PlayerCharacter has public void OnDie() 
+        // and public void OnDie(PlayerCharacter.DieAnimType dieType = 0)
+        // We patch the no-arg overload which is the public entry point.
+        [HarmonyPatch(typeof(PlayerCharacter), "OnDie", new System.Type[0])]
         [HarmonyPostfix]
         public static void PlayerDie_Postfix()
         {

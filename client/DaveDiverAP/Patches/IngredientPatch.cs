@@ -19,35 +19,42 @@ namespace DaveDiverAP.Patches
         // Tracks which ingredients have been collected for the first time
         private static readonly System.Collections.Generic.HashSet<string> _foundIngredients = new();
 
-        // Fires when a sea plant or ingredient is collected
-        [HarmonyPatch(typeof(IngredientObject), "SuccessInteract")]  // PLACEHOLDER
+        // ✅ CONFIRMED via dump.cs: SaveData has AddIngredientsSaveData(IngredientsData data)
+        //    This fires whenever an ingredient is added to the save (first pick-up or purchase).
+        //    IngredientsData has the ingredient's TID and data.
+        [HarmonyPatch(typeof(SaveData), "AddIngredientsSaveData")]
         [HarmonyPostfix]
-        public static void OnIngredientCollected_Postfix(object __instance)
+        public static void OnIngredientCollected_Postfix(IngredientsData data)
         {
             if (!ArchipelagoClient.IsConnected) return;
+            if (data == null) return;
 
-            // TODO: Get ingredient name from __instance
-            // Example: var name = ((IngredientObject)__instance).ingredientData.displayName;
-            string? ingredientName = null; // TODO: get from __instance
-
+            // Use the ingredient TID to look up the display name
+            var ingredientName = IngredientNameMapper.GetDisplayName(data.tid);
             if (ingredientName == null) return;
             if (_foundIngredients.Contains(ingredientName)) return;
 
             _foundIngredients.Add(ingredientName);
             LocationTracker.OnIngredientFirstFound(ingredientName);
         }
+    }
 
-        // Fires when Truffle or Rainbow Cap is purchased from vendor (Jango/Mushroomer)
-        [HarmonyPatch(typeof(VendorManager), "OnItemPurchased")]  // PLACEHOLDER
-        [HarmonyPostfix]
-        public static void OnVendorPurchase_Postfix(string itemName)
+    public static class IngredientNameMapper
+    {
+        // Maps ingredient TID to display name for AP location matching.
+        // TODO: Cross-reference ingredient TIDs from game design sheets.
+        private static readonly System.Collections.Generic.Dictionary<int, string> _map = new()
         {
-            if (!ArchipelagoClient.IsConnected) return;
-            if (itemName != "Truffle" && itemName != "Rainbow Cap") return;
-            if (_foundIngredients.Contains(itemName)) return;
+            // Sea plants (diving):
+            // { 50001, "Agar" }, { 50002, "Kajime" }, { 50003, "Seaweed" },
+            // { 50004, "Kelp" }, { 50005, "Sea Grape" }, { 50006, "Bladderwrack" },
+            // { 50007, "Hyalonema" }, { 50008, "Southern Bull Kelp" }, { 50009, "Black Coral" },
+            // { 50010, "Buckbean" },
+            // Rare forageables (vendor):
+            // { 50011, "Truffle" }, { 50012, "Rainbow Cap" },
+        };
 
-            _foundIngredients.Add(itemName);
-            LocationTracker.OnIngredientFirstFound(itemName);
-        }
+        public static string? GetDisplayName(int tid) =>
+            _map.TryGetValue(tid, out var name) ? name : null;
     }
 }

@@ -14,43 +14,49 @@ namespace DaveDiverAP.Patches
     public static class RecipeUnlockPatch
     {
         // ── Recipe unlock (new recipe becomes available) ─────────────────────
-        [HarmonyPatch(typeof(RecipeManager), "UnlockRecipe")]  // PLACEHOLDER
+        // ✅ CONFIRMED via dump.cs: SaveData has AddUnlockRecipeSaveData(int id, DateTime unlockTime)
+        // Hooking AddUnlockRecipeSaveData fires exactly when a recipe is unlocked and persisted.
+        // The int id is the recipe's design sheet TID.
+        [HarmonyPatch(typeof(SaveData), "AddUnlockRecipeSaveData")]
         [HarmonyPostfix]
-        public static void UnlockRecipe_Postfix(string recipeId)
+        public static void UnlockRecipe_Postfix(int id)
         {
             if (!ArchipelagoClient.IsConnected) return;
 
-            var recipeName = RecipeNameMapper.GetDisplayName(recipeId);
+            var recipeName = RecipeNameMapper.GetDisplayName(id);
             if (recipeName != null)
                 LocationTracker.OnRecipeUnlocked(recipeName);
         }
 
         // ── Dish upgrade (research complete using Artisan's Flame) ───────────
-        [HarmonyPatch(typeof(RecipeManager), "UpgradeDish")]   // PLACEHOLDER
+        // ✅ CONFIRMED via dump.cs: SaveData has UpdateUnlockRecipeSave() and
+        //    UnlockRecipeSave has ObscuredInt m_UnlockRecipeID and level data.
+        // Hook UpdateUnlockRecipeSave to catch research level-ups.
+        [HarmonyPatch(typeof(SaveData), "UpdateUnlockRecipeSave")]
         [HarmonyPostfix]
-        public static void UpgradeDish_Postfix(string dishId, int newLevel)
+        public static void UpgradeDish_Postfix()
         {
             if (!ArchipelagoClient.IsConnected) return;
-
-            var dishName = RecipeNameMapper.GetDisplayName(dishId);
-            if (dishName != null)
-                LocationTracker.OnDishUpgraded(dishName, newLevel);
+            // Enumerate all unlock recipes and check for new level-ups
+            LocationTracker.OnDishResearchUpdated();
         }
     }
 
     public static class RecipeNameMapper
     {
         // TODO: Fill in with real internal recipe/dish IDs from decompiled game
-        private static readonly System.Collections.Generic.Dictionary<string, string> _map = new()
+        // Maps recipe TID (design sheet integer ID) to AP location display name.
+        // TODO: Fill in by cross-referencing the game's recipe design sheet data
+        // (search dump.cs for "RecipeTID" or open design tables in UnityExplorer)
+        private static readonly System.Collections.Generic.Dictionary<int, string> _map = new()
         {
-            // { "RECIPE_YELLOWFIN_TUNA_AKAMI", "Yellowfin Tuna Akami Sushi" },
-            // { "RECIPE_ATLANTIC_BONITO_CURRY", "Atlantic Bonito Curry" },
-            // Add all recipes here
+            // Example layout — replace with real TIDs:
+            // { 20001, "Yellowfin Tuna Akami Sushi" },
+            // { 20002, "Atlantic Bonito Curry" },
+            // ... etc for all sushi and menu recipes
         };
 
-        public static string? GetDisplayName(string recipeId)
-        {
-            return _map.TryGetValue(recipeId, out var name) ? name : null;
-        }
+        public static string? GetDisplayName(int recipeId) =>
+            _map.TryGetValue(recipeId, out var name) ? name : null;
     }
 }

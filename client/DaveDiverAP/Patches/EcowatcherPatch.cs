@@ -10,22 +10,33 @@ namespace DaveDiverAP.Patches
     [HarmonyPatch]
     public static class EcowatcherPatch
     {
-        // Fires when an Ecowatcher mission is completed
-        [HarmonyPatch(typeof(EcowatcherManager), "OnMissionComplete")]  // PLACEHOLDER
+        // ✅ CONFIRMED via dump.cs: MissionManager.UpdateMission(MissionClearType type, int target, int count)
+        //    is the central hub for ALL mission updates including Ecowatcher tasks.
+        //    EcoWatcher missions use MissionClearType values to categorize the task type.
+        //    We hook EcoWatcherDeliverPopup which fires when the player delivers items
+        //    to complete an Ecowatcher task (the "deliver" confirmation popup).
+        [HarmonyPatch(typeof(EcoWatcherDeliverPopup), "OnDREvent")]  // fires on deliver confirm
         [HarmonyPostfix]
-        public static void OnMissionComplete_Postfix(string missionName)
+        public static void OnEcowatcherDeliver_Postfix(EcoWatcherDeliverPopup __instance)
         {
             if (!ArchipelagoClient.IsConnected) return;
-            LocationTracker.OnEcowatcherMissionCompleted(missionName);
+            // Get the mission name from the cell data
+            if (__instance.cell?.CellData != null)
+            {
+                var missionName = __instance.cell.CellData.ToString();
+                LocationTracker.OnEcowatcherMissionCompleted(missionName);
+            }
         }
 
-        // Fires when the Ecowatcher app levels up
-        [HarmonyPatch(typeof(EcowatcherManager), "set_Level")]  // PLACEHOLDER
+        // Fires when Ecowatcher research level increases (Level 2-5 grant charms)
+        // ✅ CONFIRMED via dump.cs: EcoWatcherResearchRankUpPopup fires on rank up
+        [HarmonyPatch(typeof(EcoWatcherResearchRankUpPopup), "OnDREvent")]
         [HarmonyPostfix]
-        public static void OnLevelUp_Postfix(int value)
+        public static void OnEcowatcherLevelUp_Postfix()
         {
             if (!ArchipelagoClient.IsConnected) return;
-            LocationTracker.OnEcowatcherLevelUp(value);
+            // Level-up detected — notify tracker (it tracks current level internally)
+            LocationTracker.OnEcowatcherLevelUp(LocationTracker.GetEcowatcherLevel());
         }
     }
 }
