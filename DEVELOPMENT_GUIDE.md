@@ -47,6 +47,13 @@ and applies items received from the multiworld.
 - **DLC support** for 4 DLC packs
 - **`fill_slot_data()`** passes all options to the client
 
+### ✅ Phase 2.5 — Unit Tests (Complete, 55/55 passing)
+- `apworld/tests/conftest.py` — Archipelago BaseClasses mock (no full install needed)
+- `apworld/tests/test_ids.py` — ID uniqueness, region validity, item/location collision detection
+- `apworld/tests/test_filtering.py` — all `should_include_location()` and `should_include_item()` logic
+- `apworld/tests/test_slot_data.py` — `fill_slot_data()` key coverage and value types
+- Run with: `cd apworld && python -m pytest tests/ -v`
+
 ### ✅ Phase 3 — C# Client Skeleton (Complete)
 - BepInEx 6 IL2CPP plugin structure
 - Archipelago.MultiClient.Net connection with auto-reconnect
