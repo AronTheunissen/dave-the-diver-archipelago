@@ -1,316 +1,170 @@
 # Dave the Diver Archipelago - TODO List
 
-## 🎯 What You Can Do RIGHT NOW (No Prerequisites Needed)
-
-### 1. Game Analysis ⭐ **START HERE**
-
-**Goal:** Document all items and locations in Dave the Diver
-
-**How:**
-1. Open `GAME_ANALYSIS_TEMPLATE.md`
-2. Watch Dave the Diver playthroughs on YouTube
-   - Search: "Dave the Diver 100% playthrough"
-   - Or "Dave the Diver all recipes"
-   - Or "Dave the Diver complete guide"
-3. Check the Dave the Diver Wiki: https://dave-the-diver.fandom.com/
-4. Fill in the template sections:
-   - Weapons and equipment
-   - All recipes (there are 100+!)
-   - Story chapters
-   - Boss fish
-   - Side quests
-   - Minigames
-
-**Output:** Completed analysis with 150-300 items and locations identified
-
-**Time Estimate:** 4-6 hours of research
+> Last updated: June 15, 2026
+> Current status: APWorld complete, C# client skeleton complete, awaiting game internals to wire up patches
 
 ---
 
-### 2. Study Existing APWorlds
+## ✅ COMPLETED
 
-**Goal:** Learn how other games implement Archipelago
+### APWorld (Python)
+- [x] Core world class (`__init__.py`) with item pool, location placement, slot data
+- [x] 1,134 locations across 15 regions
+- [x] 276 items (fish, weapons, recipes, charms, ingredients, progressive equipment, etc.)
+- [x] 5 victory conditions (Defeat Yawie, All Bosses, Diamond Rank, Master Diver, 100%)
+- [x] Full logic rules with game-accurate region gating
+- [x] All fish species (203) placed in correct depth zones
+- [x] All weapon trees (79 variants across 9 weapons)
+- [x] All dish upgrades (549 checks) with correct max levels
+- [x] Cooksta rank system (5 ranks, 12 requirement checks)
+- [x] Ecowatcher missions (44 real checks from wiki data)
+- [x] Ingredient first-find checks + filler items
+- [x] Charm system (12 charms from missions + Ecowatcher)
+- [x] DLC support: DREDGE, Godzilla, Ichiban, Jungle toggles
+- [x] `should_include_item()` and `should_include_location()` filtering
+- [x] `fill_slot_data()` passing all 25 options to client
+- [x] 7 chapters with correct story structure
 
-**How:**
-1. Open `tools/Archipelago/worlds/`
-2. Study these similar games:
+### C# Client Mod
+- [x] Plugin entry point (BepInEx 6 IL2CPP)
+- [x] Archipelago connection with auto-reconnect
+- [x] Item queue (thread-safe, boat-only delivery)
+- [x] Death Link support
+- [x] 3-tab in-game UI (F9): Connection · Hints · Progress
+- [x] Goal tracker for all 5 victory conditions
+- [x] Hint system (request by item or location name)
+- [x] Progress tracker with category breakdown
+- [x] Toast notifications (item received, death, connection, goal)
+- [x] BepInEx config file support
+- [x] Save/restore session state
+- [x] SlotData parsing (all 25 options)
+- [x] 17 Harmony patch skeletons (all categories covered)
+- [x] ItemHandler stubs for all 276 items
+- [x] LocationTracker stubs for all 1,134 locations
 
-**Stardew Valley** (Best reference - similar gameplay):
-```
-tools/Archipelago/worlds/stardew_valley/
-├── __init__.py          # See how they structure the world
-├── items.py             # ~400 items defined
-├── locations.py         # ~400 locations
-├── regions.py           # Farm, Town, Mines, etc.
-├── rules.py             # Complex logic rules
-└── options.py           # Many YAML options
-```
-
-**Subnautica** (Underwater exploration):
-```
-tools/Archipelago/worlds/subnautica/
-├── __init__.py
-├── items.py             # Equipment and tech
-├── locations.py         # Databoxes, wrecks
-└── rules.py             # Depth-based progression
-```
-
-**What to look for:**
-- How they categorize items (progression vs useful vs filler)
-- How they define regions and connections
-- How they write logic rules
-- How they handle crafting/recipes
-
-**Time Estimate:** 2-3 hours
-
----
-
-### 3. Expand Items List
-
-**Goal:** Go from ~50 items to 150-300 items
-
-**How:**
-1. Open `apworld/davethediver/items.py`
-2. Based on your game analysis, add:
-   - All weapons (harpoons, tips, melee)
-   - All diving equipment (oxygen, cargo, suits)
-   - All recipes (100+ in the game!)
-   - All restaurant upgrades
-   - All staff unlocks
-   - Key story items
-   - Filler items (gold, materials)
-
-**Example additions:**
-```python
-# Add to weapon_items
-"Poison Harpoon Tip": ItemData(BASE_ID + 15, ItemClassification.useful),
-"Triple Axe Harpoon Tip": ItemData(BASE_ID + 16, ItemClassification.useful),
-
-# Add all recipes
-recipe_items: Dict[str, ItemData] = {
-    "Recipe: Tuna Nigiri": ItemData(BASE_ID + 250, ItemClassification.useful),
-    "Recipe: Salmon Roll": ItemData(BASE_ID + 251, ItemClassification.useful),
-    "Recipe: Premium Sushi Set": ItemData(BASE_ID + 252, ItemClassification.useful),
-    # ... 100+ more recipes
-}
-```
-
-**Time Estimate:** 3-4 hours
+### Documentation
+- [x] `docs/SETUP_GUIDE.md` — player setup guide
+- [x] `docs/MODDING_NOTES.md` — reverse engineering guide
+- [x] `docs/DESIGN.md` — design decisions
 
 ---
 
-### 4. Expand Locations List
+## 🔴 CRITICAL — Blocking Actual Play
 
-**Goal:** Go from ~40 locations to 150-300 locations
+### Fill in Harmony Patch Class Names
+The single biggest blocker. All 17 patches use PLACEHOLDER class names.
+**Requires:** `Assembly-CSharp.dll` from BepInEx/interop/ OR Il2CppDumper output.
+**See:** `docs/CLASS_NAME_CHEAT_SHEET.md` for exactly what to search for.
 
-**How:**
-1. Open `apworld/davethediver/locations.py`
-2. Based on your game analysis, add:
-   - All story chapter completions
-   - All boss defeats
-   - Notable fish catches
-   - Recipe unlocks
-   - Restaurant milestones
-   - Side quest completions
-   - Minigame victories
-   - Treasure chests
-   - Achievement milestones
+| Patch | Placeholder Class | Priority |
+|---|---|---|
+| `FishCatchPatch.cs` | `FishInteraction` | 🔴 High |
+| `BossDefeatedPatch.cs` | `BossManager` | 🔴 High |
+| `StoryProgressPatch.cs` | `MissionManager` | 🔴 High |
+| `RecipeUnlockPatch.cs` | `RecipeManager` | 🔴 High |
+| `WeaponCraftPatch.cs` | `WeaponShopManager` | 🔴 High |
+| `GameStatePatch.cs` | `BoatSceneManager` etc. | 🔴 High |
+| `PlayerDeathPatch.cs` | `OxygenSystem`, `PlayerCharacter` | 🔴 High |
+| `CookstaPatch.cs` | `CookstaManager` | 🟡 Medium |
+| `EcowatcherPatch.cs` | `EcowatcherManager` | 🟡 Medium |
+| `RestaurantPatch.cs` | `SushiBarManager` | 🟡 Medium |
+| `FarmPatch.cs` | `VegetableFarmManager` etc. | 🟡 Medium |
+| `ChallengePatch.cs` | `ChallengeManager` | 🟡 Medium |
+| `PhotographyPatch.cs` | `PhotographyManager` | 🟡 Medium |
+| `CollectiblePatch.cs` | `TreasureChest`, `TeleportPoint` etc. | 🟡 Medium |
+| `IngredientPatch.cs` | `IngredientObject`, `VendorManager` | 🟢 Low |
+| `MinigamePatch.cs` | `SeahorseRaceManager` etc. | 🟢 Low |
+| `CharmPatch.cs` | `CharmManager` | 🟢 Low |
 
-**Example additions:**
-```python
-# More fish locations
-"Catch Blue Marlin": LocationData(BASE_ID + 104, "Blue Hole - Mid"),
-"Catch Giant Tuna": LocationData(BASE_ID + 105, "Blue Hole - Deep"),
-"Catch Manta Ray": LocationData(BASE_ID + 106, "Blue Hole - Mid"),
+### Fill in ID Mapper Dictionaries
+Each patch has a `*NameMapper` dictionary that maps game internal IDs → AP location names.
+All are empty (commented-out examples only). Needs actual game IDs from Il2CppDumper.
 
-# Recipe locations
-"Unlock Recipe: Tuna Nigiri": LocationData(BASE_ID + 250, "Bancho Sushi"),
-"Unlock Recipe: Salmon Roll": LocationData(BASE_ID + 251, "Bancho Sushi"),
+- [ ] FishNameMapper (~200 entries)
+- [ ] BossNameMapper (16 entries)
+- [ ] WeaponNameMapper (~80 entries)
+- [ ] RecipeNameMapper (~100 entries)
+- [ ] QuestNameMapper (~20 entries)
+- [ ] CharmMapper (8 entries)
+- [ ] ChallengeNameMapper (9 entries)
+- [ ] VIPNameMapper (6 entries)
 
-# Quest locations
-"Complete Duff's Quest 1": LocationData(BASE_ID + 401, "Blue Hole"),
-"Complete Dr. Bacon's Quest 1": LocationData(BASE_ID + 402, "Blue Hole"),
-```
+### Implement ItemHandler Game API Calls
+All `ItemHandler.cs` methods are stubs. Need real SaveSystem API calls to actually give items to the player.
 
-**Time Estimate:** 3-4 hours
+- [ ] `GiveWeapon()` — add weapon to Duff's shop / inventory
+- [ ] `UnlockRecipe()` — unlock recipe in restaurant
+- [ ] `UpgradeDish()` — apply dish research level
+- [ ] `GiveIngredient()` — add ingredient to inventory
+- [ ] `UpgradeDivingSuit()` / `UpgradeOxygenTank()` / `UpgradeHarpoon()` — iDiver upgrades
+- [ ] `UnlockRegion()` — unlock area (teleport/access)
+- [ ] `UpgradeCookstaRank()` — apply Cooksta rank
+- [ ] `GiveCharm()` — equip/unlock charm
 
----
-
-### 5. Read Archipelago Documentation
-
-**Goal:** Understand how Archipelago works
-
-**Resources:**
-1. **Archipelago Website:** https://archipelago.gg/
-   - Read "How it Works"
-   - Check supported games
-   
-2. **GitHub Wiki:** https://github.com/ArchipelagoMW/Archipelago/wiki
-   - World Development Guide
-   - Logic Documentation
-   
-3. **Join Discord:** https://discord.gg/archipelago
-   - Browse #apworld-development
-   - See how others ask questions
-   - Look for similar games
-
-**Time Estimate:** 1-2 hours
+### Fix GoalTracker Bug
+- [ ] `GoalTracker.cs` line ~114: `_allMarincaComplete` variable declared but never initialized (should be `= false`)
 
 ---
 
-### 6. Plan Regions and Logic
+## 🟡 IMPORTANT — Quality & Completeness
 
-**Goal:** Design how your game areas connect
+### Unit Tests
+- [ ] Create `apworld/tests/` directory
+- [ ] Test item pool generation for each option combination
+- [ ] Test `should_include_item()` filtering
+- [ ] Test `should_include_location()` filtering
+- [ ] Test region access rules (can reach each region with correct items)
+- [ ] Test victory conditions
+- [ ] Test ID uniqueness (no duplicate item/location IDs)
+- [ ] Test all location regions are valid
 
-**How:**
-1. Create a document mapping regions:
-```
-Menu
-  └─> Bancho Sushi
-       ├─> Blue Hole - Shallow (no requirements)
-       │    └─> Blue Hole - Mid (requires: Oxygen +2 OR Enhanced Suit)
-       │         └─> Blue Hole - Deep (requires: Advanced Harpoon + Deep Suit + Oxygen +4)
-       ├─> Glacier (requires: Cold Protection Suit + Chapter 4 Complete)
-       └─> Sea People Village (requires: VIP Card + Chapter 3 Complete)
-```
+### In the Jungle DLC Content (Available June 18, 2026)
+- [ ] New fish species (freshwater lake ecosystem)
+- [ ] New locations (Bancho Grill, Utara Village, jungle lake)
+- [ ] New items (jungle ingredients, new recipes)
+- [ ] New regions (Jungle Lake, Bancho Grill, Utara Village)
+- [ ] New goals or goal extensions
+- [ ] Tag all new content with `dlc_jungle` category
 
-2. Document what items are needed to access each region
-3. Document what items are needed to check each location
-
-**Time Estimate:** 2-3 hours
-
----
-
-### 7. Write Design Documents
-
-**Goal:** Document your design decisions
-
-**How:**
-1. Update `docs/DESIGN.md` with:
-   - Final item/location counts
-   - Region structure
-   - Logic rules
-   - YAML options you'll implement
-   
-2. Create a roadmap document:
-   - What features to implement first
-   - What can wait for v1.1
-   - Known challenges
-
-**Time Estimate:** 1-2 hours
+### Connection UI Improvements
+- [ ] Auto-connect on game launch (config option already exists, UI toggle needed)
+- [ ] Better error messages for common connection failures
+- [ ] Server browser / recent servers list
 
 ---
 
-### 8. Set Up Development Tools (Optional)
+## 🟢 NICE TO HAVE — Polish
 
-**If you want to start coding, even without .NET:**
+### Spoiler Log Viewer
+- [ ] Add 4th tab to UI showing where your items are in the multiworld
+- [ ] Filter by item category
 
-**Install VS Code:**
-1. Download: https://code.visualstudio.com/
-2. Install Python extension
-3. Open the `dave-the-diver-archipelago` folder
+### README Update
+- [ ] Update README.md to reflect current project state (it still shows the old skeleton structure)
+- [ ] Add screenshots of the in-game UI
 
-**Configure Python in VS Code:**
-1. Press `Ctrl+Shift+P`
-2. Type "Python: Select Interpreter"
-3. Choose `.\apworld\venv\Scripts\python.exe`
-
-**Now you can:**
-- Edit Python files with IntelliSense
-- See syntax errors immediately
-- Use integrated terminal
-
-**Time Estimate:** 30 minutes
+### Archipelago Submission
+- [ ] Review Archipelago submission guidelines
+- [ ] Add `apworld/davethediver/data/` folder with any required data files
+- [ ] Register on Archipelago website
 
 ---
 
-## 📊 Recommended Work Order
+## 📋 How to Get the Class Names (Tonight's Task)
 
-### Phase 1: Research (Can do now!)
-1. ✅ Game analysis (4-6 hours) ⭐ **PRIORITY**
-2. ✅ Study existing APWorlds (2-3 hours)
-3. ✅ Read Archipelago docs (1-2 hours)
-4. ✅ Plan regions and logic (2-3 hours)
+**Option A — BepInEx interop DLL (easiest):**
+1. Install BepInEx 6 on game machine, run game once
+2. Find `BepInEx/interop/Assembly-CSharp.dll`
+3. Open in dnSpy or ILSpy and search for class names
+4. See `docs/CLASS_NAME_CHEAT_SHEET.md` for what to search
 
-**Total: ~10-14 hours** - Can complete this weekend!
+**Option B — Il2CppDumper:**
+1. Download Il2CppDumper from GitHub
+2. Run against `GameAssembly.dll` + `il2cpp_data/Metadata/global-metadata.dat`
+3. Share `dump.cs` — I can find all names from that file
 
-### Phase 2: Python Implementation (Need Python setup)
-5. Expand items list (3-4 hours)
-6. Expand locations list (3-4 hours)
-7. Create regions.py (2-3 hours)
-8. Create rules.py (3-4 hours)
-9. Create options.py (1-2 hours)
-10. Update __init__.py (2-3 hours)
-
-**Total: ~14-20 hours** - Next week
-
-### Phase 3: C# Client (Need .NET SDK + BepInEx)
-11. Set up C# project (1 hour)
-12. Implement Archipelago client (4-6 hours)
-13. Create Harmony patches (10-15 hours)
-14. Test integration (3-5 hours)
-
-**Total: ~18-27 hours** - Week after
-
-### Phase 4: Testing & Polish
-15. Generate test seeds (2 hours)
-16. Solo playthrough (6-8 hours)
-17. Fix bugs (5-10 hours)
-18. Multiworld testing (3-5 hours)
-
-**Total: ~16-25 hours** - Final week
-
----
-
-## 🎯 This Week's Goal
-
-**Complete Phase 1: Research**
-
-By end of this week, you should have:
-- [ ] Complete game analysis template filled out
-- [ ] 150-300 items identified and categorized
-- [ ] 150-300 locations identified and categorized
-- [ ] Region structure planned
-- [ ] Logic requirements documented
-- [ ] Understanding of how Archipelago works
-
-**This gives you everything needed to implement Phase 2!**
-
----
-
-## 💡 Pro Tips
-
-1. **Don't try to be perfect** - Start with 80% coverage, you can add more later
-2. **Focus on progression first** - What's required to beat the game?
-3. **Use the wiki liberally** - Don't spend hours in-game when info is online
-4. **Take notes while researching** - You'll forget details
-5. **Commit often** - After each section of analysis, commit to git
-
----
-
-## 🤔 Questions to Answer During Research
-
-- How many main story chapters are there?
-- What's the final boss/goal?
-- Which equipment unlocks new areas?
-- Are there multiple endings?
-- What recipes are required vs optional?
-- How many total fish species exist?
-- What's the deepest dive depth?
-- Are there any sequence breaks or skips?
-- What's the minimum equipment to beat the game?
-
----
-
-## ✅ Success Criteria
-
-You're ready for Phase 2 when you can answer:
-- ✓ "How many items will be in the randomizer?" (150-300)
-- ✓ "What are the main progression items?" (List them)
-- ✓ "How do players access each region?" (Requirements)
-- ✓ "What's the victory condition?" (Beat chapter 6? Catch all fish?)
-- ✓ "How will we handle recipes?" (All required? Some optional?)
-
----
-
-**Start with GAME_ANALYSIS_TEMPLATE.md and you're on your way!** 🎮
+**Option C — Existing mods:**
+- Check https://github.com/WhiteMinds/dave-diver-expansion source code
+- Check https://github.com/devopsdinosaur/dave-the-diver-mods source code
+- Check https://github.com/Arutsuyo/SuperDave2.0 source code
+- These may already reveal some real class names!
