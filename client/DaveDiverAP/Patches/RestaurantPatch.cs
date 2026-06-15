@@ -16,8 +16,12 @@ namespace DaveDiverAP.Patches
         // Total customers served — track for milestone checks
         private static int _totalCustomers = 0;
 
+        // ✅ CONFIRMED: SushiBarManager is the real class name (devopsdinosaur mod)
+        // ✅ CONFIRMED: SushiBarCustomer and SushiBarStaffBase also confirmed
+        // Method names still need confirming via Il2CppDumper
+        // Search for: "OnServe", "OnCustomerLeave", "CustomerComplete" in SushiBarManager
         // Fires when a customer is successfully served and leaves happy
-        [HarmonyPatch(typeof(SushiBarManager), "OnCustomerServed")]  // PLACEHOLDER
+        [HarmonyPatch(typeof(SushiBarManager), "OnCustomerServed")]  // class confirmed, method still PLACEHOLDER
         [HarmonyPostfix]
         public static void OnCustomerServed_Postfix()
         {

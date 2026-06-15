@@ -366,6 +366,103 @@ iDiver upgrade method: ???
 
 ---
 
+## ✅ Confirmed Real Class Names (from WhiteMinds dave-diver-expansion)
+
+These are **confirmed real game class names** extracted from the WhiteMinds mod source code:
+
+### Fish / Item Pickup
+| Placeholder | Real Class Name | Notes |
+|---|---|---|
+| `FishInteraction` | `FishInteractionBody` | Fish catching class |
+| `SuccessInteract` | `SuccessInteract(BaseCharacter)` | ✅ Confirmed method signature |
+| `PickupInstanceItem` | `PickupInstanceItem` | ✅ Confirmed — item pickup |
+| `PickupInstanceItem_SeaUrchin` | `PickupInstanceItem_SeaUrchin` | Sea urchin special case |
+| `InstanceItemChest` | `InstanceItemChest` | ✅ Confirmed — treasure chests |
+
+### Player / Core
+| Placeholder | Real Class Name | Notes |
+|---|---|---|
+| `PlayerCharacter` | `PlayerCharacter` | ✅ Confirmed — main player class |
+| `InGameManager` | `InGameManager` | ✅ Confirmed — has FishAllocators |
+| `FishAllocator` | `FishAllocator` | Fish spawn manager |
+| `PlayerBreathHandler` | `PlayerBreathHandler` | ✅ Oxygen/breath system! |
+| `BuffHandler` | `BuffHandler` | Status effects |
+| `CharacterController2D` | `CharacterController2D` | 2D movement |
+
+### Scene Management
+| Placeholder | Real Class Name | Notes |
+|---|---|---|
+| `BoatSceneManager` | `LobbyPlayer` | Boat/lobby area player class |
+| `MoveScenePanel` | `MoveScenePanel` | Scene transition panel |
+
+### Restaurant / Sushi Bar
+| Placeholder | Real Class Name | Notes |
+|---|---|---|
+| `SushiBarManager` | `SushiBarManager` | ✅ Confirmed (devopsdinosaur) |
+| `SushiBarCustomer` | `SushiBarCustomer` | ✅ Confirmed |
+| `SushiBarStaffBase` | `SushiBarStaffBase` | ✅ Confirmed |
+
+### Farm
+| Placeholder | Real Class Name | Notes |
+|---|---|---|
+| `VegetableFarmManager` | `Farm.FarmPlayerView` | Veg farm area |
+| `FarmCore` | `Farm.FarmCore` | Farm core mechanics |
+| `FishFarmManager` | `FishFarm.FishFarmPlayerView` | Fish farm area |
+
+### Equipment / Weapons
+| Placeholder | Real Class Name | Notes |
+|---|---|---|
+| `SubEquipmentManager` | `SubEquipmentManager` | Equipment system |
+| `HarpoonHandler` | `HarpoonProjectile` | Harpoon projectile |
+| `InventoryManager` | `InstanceItemInventory` | Equipment inventory |
+
+### Mining / Environment
+| Placeholder | Real Class Name | Notes |
+|---|---|---|
+| `BreakableLootObject` | `BreakableLootObject` | Breakable objects (type enum available) |
+| `InteractionGimmick_Mining` | `InteractionGimmick_Mining` | Mining interaction |
+| `CrabTrapZone` | `CrabTrapZone` | Crab trap zones |
+| `CrabTrapObject` | `CrabTrapObject` | Individual crab traps |
+
+### Minigames
+| Placeholder | Real Class Name | Notes |
+|---|---|---|
+| `SeahorseRaceManager` | `SeahorseRacer` | Seahorse racer class |
+| `SeahorseRaceSession` | `SeahorseRaceSessionPlay` | Race session |
+
+### Key Enums Found
+```csharp
+// FishInteractionType — use Pickup = 2 to detect catches
+enum FishInteractionType { None, Attack, Pickup, Special }
+
+// BreakableLootObjectType — 8 values for different breakable types
+enum BreakableLootObjectType { ... }
+
+// SubHelperType — 13 values for equipment types
+enum SubHelperType { ... }
+```
+
+### Key Patterns Confirmed
+```csharp
+// Singleton access pattern used in this game:
+Singleton<T>._instance
+SingletonNoMono<T>.s_Instance
+
+// Universal interaction pattern:
+CheckAvailableInteraction() → SuccessInteract(BaseCharacter player)
+
+// Chest opening — patch THIS:
+[HarmonyPatch(typeof(InstanceItemChest), "SuccessInteract")]
+```
+
+### Save System (from DaveSaveEd)
+- Save files: `GameSave_00_GD.sav` (XOR encrypted, decrypts to JSON)
+- Editable fields confirmed: `Gold`, `Bei`, `ArtisanFlame`, `FollowerCount`
+- Ingredients stored as JSON with byproducts, plants, seasonings sections
+- Uses `nlohmann_json` + `sqlite3` for ID lookups internally
+
+---
+
 ## Known Good Info (from existing mods)
 
 These are confirmed from the WhiteMinds mod and other sources:

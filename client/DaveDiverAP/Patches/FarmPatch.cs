@@ -15,8 +15,11 @@ namespace DaveDiverAP.Patches
     {
         // ── Vegetable Farm ────────────────────────────────────────────────────
 
+        // ✅ CONFIRMED: Farm.FarmPlayerView is the real veg farm class (WhiteMinds mod)
+        // ✅ CONFIRMED: Farm.FarmCore is the farm core mechanics class
+        // Method names still need confirming via Il2CppDumper — search in Farm.FarmPlayerView / Farm.FarmCore
         // Fires on first harvest of each crop type
-        [HarmonyPatch(typeof(VegetableFarmManager), "OnFirstHarvest")]  // PLACEHOLDER
+        [HarmonyPatch(typeof(Farm.FarmCore), "OnFirstHarvest")]  // class confirmed, method still PLACEHOLDER
         [HarmonyPostfix]
         public static void OnFirstVegetableHarvest_Postfix(string cropName)
         {
@@ -26,7 +29,7 @@ namespace DaveDiverAP.Patches
         }
 
         // Fires when garden tier is upgraded
-        [HarmonyPatch(typeof(VegetableFarmManager), "OnTierUpgrade")]  // PLACEHOLDER
+        [HarmonyPatch(typeof(Farm.FarmCore), "OnTierUpgrade")]  // class confirmed, method still PLACEHOLDER
         [HarmonyPostfix]
         public static void OnGardenTierUpgrade_Postfix(int newTier)
         {
@@ -36,7 +39,7 @@ namespace DaveDiverAP.Patches
 
         // Fires when total crop harvest count changes
         private static int _totalCrops = 0;
-        [HarmonyPatch(typeof(VegetableFarmManager), "OnHarvest")]  // PLACEHOLDER
+        [HarmonyPatch(typeof(Farm.FarmCore), "OnHarvest")]  // class confirmed, method still PLACEHOLDER
         [HarmonyPostfix]
         public static void OnVegetableHarvest_Postfix()
         {
@@ -75,7 +78,8 @@ namespace DaveDiverAP.Patches
         // ── Fish Farm ─────────────────────────────────────────────────────────
 
         // Fires when a fish tank is upgraded
-        [HarmonyPatch(typeof(FishFarmManager), "OnTankUpgrade")]  // PLACEHOLDER
+        // ✅ CONFIRMED: FishFarm.FishFarmPlayerView is the real fish farm class (WhiteMinds mod)
+        [HarmonyPatch(typeof(FishFarm.FishFarmPlayerView), "OnTankUpgrade")]  // class confirmed, method still PLACEHOLDER
         [HarmonyPostfix]
         public static void OnFishTankUpgrade_Postfix(int tankNumber)
         {
@@ -84,7 +88,7 @@ namespace DaveDiverAP.Patches
         }
 
         // Fires when a fish species is bred for the first time
-        [HarmonyPatch(typeof(FishFarmManager), "OnFirstBreed")]  // PLACEHOLDER
+        [HarmonyPatch(typeof(FishFarm.FishFarmPlayerView), "OnFirstBreed")]  // class confirmed, method still PLACEHOLDER
         [HarmonyPostfix]
         public static void OnFirstBreed_Postfix(string fishName)
         {
@@ -95,7 +99,7 @@ namespace DaveDiverAP.Patches
         // Fires when fish reach adulthood
         private static int _totalAdultFish = 0;
         private static readonly System.Collections.Generic.HashSet<string> _bredSpecies = new();
-        [HarmonyPatch(typeof(FishFarmManager), "OnFishReachedAdulthood")]  // PLACEHOLDER
+        [HarmonyPatch(typeof(FishFarm.FishFarmPlayerView), "OnFishReachedAdulthood")]  // class confirmed, method still PLACEHOLDER
         [HarmonyPostfix]
         public static void OnFishAdulthood_Postfix(string fishName)
         {

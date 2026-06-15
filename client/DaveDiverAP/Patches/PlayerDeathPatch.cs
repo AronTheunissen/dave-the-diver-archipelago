@@ -27,9 +27,10 @@ namespace DaveDiverAP.Patches
     public static class PlayerDeathPatch
     {
         // ── Oxygen depletion death ────────────────────────────────────────────
-        // PLACEHOLDER: Replace OxygenSystem with real class name
-        // Look for a method called when oxygen hits 0 and triggers death sequence
-        [HarmonyPatch(typeof(OxygenSystem), "OnOxygenDepleted")]  // PLACEHOLDER
+        // ✅ CONFIRMED: PlayerBreathHandler is the real oxygen system class (WhiteMinds mod)
+        // Still needed via Il2CppDumper: exact method name that fires on depletion
+        // Search for: "OnBreathDepleted", "OnOxygenEmpty", "OnSuffocate", "Die" in PlayerBreathHandler
+        [HarmonyPatch(typeof(PlayerBreathHandler), "OnOxygenDepleted")]  // class confirmed, method name still PLACEHOLDER
         [HarmonyPostfix]
         public static void OnOxygenDepleted_Postfix()
         {
@@ -40,9 +41,10 @@ namespace DaveDiverAP.Patches
         }
 
         // ── Damage-based death ────────────────────────────────────────────────
-        // PLACEHOLDER: Replace PlayerCharacter.Die with real class/method name
-        // This fires when HP reaches 0 from enemy damage
-        [HarmonyPatch(typeof(PlayerCharacter), "Die")]  // PLACEHOLDER
+        // ✅ CONFIRMED: PlayerCharacter is the real class name (confirmed by multiple mods)
+        // Still needed via Il2CppDumper: exact death method name in PlayerCharacter
+        // Search for: "Die", "Death", "OnDeath", "Kill", "OnDamageKill" in PlayerCharacter
+        [HarmonyPatch(typeof(PlayerCharacter), "Die")]  // class confirmed, method name still PLACEHOLDER
         [HarmonyPostfix]
         public static void PlayerDie_Postfix()
         {

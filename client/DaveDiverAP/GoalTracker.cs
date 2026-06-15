@@ -30,6 +30,7 @@ namespace DaveDiverAP
         private static int  _cookstaBestTaste        = 0;
         private static int  _cookstaResearchedRecipes = 0;
         private static bool _allFishComplete         = false;
+        private static bool _allMarincaComplete      = false;
 
         private static readonly HashSet<string> _defeatedBosses = new();
 

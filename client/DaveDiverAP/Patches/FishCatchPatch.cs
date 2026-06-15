@@ -31,24 +31,25 @@ namespace DaveDiverAP.Patches
     [HarmonyPatch]
     public static class FishCatchPatch
     {
-        // PLACEHOLDER — replace FishInteraction with real class name from Il2CppDumper output
-        // Candidates: FishInteraction, FishObject, CatchableFish, MarincaFish
-        // Look for the class that implements SuccessInteract() and tracks first-catch state
-        [HarmonyPatch(typeof(FishInteraction), "SuccessInteract")]   // PLACEHOLDER
+        // ✅ CONFIRMED: FishInteractionBody is the real class name (WhiteMinds mod)
+        // ✅ CONFIRMED: SuccessInteract(BaseCharacter) is the real method signature
+        // Still needed via Il2CppDumper: field names for fishId and isFirstCatch
+        [HarmonyPatch(typeof(FishInteractionBody), "SuccessInteract")]
         [HarmonyPostfix]
         public static void SuccessInteract_Postfix(object __instance)
         {
             if (!ArchipelagoClient.IsConnected) return;
 
             // TODO: Read the fish name and isFirstCatch flag from __instance
-            // These field names must be confirmed via Il2CppDumper output
-            // Example: var fishData = ((FishInteraction)__instance).fishData;
-            //          bool isFirst = fishData.isFirstCatch;
-            //          string fishId = fishData.fishId;
+            // Field names must be confirmed via Il2CppDumper / dnSpy on interop DLL
+            // Tip: search for "FirstCatch", "isNewFish", "marinca" in FishInteractionBody
+            // Example once field names known:
+            //   var body = (FishInteractionBody)__instance;
+            //   bool isFirst = body.isFirstCatch;
+            //   string fishId = body.fishData.fishId;
 
-            // Placeholder logic:
-            string? fishId = null;    // TODO: get from __instance
-            bool isFirstCatch = true; // TODO: get from __instance
+            string? fishId = null;    // TODO: get from __instance fields
+            bool isFirstCatch = true; // TODO: get from __instance fields
 
             if (!isFirstCatch) return;
 

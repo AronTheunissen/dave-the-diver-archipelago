@@ -12,8 +12,9 @@ namespace DaveDiverAP.Patches
     [HarmonyPatch]
     public static class MinigamePatch
     {
-        // Fires when a seahorse race is won
-        [HarmonyPatch(typeof(SeahorseRaceManager), "OnRaceWon")]  // PLACEHOLDER
+        // ✅ CONFIRMED: SeahorseRaceSessionPlay is the real class (WhiteMinds mod)
+        // Method name still needs confirming — search for "OnRaceEnd", "OnRaceComplete", "RaceResult" in SeahorseRaceSessionPlay
+        [HarmonyPatch(typeof(SeahorseRaceSessionPlay), "OnRaceWon")]  // class confirmed, method still PLACEHOLDER
         [HarmonyPostfix]
         public static void OnSeahorseRaceWon_Postfix(string difficulty)
         {

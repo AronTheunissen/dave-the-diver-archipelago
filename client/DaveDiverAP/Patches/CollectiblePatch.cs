@@ -18,7 +18,9 @@ namespace DaveDiverAP.Patches
         // ── Treasure chests ───────────────────────────────────────────────────
         private static int _chestCount = 0;
 
-        [HarmonyPatch(typeof(TreasureChest), "SuccessInteract")]  // PLACEHOLDER
+        // ✅ CONFIRMED: InstanceItemChest is the real class name (WhiteMinds mod)
+        // ✅ CONFIRMED: SuccessInteract(BaseCharacter) is the real method signature
+        [HarmonyPatch(typeof(InstanceItemChest), "SuccessInteract")]
         [HarmonyPostfix]
         public static void TreasureChest_Postfix()
         {
