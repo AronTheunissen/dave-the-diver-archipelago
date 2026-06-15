@@ -31,6 +31,11 @@ class ItemData(NamedTuple):
 # We'll use 0x444400 (DvD in hex-ish) as our base
 BASE_ID = 0x444400
 
+# Item IDs are offset from ITEM_BASE to avoid collisions with location IDs.
+# Location IDs use ITEM_BASE + 0 to ITEM_BASE + ~3500.
+# Item IDs use ITEM_BASE + 0 upward (i.e. ITEM_BASE + 5000+).
+ITEM_BASE = BASE_ID + 5000
+
 
 # === PROGRESSIVE EQUIPMENT ===
 # These use a single item with multiple copies to represent depth upgrades.
@@ -38,9 +43,9 @@ BASE_ID = 0x444400
 # the thresholds in rules.py require only a fraction of the total copies.
 progressive_equipment: Dict[str, ItemData] = {
     # 6 copies: rules only require 1 (mid) or 3 (deep) — plenty of slack
-    "Progressive Oxygen Tank": ItemData(BASE_ID + 300, ItemClassification.progression, count=6),
+    "Progressive Oxygen Tank": ItemData(ITEM_BASE + 300, ItemClassification.progression, count=6),
     # 4 copies: rules only require 1 (mid) or 2 (deep)
-    "Progressive Harpoon": ItemData(BASE_ID + 301, ItemClassification.progression, count=4),
+    "Progressive Harpoon": ItemData(ITEM_BASE + 301, ItemClassification.progression, count=4),
     # 8 copies — one per suit level (including cold-resistant tiers):
     #   Level 1: max 40m  (from start, but progressive copies unlock deeper)
     #   Level 2: max 80m
@@ -51,14 +56,14 @@ progressive_equipment: Dict[str, ItemData] = {
     #   Level 7: max 560m  (Cold-Resistant tier 1 — required for Glacial Passage)
     #   Level 8: max 800m  (Cold-Resistant tier 2 — required for full Glacier Zone)
     # Rules only require a subset of these for each depth gate.
-    "Progressive Diving Suit": ItemData(BASE_ID + 302, ItemClassification.progression, count=8),
+    "Progressive Diving Suit": ItemData(ITEM_BASE + 302, ItemClassification.progression, count=8),
 }
 
 # === WEAPONS & EQUIPMENT ===
 # Each craftable weapon variant is its own item — received as AP reward when sent.
 # Classification: useful (better weapons help but aren't required for progression).
-# IDs allocated in blocks starting at BASE_ID + 0.
-_W = BASE_ID  # weapon items start at BASE_ID + 0
+# IDs allocated in blocks starting at ITEM_BASE + 0.
+_W = ITEM_BASE  # weapon items start at ITEM_BASE + 0
 
 weapon_items: Dict[str, ItemData] = {
     # --- Basic Underwater Rifle tree ---
@@ -167,108 +172,108 @@ weapon_items: Dict[str, ItemData] = {
 # These are NOT progressive - you get them once and unlock specific areas
 area_unlock_items: Dict[str, ItemData] = {
     # Physical access items
-    "Sea People Gloves": ItemData(BASE_ID + 100, ItemClassification.progression),  # Lets you swim to Sea People Village
-    "Sea People Translator": ItemData(BASE_ID + 101, ItemClassification.progression),  # Required to interact in village
+    "Sea People Gloves": ItemData(ITEM_BASE + 100, ItemClassification.progression),  # Lets you swim to Sea People Village
+    "Sea People Translator": ItemData(ITEM_BASE + 101, ItemClassification.progression),  # Required to interact in village
     # Note: Cold-Resistant suit tiers are now levels 7 and 8 of Progressive Diving Suit
-    "Key to Tenzhin": ItemData(BASE_ID + 103, ItemClassification.progression),  # Opens Glacial Passage gate
-    "Tech Suit Parts": ItemData(BASE_ID + 104, ItemClassification.progression, count=3),  # Needed for Glacier Zone
-    "Laser Device": ItemData(BASE_ID + 105, ItemClassification.progression),  # Required to open Broken Control Room
-    "Control Room Button": ItemData(BASE_ID + 106, ItemClassification.progression, count=3),  # 3 needed for Ch7 finale
-    "Sea People's Trust": ItemData(BASE_ID + 107, ItemClassification.progression),  # Unlocks Duff's Dream Concert + Ch4
-    "Vortex Entry": ItemData(BASE_ID + 119, ItemClassification.progression, count=5),  # Needed to enter vortex fights (optional bosses)
+    "Key to Tenzhin": ItemData(ITEM_BASE + 103, ItemClassification.progression),  # Opens Glacial Passage gate
+    "Tech Suit Parts": ItemData(ITEM_BASE + 104, ItemClassification.progression, count=3),  # Needed for Glacier Zone
+    "Laser Device": ItemData(ITEM_BASE + 105, ItemClassification.progression),  # Required to open Broken Control Room
+    "Control Room Button": ItemData(ITEM_BASE + 106, ItemClassification.progression, count=3),  # 3 needed for Ch7 finale
+    "Sea People's Trust": ItemData(ITEM_BASE + 107, ItemClassification.progression),  # Unlocks Duff's Dream Concert + Ch4
+    "Vortex Entry": ItemData(ITEM_BASE + 119, ItemClassification.progression, count=5),  # Needed to enter vortex fights (optional bosses)
 
     # Teleport system - allows bypassing physical routes
-    "Teleport Mirror": ItemData(BASE_ID + 108, ItemClassification.progression),  # Base teleport ability
-    "Teleport to Sea People Village": ItemData(BASE_ID + 109, ItemClassification.progression),  # Alt route to village
-    "Teleport to Glacier": ItemData(BASE_ID + 110, ItemClassification.progression),  # Direct access to Glacier Zone
-    "Teleport to Deep Blue Hole": ItemData(BASE_ID + 111, ItemClassification.useful),  # Backtracking QoL
+    "Teleport Mirror": ItemData(ITEM_BASE + 108, ItemClassification.progression),  # Base teleport ability
+    "Teleport to Sea People Village": ItemData(ITEM_BASE + 109, ItemClassification.progression),  # Alt route to village
+    "Teleport to Glacier": ItemData(ITEM_BASE + 110, ItemClassification.progression),  # Direct access to Glacier Zone
+    "Teleport to Deep Blue Hole": ItemData(ITEM_BASE + 111, ItemClassification.useful),  # Backtracking QoL
 
     # Farm unlock items — each farm is a separate system that must be unlocked
-    "Unlock Fish Farm": ItemData(BASE_ID + 116, ItemClassification.progression),       # Otto's quest "A Noisy Customer"
-    "Unlock Vegetable Farm": ItemData(BASE_ID + 117, ItemClassification.progression),  # Unlocked via story/quest
-    "Unlock Chicken Farm": ItemData(BASE_ID + 118, ItemClassification.progression),    # Same location as veg farm, separate system
+    "Unlock Fish Farm": ItemData(ITEM_BASE + 116, ItemClassification.progression),       # Otto's quest "A Noisy Customer"
+    "Unlock Vegetable Farm": ItemData(ITEM_BASE + 117, ItemClassification.progression),  # Unlocked via story/quest
+    "Unlock Chicken Farm": ItemData(ITEM_BASE + 118, ItemClassification.progression),    # Same location as veg farm, separate system
 
     # Other key items
-    "VIP Card": ItemData(BASE_ID + 115, ItemClassification.useful),  # Unlocks VIP restaurant events
+    "VIP Card": ItemData(ITEM_BASE + 115, ItemClassification.useful),  # Unlocks VIP restaurant events
 }
 
 # === DIVING EQUIPMENT (Non-Progressive) ===
 diving_equipment: Dict[str, ItemData] = {
     # Oxygen efficiency (multiplies oxygen duration)
-    "Oxygen Efficiency Upgrade": ItemData(BASE_ID + 120, ItemClassification.useful, count=2),
+    "Oxygen Efficiency Upgrade": ItemData(ITEM_BASE + 120, ItemClassification.useful, count=2),
     
     # Durability
-    "Diving Suit Durability +1": ItemData(BASE_ID + 125, ItemClassification.useful, count=3),
+    "Diving Suit Durability +1": ItemData(ITEM_BASE + 125, ItemClassification.useful, count=3),
     
     # Tools
-    "Fish Radar": ItemData(BASE_ID + 130, ItemClassification.useful),
-    "Enhanced Night Vision": ItemData(BASE_ID + 131, ItemClassification.useful),
-    "Crab Trap": ItemData(BASE_ID + 135, ItemClassification.useful),
-    "Enhanced Crab Trap": ItemData(BASE_ID + 136, ItemClassification.useful),
+    "Fish Radar": ItemData(ITEM_BASE + 130, ItemClassification.useful),
+    "Enhanced Night Vision": ItemData(ITEM_BASE + 131, ItemClassification.useful),
+    "Crab Trap": ItemData(ITEM_BASE + 135, ItemClassification.useful),
+    "Enhanced Crab Trap": ItemData(ITEM_BASE + 136, ItemClassification.useful),
     # TODO: Add more tools
 }
 
 # === RESTAURANT & RECIPES ===
 restaurant_items: Dict[str, ItemData] = {
     # Staff
-    "Hire Waiter": ItemData(BASE_ID + 200, ItemClassification.useful, count=3, category="restaurant"),
-    "Hire Chef": ItemData(BASE_ID + 205, ItemClassification.useful, count=2, category="restaurant"),
-    "Hire Bartender": ItemData(BASE_ID + 206, ItemClassification.useful, category="restaurant"),
+    "Hire Waiter": ItemData(ITEM_BASE + 200, ItemClassification.useful, count=3, category="restaurant"),
+    "Hire Chef": ItemData(ITEM_BASE + 205, ItemClassification.useful, count=2, category="restaurant"),
+    "Hire Bartender": ItemData(ITEM_BASE + 206, ItemClassification.useful, category="restaurant"),
 
     # Restaurant Upgrades
-    "Dining Area Expansion": ItemData(BASE_ID + 320, ItemClassification.useful, count=3, category="restaurant"),
-    "Kitchen Upgrade": ItemData(BASE_ID + 330, ItemClassification.useful, count=3, category="restaurant"),
+    "Dining Area Expansion": ItemData(ITEM_BASE + 320, ItemClassification.useful, count=3, category="restaurant"),
+    "Kitchen Upgrade": ItemData(ITEM_BASE + 330, ItemClassification.useful, count=3, category="restaurant"),
 
     # Key Recipes (as randomizable items - given to player as reward)
     # Basic fish sushi recipes
-    "Recipe: Yellowfin Tuna Akami Sushi": ItemData(BASE_ID + 210, ItemClassification.useful, category="recipe"),
-    "Recipe: Great Barracuda Sushi": ItemData(BASE_ID + 211, ItemClassification.useful, category="recipe"),
-    "Recipe: Humboldt Squid Sushi": ItemData(BASE_ID + 212, ItemClassification.useful, category="recipe"),
-    "Recipe: Greenland Shark Sushi": ItemData(BASE_ID + 213, ItemClassification.useful, category="recipe"),
-    "Recipe: Blobfish Sushi": ItemData(BASE_ID + 214, ItemClassification.useful, category="recipe"),
-    "Recipe: Narwhal Sushi": ItemData(BASE_ID + 215, ItemClassification.useful, category="recipe"),
-    "Recipe: Vampire Squid Sushi": ItemData(BASE_ID + 216, ItemClassification.useful, category="recipe"),
+    "Recipe: Yellowfin Tuna Akami Sushi": ItemData(ITEM_BASE + 210, ItemClassification.useful, category="recipe"),
+    "Recipe: Great Barracuda Sushi": ItemData(ITEM_BASE + 211, ItemClassification.useful, category="recipe"),
+    "Recipe: Humboldt Squid Sushi": ItemData(ITEM_BASE + 212, ItemClassification.useful, category="recipe"),
+    "Recipe: Greenland Shark Sushi": ItemData(ITEM_BASE + 213, ItemClassification.useful, category="recipe"),
+    "Recipe: Blobfish Sushi": ItemData(ITEM_BASE + 214, ItemClassification.useful, category="recipe"),
+    "Recipe: Narwhal Sushi": ItemData(ITEM_BASE + 215, ItemClassification.useful, category="recipe"),
+    "Recipe: Vampire Squid Sushi": ItemData(ITEM_BASE + 216, ItemClassification.useful, category="recipe"),
     # VIP recipes
-    "Recipe: Seagrapes Jellyfish Sushi": ItemData(BASE_ID + 220, ItemClassification.useful, category="recipe"),
-    "Recipe: Tropical Fish Sushi Set": ItemData(BASE_ID + 221, ItemClassification.useful, category="recipe"),
-    "Recipe: Vegetable Sushi": ItemData(BASE_ID + 222, ItemClassification.useful, category="recipe"),
-    "Recipe: Humboldt Ink Pasta": ItemData(BASE_ID + 223, ItemClassification.useful, category="recipe"),
-    "Recipe: Antarctic Octopus Carpaccio": ItemData(BASE_ID + 224, ItemClassification.useful, category="recipe"),
-    "Recipe: Arctic Cod Risotto": ItemData(BASE_ID + 225, ItemClassification.useful, category="recipe"),
-    "Recipe: Deep Fish Tempura": ItemData(BASE_ID + 226, ItemClassification.useful, category="recipe"),
+    "Recipe: Seagrapes Jellyfish Sushi": ItemData(ITEM_BASE + 220, ItemClassification.useful, category="recipe"),
+    "Recipe: Tropical Fish Sushi Set": ItemData(ITEM_BASE + 221, ItemClassification.useful, category="recipe"),
+    "Recipe: Vegetable Sushi": ItemData(ITEM_BASE + 222, ItemClassification.useful, category="recipe"),
+    "Recipe: Humboldt Ink Pasta": ItemData(ITEM_BASE + 223, ItemClassification.useful, category="recipe"),
+    "Recipe: Antarctic Octopus Carpaccio": ItemData(ITEM_BASE + 224, ItemClassification.useful, category="recipe"),
+    "Recipe: Arctic Cod Risotto": ItemData(ITEM_BASE + 225, ItemClassification.useful, category="recipe"),
+    "Recipe: Deep Fish Tempura": ItemData(ITEM_BASE + 226, ItemClassification.useful, category="recipe"),
     # Boss recipes
-    "Recipe: White Shark Omelet": ItemData(BASE_ID + 230, ItemClassification.useful, category="recipe"),
-    "Recipe: Clione Queen Soup": ItemData(BASE_ID + 231, ItemClassification.useful, category="recipe"),
-    "Recipe: Steamed Wolf Eel": ItemData(BASE_ID + 232, ItemClassification.useful, category="recipe"),
-    "Recipe: Goblin Shark Belly Roast": ItemData(BASE_ID + 233, ItemClassification.useful, category="recipe"),
-    "Recipe: Phantom Jellyfish Jelly": ItemData(BASE_ID + 234, ItemClassification.useful, category="recipe"),
-    "Recipe: Roasted Helicoprion Tail": ItemData(BASE_ID + 235, ItemClassification.useful, category="recipe"),
-    "Recipe: Yawie Steamed Meat": ItemData(BASE_ID + 236, ItemClassification.useful, category="recipe"),
+    "Recipe: White Shark Omelet": ItemData(ITEM_BASE + 230, ItemClassification.useful, category="recipe"),
+    "Recipe: Clione Queen Soup": ItemData(ITEM_BASE + 231, ItemClassification.useful, category="recipe"),
+    "Recipe: Steamed Wolf Eel": ItemData(ITEM_BASE + 232, ItemClassification.useful, category="recipe"),
+    "Recipe: Goblin Shark Belly Roast": ItemData(ITEM_BASE + 233, ItemClassification.useful, category="recipe"),
+    "Recipe: Phantom Jellyfish Jelly": ItemData(ITEM_BASE + 234, ItemClassification.useful, category="recipe"),
+    "Recipe: Roasted Helicoprion Tail": ItemData(ITEM_BASE + 235, ItemClassification.useful, category="recipe"),
+    "Recipe: Yawie Steamed Meat": ItemData(ITEM_BASE + 236, ItemClassification.useful, category="recipe"),
     # Cooksta rank recipes
-    "Recipe: Seahorse Udon": ItemData(BASE_ID + 240, ItemClassification.useful, category="recipe"),
-    "Recipe: Atlantic Bonito Curry": ItemData(BASE_ID + 241, ItemClassification.useful, category="recipe"),
-    "Recipe: Humphead Parrotfish Curry": ItemData(BASE_ID + 242, ItemClassification.useful, category="recipe"),
-    "Recipe: Dumbo Takoyaki": ItemData(BASE_ID + 243, ItemClassification.useful, category="recipe"),
-    "Recipe: Great Barracuda Canape": ItemData(BASE_ID + 244, ItemClassification.useful, category="recipe"),
+    "Recipe: Seahorse Udon": ItemData(ITEM_BASE + 240, ItemClassification.useful, category="recipe"),
+    "Recipe: Atlantic Bonito Curry": ItemData(ITEM_BASE + 241, ItemClassification.useful, category="recipe"),
+    "Recipe: Humphead Parrotfish Curry": ItemData(ITEM_BASE + 242, ItemClassification.useful, category="recipe"),
+    "Recipe: Dumbo Takoyaki": ItemData(ITEM_BASE + 243, ItemClassification.useful, category="recipe"),
+    "Recipe: Great Barracuda Canape": ItemData(ITEM_BASE + 244, ItemClassification.useful, category="recipe"),
 }
 
 # === STORY KEY ITEMS ===
 # Key items and progression unlocks tied to story milestones
 story_key_items: Dict[str, ItemData] = {
     # Chapter completion flags (7 chapters)
-    "Chapter 1 Complete": ItemData(BASE_ID + 400, ItemClassification.progression),
-    "Chapter 2 Complete": ItemData(BASE_ID + 401, ItemClassification.progression),
-    "Chapter 3 Complete": ItemData(BASE_ID + 402, ItemClassification.progression),
-    "Chapter 4 Complete": ItemData(BASE_ID + 403, ItemClassification.progression),
-    "Chapter 5 Complete": ItemData(BASE_ID + 404, ItemClassification.progression),
-    "Chapter 6 Complete": ItemData(BASE_ID + 405, ItemClassification.progression),
-    "Chapter 7 Complete": ItemData(BASE_ID + 406, ItemClassification.progression),
+    "Chapter 1 Complete": ItemData(ITEM_BASE + 400, ItemClassification.progression),
+    "Chapter 2 Complete": ItemData(ITEM_BASE + 401, ItemClassification.progression),
+    "Chapter 3 Complete": ItemData(ITEM_BASE + 402, ItemClassification.progression),
+    "Chapter 4 Complete": ItemData(ITEM_BASE + 403, ItemClassification.progression),
+    "Chapter 5 Complete": ItemData(ITEM_BASE + 404, ItemClassification.progression),
+    "Chapter 6 Complete": ItemData(ITEM_BASE + 405, ItemClassification.progression),
+    "Chapter 7 Complete": ItemData(ITEM_BASE + 406, ItemClassification.progression),
     # Key story items given by NPCs
-    "Sea People Bracelet": ItemData(BASE_ID + 410, ItemClassification.useful),    # Survive out of oxygen briefly
-    "Bug Net": ItemData(BASE_ID + 411, ItemClassification.useful),                # Catch small fish/seahorses
-    "Cargo Box Upgrade": ItemData(BASE_ID + 412, ItemClassification.useful, count=3),  # Carry more loot
-    "Night Dive Unlock": ItemData(BASE_ID + 413, ItemClassification.progression), # Unlocks night diving
-    "iDiver App": ItemData(BASE_ID + 414, ItemClassification.progression),        # Equipment upgrade app
+    "Sea People Bracelet": ItemData(ITEM_BASE + 410, ItemClassification.useful),    # Survive out of oxygen briefly
+    "Bug Net": ItemData(ITEM_BASE + 411, ItemClassification.useful),                # Catch small fish/seahorses
+    "Cargo Box Upgrade": ItemData(ITEM_BASE + 412, ItemClassification.useful, count=3),  # Carry more loot
+    "Night Dive Unlock": ItemData(ITEM_BASE + 413, ItemClassification.progression), # Unlocks night diving
+    "iDiver App": ItemData(ITEM_BASE + 414, ItemClassification.progression),        # Equipment upgrade app
 }
 
 # === PROGRESSIVE DISH ITEMS ===
@@ -280,7 +285,7 @@ story_key_items: Dict[str, ItemData] = {
 def _prog_dish(base_id: int, max_level: int) -> ItemData:
     return ItemData(base_id, ItemClassification.useful, count=max_level - 1, category="dish_upgrade")
 
-_PD = BASE_ID + 3000  # Start at 3000 to avoid all other item ID ranges
+_PD = ITEM_BASE + 3000  # Start at 3000 to avoid all other item ID ranges
 
 dish_upgrade_items: Dict[str, ItemData] = {
     "Progressive Agar Tokoroten":                          _prog_dish(_PD + 0,   7),
@@ -373,31 +378,31 @@ dish_upgrade_items: Dict[str, ItemData] = {
 # Each copy received = one rank up in Cooksta, unlocking new features.
 # Starting rank is Coal (no item needed), so 5 progressive items = 5 rank-ups.
 cooksta_rank_items: Dict[str, ItemData] = {
-    "Progressive Cooksta Rank": ItemData(BASE_ID + 535, ItemClassification.useful, count=5, category="cooksta"),
+    "Progressive Cooksta Rank": ItemData(ITEM_BASE + 535, ItemClassification.useful, count=5, category="cooksta"),
 }
 
 # === CHARMS ===
 # 12 charms total — each grants a passive bonus effect when equipped.
 # Obtained from story missions or Ecowatcher level-ups.
 charm_items: Dict[str, ItemData] = {
-    "Dolphin Necklace":         ItemData(BASE_ID + 500, ItemClassification.useful),  # +30% dash speed
-    "Octopus Bracelet":         ItemData(BASE_ID + 501, ItemClassification.useful),  # Short dash ability
-    "Sea People Bracelet":      ItemData(BASE_ID + 502, ItemClassification.useful),  # Survive ~10s after oxygen out
-    "Octopus Weapon Charm":     ItemData(BASE_ID + 503, ItemClassification.useful),  # +15% gun damage
-    "Sea People Necklace":      ItemData(BASE_ID + 504, ItemClassification.useful),  # Travel through tubeworm tunnels
-    "Shark Teeth Necklace":     ItemData(BASE_ID + 505, ItemClassification.useful),  # +15% harpoon damage
-    "Eco Poison Resist Bracelet": ItemData(BASE_ID + 506, ItemClassification.useful), # Poison resistance
-    "Eco Health Bracelet":      ItemData(BASE_ID + 507, ItemClassification.useful),  # -10% damage taken
-    "Eco Gemstone Bracelet":    ItemData(BASE_ID + 508, ItemClassification.useful),  # +1 mineral from mining
-    "Eco Waterproof Bag":       ItemData(BASE_ID + 509, ItemClassification.useful),  # +30kg weight limit
-    "Leo Keychain":             ItemData(BASE_ID + 510, ItemClassification.useful, category="dlc_dredge"),  # DREDGE DLC
-    "Jimbo Coin":               ItemData(BASE_ID + 511, ItemClassification.useful),  # Base game — Jimbo's Game Craze! mission
+    "Dolphin Necklace":         ItemData(ITEM_BASE + 500, ItemClassification.useful),  # +30% dash speed
+    "Octopus Bracelet":         ItemData(ITEM_BASE + 501, ItemClassification.useful),  # Short dash ability
+    "Sea People Bracelet":      ItemData(ITEM_BASE + 502, ItemClassification.useful),  # Survive ~10s after oxygen out
+    "Octopus Weapon Charm":     ItemData(ITEM_BASE + 503, ItemClassification.useful),  # +15% gun damage
+    "Sea People Necklace":      ItemData(ITEM_BASE + 504, ItemClassification.useful),  # Travel through tubeworm tunnels
+    "Shark Teeth Necklace":     ItemData(ITEM_BASE + 505, ItemClassification.useful),  # +15% harpoon damage
+    "Eco Poison Resist Bracelet": ItemData(ITEM_BASE + 506, ItemClassification.useful), # Poison resistance
+    "Eco Health Bracelet":      ItemData(ITEM_BASE + 507, ItemClassification.useful),  # -10% damage taken
+    "Eco Gemstone Bracelet":    ItemData(ITEM_BASE + 508, ItemClassification.useful),  # +1 mineral from mining
+    "Eco Waterproof Bag":       ItemData(ITEM_BASE + 509, ItemClassification.useful),  # +30kg weight limit
+    "Leo Keychain":             ItemData(ITEM_BASE + 510, ItemClassification.useful, category="dlc_dredge"),  # DREDGE DLC
+    "Jimbo Coin":               ItemData(ITEM_BASE + 511, ItemClassification.useful),  # Base game — Jimbo's Game Craze! mission
 }
 
 # === ABILITIES & UPGRADES ===
 ability_items: Dict[str, ItemData] = {
-    "Enhanced Vision":          ItemData(BASE_ID + 520, ItemClassification.useful),
-    "Swimming Speed +1":        ItemData(BASE_ID + 521, ItemClassification.useful, count=3),
+    "Enhanced Vision":          ItemData(ITEM_BASE + 520, ItemClassification.useful),
+    "Swimming Speed +1":        ItemData(ITEM_BASE + 521, ItemClassification.useful, count=3),
     # TODO: Add more abilities
 }
 
@@ -406,55 +411,55 @@ ability_items: Dict[str, ItemData] = {
 # Quantities reflect rarity: common farm items get large stacks, rare items get small stacks.
 filler_items: Dict[str, ItemData] = {
     # Currency
-    "Gold (Small)": ItemData(BASE_ID + 600, ItemClassification.filler),
-    "Gold (Medium)": ItemData(BASE_ID + 601, ItemClassification.filler),
-    "Gold (Large)": ItemData(BASE_ID + 602, ItemClassification.filler),
-    "Bei (Small)": ItemData(BASE_ID + 610, ItemClassification.filler),
-    "Bei (Medium)": ItemData(BASE_ID + 611, ItemClassification.filler),
+    "Gold (Small)": ItemData(ITEM_BASE + 600, ItemClassification.filler),
+    "Gold (Medium)": ItemData(ITEM_BASE + 601, ItemClassification.filler),
+    "Gold (Large)": ItemData(ITEM_BASE + 602, ItemClassification.filler),
+    "Bei (Small)": ItemData(ITEM_BASE + 610, ItemClassification.filler),
+    "Bei (Medium)": ItemData(ITEM_BASE + 611, ItemClassification.filler),
 
     # Sea plants — common (×10 per item received)
-    "Agar x10":               ItemData(BASE_ID + 620, ItemClassification.filler),
-    "Kajime x10":             ItemData(BASE_ID + 621, ItemClassification.filler),
-    "Seaweed x10":            ItemData(BASE_ID + 622, ItemClassification.filler),
-    "Kelp x10":               ItemData(BASE_ID + 623, ItemClassification.filler),
+    "Agar x10":               ItemData(ITEM_BASE + 620, ItemClassification.filler),
+    "Kajime x10":             ItemData(ITEM_BASE + 621, ItemClassification.filler),
+    "Seaweed x10":            ItemData(ITEM_BASE + 622, ItemClassification.filler),
+    "Kelp x10":               ItemData(ITEM_BASE + 623, ItemClassification.filler),
 
     # Sea plants — uncommon (×5 per item received)
-    "Sea Grape x5":           ItemData(BASE_ID + 624, ItemClassification.filler),
-    "Southern Bull Kelp x5":  ItemData(BASE_ID + 625, ItemClassification.filler),
-    "Black Coral x5":         ItemData(BASE_ID + 626, ItemClassification.filler),
+    "Sea Grape x5":           ItemData(ITEM_BASE + 624, ItemClassification.filler),
+    "Southern Bull Kelp x5":  ItemData(ITEM_BASE + 625, ItemClassification.filler),
+    "Black Coral x5":         ItemData(ITEM_BASE + 626, ItemClassification.filler),
 
     # Sea plants — rare (×2 per item received)
-    "Bladderwrack x2":        ItemData(BASE_ID + 627, ItemClassification.filler),
-    "Hyalonema x2":           ItemData(BASE_ID + 628, ItemClassification.filler),
-    "Buckbean x2":            ItemData(BASE_ID + 629, ItemClassification.filler),
+    "Bladderwrack x2":        ItemData(ITEM_BASE + 627, ItemClassification.filler),
+    "Hyalonema x2":           ItemData(ITEM_BASE + 628, ItemClassification.filler),
+    "Buckbean x2":            ItemData(ITEM_BASE + 629, ItemClassification.filler),
 
     # Rare forageables (×1 per item received)
-    "Truffle x1":             ItemData(BASE_ID + 630, ItemClassification.filler),
-    "Rainbow Cap x1":         ItemData(BASE_ID + 631, ItemClassification.filler),
+    "Truffle x1":             ItemData(ITEM_BASE + 630, ItemClassification.filler),
+    "Rainbow Cap x1":         ItemData(ITEM_BASE + 631, ItemClassification.filler),
 
     # Farm ingredients — common (×10 per item received)
-    "Rice x10":               ItemData(BASE_ID + 640, ItemClassification.filler),
-    "Wheat x10":              ItemData(BASE_ID + 641, ItemClassification.filler),
-    "Egg x10":                ItemData(BASE_ID + 642, ItemClassification.filler),
-    "Cucumber x10":           ItemData(BASE_ID + 643, ItemClassification.filler),
+    "Rice x10":               ItemData(ITEM_BASE + 640, ItemClassification.filler),
+    "Wheat x10":              ItemData(ITEM_BASE + 641, ItemClassification.filler),
+    "Egg x10":                ItemData(ITEM_BASE + 642, ItemClassification.filler),
+    "Cucumber x10":           ItemData(ITEM_BASE + 643, ItemClassification.filler),
 
     # Farm ingredients — uncommon (×5 per item received)
-    "Bean x5":                ItemData(BASE_ID + 644, ItemClassification.filler),
-    "Buckwheat x5":           ItemData(BASE_ID + 645, ItemClassification.filler),
-    "Carrot x5":              ItemData(BASE_ID + 646, ItemClassification.filler),
-    "Cherry Tomato x5":       ItemData(BASE_ID + 647, ItemClassification.filler),
-    "Eggplant x5":            ItemData(BASE_ID + 648, ItemClassification.filler),
-    "Garlic x5":              ItemData(BASE_ID + 649, ItemClassification.filler),
-    "Onion x5":               ItemData(BASE_ID + 650, ItemClassification.filler),
+    "Bean x5":                ItemData(ITEM_BASE + 644, ItemClassification.filler),
+    "Buckwheat x5":           ItemData(ITEM_BASE + 645, ItemClassification.filler),
+    "Carrot x5":              ItemData(ITEM_BASE + 646, ItemClassification.filler),
+    "Cherry Tomato x5":       ItemData(ITEM_BASE + 647, ItemClassification.filler),
+    "Eggplant x5":            ItemData(ITEM_BASE + 648, ItemClassification.filler),
+    "Garlic x5":              ItemData(ITEM_BASE + 649, ItemClassification.filler),
+    "Onion x5":               ItemData(ITEM_BASE + 650, ItemClassification.filler),
 
     # Farm ingredients — rare/spicy (×2 per item received)
-    "Habanero x2":            ItemData(BASE_ID + 651, ItemClassification.filler),
-    "Grade A Egg x2":         ItemData(BASE_ID + 652, ItemClassification.filler),
+    "Habanero x2":            ItemData(ITEM_BASE + 651, ItemClassification.filler),
+    "Grade A Egg x2":         ItemData(ITEM_BASE + 652, ItemClassification.filler),
 }
 
 # === TRAP ITEMS (Optional) ===
 trap_items: Dict[str, ItemData] = {
-    # "Broken Equipment": ItemData(BASE_ID + 700, ItemClassification.trap, category="trap"),
+    # "Broken Equipment": ItemData(ITEM_BASE + 700, ItemClassification.trap, category="trap"),
     # TODO: Add trap items if desired
 }
 

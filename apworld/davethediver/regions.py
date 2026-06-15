@@ -20,7 +20,7 @@ Region map:
 """
 
 from BaseClasses import Region
-from .locations import location_table, DaveDiverLocation
+from .locations import location_table
 
 
 # All valid region names — used for location assignment lookup
