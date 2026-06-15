@@ -1,43 +1,52 @@
 # Dave the Diver - Master Diver Configuration
-# Explore the ocean depths and catch 'em all!
+# Explore every depth, catch every creature, complete the MarinCa collection!
 
 name: MasterDiver
 
 game: Dave the Diver
 
 Dave the Diver:
-  # Goal: Catch and catalog everything
+
+  # Goal: Catch every fish species (complete MarinCa collection)
   goal: master_diver
-  
-  # ALL fish checks!
+
+  # Every fish species is a check — that's the whole point!
   fish_checks: all
-  require_all_fish: true
-  
-  # Minimal restaurant focus
+
+  # Light restaurant focus — just key dishes
   dish_upgrades: key_dishes
   recipe_checks: key_only
-  require_all_recipes: false
-  restaurant_rating_required: 0
-  
-  # Minimal Cooksta
+
+  # Cooksta not the focus here
   include_cooksta: false
-  
+
   # Max exploration content
   include_ecowatcher: true
   include_photography: true
   include_challenges: true
-  
-  # Farming not critical for exploration
+
+  # Farming not critical for ocean exploration
   include_farming: false
-  include_fish_farm: false
+  include_chicken_farm: false
+  include_fish_farm: true   # Fish farm IS ocean-related!
   include_minigames: true
-  
+
+  # Weapon shop — useful for hunting deep sea creatures
+  include_weapon_shop: true
+
+  # DLC — enable what you own (DREDGE adds 34 aberration fish!)
+  has_dredge_dlc: false
+  has_godzilla_dlc: false
+  has_ichiban_dlc: false
+  has_jungle_dlc: false
+
   # Standard starting equipment
   starting_oxygen_level: 1
   starting_harpoon_level: 1
   starting_diving_suit_level: 1
-  
+
   # Strict difficulty for veteran divers
   oxygen_requirement: strict
-  
+
   death_link: false
+  trap_frequency: none

@@ -1,13 +1,14 @@
 # Dave the Diver - Example Player Options
 # Copy this file and customize it for your multiworld game!
+# Full option documentation: docs/SETUP_GUIDE.md
 
-# Your player name (what others will see)
+# Your player name (what others will see in the multiworld)
 name: YourName
 
 # The game you're playing
 game: Dave the Diver
 
-# Accessibility options (for all games)
+# Accessibility options (for all Archipelago games)
 accessibility: items
 
 # ====================
@@ -15,88 +16,112 @@ accessibility: items
 # ====================
 
 Dave the Diver:
+
   # ==================== GOAL ====================
-  # What you need to do to complete the game
-  # Options: final_chapter_only, all_chapters, chapters_plus_cooksta, 
-  #          restaurant_tycoon, master_diver, hundred_percent
-  # Time estimates: 5-10h, 15-25h, 30-40h, 30-40h, 50-70h, 100+h
-  goal: all_chapters  # Default - recommended for first playthrough
-  
+  # What you need to do to complete the game.
+  # Options:
+  #   defeat_yawie          - Defeat the final boss (~15-25 hours) [DEFAULT]
+  #   defeat_all_bosses     - Defeat Yawie + all optional/vortex bosses (~25-35 hours)
+  #   diamond_rank          - Defeat Yawie + reach Cooksta Diamond rank (~30-40 hours)
+  #   master_diver          - Defeat Yawie + catch every fish species (~50-70 hours)
+  #   hundred_percent       - Everything above combined (100+ hours)
+  goal: defeat_yawie
+
   # ==================== FISH ====================
-  # Which fish catches count as location checks?
-  # Options: none, rare_only, all
+  # Which fish first-catches count as location checks?
+  # Options: none | rare_only | all
+  #   none       - No fish checks (fastest)
+  #   rare_only  - Mid/deep/glacier/aberration fish only (~100 checks)
+  #   all        - Every fish species first catch (~203 checks) [DEFAULT]
   fish_checks: all
-  
-  # Require catching ALL fish species for victory?
-  # Only applies if goal includes it (master_diver or hundred_percent)
-  require_all_fish: false
-  
+
   # ==================== RESTAURANT ====================
-  # Which dish upgrades count as location checks?
-  # Options: none, key_dishes, popular, all
-  # Locations: 0, ~80, ~200, ~400+
+  # Which dish research levels count as location checks?
+  # Options: none | key_dishes | popular | all
+  #   none       - No dish upgrade checks
+  #   key_dishes - ~20 important dishes only (~80 checks) [DEFAULT]
+  #   popular    - ~50 commonly used dishes (~200 checks)
+  #   all        - Every upgradeable dish (~549 checks)
   dish_upgrades: key_dishes
-  
+
   # Which recipe unlocks count as checks?
-  # Options: key_only, all
+  # Options: key_only | all
+  #   key_only - Only story/VIP/boss recipes (~30 checks)
+  #   all      - Every recipe unlock (~54 checks) [DEFAULT]
   recipe_checks: all
-  
-  # Require unlocking ALL recipes for victory?
-  require_all_recipes: false
-  
-  # Minimum restaurant star rating (0-5)
-  restaurant_rating_required: 5
-  
+
   # ==================== SIDE CONTENT ====================
-  # Include Cooksta (social media) checks?
+  # Toggle each system on or off to control check count and scope.
+
+  # Cooksta (social media app) rank milestones — 12 checks
   include_cooksta: true
-  
-  # Cooksta followers needed (0-10000)
-  cooksta_followers_required: 10000
-  
-  # Include Ecowatcher (marine database) checks?
+
+  # Ecowatcher missions — 44 checks
   include_ecowatcher: true
-  
-  # Include Tako's photography missions?
+
+  # Tako's photography missions — 12 checks
   include_photography: true
-  
-  # Include in-game challenges? (Can be difficult!)
+
+  # In-game challenges (can be difficult!) — 9 checks
   include_challenges: false
-  
-  # Include vegetable garden farming?
+
+  # Vegetable farm harvesting — 13 checks
   include_farming: true
-  
-  # Include fish farm breeding/raising?
+
+  # Chicken farm (egg collection, coop upgrades) — 9 checks
+  include_chicken_farm: true
+
+  # Fish farm breeding milestones — 15 checks
   include_fish_farm: true
-  
-  # Include minigame completions?
+
+  # Minigames (seahorse racing, etc.) — 4 checks
   include_minigames: true
-  
+
+  # Duff's weapon shop crafting — 79 checks
+  include_weapon_shop: true
+
+  # ==================== DLC ====================
+  # Only enable DLC you actually own! Enabling DLC you don't have will add
+  # unreachable locations and softlock your game.
+  #
+  # DREDGE Content Pack (free) — adds aberration fish + Drain Gun
+  has_dredge_dlc: false
+
+  # Godzilla Content Pack (free, time-limited) — adds 2 recipe locations
+  has_godzilla_dlc: false
+
+  # Ichiban's Holiday Content Pack (paid)
+  has_ichiban_dlc: false
+
+  # In the Jungle Content Pack (paid, releases June 18 2026)
+  has_jungle_dlc: false
+
   # ==================== STARTING EQUIPMENT ====================
-  # How many progressive oxygen tank upgrades to start with (0-5)
+  # How many progressive upgrades to start with (saves early-game grind).
+
+  # Progressive Oxygen Tank upgrades to start with (0-5)
   starting_oxygen_level: 1
-  
-  # Which progressive harpoon to start with (0-3)
-  # 0 = none, 1 = basic, 2 = enhanced, 3 = advanced
+
+  # Progressive Harpoon upgrades to start with (0-3)
   starting_harpoon_level: 1
-  
-  # Which progressive diving suit to start with (0-3)
-  # 0 = none, 1 = basic, 2 = enhanced, 3 = deep sea
+
+  # Progressive Diving Suit level to start at (0-8)
+  # Levels 7-8 are the cold-resistant suit tiers needed for Glacier Zone
   starting_diving_suit_level: 1
-  
+
   # ==================== DIFFICULTY ====================
-  # How many oxygen upgrades needed for deep areas?
-  # Options: lenient (3), normal (4), strict (5)
+  # How many oxygen tank upgrades are required to reach deeper areas?
+  # Options: lenient | normal | strict
   oxygen_requirement: normal
-  
+
   # ==================== SPECIAL OPTIONS ====================
-  # Death Link: When you die, everyone dies
+  # Death Link: When you die, all linked players die too (and vice versa)
   death_link: false
-  
+
   # How teleport mirrors work
-  # Options: required, fast_travel_only
+  # Options: required | fast_travel_only
   teleport_behavior: required
-  
-  # Trap item frequency (not implemented yet)
-  # Options: none, low, medium, high
+
+  # Trap item frequency
+  # Options: none | low | medium | high
   trap_frequency: none

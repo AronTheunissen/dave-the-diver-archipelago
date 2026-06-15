@@ -63,8 +63,13 @@ and applies items received from the multiworld.
 - 3-tab in-game UI (F9): Connection · Hints · Progress
 - BepInEx config file, save/restore session state
 
-### 🔧 Phase 4 — Wire Up Game Internals (In Progress)
-The C# client needs real game class/method names to function.
+### ✅ Phase 4 — Wire Up Game Internals (Complete)
+All 17 Harmony patches now use real class/method names confirmed via dump.cs (Il2CppDumper).
+See `docs/CLASS_NAME_CHEAT_SHEET.md` for the full reference.
+
+### 🔧 Phase 5 — TID Mapping & ItemHandler (In Progress)
+The patches fire correctly but need design-sheet TID integers filled into the `*NameMapper`
+dictionaries, and `ItemHandler.cs` stubs need real `SaveData` API calls implemented.
 
 **Step 1 — Fill in class names (partially done)**
 Many class names are now confirmed from existing mod research:

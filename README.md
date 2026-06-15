@@ -6,10 +6,11 @@ An [Archipelago](https://archipelago.gg/) multiworld randomizer integration for 
 
 | Component | Status |
 |---|---|
-| APWorld (Python) | ✅ Complete — 1,134 locations, 276 items |
-| C# Client Mod | ✅ Skeleton complete — needs game class names wired up |
+| APWorld (Python) | ✅ Complete — 1,134 locations, 276 items, 55 tests passing |
+| C# Client Mod | ✅ Complete — all 17 patches wired with real class names |
+| Reverse Engineering | ✅ dump.cs analysed — all class/method names confirmed |
 | Player Setup Guide | ✅ See `docs/SETUP_GUIDE.md` |
-| Unit Tests | 🔧 Not yet written |
+| Unit Tests | ✅ 55/55 passing |
 | In the Jungle DLC | ⏳ Available June 18, 2026 |
 
 ## What's Randomized

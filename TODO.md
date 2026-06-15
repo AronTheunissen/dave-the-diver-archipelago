@@ -1,7 +1,7 @@
 # Dave the Diver Archipelago - TODO List
 
 > Last updated: June 15, 2026
-> Current status: APWorld complete, C# client skeleton complete, awaiting game internals to wire up patches
+> Current status: APWorld complete, C# client complete with real class names, awaiting TID mapping and in-game testing
 
 ---
 
@@ -24,6 +24,7 @@
 - [x] `should_include_item()` and `should_include_location()` filtering
 - [x] `fill_slot_data()` passing all 25 options to client
 - [x] 7 chapters with correct story structure
+- [x] Unit tests (55/55 passing)
 
 ### C# Client Mod
 - [x] Plugin entry point (BepInEx 6 IL2CPP)
@@ -38,134 +39,100 @@
 - [x] BepInEx config file support
 - [x] Save/restore session state
 - [x] SlotData parsing (all 25 options)
-- [x] 17 Harmony patch skeletons (all categories covered)
+- [x] 17 Harmony patches — **all real class names confirmed via dump.cs** ✅
 - [x] ItemHandler stubs for all 276 items
 - [x] LocationTracker stubs for all 1,134 locations
+
+### Reverse Engineering
+- [x] Generated dump.cs via Il2CppDumper on game machine
+- [x] Confirmed all 17 patch class/method names from dump.cs
+- [x] Updated `docs/CLASS_NAME_CHEAT_SHEET.md` with all confirmed names
+- [x] Identified key save data classes: `SaveData`, `SNSInfoSave`, `ChapterManager`, `MissionManager`
 
 ### Documentation
 - [x] `docs/SETUP_GUIDE.md` — player setup guide
 - [x] `docs/MODDING_NOTES.md` — reverse engineering guide
 - [x] `docs/DESIGN.md` — design decisions
+- [x] `docs/CLASS_NAME_CHEAT_SHEET.md` — all confirmed class names from dump.cs
 
 ---
 
 ## 🔴 CRITICAL — Blocking Actual Play
 
-### Fill in Harmony Patch Class Names
-The single biggest blocker. All 17 patches use PLACEHOLDER class names.
-**Requires:** `Assembly-CSharp.dll` from BepInEx/interop/ OR Il2CppDumper output.
-**See:** `docs/CLASS_NAME_CHEAT_SHEET.md` for exactly what to search for.
+### Fill in TID Mapper Dictionaries
+All patches have the correct classes and methods, but the `*NameMapper` dictionaries
+that map game design-sheet TID integers → AP location names are still empty.
 
-| Patch | Placeholder Class | Priority |
+**How to get TIDs:** Install **UnityExplorer** as a BepInEx plugin, run the game,
+and use the inspector to find TID values on live objects. Or search `dump.cs` for
+static const values near the relevant classes.
+
+| Mapper | Entries needed | File |
 |---|---|---|
-| `FishCatchPatch.cs` | `FishInteraction` | 🔴 High |
-| `BossDefeatedPatch.cs` | `BossManager` | 🔴 High |
-| `StoryProgressPatch.cs` | `MissionManager` | 🔴 High |
-| `RecipeUnlockPatch.cs` | `RecipeManager` | 🔴 High |
-| `WeaponCraftPatch.cs` | `WeaponShopManager` | 🔴 High |
-| `GameStatePatch.cs` | `BoatSceneManager` etc. | 🔴 High |
-| `PlayerDeathPatch.cs` | `OxygenSystem`, `PlayerCharacter` | 🔴 High |
-| `CookstaPatch.cs` | `CookstaManager` | 🟡 Medium |
-| `EcowatcherPatch.cs` | `EcowatcherManager` | 🟡 Medium |
-| `RestaurantPatch.cs` | `SushiBarManager` | 🟡 Medium |
-| `FarmPatch.cs` | `VegetableFarmManager` etc. | 🟡 Medium |
-| `ChallengePatch.cs` | `ChallengeManager` | 🟡 Medium |
-| `PhotographyPatch.cs` | `PhotographyManager` | 🟡 Medium |
-| `CollectiblePatch.cs` | `TreasureChest`, `TeleportPoint` etc. | 🟡 Medium |
-| `IngredientPatch.cs` | `IngredientObject`, `VendorManager` | 🟢 Low |
-| `MinigamePatch.cs` | `SeahorseRaceManager` etc. | 🟢 Low |
-| `CharmPatch.cs` | `CharmManager` | 🟢 Low |
-
-### Fill in ID Mapper Dictionaries
-Each patch has a `*NameMapper` dictionary that maps game internal IDs → AP location names.
-All are empty (commented-out examples only). Needs actual game IDs from Il2CppDumper.
-
-- [ ] FishNameMapper (~200 entries)
-- [ ] BossNameMapper (16 entries)
-- [ ] WeaponNameMapper (~80 entries)
-- [ ] RecipeNameMapper (~100 entries)
-- [ ] QuestNameMapper (~20 entries)
-- [ ] CharmMapper (8 entries)
-- [ ] ChallengeNameMapper (9 entries)
-- [ ] VIPNameMapper (6 entries)
+| `FishNameMapper._map` | ~200 entries (GameObject name → fish name) | `FishCatchPatch.cs` ✅ Already populated! |
+| `BossNameMapper._map` | 16 entries (scene name substring → boss name) | `BossDefeatedPatch.cs` ✅ Already populated! |
+| `WeaponNameMapper._idMap` | ~79 entries (craft TID → weapon name) | `WeaponCraftPatch.cs` |
+| `RecipeNameMapper._map` | ~54 entries (recipe TID → recipe name) | `RecipeUnlockPatch.cs` |
+| `QuestNameMapper._map` | ~20 entries (mission TID → quest name) | `StoryProgressPatch.cs` |
+| `ChallengeNameMapper._map` | 9 entries (mission TID → challenge name) | `ChallengePatch.cs` |
+| `IngredientNameMapper._map` | ~12 entries (ingredient TID → name) | `IngredientPatch.cs` |
+| `CharmMapper._map` | 8 entries (charm TID → name + source) | `CharmPatch.cs` |
 
 ### Implement ItemHandler Game API Calls
 All `ItemHandler.cs` methods are stubs. Need real SaveSystem API calls to actually give items to the player.
+**Class names are now confirmed from dump.cs — just need to call the right methods.**
 
-- [ ] `GiveWeapon()` — add weapon to Duff's shop / inventory
-- [ ] `UnlockRecipe()` — unlock recipe in restaurant
-- [ ] `UpgradeDish()` — apply dish research level
-- [ ] `GiveIngredient()` — add ingredient to inventory
+- [ ] `GiveWeapon()` — add weapon to Duff's shop / inventory via `SaveData`
+- [ ] `UnlockRecipe()` — unlock recipe via `SaveData.AddUnlockRecipeSaveData()`
+- [ ] `UpgradeDish()` — apply dish research level via `SaveData.UpdateUnlockRecipeSave()`
+- [ ] `GiveIngredient()` — add ingredient via `SaveData.AddIngredientsSaveData()`
 - [ ] `UpgradeDivingSuit()` / `UpgradeOxygenTank()` / `UpgradeHarpoon()` — iDiver upgrades
-- [ ] `UnlockRegion()` — unlock area (teleport/access)
-- [ ] `UpgradeCookstaRank()` — apply Cooksta rank
-- [ ] `GiveCharm()` — equip/unlock charm
-
-### Fix GoalTracker Bug
-- [ ] `GoalTracker.cs` line ~114: `_allMarincaComplete` variable declared but never initialized (should be `= false`)
+- [ ] `UnlockRegion()` — unlock area (teleport/access) via `SaveData`
+- [ ] `UpgradeCookstaRank()` — apply Cooksta rank via `SNSInfoSave`
+- [ ] `GiveCharm()` — equip/unlock charm via `LobbyCharmSwapPanel.AutoEquipCharmItem()`
 
 ---
 
 ## 🟡 IMPORTANT — Quality & Completeness
 
-### Unit Tests ✅ Complete (55/55 passing)
-- [x] Create `apworld/tests/` directory with `conftest.py` (Archipelago mock)
-- [x] Test ID uniqueness — no duplicate item IDs, no duplicate location IDs
-- [x] Test item/location ID collision detection (found and fixed 96 collisions!)
-- [x] Test `should_include_item()` filtering — all categories, DLC flags, traps
-- [x] Test `should_include_location()` filtering — fish 3-way, all toggles, DLC
-- [x] Test all location regions are valid (in REGION_NAMES)
-- [x] Test `fill_slot_data()` key coverage and value types
-- [ ] Test region access rules (can reach each region with correct items) — needs Archipelago State mock
-- [ ] Test victory conditions end-to-end — needs full world generation
+### Unit Tests (55/55 passing ✅)
+- [x] ID uniqueness, no duplicate IDs, no item/location collisions
+- [x] `should_include_item()` filtering — all categories, DLC flags, traps
+- [x] `should_include_location()` filtering — fish 3-way, all toggles, DLC
+- [x] All location regions valid (in REGION_NAMES)
+- [x] `fill_slot_data()` key coverage and value types
+- [ ] Test region access rules (needs Archipelago State mock)
+- [ ] Test victory conditions end-to-end (needs full world generation)
 
-### In the Jungle DLC Content (Available June 18, 2026)
+### In the Jungle DLC Content (Available June 18, 2026 — Thursday!)
 - [ ] New fish species (freshwater lake ecosystem)
-- [ ] New locations (Bancho Grill, Utara Village, jungle lake)
+- [ ] New locations (Bancho Grill, Utara Village, jungle lake, ancient temples)
 - [ ] New items (jungle ingredients, new recipes)
-- [ ] New regions (Jungle Lake, Bancho Grill, Utara Village)
+- [ ] New regions (Jungle Lake, Bancho Grill, Utara Village, Ancient Temple)
 - [ ] New goals or goal extensions
 - [ ] Tag all new content with `dlc_jungle` category
 
-### Connection UI Improvements
-- [ ] Auto-connect on game launch (config option already exists, UI toggle needed)
-- [ ] Better error messages for common connection failures
-- [ ] Server browser / recent servers list
+### In-Game Testing
+- [ ] Build mod on game machine (`dotnet build` in `client/DaveDiverAP/`)
+- [ ] Install and connect to a test Archipelago server
+- [ ] Verify fish catches trigger correctly
+- [ ] Verify boss defeats trigger correctly
+- [ ] Verify boat-only item delivery works
+- [ ] Verify goal completion fires correctly
 
 ---
 
 ## 🟢 NICE TO HAVE — Polish
 
+### Connection UI Improvements
+- [ ] Auto-connect on game launch (config option exists, needs UI toggle)
+- [ ] Better error messages for common connection failures
+- [ ] Server browser / recent servers list
+
 ### Spoiler Log Viewer
 - [ ] Add 4th tab to UI showing where your items are in the multiworld
-- [ ] Filter by item category
-
-### README Update
-- [ ] Update README.md to reflect current project state (it still shows the old skeleton structure)
-- [ ] Add screenshots of the in-game UI
 
 ### Archipelago Submission
 - [ ] Review Archipelago submission guidelines
 - [ ] Add `apworld/davethediver/data/` folder with any required data files
 - [ ] Register on Archipelago website
-
----
-
-## 📋 How to Get the Class Names (Tonight's Task)
-
-**Option A — BepInEx interop DLL (easiest):**
-1. Install BepInEx 6 on game machine, run game once
-2. Find `BepInEx/interop/Assembly-CSharp.dll`
-3. Open in dnSpy or ILSpy and search for class names
-4. See `docs/CLASS_NAME_CHEAT_SHEET.md` for what to search
-
-**Option B — Il2CppDumper:**
-1. Download Il2CppDumper from GitHub
-2. Run against `GameAssembly.dll` + `il2cpp_data/Metadata/global-metadata.dat`
-3. Share `dump.cs` — I can find all names from that file
-
-**Option C — Existing mods:**
-- Check https://github.com/WhiteMinds/dave-diver-expansion source code
-- Check https://github.com/devopsdinosaur/dave-the-diver-mods source code
-- Check https://github.com/Arutsuyo/SuperDave2.0 source code
-- These may already reveal some real class names!

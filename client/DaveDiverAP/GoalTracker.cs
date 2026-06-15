@@ -8,13 +8,11 @@ namespace DaveDiverAP
     /// sends the goal completion signal to the Archipelago server when met.
     ///
     /// Goals (matching options.py Goal values):
-    ///   0 = Defeat Yawie
-    ///   1 = Defeat All Bosses (Yawie + all 15 optional/story bosses)
-    ///   2 = Defeat Yawie + Cooksta 10,000 followers
-    ///   3 = Defeat Yawie + 5-star restaurant rating
-    ///   4 = Defeat Yawie + all Ecowatcher (Complete All Fish + Complete All Marinca)
-    ///   5 = Defeat Yawie + Complete MarinCa Collection
-    ///   6 = 100% (Yawie + all bosses + max Cooksta + 5-star + all Ecowatcher)
+    ///   0 = Defeat Yawie              — defeat the final boss
+    ///   1 = Defeat All Bosses         — Yawie + all 15 optional/story/vortex bosses
+    ///   2 = Diamond Rank              — Yawie + 720 followers + 375 best taste + 32 recipes
+    ///   3 = Master Diver              — Yawie + catch every fish species
+    ///   4 = 100% Completion           — all of the above combined
     ///
     /// Call the appropriate On*() method whenever the player achieves something.
     /// GoalTracker will check if the overall goal is now satisfied.
@@ -42,15 +40,27 @@ namespace DaveDiverAP
         public static int  CookstaBestTaste       => _cookstaBestTaste;
         public static int  CookstaResearchedRecipes => _cookstaResearchedRecipes;
 
-        // All 15 story + optional bosses required for goal 1
+        // All 16 bosses required for goal 1 (Defeat All Bosses).
+        // Names must match BossNameMapper output in BossDefeatedPatch.cs
+        // (prefixed with "Boss: " as returned by GetDisplayNameFromScene).
         private static readonly HashSet<string> AllBossNames = new()
         {
-            "Giant Squid", "Clione Queen", "Truck Hermit Crab",
-            "Giant Wolf Eel", "Goblin Shark", "Phantom Jellyfish",
-            "Giant Gadon", "Helicoprion", "Kronosaurus",
-            "John Watson", "Ebirah",
-            "Great White Shark Klaus", "Mantis Shrimp", "Lusca", "Torben",
-            "Yawie",
+            "Boss: Giant Squid",
+            "Boss: Clione Queen",
+            "Boss: Truck Hermit Crab",
+            "Boss: Giant Wolf Eel",
+            "Boss: Goblin Shark",
+            "Boss: Phantom Jellyfish",
+            "Boss: Giant Gadon",
+            "Boss: Helicoprion",
+            "Boss: Kronosaurus",
+            "Boss: John Watson",
+            "Boss: Ebirah",
+            "Boss: Klaus",
+            "Boss: Mantis Shrimp",
+            "Boss: Lusca",
+            "Boss: Torben",
+            "Boss: Yawie",
         };
 
         private static bool _goalCompleted = false;

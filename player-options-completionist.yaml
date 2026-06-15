@@ -1,40 +1,51 @@
 # Dave the Diver - Completionist Configuration
 # Experience EVERYTHING Dave the Diver has to offer!
+# Warning: This will take 100+ hours. You have been warned. 🐟
 
 name: Completionist
 
 game: Dave the Diver
 
 Dave the Diver:
-  # Goal: 100% Completion
+
+  # Goal: 100% Completion (all bosses + Diamond rank + all fish)
   goal: hundred_percent
-  
-  # ALL the checks!
+
+  # Every fish, every depth
   fish_checks: all
-  require_all_fish: true
-  
+
+  # Every dish researched to max level
   dish_upgrades: all
+
+  # Every recipe unlocked
   recipe_checks: all
-  require_all_recipes: true
-  restaurant_rating_required: 5
-  
-  # Include EVERYTHING
+
+  # Include ALL side content
   include_cooksta: true
-  cooksta_followers_required: 10000
   include_ecowatcher: true
   include_photography: true
   include_challenges: true
   include_farming: true
+  include_chicken_farm: true
   include_fish_farm: true
   include_minigames: true
-  
-  # Start with minimal equipment for full progression experience
-  starting_oxygen_level: 1
-  starting_harpoon_level: 1
+  include_weapon_shop: true
+
+  # DLC — enable what you own
+  has_dredge_dlc: false
+  has_godzilla_dlc: false
+  has_ichiban_dlc: false
+  has_jungle_dlc: false
+
+  # Start minimal for full progression experience
+  starting_oxygen_level: 0
+  starting_harpoon_level: 0
   starting_diving_suit_level: 1
-  
+
   # Normal difficulty
   oxygen_requirement: normal
-  
-  # Optional: Enable death link for extra challenge!
+
+  # Brave enough for Death Link?
   death_link: false
+
+  trap_frequency: none

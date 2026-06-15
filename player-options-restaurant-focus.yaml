@@ -1,42 +1,53 @@
-# Dave the Diver - Restaurant Tycoon Configuration
-# Focus on running the best sushi restaurant!
+# Dave the Diver - Diamond Rank Configuration
+# Run the best sushi restaurant and reach Cooksta Diamond rank!
 
 name: RestaurantTycoon
 
 game: Dave the Diver
 
 Dave the Diver:
-  # Goal: Restaurant perfection
-  goal: restaurant_tycoon
-  
-  # Focus on fish needed for recipes, not all fish
+
+  # Goal: Defeat Yawie AND reach Diamond rank
+  # (720 followers + 375 best taste + 32 researched recipes)
+  goal: diamond_rank
+
+  # Focus on fish needed for recipes, skip shallow common fish
   fish_checks: rare_only
-  require_all_fish: false
-  
-  # Lots of dish and recipe content
-  dish_upgrades: popular
+
+  # Lots of dish research — that's what Artisan's Flame is for!
+  dish_upgrades: all
+
+  # Every recipe unlock
   recipe_checks: all
-  require_all_recipes: true
-  restaurant_rating_required: 5
-  
-  # Include Cooksta (restaurant-focused)
+
+  # Cooksta is essential — it's literally in the goal!
   include_cooksta: true
-  cooksta_followers_required: 10000
-  
-  # Skip some diving-focused content
+
+  # Skip diving-focused content
   include_ecowatcher: false
-  include_photography: true
+  include_photography: true   # Tako's missions tie into restaurant quests
   include_challenges: false
-  
-  # Include farming (ingredients!)
+
+  # Include farming — fresh ingredients for dishes!
   include_farming: true
+  include_chicken_farm: true
   include_fish_farm: true
   include_minigames: true
-  
+
+  # Weapon shop — useful but not the focus
+  include_weapon_shop: false
+
+  # DLC — Godzilla adds 2 extra recipe locations if you have it
+  has_dredge_dlc: false
+  has_godzilla_dlc: false
+  has_ichiban_dlc: false
+  has_jungle_dlc: false
+
   # Standard starting equipment
   starting_oxygen_level: 1
   starting_harpoon_level: 1
   starting_diving_suit_level: 1
-  
+
   oxygen_requirement: normal
   death_link: false
+  trap_frequency: none
