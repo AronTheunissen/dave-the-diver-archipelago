@@ -42,19 +42,19 @@ namespace DaveDiverAP.Patches
     public static class CharmMapper
     {
         // Maps charm TID (integer) to (charm name, source mission) for AP location checking.
-        // CharmSpecData identified in dump.cs — TIDs from game design sheet.
-        // TODO: Cross-reference charm TIDs from the charm design data.
+        // TIDs confirmed via UnityExplorer CharmSpecData dump.
         private static readonly System.Collections.Generic.Dictionary<int, (string charm, string mission)> _map = new()
         {
-            // Example layout — replace with real TIDs:
-            // { 60001, ("Dolphin Necklace",      "Complete Defeat Pirates") },
-            // { 60002, ("Octopus Bracelet",      "Complete Investigate the Strange Coral") },
-            // { 60003, ("Sea People Bracelet",   "Complete Beyond the Rock Pile") },
-            // { 60004, ("Octopus Weapon Charm",  "Complete Octopus Returns") },
-            // { 60005, ("Sea People Necklace",   "Complete Deliver Key to Tenzhin") },
-            // { 60006, ("Shark Teeth Necklace",  "Complete Revenge Time!") },
-            // { 60007, ("Leo Keychain",          "Complete EVIL FACTORY Demo") },
-            // { 60008, ("Jimbo Coin",            "Complete Jimbo's Game Craze!") },
+            // ── Mission-acquired charms (base game) ──────────────────────────────
+            { 3017001, ("Dolphin Necklace",      "Complete Defeat Pirates") },
+            { 3017021, ("Octopus Bracelet",      "Complete Investigate the Strange Coral") },
+            { 3017031, ("Sea People Bracelet",   "Complete Beyond the Rock Pile") },
+            { 3017042, ("Octopus Weapon Charm",  "Complete Octopus Returns") },
+            { 3017011, ("Sea People Necklace",   "Complete Deliver Key to Tenzhin") },
+            { 3017044, ("Shark Teeth Necklace",  "Complete Revenge Time!") },
+            // ── DLC charms ───────────────────────────────────────────────────────
+            { 3017101, ("Leo Keychain",          "Complete EVIL FACTORY Demo") },
+            { 3017049, ("Jimbo Coin",            "Complete Jimbo's Game Craze!") },
         };
 
         public static (string? charm, string? mission) GetCharmInfo(int tid)
