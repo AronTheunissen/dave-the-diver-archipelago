@@ -11,7 +11,7 @@ An [Archipelago](https://archipelago.gg/) multiworld randomizer integration for 
 | Reverse Engineering | ✅ dump.cs analysed — all class/method names confirmed |
 | Player Setup Guide | ✅ See `docs/SETUP_GUIDE.md` |
 | Unit Tests | ✅ 55/55 passing |
-| In the Jungle DLC | ⏳ Available June 18, 2026 |
+| In the Jungle DLC | ⏳ Released June 18, 2026 — content integration in progress |
 
 ## What's Randomized
 
@@ -126,7 +126,7 @@ See **[DEVELOPMENT_GUIDE.md](DEVELOPMENT_GUIDE.md)** for detailed workflow and *
 | DREDGE Content Pack (free) | `has_dredge_dlc` | ✅ Implemented |
 | Godzilla Content Pack (free, time-limited) | `has_godzilla_dlc` | ✅ Implemented |
 | Ichiban's Holiday (paid) | `has_ichiban_dlc` | ⏳ Structure ready |
-| In the Jungle (paid, June 18 2026) | `has_jungle_dlc` | ⏳ Structure ready |
+| In the Jungle (paid, released June 18 2026) | `has_jungle_dlc` | ⏳ Content integration in progress |
 
 ## Resources
 

@@ -1,227 +1,151 @@
 # Dave the Diver — TID Recording Sheet
 
-Use this sheet during your UnityExplorer session to record the TID numbers needed
-to fill in the patch file dictionaries in the C# client mod.
+Use this sheet during your UnityExplorer session to record TID numbers.
 
 **How to open UnityExplorer:** Launch the game → press **F7**
+**How to use C# console:** UnityExplorer → C# Console tab → paste script → Run
 
 ---
 
-## ⚡ Fastest Approach: C# Console Dumps
+## ✅ Already Confirmed TIDs (from dump.cs / previous sessions)
 
-Before browsing manually, try these commands in the **C# Console** tab.
-Each one dumps a whole category at once — screenshot the output!
+### Boss Types (`EnumBossFishType`)
+These are confirmed from dump.cs — no UnityExplorer needed:
+```
+GiantSquid=1, HermitCrab=2, WolfFish=3, Clione=4, JW2=5,
+Gardon=6, MantisShrimp=7, GoblinShark=8, Helicoprion=9,
+GreatWhiteShark=10, Anomalocaris=11, Lusca=12, Ebirah=100
+Jungle DLC: Stethacanthus=201, Xiphactinus=202, Sulong=203, SnappingTurtle=204
+```
 
+### VIP Cooking TIDs (`VIPCookingScenarioDataList.VIP_TID`)
+```
+WangPang=9100017, Alex=9100018, Pastro=9100019
+```
+Note: Vincent, Michael Bang, Sammy have no cooking challenge — tracked via MissionManager.
+
+### Weapon Craft TIDs (from previous UnityExplorer sessions)
+Already filled in `WeaponCraftPatch.cs` — see `WeaponNameMapper._idMap`.
+
+### Recipe TIDs (from previous UnityExplorer sessions)
+Already filled in `RecipeUnlockPatch.cs` — see `RecipeNameMapper._map`.
+Format: `8050xxx` = raw fish sushi, `8051xxx` = cooked dishes, `8052xxx` = tuna bar.
+
+### Ingredient TIDs (from previous UnityExplorer sessions)
+Already filled in `IngredientPatch.cs` and `ItemHandler.cs`:
+```
+Sea Grape=1027101, Agar=1027102, Kajime=1027103, Kelp=1027104,
+Seaweed=1027106, Black Coral=1027107, Southern Bull Kelp=1027108,
+Buckbean=1027109, Bladderwrack=1027110, Hyalonema=1027111
+Truffle=1026011
+```
+
+### Charm TIDs (from previous UnityExplorer sessions)
+Already filled in `CharmPatch.cs`:
+```
+Dolphin Necklace=3017001, Sea People Necklace=3017011,
+Octopus Bracelet=3017021, Sea People Bracelet=3017031,
+Octopus Weapon Charm=3017042, Shark Teeth Necklace=3017044,
+Jimbo Coin=3017049, Leo Keychain=3017101
+```
+
+---
+
+## 🔴 Still Needed
+
+### 1. Quest / Story Mission TIDs
+**Where to find:** While playing a quest, run this in C# console:
 ```csharp
-// All unlocked recipe TIDs
-foreach (var kv in SaveData.Instance.GetAllUnlockRecipes())
-    UnityExplorer.ExplorerCore.Log($"{kv.Key} = {kv.Value}");
-
-// All mission TIDs (covers quests, challenges, ecowatcher)
-foreach (var m in MissionManager.Instance.GetAllMissions())
-    UnityExplorer.ExplorerCore.Log($"{m.TID} = {m.name}");
-
-// All charm TIDs
-foreach (var c in CharmSpecData.GetAll())
-    UnityExplorer.ExplorerCore.Log($"{c.TID} = {c.name}");
-
-// All ingredient TIDs
-foreach (var i in IngredientsData.GetAll())
-    UnityExplorer.ExplorerCore.Log($"{i.TID} = {i.name}");
+// Dump all active missions from MissionManager
+var mgr = MissionManager.Instance;
+var field = typeof(MissionManager).GetField("m_MissionList",
+    System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+if (field != null) {
+    var list = field.GetValue(mgr) as System.Collections.IEnumerable;
+    foreach (var m in list) {
+        var tid = m.GetType().GetField("m_ID")?.GetValue(m);
+        var name = m.GetType().GetField("m_MissionName")?.GetValue(m);
+        MelonLogger.Msg($"Mission TID={tid} Name={name}");
+    }
+}
 ```
-
-For **weapons**, go to Duff's shop and craft/browse — each craft fires
-`WeaponCraftTreeEventTrigger(craftID, row, col)` which will print to the
-BepInEx console log if you add a temporary log line to `WeaponCraftPatch.cs`.
-Alternatively, search for `GunSpecData` in Object Search.
-
----
-
-## 🔫 Weapons
-*Screen: Duff's weapon shop — search `GunSpecData` in Object Search*
-
-| Weapon Name | TID |
-|---|---|
-| Basic Underwater Rifle | |
-| Underwater Rifle II | |
-| Underwater Rifle III | |
-| Death Rifle | |
-| Flame Rifle I | |
-| Flame Rifle II | |
-| Explosive Rifle | |
-| Tranquilizer Rifle | |
-| Poison Rifle I | |
-| Poison Rifle II | |
-| Hell Poison Rifle | |
-| Lightning Rifle I | |
-| Lightning Rifle II | |
-| Shock Rifle I | |
-| Shock Rifle II | |
-| Thunderbolt Rifle | |
-| Small Net Gun | |
-| Medium Net Gun | |
-| Large Net Gun | |
-| Steel Net Gun | |
-| Hush Dart | |
-| Enhanced Hush Dart | |
-| Triple Axel | |
-| Quattro Axel | |
-| Quattro Axel II | |
-| Penta Axel | |
-| Flame Triple Axel | |
-| Flame Triple Axel II | |
-| Explosive Triple Axel | |
-| Tranquilizer Triple Axel | |
-| Poison Triple Axel | |
-| Poison Triple Axel II | |
-| Hell Poison Triple Axel | |
-| Lightning Triple Axel | |
-| Shock Triple Axel | |
-| Shock Triple Axel II | |
-| Thunderbolt Triple Axel | |
-| Red Sniper Rifle | |
-| Red Sniper Rifle II | |
-| RSR III | |
-| Death Sniper Rifle | |
-| Flame Sniper Rifle I | |
-| Flame Sniper Rifle II | |
-| Explosive Sniper Rifle | |
-| Tranquilizer Mosin-Nagant | |
-| Poison Sniper Rifle I | |
-| Poison Sniper Rifle II | |
-| Hell Poison Sniper Rifle | |
-| Lightning Sniper Rifle I | |
-| Lightning Sniper Rifle II | |
-| Shock Sniper Rifle I | |
-| Shock Sniper Rifle II | |
-| Thunderbolt Sniper Rifle | |
-| Sticky Bomb Gun | |
-| Sticky Bomb Gun II | |
-| Sticky Bomb Gun III | |
-| Sticky Mine Launcher I | |
-| Sticky Mine Launcher II | |
-| Sticky Tranquilizing Bomb Gun | |
-| Poison Mine Launcher | |
-| Poison Mine Launcher II | |
-| Lightning Mine Launcher I | |
-| Lightning Mine Launcher II | |
-| Shock Mine Launcher I | |
-| Shock Mine Launcher II | |
-| Grenade Launcher | |
-| Grenade Launcher II | |
-| Grenade Launcher III | |
-| Tranquilizer Gas Bomb Launcher | |
-| Poison Launcher | |
-| Gravity Launcher | |
-| Blackhole Launcher | |
-| Flash Grenade Launcher | |
-| Ice Gun | |
-| Enhanced Ice Gun | |
-| Ultra Ice Gun | |
-| Drain Gun | |
-| Enhanced Drain Gun | |
-| Power Drain Gun | |
-
----
-
-## 🍣 Recipes
-*Run the C# Console dump above while in the restaurant — it lists all at once.*
-*There are ~150 recipes so a dump is much faster than finding them one by one.*
-
-Paste the dump output here, or record individual ones below as needed:
-
-```
-(paste dump output here)
-```
-
----
-
-## 🎪 Challenges
-*Run the MissionManager dump above at the challenge board — filter results by name*
-
-| Challenge Name | TID |
-|---|---|
-| Challenge: Catch 5 Fish in 60 Seconds | |
-| Challenge: Catch 10 Fish in 90 Seconds | |
-| Challenge: Defeat 3 Bosses in One Dive | |
-| Challenge: Complete a Dive Without Taking Damage | |
-| Challenge: Catch a Fish of Every Type in One Dive | |
-| Challenge: Serve 10 Customers in One Night | |
-| Challenge: Earn 5,000 Bei in One Night | |
-| Challenge: Complete 3 VIP Orders | |
-| Challenge: Catch a Rank 9 Fish | |
-
----
-
-## 📖 Story Quests
-*Same MissionManager dump — look for quest/story entries*
+**Alternative:** Complete a quest and check BepInEx log for:
+`[VIP] CanProcessVIPShowdownResult: MissionClearTID=XXXX`
 
 | Quest Name | TID |
 |---|---|
-| Quest: Complete Duff's First Request | |
-| Quest: Help Dr. Bacon | |
-| Quest: Find the Sea People Village | |
-| Quest: Defeat the Cobra Gang | |
-| Quest: Deliver the Cargo Box | |
-| Quest: Win Sea People's Trust | |
-| Quest: Deliver Key to Tenzhin | |
-| Quest: Duff's Dream Concert | |
-| Quest: Serve All VIP Guests | |
-| Quest: Complete Otto's Gift | |
+| Complete Duff's First Request | ? |
+| Help Duff Investigate Blue Hole | ? |
+| Complete Dr. Bacon's First Request | ? |
+| Obtain Sea People Bracelet from Dr. Bacon | ? |
+| Obtain Bug Net from Dr. Bacon | ? |
+| Complete Cobra's First Request | ? |
+| Complete Cobra's VIP Challenge | ? |
+| Complete Bancho's Training | ? |
+| Complete A Noisy Customer (Unlock Fish Farm) | ? |
+| Gain Trust of Sea People | ? |
+| Complete Niamo's Request | ? |
+| Complete Linchen's Request | ? |
+| Complete Ramo's Request | ? |
+| Obtain Sea People Mirror (Teleport) | ? |
 
----
+### 2. Challenge Mission TIDs
+**Where to find:** Same MissionManager dump while at the challenge board.
 
-## 💎 Charms
-*Run the CharmSpecData dump above, or search `CharmSpecData` in Object Search*
-
-| Charm Name | TID |
+| Challenge Name | TID |
 |---|---|
-| Dolphin Necklace | |
-| Octopus Bracelet | |
-| Sea People Bracelet | |
-| Octopus Weapon Charm | |
-| Sea People Necklace | |
-| Shark Teeth Necklace | |
-| Leo Keychain | |
-| Jimbo Coin | |
-| Eco Poison Resist Bracelet | |
-| Eco Health Bracelet | |
-| Eco Gemstone Bracelet | |
-| Eco Waterproof Bag | |
+| (Need to list in-game challenge names) | ? |
 
----
+### 3. Ecowatcher Mission TIDs
+**Where to find:** Open Ecowatcher app, trigger a mission, check MissionManager.
 
-## 🌿 Ingredients
-*Run the IngredientsData dump above, or pick up a sea plant and search `IngredientsData`*
-
-| Ingredient Name | TID |
+| Mission Name | TID |
 |---|---|
-| Agar | |
-| Kajime | |
-| Seaweed | |
-| Kelp | |
-| Sea Grape | |
-| Bladderwrack | |
-| Hyalonema | |
-| Southern Bull Kelp | |
-| Black Coral | |
-| Buckbean | |
-| Truffle | |
-| Rainbow Cap | |
+| (Need to list in-game mission names) | ? |
 
----
+### 4. Rainbow Cap TID
+**Where to find:** Purchase from the mushroom vendor, check `AddIngredientsSaveData`:
+```csharp
+// Patch hook will log: OnIngredientCollected_Postfix called with id=XXXX
+// Or search in ObjectSearch for IngredientsData with name containing "Rainbow"
+```
 
-## 🍽️ VIP Guests
-*Serve a VIP in the restaurant and watch the MissionManager or SushiBarManager fire*
-
-| VIP Name | String ID / TID |
+| Ingredient | TID |
 |---|---|
-| Vincent Yamaoka | |
-| Gourmet Pastro | |
-| *(note down any others that appear)* | |
+| Rainbow Cap | ? |
 
 ---
 
-## 📝 Notes
-*(Use this space for anything unexpected you find)*
+## 📋 Quick C# Console Scripts
 
+### Dump All Missions (run at any time)
+```csharp
+// Paste in UnityExplorer C# Console
+var saveData = SaveSystem.Instance?.CurrentSaveData;
+// MissionManager approach — works if MissionManager is loaded
+```
+
+### Find Ingredient TID by Name
+```csharp
+// While holding the ingredient or after picking it up:
+// Check BepInEx log for: [Ingredient] AddIngredientsSaveData id=XXXX
+// The IngredientPatch hook logs this automatically
+```
+
+### Dump Ecowatcher Missions
+```csharp
+// Open the Ecowatcher app in-game, then:
+// Trigger a mission completion and watch BepInEx log for MissionManager.UpdateMission calls
+// The patch logs: type=X target=XXXX count=X
+```
+
+---
+
+## 📝 Notes / Session Log
+
+| Date | What was found | TIDs |
+|---|---|---|
+| 2026-06-19 | VIP cooking TIDs from dump.cs | WangPang=9100017, Alex=9100018, Pastro=9100019 |
+| 2026-06-19 | Boss types from EnumBossFishType enum | See above |
+| 2026-06-19 | Fish farm areas from FishFarmAreaType enum | A=1, B=2, C=3, D=4, E=5, F=6, G=7, H=8 |
+| 2026-06-19 | Seahorse race divisions | C=Easy, B=Medium, A=Hard, S=Expert |

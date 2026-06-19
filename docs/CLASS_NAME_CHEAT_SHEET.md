@@ -1,227 +1,267 @@
 # Dave the Diver — Harmony Patch Class Name Reference
 
-All class and method names confirmed via **dump.cs** (generated with Il2CppDumper on the
-`GameAssembly.dll` + `global-metadata.dat` from Dave the Diver v1.x, June 2026).
+All class and method names **confirmed via dump.cs** generated with Il2CppDumper on game version
+with Jungle DLC installed (dump dated 2026-06-19).
 
-## ✅ Fully Confirmed Classes & Methods
+---
 
-| Patch File | Class | Method | Notes |
+## ✅ Confirmed Patches & Hook Points
+
+| Patch File | Hook Class | Hook Method | Notes |
 |---|---|---|---|
-| `FishCatchPatch` | `FishInteractionBody` | `SuccessInteraction()` | All fish/item catches — MonoBehaviour with UnityEvent fields |
-| `BossDefeatedPatch` | `BossScene` | `FinishBossScene()` | Fires when boss HP reaches 0 and death sequence starts |
-| `PlayerDeathPatch` | `PlayerCharacter` | `OnDie()` | No-arg overload; covers both oxygen & damage death |
-| `WeaponCraftPatch` | `WeaponCraftTreeViewPanel` | `WeaponCraftTreeEventTrigger(int craftID, int row, int col)` | `WeaponCraftTreeEvent` struct: craftID, rowIndex, colIndex |
-| `RecipeUnlockPatch` | `SaveData` | `AddUnlockRecipeSaveData(int id, DateTime)` | Recipe unlock persisted here |
-| `RecipeUnlockPatch` | `SaveData` | `UpdateUnlockRecipeSave()` | Research level-up persisted here |
-| `StoryProgressPatch` | `ChapterManager` | `set_currentChapterInfo(ChapterInfo)` | Singleton; ChapterInfo has chapterNumber field |
-| `StoryProgressPatch` | `MissionManager` | `UpdateMission(MissionClearType, int target, int count, ...)` | Central hub for ALL missions; target = TID |
-| `GameStatePatch` | `LobbyPlayer` | `ChangeLobbyPlayerState(LobbyPlayer.LobbyPlayerState)` | `InBoat=12` enables item delivery; `Diving=5` disables |
-| `GameStatePatch` | `SushiBarManager` | `OnRestaurantStart()` | Singleton; additional restaurant disable guard |
-| `CookstaPatch` | `SNSInfoSave` | `set_followerCount(ObscuredInt)` | ObscuredInt — cast to int |
-| `CookstaPatch` | `SNSInfoSave` | `set_grade(ObscuredInt)` | Grade = rank (Bronze/Silver/Gold/Platinum/Diamond) |
-| `CookstaPatch` | `SNSInfoManager` | `CheckGradeConditionMessage(...)` | SingletonNoMono; fires on rank-up check |
-| `PhotographyPatch` | `LobbyPostRoutine` | `PhotoRewardSequence()` | Coroutine; fires after photo scored |
-| `ChallengePatch` | `MissionManager` | `UpdateMission(MissionClearType, int, int)` | Same as StoryProgress — filter by TID |
-| `EcowatcherPatch` | `EcoWatcherDeliverPopup` | `OnDREvent(...)` | Fires on deliver confirmation |
-| `EcowatcherPatch` | `EcoWatcherResearchRankUpPopup` | `OnDREvent(...)` | Fires on Ecowatcher level-up |
-| `FarmPatch` | `MVFarmFieldController` | `DoHarvest(int laneNum)` | Veg farm; also has `RequestSowSeed(int, int)` |
-| `FarmPatch` | `MVFarmHarvestPopupCtrler` | `OnEggCollected()` | Chicken farm egg collection popup |
-| `FarmPatch` | `FishFarmDynamicEnvironmentController` | `OnFishFarmUpgraded(int)` | Singleton; fish farm upgrades |
-| `MinigamePatch` | `SeahorseRaceSessionPlay` | `OnGoalPlayer()` | Sealed class; fires when player crosses finish line |
-| `CollectiblePatch` | `InstanceItemChest` | `SuccessInteraction()` | Confirmed — chests use same pattern as fish |
-| `IngredientPatch` | `SaveData` | `AddIngredientsSaveData(IngredientsData)` | Fires on any ingredient first pick-up or purchase |
-| `CharmPatch` | `LobbyCharmSwapPanel` | `AutoEquipCharmItem(int tid)` | tid = CharmSpecData TID |
-| `RestaurantPatch` | `SushiBarAnalyticsReportSequenceCookStar` | `DoSequence()` | Coroutine; fires after each restaurant service night |
+| `FishCatchPatch` | `FishInteractionBody` | `SuccessInteract(BaseCharacter)` | Fires on any fish interaction (carve/pickup/balloon) |
+| `BossDefeatedPatch` | `CommonBossDead` | `DoJob()` | Fires for ALL bosses via BossSceneSO job system |
+| `RecipeUnlockPatch` | `SaveData` | `AddUnlockRecipeSaveData(int, DateTime)` | Fires when a recipe is unlocked and saved |
+| `RecipeUnlockPatch` | `SaveData` | `UpdateUnlockRecipeSave()` | Fires when dish research level increases |
+| `WeaponCraftPatch` | `DREventTriggerManager` | `WeaponCraftTreeEventTrigger(int, int, int)` | Static method; craftID, row, col |
+| `StoryProgressPatch` | `ChapterManager` | `set_currentChapterInfo` | Fires when chapter changes |
+| `StoryProgressPatch` | `MissionManager` | `UpdateMission(MissionClearType, int, int, ...)` | Central hub for ALL mission updates |
+| `ChallengePatch` | `MissionManager` | `UpdateMission(MissionClearType, int, int, ...)` | Same hook — filter by challenge TID |
+| `EcowatcherPatch` | `EcoWatcherDeliverPopup` | `OnDREvent` | Fires on Ecowatcher delivery confirm |
+| `EcowatcherPatch` | `EcoWatcherResearchRankUpPopup` | `OnDREvent` | Fires on research rank up |
+| `CookstaPatch` | `SNSInfoSave` | `set_followerCount(ObscuredInt)` | Fires when follower count changes |
+| `CookstaPatch` | `SNSInfoSave` | `set_grade` | Fires when Cooksta grade changes |
+| `CookstaPatch` | `SNSInfoManager` | `CheckGradeConditionMessage()` | Re-evaluate rank-up conditions |
+| `PhotographyPatch` | `LobbyPostRoutine` | `PhotoRewardSequence` | Fires after photo is scored |
+| `FarmPatch` | `MVFarmFieldController` | `DoHarvest(int)` | Fires on any farm lane harvest |
+| `FarmPatch` | `SaveData.FarmSave` | `SetDailyHarvestItems()` | Fires at day start; populates daily harvest incl. eggs |
+| `FarmPatch` | `SaveData.FishFarmAreaSave` | `set_IsOpen(ObscuredBool)` | Fires when fish farm area is unlocked |
+| `MinigamePatch` | `SeahorseRaceSessionPlay` | `OnGoal(int lane)` | Fires when any racer finishes; filter lane==4 |
+| `CollectiblePatch` | `InstanceItemChest` | `SuccessInteract(BaseCharacter)` | Fires on chest open |
+| `PlayerDeathPatch` | `PlayerCharacter` | `OnDie()` (no args) | Public entry point for player death |
+| `RestaurantPatch` | `SushiBarAnalyticsReportSequenceCookStar` | `DoSequence` | Fires after each service night |
+| `RestaurantPatch` | `SushiBarManager` | `CanProcessVIPShowdownResult(out MissionData, out MissionConditionData, out VIPCustomer)` | Returns true when VIP result pending |
+| `GameStatePatch` | `LobbyPlayer` | `ChangeLobbyPlayerState(LobbyPlayer.LobbyPlayerState)` | InBoat=12, Diving=5 |
+| `GameStatePatch` | `SushiBarManager` | `OnEventSushiBarOpened()` | Fires when restaurant opens for service |
+| `IngredientPatch` | `SaveData` | `AddIngredientsSaveData(IngredientsData)` | Fires when ingredient added to save |
+| `CharmPatch` | `LobbyCharmSwapPanel` | `AutoEquipCharmItem(int tid)` | Fires when charm is auto-equipped on acquire |
 
 ---
 
-## 🔧 Still Needs TID Mapping (design sheet data)
+## 🔑 Key Classes & Fields
 
-These patches have the correct classes and methods but need the design sheet TID integers
-to map game events to AP location names. Get TIDs via **UnityExplorer** in-game or by
-searching the `dump.cs` for static const values near the relevant classes.
-
-| Patch | What to find | Where to look |
-|---|---|---|
-| `WeaponCraftPatch` | weapon craft TIDs → `_idMap` | Search dump.cs near `GunSpecData` |
-| `RecipeUnlockPatch` | recipe TIDs → `_map` | Search dump.cs near `UnlockRecipeSave` |
-| `StoryProgressPatch` | mission TIDs → `_map` | Search dump.cs near `MissionManager` |
-| `ChallengePatch` | challenge TIDs → `_map` | Same — filter by `MissionClearType` |
-| `IngredientPatch` | ingredient TIDs → `_map` | Search dump.cs near `IngredientsData` |
-| `CharmPatch` | charm TIDs → `_map` | Search dump.cs near `CharmSpecData` |
-
----
-
-## 📋 Key Class Reference (from dump.cs)
-
-### Player & Death
+### Boss System
 ```
-PlayerCharacter        : BaseCharacter, IDamageable ...
-  - public void OnDie()                            // ← HOOK THIS (no-arg overload)
-  - public void OnDie(DieAnimType dieType = 0)
+BossScene : DRMonoBehaviour                    // Base class for all boss encounters
+  static BossScene Current                     // Static ref to active boss scene
+  BossSceneSO bossSceneSO                     // ScriptableObject with boss data
+  EnumBossFishType bossType                    // Enum identifying boss type (see below)
+  
+CommonBossDead : BossSceneSO.JobStuff         // Job fired when boss dies — hook DoJob()
+EbirahBattleScene : BossScene                 // Ebirah-specific scene (has FinishBossScene())
+BossGardonScene : BossScene                   // Gardon-specific scene
+BossLuscaScene : BossScene                    // Lusca-specific scene
 
-PlayerBreathHandler    : MonoBehaviour, IHasHP
-  - private float m_HP  // 0x9C                   // oxygen HP; when 0 calls PlayerCharacter.OnDie()
+EnumBossFishType (int enum):
+  K99_Unknown=0, k00_Boss_GiantSquid=1, k01_Boss_HermitCrab=2,
+  k02_Boss_WolfFish=3, k03_Boss_Clione=4, k04_Boss_JW2=5,
+  k05_Boss_Gardon=6, k06_Boss_MantisShrimp=7, k07_Boss_GoblinShark=8,
+  k_Boss_Helicoprion=9, k_Boss_GreatWhiteShark=10, k_Boss_Anomalocaris=11,
+  k_Boss_Lusca=12, k_Boss_Ebirah=100,
+  Jungle DLC: k_BossStethacanthus=201, k_BossXiphactinus=202,
+              k_BossSulong=203, k_BossSnappingTurtle=204
 ```
 
 ### Fish Catching
 ```
-FishInteractionBody    : MonoBehaviour, IInteractionObject
-  - public UnityEvent SuccessPickupFish
-  - public UnityEvent SuccessCarving
-  - public override void SuccessInteraction()      // ← HOOK THIS
+FishInteractionBody : MonoBehaviour            // Attached to each fish in the world
+  void SuccessInteract(BaseCharacter player)  // Hook this — fires on catch/carve/balloon
+  UnityEvent SuccessPickupFish                // UnityEvent (don't hook directly)
+  UnityEvent SuccessCarving
 ```
 
-### Boss Fights
+### Recipe / Dish System
 ```
-BossScene              : DRMonoBehaviour
-  - public static BossScene Current
-  - public BossSceneSO bossSceneSO                 // SO name identifies the boss
-  - public void FinishBossScene()                  // ← HOOK THIS
-
-Boss controller subclasses of SABossControllerBase:
-  BossClioneController, BossWolffishController, BossGoblinSharkController,
-  BossGreatWhiteSharkController, BossHelicoprionController, HermitCrabController,
-  BossJW2Controller (John Watson ch4), BossJW3Controller (John Watson ch7),
-  BossLuscaController, BossMantisShrimpController, BossKronosaurus,
-  SABossAnomalocaris (Yawie), SABossEbirah, BossGiantGardonController
+SaveData                                       // Game's main save class (not our mod's)
+  void AddUnlockRecipeSaveData(int id, DateTime unlockTime)  // Hook: recipe unlocked
+  void UpdateUnlockRecipeSave()               // Hook: dish research level updated
+  bool IsUnlockRecipe(int id)                 // Query only — do NOT hook
+  Dictionary<int, UnlockRecipeSave> unlockRecipeData
+  
+UnlockRecipeSave                              // Per-recipe save data
 ```
 
 ### Weapon Crafting
 ```
-WeaponCraftTreeEvent (struct)
-  - int craftID    // weapon design sheet TID
-  - int rowIndex
-  - int colIndex
+DREventTriggerManager (static class)          // Central event trigger hub
+  static void WeaponCraftTreeEventTrigger(int craftID, int row, int col)  // Hook this
 
-WeaponCraftTreeViewPanel : DRMonoBehaviour, IDREventListener<WeaponCraftTreeEvent>
-  - public static void WeaponCraftTreeEventTrigger(int craftID, int row, int col)  // ← HOOK THIS
+WeaponCraftTreeViewPanel : DRMonoBehaviour    // UI panel — DO NOT hook here
+WeaponCraftTreePanel : DRMonoBehaviour        // Parent panel
 ```
 
-### Recipes & Research
+### Mission / Quest / Challenge System
 ```
-SaveData
-  - public void AddUnlockRecipeSaveData(int id, DateTime unlockTime)  // ← recipe unlock
-  - public void UpdateUnlockRecipeSave()                              // ← research level up
-  - public void AddIngredientsSaveData(IngredientsData data)          // ← ingredient first find
-  - public void RemoveIngredientsSaveData(int id)
-  - public Dictionary<int, UnlockRecipeSave> GetAllUnlockRecipes()
+MissionManager : Singleton<MissionManager>
+  static void UpdateMission(MissionClearType type, int target, int count,
+                            bool isSkipEnqueueDialogData, Predicate<MissionData> extraChecker,
+                            bool doNotUpdateCanvas)  // Hook this for quests + challenges
+  MissionClearCondition GetMissionClearCondition(int tid)
 
-UnlockRecipeSave : ISerializable
-  - private ObscuredInt m_UnlockRecipeID  // 0x10
+ChapterManager : Singleton<ChapterManager>
+  ChapterInfo currentChapterInfo { get; set; }  // Hook setter
+  
+MissionData
+  int MissionClearTID  // at offset 0x2C
 ```
 
-### Chapters & Missions
+### Seahorse Racing
 ```
-ChapterManager         : Singleton<ChapterManager>
-  - public ChapterInfo currentChapterInfo { get; set; }  // ← hook setter
-  - private List<ChapterInfo> _chapters
+SeahorseRaceSessionPlay : MonoBehaviour, ISessionPlay   // sealed class
+  void OnGoal(int lane)                       // Hook this — fires when any racer finishes
+  private IEnumerator OnGoalPlayer()          // Internal coroutine — do NOT hook
+  private SeahorseRaceSession _session        // at offset 0x70 — use Traverse to read
 
-MissionManager         : Singleton<MissionManager>, IEditorTime
-  - public static void UpdateMission(MissionClearType type, int target, int count,
-        bool isSkipEnqueueDialogData = false, Predicate<MissionData> extraChecker = null,
-        bool doNotUpdateCanvas = false)             // ← HOOK THIS (target = mission TID)
+SeahorseRaceSession                           // sealed class
+  SeahorseRaceTrackData trackData { get; }
+
+SeahorseRaceTrackData                         // sealed class
+  const int playerLane = 4                    // Player is always lane 4
+  SeahorseRaceTrackKey trackKey { get; }
+
+SeahorseRaceTrackKey
+  private SeahorseRaceTrackKey.Division _division  // Use Traverse to read
+  
+SeahorseRaceTrackKey.Division (enum):
+  C=0 (Easy), B=1 (Medium), A=2 (Hard), S=3 (Expert)
+```
+
+### Fish Farm
+```
+FishFarmManager : Singleton<FishFarmManager>
+SaveData.FishFarmSave                         // Fish farm save data
+SaveData.FishFarmAreaSave                     // Per-area save data
+  ObscuredInt AreaID                          // Matches FishFarmAreaType enum
+  ObscuredBool IsOpen                         // Hook set_IsOpen
+  
+FishFarmAreaType (enum):
+  None=0, A=1, B=2, C=3, D=4, E=5, F=6, G=7, H=8
+  
+FishFarmDynamicEnvironmentController : Singleton<FishFarmDynamicEnvironmentController>
+```
+
+### Vegetable / Chicken Farm
+```
+MVFarmFieldController                         // Manages farm field lanes
+  void DoHarvest(int laneNum)                 // Hook: vegetable harvest AND egg collection
+  void RequestSowSeed(int laneNum, int seedTID)
+
+SaveData.FarmSave
+  void SetDailyHarvestItems()                 // Hook: populates daily harvest (incl. eggs)
+  bool HasHarvestItemToClaim { get; set; }
+```
+
+### Restaurant / VIP
+```
+SushiBarManager : Singleton<SushiBarManager>
+  void OnEventSushiBarOpened()                // Hook: restaurant opens for service
+  bool CanProcessVIPShowdownResult(out MissionData missionData,
+       out MissionConditionData resultCondition, out VIPCustomer customer)
+  private IEnumerator ProcessVIPShowdownResult()  // Internal — don't hook
+
+VIPCustomer : SushiBarCustomer
+  string AssetKey                             // Identifies VIP character
+  MissionData m_LinkMissionData               // Linked mission
+
+VIPCookingScenarioDataList.VIP_TID (enum):
+  WangPang=9100017, Alex=9100018, Pastro=9100019
+
+SushiBarAnalyticsReportSequenceCookStar
+  IEnumerator DoSequence()                    // Hook: fires after each service night
 ```
 
 ### Cooksta / SNS
 ```
-SNSInfoSave            : ISerializable
-  - public ObscuredInt followerCount { get; set; }  // ← hook set_followerCount
-  - public ObscuredInt grade { get; set; }           // ← hook set_grade
-  - private ObscuredInt m_LikeCount  // 0x24
-
-SNSInfoManager         : SingletonNoMono<SNSInfoManager>
-  - public static void CheckGradeConditionMessage(...)  // ← HOOK THIS
-  - public static SNSGrade Grade { get; }
-
-LobbyPlayer.LobbyPlayerState enum:
-  Idle=0, Call=1, Die=2, Clear=3, MaskOffClear=4, Diving=5,
-  ThumbUp=6, MorningStart=7, AfternoonStart=8, EveningStart=9,
-  Memo=10, EnterBoat=11, InBoat=12    ← item delivery fires on InBoat=12
-```
-
-### Game State / Boat
-```
-LobbyPlayer            : MonoBehaviour
-  - public void ChangeLobbyPlayerState(LobbyPlayer.LobbyPlayerState state)  // ← HOOK THIS
-  - public LobbyPlayer.LobbyPlayerState CurrentState { get; }
-  - private LobbyPlayer.LobbyPlayerState m_State  // 0x68
-```
-
-### Farming
-```
-MVFarmFieldController  : MonoBehaviour
-  - public void DoHarvest(int laneNum)            // ← HOOK THIS (veg farm)
-  - public void RequestSowSeed(int laneNum, int seedTID)
-  - public MVFarmLaneLocker.LockStatus GetCurrentLaneLockState(int laneNum)
-
-MVFarmHarvestPopupCtrler : MonoBehaviour
-  - hook OnEggCollected()                         // ← HOOK THIS (chicken farm)
-
-FishFarmDynamicEnvironmentController : Singleton<FishFarmDynamicEnvironmentController>
-  - hook OnFishFarmUpgraded(int)                  // ← HOOK THIS (fish farm)
-```
-
-### Photography
-```
-PhotoZone              : MiniGameBase<PhotoZone.Data, PhotoZone.Result>
-  - public int photozoneTID
-  - public UnityEvent OnEnterPhotoMode / OnExitPhotoMode
-
-LobbyPostRoutine       : MonoBehaviour
-  - private IEnumerator PhotoRewardSequence()     // ← HOOK THIS
-  - internal Reward <PhotoRewardSequence>b__24_2(int elem)
-
-InteractionGimmick_PhotoZone : InteractionGimmick
-  - fires when player activates a photo zone
+SNSInfoSave
+  ObscuredInt followerCount { get; set; }     // Hook set_followerCount
+  
+SNSInfoManager : Singleton<SNSInfoManager>
+  void CheckGradeConditionMessage()           // Hook for recipe/grade checks
 ```
 
 ### Ecowatcher
 ```
 EcoWatcherDeliverPopup : MonoBehaviour, IOnDirectHandler_UI
-  - public EcoWatcherDeliverCell cell
-  - hook OnDREvent()                              // ← HOOK THIS (deliver confirmation)
+  // Hook OnDREvent — fires on delivery confirm
 
-EcoWatcherResearchRankUpPopup : MonoBehaviour, IOnDirectHandler_UI
-  - hook OnDREvent()                              // ← HOOK THIS (level-up popup)
+EcoWatcherResearchRankUpPopup : MonoBehaviour, IOnDirectHandler_UI  
+  // Hook OnDREvent — fires on research rank up
 ```
 
-### Charms
+### Photography
 ```
-LobbyCharmSwapPanel    : MonoBehaviour
-  - public void AutoEquipCharmItem(int tid)       // ← HOOK THIS
-  - public void AutoUnequipCharmItem(int tid)
-  - public int GetEquipCharmCount()
-
-CharmSpecData          : SpecDataBase
-  - public List<CharacterAbilityData> Abilitys
-```
-
-### Restaurant
-```
-SushiBarManager        : Singleton<SushiBarManager>
-
-SushiBarAnalyticsReportSequenceCookStar : SushiBarAnalyticsReportSequenceElement
-  - private SushiBarAnalyticsResult m_GainFollowerResult
-  - private UITextCounter m_GainFollowerCount
-  - IEnumerator DoSequence()                      // ← HOOK THIS (post-service night)
+LobbyPostRoutine
+  IEnumerator PhotoRewardSequence             // Hook — fires after photo is scored
+  
+PhotoZone : MiniGameBase<PhotoZone.Data, PhotoZone.Result>
+PhotoZoneEntity : PhotoZone                   // World instance
 ```
 
 ### Collectibles / Chests
 ```
-InstanceItemChest      : MonoBehaviour, IInteractionObject
-  - public void SuccessInteraction()              // ← HOOK THIS
-  - private bool IsOpen  // 0x63
+InstanceItemChest : MonoBehaviour, IInteractionObject
+  void SuccessInteract(BaseCharacter player)  // Hook: chest opened
 ```
 
-### Seahorse Racing
+### Player Death
 ```
-SeahorseRaceSessionPlay : MonoBehaviour, ISessionPlay (sealed class)
-  - IEnumerator OnGoalPlayer()                    // ← HOOK THIS (player finishes race)
-  - IEnumerator OnReturnToMenu_Impl()
-  - IEnumerator Start_Impl()
+PlayerCharacter
+  void OnDie()                                // Hook: no-arg overload = public entry point
+  void OnDie(PlayerCharacter.DieAnimType)     // Also exists — don't hook this one
+  
+PlayerBreathHandler                           // Manages oxygen HP (m_HP at 0x9C)
+```
 
-SeahorseRacerState_Finish : SeahorseRacerState   // win state
-SeahorseRacerState_Fail   : SeahorseRacerState_Finish  // lose state
-SeahorseRaceSession.Destination                  // finish line data
+### Game State
 ```
+LobbyPlayer : MonoBehaviour
+  void ChangeLobbyPlayerState(LobbyPlayer.LobbyPlayerState state)
+  
+LobbyPlayer.LobbyPlayerState (enum):
+  InBoat=12, Diving=5, MorningStart=7, AfternoonStart=8
+```
+
+### Ingredients
+```
+IngredientsStorage : SingletonNoMono<IngredientsStorage>
+  void AddIngredients(int ingredientsID, int count = 1, Place place = 0)  // Give ingredient
+
+IngredientsData                               // Game's ingredient data class
+  int ingredientsID                           // lowercase — NOT ObscuredInt
+  int level, parentID, rank
+  IngredientsType type
+  int[] counts
+```
+
+### Charms
+```
+LobbyCharmSwapPanel
+  void AutoEquipCharmItem(int tid)            // Hook: fires when charm acquired+auto-equipped
+  
+CharmSpecData                                 // Design data for each charm
+```
+
+---
+
+## 🚫 Classes That Do NOT Exist (old placeholder names)
+
+These names appeared in old docs but are **NOT in the game**:
+
+| Fake Name | What it actually is |
+|---|---|
+| `BossContainer` | `BossScene` / `CommonBossDead` |
+| `RecipeResearch` | `SaveData.AddUnlockRecipeSaveData` |
+| `DuffShop` | `PhoneAppList` constant (value 14060002) — just a UI app |
+| `DuffShopManager` | Does not exist |
+| `WeaponCraft` | `DREventTriggerManager.WeaponCraftTreeEventTrigger` |
+| `ChallengeManager` | `MissionManager` handles challenges too |
+| `CardGameManager` | Not confirmed — needs investigation |
+| `EcowatcherDatabase` | `EcoWatcherDeliverPopup` / `EcoWatcherResearchRankUpPopup` |
+| `SpeciesEntry` / `SpeciesUnlock` | Not found in dump |
+| `PhotoCamera` / `PhotoCapture` | `PhotoZone` / `LobbyPostRoutine.PhotoRewardSequence` |
+| `SeahorseRaceManager` | `SeahorseRaceSessionPlay` |
+| `RaceResult` | `SeahorseRaceSession.Destination` |
+| `VegetableGarden` | `MVFarmFieldController` |
+| `FishFarm` (class) | `FishFarmManager` / `FishFarmDynamicEnvironmentController` |
+| `ChickenFarm` (class) | `SaveData.FarmSave.SetDailyHarvestItems` |
+| `SNSPost` / `SNSLikes` | `SNSInfoSave.set_followerCount` |
