@@ -304,7 +304,8 @@ namespace DaveDiverAP
         private static bool IsWeapon(string name) =>
             name.Contains("Rifle") || name.Contains("Gun") || name.Contains("Launcher") ||
             name.Contains("Dart") || name.Contains("Axel") || name.Contains("Knife") ||
-            name.Contains("Bomb");
+            name.Contains("Bomb") || name.Contains("Sniper") || name.Contains("Ice Gun") ||
+            name.Contains("Drain Gun") || name.Contains("Thunderbolt");
 
         private static bool IsIngredient(string name) =>
             name.EndsWith(" x1") || name.EndsWith(" x2") || name.EndsWith(" x5") || name.EndsWith(" x10");
