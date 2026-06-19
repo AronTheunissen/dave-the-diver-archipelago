@@ -7,6 +7,29 @@ Use this sheet during your UnityExplorer session to record TID numbers.
 
 ---
 
+## 📋 TID Mapping Checklist
+
+| Mapper | File | Status | Notes |
+|---|---|---|---|
+| `BossNameMapper` | `BossDefeatedPatch.cs` | ✅ Complete | Uses `EnumBossFishType` enum — no TIDs needed |
+| `FishNameMapper` | `FishCatchPatch.cs` | ✅ Complete | Uses GameObject name substrings — no TIDs needed |
+| `WeaponNameMapper` | `WeaponCraftPatch.cs` | ✅ Complete | All weapon craft TIDs filled in |
+| `RecipeNameMapper` | `RecipeUnlockPatch.cs` | ✅ Complete | 300+ recipe TIDs mapped (8050xxx-8059xxx) |
+| `IngredientNameMapper` | `IngredientPatch.cs` | ✅ Complete | 10 sea plants + Truffle mapped |
+| `CharmMapper` | `CharmPatch.cs` | ✅ Complete | 8 charms mapped (3017xxx TIDs) |
+| `VIPNameMapper` | `RestaurantPatch.cs` | 🟡 Partial | WangPang/Alex/Pastro confirmed — **needs in-game verify** |
+| `QuestNameMapper` | `StoryProgressPatch.cs` | 🔴 Empty | All quest/story mission TIDs unknown |
+| `ChallengeNameMapper` | `ChallengePatch.cs` | 🔴 Empty | All challenge mission TIDs unknown |
+| Rainbow Cap TID | `IngredientPatch.cs` | 🔴 Unknown | Not found in dump.cs — needs in-game capture |
+
+**Priority order for in-game TID capture:**
+1. 🔴 Quest TIDs — complete a quest, read BepInEx log for `MissionManager.UpdateMission` calls
+2. 🔴 Challenge TIDs — complete a challenge, same approach
+3. 🟡 VIP TID verify — beat Wang Pang, read log for `[VIP] CanProcessVIPShowdownResult: MissionClearTID=XXXX`
+4. 🔴 Rainbow Cap — purchase from mushroom vendor, read log for `AddIngredientsSaveData id=XXXX`
+
+---
+
 ## ✅ Already Confirmed TIDs (from dump.cs / previous sessions)
 
 ### Boss Types (`EnumBossFishType`)
