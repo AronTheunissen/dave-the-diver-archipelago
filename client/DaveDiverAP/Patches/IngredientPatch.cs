@@ -29,8 +29,8 @@ namespace DaveDiverAP.Patches
             if (!ArchipelagoClient.IsConnected) return;
             if (data == null) return;
 
-            // Use the ingredient TID to look up the display name
-            var ingredientName = IngredientNameMapper.GetDisplayName(data.tid);
+            // Use the ingredient ID to look up the display name
+            var ingredientName = IngredientNameMapper.GetDisplayName(data.ingredientsID);
             if (ingredientName == null) return;
             if (_foundIngredients.Contains(ingredientName)) return;
 
@@ -45,13 +45,20 @@ namespace DaveDiverAP.Patches
         // TODO: Cross-reference ingredient TIDs from game design sheets.
         private static readonly System.Collections.Generic.Dictionary<int, string> _map = new()
         {
-            // Sea plants (diving):
-            // { 50001, "Agar" }, { 50002, "Kajime" }, { 50003, "Seaweed" },
-            // { 50004, "Kelp" }, { 50005, "Sea Grape" }, { 50006, "Bladderwrack" },
-            // { 50007, "Hyalonema" }, { 50008, "Southern Bull Kelp" }, { 50009, "Black Coral" },
-            // { 50010, "Buckbean" },
-            // Rare forageables (vendor):
-            // { 50011, "Truffle" }, { 50012, "Rainbow Cap" },
+            // Sea plants (diving) — Type: Vegetable in game data:
+            { 1027102, "Agar" },
+            { 1027103, "Kajime" },
+            { 1027106, "Seaweed" },
+            { 1027104, "Kelp" },
+            { 1027101, "Sea Grape" },
+            { 1027110, "Bladderwrack" },
+            { 1027111, "Hyalonema" },
+            { 1027108, "Southern Bull Kelp" },
+            { 1027107, "Black Coral" },
+            { 1027109, "Buckbean" },
+            // Rare forageables (vendor) — Truffle is Type: Seasoning, Rainbow Cap not in dump (may be missing):
+            { 1026011, "Truffle" },
+            // Rainbow Cap not found in dump — TID unknown, TODO when found
         };
 
         public static string? GetDisplayName(int tid) =>

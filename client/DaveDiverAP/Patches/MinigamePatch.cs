@@ -13,22 +13,36 @@ namespace DaveDiverAP.Patches
     public static class MinigamePatch
     {
         // ✅ CONFIRMED via dump.cs: SeahorseRaceSessionPlay is real (sealed class, implements ISessionPlay)
-        //    Methods confirmed: OnGoalPlayer (coroutine — fires when player reaches finish line)
-        //    SeahorseRacerState_Finish and SeahorseRacerState_Fail are the outcome states.
-        //    SeahorseRaceSession.Destination is the finish data class.
-        [HarmonyPatch(typeof(SeahorseRaceSessionPlay), "OnGoalPlayer")]
+        //    public void OnGoal(int lane) — fires when ANY racer reaches the finish line
+        //    private IEnumerator OnGoalPlayer() — coroutine called internally (NOT hookable by Harmony)
+        //    We hook OnGoal(int lane) and check if lane == playerLane (4, per SeahorseRaceTrackData.playerLane const)
+        //
+        //    Difficulty chain (all confirmed via dump.cs):
+        //    SeahorseRaceSessionPlay._session (offset 0x70) → SeahorseRaceSession
+        //    SeahorseRaceSession.trackData → SeahorseRaceTrackData
+        //    SeahorseRaceTrackData.trackKey → SeahorseRaceTrackKey
+        //    SeahorseRaceTrackKey._division → SeahorseRaceTrackKey.Division enum:
+        //        C = 0 (Easy), B = 1 (Medium), A = 2 (Hard), S = 3 (Expert)
+        [HarmonyPatch(typeof(SeahorseRaceSessionPlay), "OnGoal")]
         [HarmonyPostfix]
-        public static void OnSeahorseRaceWon_Postfix(string difficulty)
+        public static void OnSeahorseRaceWon_Postfix(SeahorseRaceSessionPlay __instance, int lane)
         {
             if (!ArchipelagoClient.IsConnected) return;
+            if (lane != 4) return;  // playerLane = 4 (const in SeahorseRaceTrackData)
 
-            // difficulty should be "Easy", "Medium", or "Hard"
-            var locationName = difficulty switch
+            // Walk the chain: _session → trackData → trackKey → division
+            var session = Traverse.Create(__instance).Field("_session").GetValue<SeahorseRaceSession>();
+            var trackData = session?.trackData;
+            var trackKey = trackData?.trackKey;
+            var division = Traverse.Create(trackKey).Field("_division").GetValue<SeahorseRaceTrackKey.Division>();
+
+            var locationName = division switch
             {
-                "Easy"   => "Beat Seahorse Racing - Easy",
-                "Medium" => "Beat Seahorse Racing - Medium",
-                "Hard"   => "Beat Seahorse Racing - Hard",
-                _        => null
+                SeahorseRaceTrackKey.Division.C => "Beat Seahorse Racing - Easy",
+                SeahorseRaceTrackKey.Division.B => "Beat Seahorse Racing - Medium",
+                SeahorseRaceTrackKey.Division.A => "Beat Seahorse Racing - Hard",
+                SeahorseRaceTrackKey.Division.S => "Beat Seahorse Racing - Expert",
+                _                               => null
             };
 
             if (locationName != null)

@@ -552,19 +552,24 @@ teleport_locations: Dict[str, LocationData] = {
 
 # === COLLECTIBLES & UPGRADES ===
 collectible_locations: Dict[str, LocationData] = {
+    # ✅ CONFIRMED via dump.cs: InstanceItemChest.SuccessInteract(BaseCharacter) is the hook
     "Find Treasure Chest 1": LocationData(BASE_ID + 950, "Blue Hole - Shallow"),
     "Find Treasure Chest 2": LocationData(BASE_ID + 951, "Blue Hole - Mid"),
-    "Purchase Upgrade from Duff 1": LocationData(BASE_ID + 960, "Bancho Sushi"),
-    "Purchase Upgrade from Duff 2": LocationData(BASE_ID + 961, "Bancho Sushi"),
-    # TODO: Add all treasure chests, shop purchases, etc.
+    # NOTE: "Purchase Upgrade from Duff" REMOVED — DuffShopManager class does NOT exist in the game.
+    # DuffShop is a PhoneAppList constant (value 14060002). Weapon crafting is already covered
+    # by WeaponCraftPatch.cs via DREventTriggerManager.WeaponCraftTreeEventTrigger.
+    # TODO: Add all treasure chests once chest locations are mapped
 }
 
 # === MINIGAMES ===
 minigame_locations: Dict[str, LocationData] = {
-    "Beat Seahorse Racing - Easy": LocationData(BASE_ID + 600, "Sea People Village", "minigame"),
+    # ✅ CONFIRMED via dump.cs: SeahorseRaceTrackKey.Division enum: C=0 (Easy), B=1 (Medium), A=2 (Hard), S=3 (Expert)
+    # Hook: SeahorseRaceSessionPlay.OnGoal(int lane), filter lane==4 (playerLane const), read _session.trackData.trackKey._division
+    "Beat Seahorse Racing - Easy":   LocationData(BASE_ID + 600, "Sea People Village", "minigame"),
     "Beat Seahorse Racing - Medium": LocationData(BASE_ID + 601, "Sea People Village", "minigame"),
-    "Beat Seahorse Racing - Hard": LocationData(BASE_ID + 602, "Sea People Village", "minigame"),
-    "Complete All Card Mini-games": LocationData(BASE_ID + 610, "Bancho Sushi", "minigame"),
+    "Beat Seahorse Racing - Hard":   LocationData(BASE_ID + 602, "Sea People Village", "minigame"),
+    "Beat Seahorse Racing - Expert": LocationData(BASE_ID + 603, "Sea People Village", "minigame"),
+    "Complete All Card Mini-games":  LocationData(BASE_ID + 610, "Bancho Sushi", "minigame"),
     # TODO: Add other minigames
 }
 
@@ -794,28 +799,27 @@ chicken_farm_locations: Dict[str, LocationData] = {
 # === FISH FARM ===
 # Fish farm management and breeding
 fish_farm_locations: Dict[str, LocationData] = {
-    # Fish farm unlocks
-    "Fish Farm: Unlock Fish Farm": LocationData(BASE_ID + 650, "Fish Farm", "fish_farm"),
-    "Fish Farm: Upgrade Tank 1": LocationData(BASE_ID + 651, "Fish Farm", "fish_farm"),
-    "Fish Farm: Upgrade Tank 2": LocationData(BASE_ID + 652, "Fish Farm", "fish_farm"),
-    "Fish Farm: Upgrade Tank 3": LocationData(BASE_ID + 653, "Fish Farm", "fish_farm"),
-    
-    # Breed/raise specific fish types
-    "Fish Farm: First Breed - Tuna": LocationData(BASE_ID + 660, "Fish Farm", "fish_farm"),
-    "Fish Farm: First Breed - Salmon": LocationData(BASE_ID + 661, "Fish Farm", "fish_farm"),
-    "Fish Farm: First Breed - Squid": LocationData(BASE_ID + 662, "Fish Farm", "fish_farm"),
-    "Fish Farm: First Breed - Octopus": LocationData(BASE_ID + 663, "Fish Farm", "fish_farm"),
-    "Fish Farm: First Breed - Rare Species": LocationData(BASE_ID + 664, "Fish Farm", "fish_farm"),
-    
-    # Fish farm milestones
+    # Fish farm area unlocks
+    # ✅ CONFIRMED via dump.cs: FishFarmAreaType enum: None=0, A=1, B=2, C=3, D=4, E=5, F=6, G=7, H=8
+    # The first area (A) is unlocked via the "A Noisy Customer" quest (covered in quest_locations).
+    # Areas B-H are purchased in-game. Base game likely uses A-D; E-H may be future/DLC content.
+    # Hook: SaveData.FishFarmAreaSave.set_IsOpen(ObscuredBool) in FarmPatch.cs
+    "Fish Farm: Unlock Area A": LocationData(BASE_ID + 651, "Fish Farm", "fish_farm"),
+    "Fish Farm: Unlock Area B": LocationData(BASE_ID + 652, "Fish Farm", "fish_farm"),
+    "Fish Farm: Unlock Area C": LocationData(BASE_ID + 653, "Fish Farm", "fish_farm"),
+    "Fish Farm: Unlock Area D": LocationData(BASE_ID + 654, "Fish Farm", "fish_farm"),
+    "Fish Farm: Unlock Area E": LocationData(BASE_ID + 655, "Fish Farm", "fish_farm"),
+    "Fish Farm: Unlock Area F": LocationData(BASE_ID + 656, "Fish Farm", "fish_farm"),
+    "Fish Farm: Unlock Area G": LocationData(BASE_ID + 657, "Fish Farm", "fish_farm"),
+    "Fish Farm: Unlock Area H": LocationData(BASE_ID + 658, "Fish Farm", "fish_farm"),
+
+    # Fish farm milestones (kept from original design)
     "Fish Farm: Raise 10 Fish to Adulthood": LocationData(BASE_ID + 670, "Fish Farm", "fish_farm"),
     "Fish Farm: Raise 25 Fish to Adulthood": LocationData(BASE_ID + 671, "Fish Farm", "fish_farm"),
     "Fish Farm: Raise 50 Fish to Adulthood": LocationData(BASE_ID + 672, "Fish Farm", "fish_farm"),
     "Fish Farm: Raise 5 Different Species": LocationData(BASE_ID + 673, "Fish Farm", "fish_farm"),
     "Fish Farm: Raise 10 Different Species": LocationData(BASE_ID + 674, "Fish Farm", "fish_farm"),
     "Fish Farm: Max Out Fish Quality": LocationData(BASE_ID + 675, "Fish Farm", "fish_farm"),
-    
-    # TODO: Add all farmable fish species
 }
 
 # === INGREDIENT FIRST-FINDS ===

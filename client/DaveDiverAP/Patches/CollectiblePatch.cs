@@ -58,16 +58,13 @@ namespace DaveDiverAP.Patches
         }
 
         // ── Duff shop purchases ───────────────────────────────────────────────
-        private static int _duffPurchases = 0;
-
-        [HarmonyPatch(typeof(DuffShopManager), "OnUpgradePurchased")]  // PLACEHOLDER
-        [HarmonyPostfix]
-        public static void OnDuffUpgradePurchased_Postfix()
-        {
-            if (!ArchipelagoClient.IsConnected) return;
-            _duffPurchases++;
-            if (_duffPurchases <= 2)
-                ArchipelagoClient.CheckLocation($"Purchase Upgrade from Duff {_duffPurchases}");
-        }
+        // ✅ CONFIRMED via dump.cs: "DuffShopManager" does NOT exist as a class.
+        //    DuffShop is a PhoneAppList constant (value 14060002) — it's a phone app, not a manager.
+        //    The Duff shop (weapon crafting shop) is WeaponCraftTreePanel / WeaponCraftTreeViewPanel.
+        //    Craft purchases are already covered by WeaponCraftPatch.cs via DREventTriggerManager.WeaponCraftTreeEventTrigger.
+        //    For upgrade shop (suit/oxygen/tank upgrades from Duff), search dump for "LobbyShop" or "UpgradeShop".
+        // TODO: Find the lobby upgrade shop class — search dump.cs for "suit upgrade", "LobbyShop", "EquipShop"
+        // Removing this placeholder patch to avoid compile errors.
+        // private static int _duffPurchases = 0;
     }
 }

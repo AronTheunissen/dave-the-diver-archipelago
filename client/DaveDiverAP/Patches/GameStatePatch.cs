@@ -67,8 +67,10 @@ namespace DaveDiverAP.Patches
         }
 
         // ── Restaurant / SushiBar (additional disable) ────────────────────────
-        // ✅ CONFIRMED via dump.cs: SushiBarManager is a Singleton — hook its start
-        [HarmonyPatch(typeof(SushiBarManager), "OnRestaurantStart")]
+        // ✅ CONFIRMED via dump.cs: SushiBarManager has private void OnStartOpeningSushiBar()
+        //    which fires when the restaurant opens for service each night.
+        //    Also public void OnEventSushiBarOpened() — the public event callback.
+        [HarmonyPatch(typeof(SushiBarManager), "OnEventSushiBarOpened")]
         [HarmonyPostfix]
         public static void OnRestaurantStart_Postfix()
         {

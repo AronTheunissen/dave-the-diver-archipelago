@@ -212,8 +212,63 @@ namespace DaveDiverAP
 
         private static void GiveIngredient(string ingredientName)
         {
-            Log.LogInfo($"Giving ingredient: {ingredientName}");
+            // Strip quantity suffix e.g. "Kelp x10" -> "Kelp", count = 10
+            int count = 1;
+            var name = ingredientName;
+            if (name.EndsWith(" x10")) { count = 10; name = name[..^4]; }
+            else if (name.EndsWith(" x5"))  { count = 5;  name = name[..^3]; }
+            else if (name.EndsWith(" x2"))  { count = 2;  name = name[..^3]; }
+            else if (name.EndsWith(" x1"))  { count = 1;  name = name[..^3]; }
+
+            if (!_ingredientIDs.TryGetValue(name, out var id))
+            {
+                Log.LogWarning($"Unknown ingredient: {name}");
+                return;
+            }
+
+            Log.LogInfo($"Giving {count}x {name} (ID={id})");
+            IngredientsStorage.Instance.AddIngredients(id, count, SushiBar.Place.Main);
         }
+
+        // Maps ingredient display name -> ingredientsID (from UnityExplorer dump)
+        private static readonly System.Collections.Generic.Dictionary<string, int> _ingredientIDs = new()
+        {
+            // Sea plants
+            { "Agar",              1027102 },
+            { "Kajime",            1027103 },
+            { "Seaweed",           1027106 },
+            { "Kelp",              1027104 },
+            { "Sea Grape",         1027101 },
+            { "Bladderwrack",      1027110 },
+            { "Hyalonema",         1027111 },
+            { "Southern Bull Kelp",1027108 },
+            { "Black Coral",       1027107 },
+            { "Buckbean",          1027109 },
+            // Rare forageables
+            { "Truffle",           1026011 },
+            // { "Rainbow Cap",    ?????  }, // TID unknown — TODO
+            // Farm vegetables
+            { "Rice",              1027002 },
+            { "Carrot",            1027001 },
+            { "Wheat",             1027004 },
+            { "Eggplant",          1027016 },
+            { "Garlic",            1027018 },
+            { "Grade A Egg",       1027017 },
+            { "Egg",               1027014 },
+            { "Habanero",          1027013 },
+            { "Cherry Tomato",     1027008 },
+            // Seasoning
+            { "Soy Sauce",         1026001 },
+            { "Olive Oil",         1026003 },
+            { "Black Vinegar",     1026002 },
+            { "Black Pepper",      1026004 },
+            { "Mayonnaise",        1026005 },
+            { "Curry Block",       1026006 },
+            { "Turmeric",          1026007 },
+            { "Salt",              1026008 },
+            { "Miso",              1026009 },
+            { "Sesame Seed",       1026010 },
+        };
 
         private static void UnlockAbility(string abilityKey)
         {

@@ -32,12 +32,12 @@ namespace DaveDiverAP.Patches
     public static class FishCatchPatch
     {
         // ✅ CONFIRMED via dump.cs: FishInteractionBody is the real class
-        // ✅ CONFIRMED via dump.cs: SuccessInteraction() is the real method name (not SuccessInteract)
+        // ✅ CONFIRMED via dump.cs: SuccessInteract(BaseCharacter player) is the real method name (not SuccessInteraction)
         // Fields confirmed in dump.cs: SuccessPickupFish (UnityEvent), SuccessCarving (UnityEvent)
         // Fish identity must be read from the parent fish AI object via __instance
-        [HarmonyPatch(typeof(FishInteractionBody), "SuccessInteraction")]
+        [HarmonyPatch(typeof(FishInteractionBody), "SuccessInteract")]
         [HarmonyPostfix]
-        public static void SuccessInteraction_Postfix(FishInteractionBody __instance)
+        public static void SuccessInteract_Postfix(FishInteractionBody __instance)
         {
             if (!ArchipelagoClient.IsConnected) return;
 

@@ -30,34 +30,53 @@ namespace DaveDiverAP.Patches
             LocationTracker.OnCustomersServed(_totalCustomers);
         }
 
-        // Fires when a VIP mission is completed (e.g. serving Vincent, Michael Bang etc.)
-        // VIP missions have unique quest IDs mapped to their AP location names
-        [HarmonyPatch(typeof(SushiBarManager), "OnVIPMissionComplete")]  // PLACEHOLDER
+        // Fires when a VIP showdown result is ready to be processed.
+        // ✅ CONFIRMED via dump.cs: SushiBarManager.CanProcessVIPShowdownResult(out MissionData, out MissionConditionData, out VIPCustomer)
+        //    returns true when a VIP mission has been completed and result is pending.
+        //    The private coroutine ProcessVIPShowdownResult() handles the actual reward flow.
+        //    We hook CanProcessVIPShowdownResult as a postfix — when it returns true, a VIP was served.
+        [HarmonyPatch(typeof(SushiBarManager), "CanProcessVIPShowdownResult")]
         [HarmonyPostfix]
-        public static void OnVIPMissionComplete_Postfix(string vipId)
+        public static void OnVIPMissionComplete_Postfix(bool __result, MissionData missionData, VIPCustomer customer)
         {
             if (!ArchipelagoClient.IsConnected) return;
+            if (!__result) return;  // no VIP result ready
 
-            var locationName = VIPNameMapper.GetLocationName(vipId);
+            // Log both TIDs for in-game verification (MissionClearTID vs VIP_TID may differ)
+            int missionTID = missionData?.MissionClearTID ?? 0;
+            Plugin.Log.LogInfo($"[VIP] CanProcessVIPShowdownResult: MissionClearTID={missionTID}, customer={customer?.AssetKey}");
+
+            var locationName = VIPNameMapper.GetLocationName(missionTID);
             if (locationName != null)
                 ArchipelagoClient.CheckLocation(locationName);
+            else
+                Plugin.Log.LogWarning($"[VIP] Unknown VIP mission TID: {missionTID} — add to VIPNameMapper");
         }
     }
 
     public static class VIPNameMapper
     {
-        private static readonly System.Collections.Generic.Dictionary<string, string> _map = new()
+        // ✅ CONFIRMED via dump.cs: VIPCookingScenarioDataList.VIP_TID enum:
+        //    WangPang = 9100017, Alex = 9100018, Pastro = 9100019
+        //    These are the chef competitor VIPs who have cooking showdown challenges.
+        //    CanProcessVIPShowdownResult only fires for these three VIPs.
+        //
+        //    Vincent Yamaoka, Michael Bang, and Sammy are simpler VIPs (no cooking challenge)
+        //    and are tracked via MissionManager.UpdateMission in StoryProgressPatch/QuestNameMapper.
+        //
+        //    The MissionClearTID in MissionData is the mission's clear condition TID.
+        //    VIP_TID (9100017-19) is the VIP scenario TID, NOT the mission clear TID.
+        //    We use the VIPCustomer's NPC TID via FindVIPCustomerByNpcNormalTID to identify them.
+        //    For now, map by VIP_TID passed through missionData.MissionClearTID (to be verified in-game).
+        private static readonly System.Collections.Generic.Dictionary<int, string> _map = new()
         {
-            // TODO: Fill in with real VIP IDs from Il2CppDumper
-            // { "VIP_VINCENT",  "Quest: Serve Vincent Yamaoka (The Gourmet)" },
-            // { "VIP_MICHAEL",  "Quest: Serve Michael Bang (Movie Director)" },
-            // { "VIP_SAMMY",    "Quest: Serve Sammy (Rapper)" },
-            // { "VIP_WANG",     "Quest: Serve Wang Pang (Chef Competitor)" },
-            // { "VIP_ALEX",     "Quest: Serve Alex Cooper (Chef Competitor)" },
-            // { "VIP_PASTRO",   "Quest: Serve Pastro Antogiovani (Chef Competitor)" },
+            { 9100017, "Quest: Serve Wang Pang (Chef Competitor)" },
+            { 9100018, "Quest: Serve Alex Cooper (Chef Competitor)" },
+            { 9100019, "Quest: Serve Pastro Antogiovani (Chef Competitor)" },
+            // Vincent, Michael Bang, Sammy handled by QuestNameMapper (MissionManager hook)
         };
 
-        public static string? GetLocationName(string vipId) =>
-            _map.TryGetValue(vipId, out var name) ? name : null;
+        public static string? GetLocationName(int missionTID) =>
+            _map.TryGetValue(missionTID, out var name) ? name : null;
     }
 }

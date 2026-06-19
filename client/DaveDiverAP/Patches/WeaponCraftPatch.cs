@@ -14,9 +14,9 @@ namespace DaveDiverAP.Patches
     {
         // ✅ CONFIRMED via dump.cs: WeaponCraftTreeEvent is a struct fired via DREventManager
         //    Fields: int craftID, int rowIndex, int colIndex
-        //    Trigger method: WeaponCraftTreeViewPanel.WeaponCraftTreeEventTrigger(int craftID, int row, int col)
-        // We hook WeaponCraftTreeEventTrigger on WeaponCraftTreeViewPanel (the UI panel class)
-        [HarmonyPatch(typeof(WeaponCraftTreeViewPanel), "WeaponCraftTreeEventTrigger")]
+        //    Trigger method: DREventTriggerManager.WeaponCraftTreeEventTrigger(int craftID, int row, int col)
+        //    DREventTriggerManager is a static class (TypeDefIndex: 2463) confirmed at line 94078 of dump.cs
+        [HarmonyPatch(typeof(DREventTriggerManager), "WeaponCraftTreeEventTrigger")]
         [HarmonyPostfix]
         public static void OnWeaponCrafted_Postfix(int craftID, int row, int col)
         {
