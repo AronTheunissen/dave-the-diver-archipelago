@@ -480,6 +480,191 @@ ichiban_locations: Dict[str, LocationData] = {
     "Ichiban: Find Hero's Bat":                    LocationData(BASE_ID + 884, "Blue Hole - Deep", "dlc_ichiban"),
 }
 
+# =====================================================================
+# === JUNGLE DLC LOCATIONS (dlc_jungle) ===
+# =====================================================================
+# IDs allocated in the BASE_ID + 1400–1999 range.
+# Fish locations are TODO — to be filled in once the full fish list is
+# available from the wiki. Placeholder entries are numbered for now.
+
+_J = BASE_ID + 4000  # Jungle DLC location base (dish upgrades end ~BASE_ID+3425, so 4000 is safe)
+
+# --- Jungle story chapters ---
+jungle_story_locations: Dict[str, LocationData] = {
+    "Jungle: Prologue - To a New Place":                    LocationData(_J + 0,  "Utara Village",      "dlc_jungle"),
+    "Jungle: Chapter 1 - The Village with Bad Food":        LocationData(_J + 1,  "Utara Village",      "dlc_jungle"),
+    "Jungle: Chapter 2 - Jungle Life!":                     LocationData(_J + 2,  "Utara Village",      "dlc_jungle"),
+    "Jungle: Chapter 3 - Diving Suit of the Sunang Civ":    LocationData(_J + 3,  "Setah Forest",       "dlc_jungle"),
+    "Jungle: Chapter 4 - The Sea Beneath the Lake":         LocationData(_J + 4,  "Lakebed Sea",        "dlc_jungle"),
+    "Jungle: Chapter 5 - Let's Head To The Jungle!":        LocationData(_J + 5,  "Utara Village",      "dlc_jungle"),
+    "Jungle: Chapter 6 - Welcome To The Jungle!":           LocationData(_J + 6,  "Utara Village",      "dlc_jungle"),
+    "Jungle: Chapter 7 - Find The Blue Divine Tree Fruit!": LocationData(_J + 7,  "Lakebed Sea",        "dlc_jungle"),
+    "Jungle: Epilogue":                                     LocationData(_J + 8,  "Utara Village",      "dlc_jungle"),
+}
+
+# --- Jungle boss defeats ---
+jungle_boss_locations: Dict[str, LocationData] = {
+    "Jungle Boss: Defeat Giant Snapping Turtle":  LocationData(_J + 20, "Utara Lake - Lower", "dlc_jungle"),
+    "Jungle Boss: Defeat Sulong":                 LocationData(_J + 21, "Utara Lake - Lower", "dlc_jungle"),
+    "Jungle Boss: Defeat Black Caiman":           LocationData(_J + 22, "Utara Lake - Upper", "dlc_jungle"),
+    "Jungle Boss: Defeat Stethacanthus":          LocationData(_J + 23, "Lakebed Sea",        "dlc_jungle"),
+    "Jungle Boss: Defeat Xiphactinus":            LocationData(_J + 24, "Lakebed Sea",        "dlc_jungle"),
+    "Jungle Boss: Defeat Basilosaurus":           LocationData(_J + 25, "Lakebed Sea",        "dlc_jungle"),
+}
+
+# --- Jungle staff unlocks ---
+jungle_staff_locations: Dict[str, LocationData] = {
+    "Jungle Staff: Unlock Yasuto":            LocationData(_J + 40, "Utara Village", "dlc_jungle"),
+    "Jungle Staff: Unlock Martin Tweed":      LocationData(_J + 41, "Utara Village", "dlc_jungle"),
+    "Jungle Staff: Unlock Rover":             LocationData(_J + 42, "Utara Village", "dlc_jungle"),
+    "Jungle Staff: Unlock Om Nom":            LocationData(_J + 43, "Utara Village", "dlc_jungle"),
+    "Jungle Staff: Unlock Charlie Bonnet III":LocationData(_J + 44, "Utara Village", "dlc_jungle"),
+    "Jungle Staff: Unlock William Longbottom":LocationData(_J + 45, "Utara Village", "dlc_jungle"),
+    "Jungle Staff: Unlock Mita":              LocationData(_J + 46, "Utara Village", "dlc_jungle"),
+    "Jungle Staff: Unlock Udo":               LocationData(_J + 47, "Utara Village", "dlc_jungle"),
+    "Jungle Staff: Unlock Sato":              LocationData(_J + 48, "Utara Village", "dlc_jungle"),
+}
+
+# --- Jungle villager friendship rewards (3-heart and 4-heart milestones) ---
+# 33 villagers with 2 reward tiers each = 66 checks
+# NOTE: Exact villager names to be confirmed in-game. Using known names from guides.
+# Key named villagers confirmed: Muna, Jaka, Bonita, Gesang, Chandra, Peneb, Lathi,
+# Cinta, Lipah, Marone, Eka, Bima, Saniah, Sato (pre-staff), Rimbo
+jungle_villager_locations: Dict[str, LocationData] = {
+    "Jungle Villager: Muna 3-Heart Reward":    LocationData(_J + 60, "Utara Village", "dlc_jungle"),
+    "Jungle Villager: Muna 4-Heart Reward":    LocationData(_J + 61, "Utara Village", "dlc_jungle"),
+    "Jungle Villager: Jaka 3-Heart Reward":    LocationData(_J + 62, "Utara Village", "dlc_jungle"),
+    "Jungle Villager: Jaka 4-Heart Reward":    LocationData(_J + 63, "Utara Village", "dlc_jungle"),
+    "Jungle Villager: Bonita 3-Heart Reward":  LocationData(_J + 64, "Utara Village", "dlc_jungle"),
+    "Jungle Villager: Bonita 4-Heart Reward":  LocationData(_J + 65, "Utara Village", "dlc_jungle"),
+    "Jungle Villager: Gesang 3-Heart Reward":  LocationData(_J + 66, "Utara Village", "dlc_jungle"),
+    "Jungle Villager: Gesang 4-Heart Reward":  LocationData(_J + 67, "Utara Village", "dlc_jungle"),
+    "Jungle Villager: Chandra 3-Heart Reward": LocationData(_J + 68, "Utara Village", "dlc_jungle"),
+    "Jungle Villager: Chandra 4-Heart Reward": LocationData(_J + 69, "Utara Village", "dlc_jungle"),
+    "Jungle Villager: Peneb 3-Heart Reward":   LocationData(_J + 70, "Utara Village", "dlc_jungle"),
+    "Jungle Villager: Peneb 4-Heart Reward":   LocationData(_J + 71, "Utara Village", "dlc_jungle"),
+    "Jungle Villager: Lathi 3-Heart Reward":   LocationData(_J + 72, "Utara Village", "dlc_jungle"),
+    "Jungle Villager: Lathi 4-Heart Reward":   LocationData(_J + 73, "Utara Village", "dlc_jungle"),
+    "Jungle Villager: Cinta 3-Heart Reward":   LocationData(_J + 74, "Utara Village", "dlc_jungle"),
+    "Jungle Villager: Cinta 4-Heart Reward":   LocationData(_J + 75, "Utara Village", "dlc_jungle"),
+    "Jungle Villager: Lipah 3-Heart Reward":   LocationData(_J + 76, "Utara Village", "dlc_jungle"),
+    "Jungle Villager: Lipah 4-Heart Reward":   LocationData(_J + 77, "Utara Village", "dlc_jungle"),
+    "Jungle Villager: Marone 3-Heart Reward":  LocationData(_J + 78, "Utara Village", "dlc_jungle"),
+    "Jungle Villager: Marone 4-Heart Reward":  LocationData(_J + 79, "Utara Village", "dlc_jungle"),
+    "Jungle Villager: Eka 3-Heart Reward":     LocationData(_J + 80, "Utara Village", "dlc_jungle"),
+    "Jungle Villager: Eka 4-Heart Reward":     LocationData(_J + 81, "Utara Village", "dlc_jungle"),
+    "Jungle Villager: Bima 3-Heart Reward":    LocationData(_J + 82, "Utara Village", "dlc_jungle"),
+    "Jungle Villager: Bima 4-Heart Reward":    LocationData(_J + 83, "Utara Village", "dlc_jungle"),
+    "Jungle Villager: Saniah 3-Heart Reward":  LocationData(_J + 84, "Utara Village", "dlc_jungle"),
+    "Jungle Villager: Saniah 4-Heart Reward":  LocationData(_J + 85, "Utara Village", "dlc_jungle"),
+    "Jungle Villager: Rimbo 3-Heart Reward":   LocationData(_J + 86, "Utara Village", "dlc_jungle"),
+    "Jungle Villager: Rimbo 4-Heart Reward":   LocationData(_J + 87, "Utara Village", "dlc_jungle"),
+    # TODO: Add remaining ~18 villagers once confirmed in-game (IDs _J+88 to _J+123 reserved)
+}
+
+# --- Jungle minigames ---
+jungle_minigame_locations: Dict[str, LocationData] = {
+    "Jungle Minigame: Win First Beetle Battle":       LocationData(_J + 130, "Setah Forest",   "dlc_jungle"),
+    "Jungle Minigame: Win 5 Beetle Battles":          LocationData(_J + 131, "Setah Forest",   "dlc_jungle"),
+    "Jungle Minigame: Win 10 Beetle Battles":         LocationData(_J + 132, "Setah Forest",   "dlc_jungle"),
+    "Jungle Minigame: Complete Hide and Seek":        LocationData(_J + 133, "Utara Village",  "dlc_jungle"),
+    "Jungle Minigame: Complete Shooting Range":       LocationData(_J + 134, "Utara Village",  "dlc_jungle"),
+    "Jungle Minigame: Complete Duck Hunting":         LocationData(_J + 135, "Surga Falls",    "dlc_jungle"),
+    "Jungle Minigame: Complete Rope-Cutting Puzzle":  LocationData(_J + 136, "Murau Temple",   "dlc_jungle"),
+    "Jungle Minigame: First Land Fishing Catch":      LocationData(_J + 137, "Surga Falls",    "dlc_jungle"),
+}
+
+# --- Jungle insect catching (Insectagram) ---
+jungle_insect_locations: Dict[str, LocationData] = {
+    "Jungle Insectagram: First Bug Caught":           LocationData(_J + 150, "Utara Village",  "dlc_jungle"),
+    "Jungle Insectagram: 10 Bugs Caught":             LocationData(_J + 151, "Setah Forest",   "dlc_jungle"),
+    "Jungle Insectagram: 20 Bugs Caught":             LocationData(_J + 152, "Setah Forest",   "dlc_jungle"),
+    "Jungle Insectagram: 30 Bugs Caught (Complete)":  LocationData(_J + 153, "Surga Falls",    "dlc_jungle"),
+    "Jungle Insectagram: 50% Complete":               LocationData(_J + 154, "Utara Village",  "dlc_jungle"),
+    # NOTE: Full insect list (~30 species) to be verified in-game
+}
+
+# --- Jungle fish (first catch) — PLACEHOLDER ---
+# TODO: Fill in exact fish names and regions once wiki tables are available.
+# Research shows ~82 fish total across Upper Lake, Lower Lake, Lakebed Sea, and fishing spots.
+# Region assignments: Upper Lake (0-35m), Lower Lake (35-75m), Lakebed Sea, Surga Falls (rod)
+# Known species: Tilapia, Archerfish, Red/Brown/Green/Blue/Heckel Discus, Walking Catfish,
+#   Red-Bellied Piranha, Black Caiman (boss), Giant Freshwater Stingray, Electric Eel,
+#   Piraiba Catfish, Asian Arowana, Platinum Alligator Gar, Sockeye Salmon,
+#   Giant Snapping Turtle (boss), Fire Eel, Pirarucu, Ammonite, Orthoceras,
+#   Stethacanthus (boss), Xiphactinus (boss), Basilosaurus (boss)
+# IDs _J+200 to _J+399 reserved for fish first-catch locations.
+jungle_fish_locations: Dict[str, LocationData] = {
+    # === Utara Lake - Upper (0-35m) ===
+    # TODO: Replace placeholder names with real names from wiki
+    "First Catch: Tilapia":                  LocationData(_J + 200, "Utara Lake - Upper", "dlc_jungle"),
+    "First Catch: Archerfish":               LocationData(_J + 201, "Utara Lake - Upper", "dlc_jungle"),
+    "First Catch: Red Discus":               LocationData(_J + 202, "Utara Lake - Upper", "dlc_jungle"),
+    "First Catch: Brown Discus":             LocationData(_J + 203, "Utara Lake - Upper", "dlc_jungle"),
+    "First Catch: Green Discus":             LocationData(_J + 204, "Utara Lake - Upper", "dlc_jungle"),
+    "First Catch: Blue Discus":              LocationData(_J + 205, "Utara Lake - Upper", "dlc_jungle"),
+    "First Catch: Heckel Discus":            LocationData(_J + 206, "Utara Lake - Upper", "dlc_jungle"),
+    "First Catch: Walking Catfish":          LocationData(_J + 207, "Utara Lake - Upper", "dlc_jungle"),
+    "First Catch: Red-Bellied Piranha":      LocationData(_J + 208, "Utara Lake - Upper", "dlc_jungle"),
+    "First Catch: Neon Tetra":               LocationData(_J + 209, "Utara Lake - Upper", "dlc_jungle"),
+    # TODO: Add remaining upper lake species (IDs _J+210 to _J+249 reserved)
+
+    # === Utara Lake - Lower (35-75m) ===
+    "First Catch: Giant Freshwater Stingray": LocationData(_J + 250, "Utara Lake - Lower", "dlc_jungle"),
+    "First Catch: Electric Eel":              LocationData(_J + 251, "Utara Lake - Lower", "dlc_jungle"),
+    "First Catch: Piraiba Catfish":           LocationData(_J + 252, "Utara Lake - Lower", "dlc_jungle"),
+    "First Catch: Asian Arowana":             LocationData(_J + 253, "Utara Lake - Lower", "dlc_jungle"),
+    "First Catch: Platinum Alligator Gar":    LocationData(_J + 254, "Utara Lake - Lower", "dlc_jungle"),
+    "First Catch: Sockeye Salmon":            LocationData(_J + 255, "Utara Lake - Lower", "dlc_jungle"),
+    "First Catch: Fire Eel":                  LocationData(_J + 256, "Utara Lake - Lower", "dlc_jungle"),
+    "First Catch: Pirarucu":                  LocationData(_J + 257, "Utara Lake - Lower", "dlc_jungle"),
+    # TODO: Add remaining lower lake species (IDs _J+258 to _J+299 reserved)
+
+    # === Lakebed Sea (ancient ecosystem) ===
+    "First Catch: Ammonite":      LocationData(_J + 300, "Lakebed Sea", "dlc_jungle"),
+    "First Catch: Orthoceras":    LocationData(_J + 301, "Lakebed Sea", "dlc_jungle"),
+    # TODO: Add remaining lakebed species (IDs _J+302 to _J+349 reserved)
+
+    # === Surga Falls / Setah Forest (rod fishing) ===
+    # TODO: Add rod-fished species (IDs _J+350 to _J+399 reserved)
+}
+
+# --- Jungle ingredient first finds ---
+jungle_ingredient_locations: Dict[str, LocationData] = {
+    "Jungle First Find: Thai Chili":    LocationData(_J + 400, "Utara Village",      "dlc_jungle"),
+    "Jungle First Find: Palm Sugar":    LocationData(_J + 401, "Utara Village",      "dlc_jungle"),
+    "Jungle First Find: Calamansi":     LocationData(_J + 402, "Utara Lake - Upper", "dlc_jungle"),
+    "Jungle First Find: Lemongrass":    LocationData(_J + 403, "Utara Village",      "dlc_jungle"),
+    "Jungle First Find: Banana":        LocationData(_J + 404, "Setah Forest",       "dlc_jungle"),
+    "Jungle First Find: Pineapple":     LocationData(_J + 405, "Utara Village",      "dlc_jungle"),
+    "Jungle First Find: Dragon Fruit":  LocationData(_J + 406, "Utara Village",      "dlc_jungle"),
+    "Jungle First Find: Watermelon":    LocationData(_J + 407, "Utara Village",      "dlc_jungle"),
+    "Jungle First Find: Honeydew":      LocationData(_J + 408, "Utara Village",      "dlc_jungle"),
+    "Jungle First Find: Sunang Stone":  LocationData(_J + 409, "Lakebed Sea",        "dlc_jungle"),
+}
+
+# --- Jungle Bancho Grill milestones ---
+jungle_restaurant_locations: Dict[str, LocationData] = {
+    "Jungle: Open Bancho Grill":                  LocationData(_J + 420, "Bancho Grill", "dlc_jungle"),
+    "Jungle: Serve 10 Customers":                 LocationData(_J + 421, "Bancho Grill", "dlc_jungle"),
+    "Jungle: Serve 50 Customers":                 LocationData(_J + 422, "Bancho Grill", "dlc_jungle"),
+    "Jungle: Serve 100 Customers":                LocationData(_J + 423, "Bancho Grill", "dlc_jungle"),
+    "Jungle: Unlock Stir-fried Crocodile Tail":   LocationData(_J + 424, "Bancho Grill", "dlc_jungle"),
+}
+
+# --- Jungle exploration milestones ---
+jungle_exploration_locations: Dict[str, LocationData] = {
+    "Jungle: Reach Setah Forest":                 LocationData(_J + 440, "Setah Forest",       "dlc_jungle"),
+    "Jungle: Discover Murau Temple":              LocationData(_J + 441, "Murau Temple",        "dlc_jungle"),
+    "Jungle: Reach Surga Falls":                  LocationData(_J + 442, "Surga Falls",         "dlc_jungle"),
+    "Jungle: Discover Lakebed Sea":               LocationData(_J + 443, "Lakebed Sea",         "dlc_jungle"),
+    "Jungle: Unlock Machete Path (Pirarucu Area)":LocationData(_J + 444, "Utara Lake - Lower",  "dlc_jungle"),
+    "Jungle: Complete Marinca Bloom 50%":         LocationData(_J + 445, "Utara Village",       "dlc_jungle"),
+    "Jungle: Complete Marinca Bloom 100%":        LocationData(_J + 446, "Utara Village",       "dlc_jungle"),
+    "Jungle: Upgrade Purification Filter Tier 2": LocationData(_J + 447, "Utara Village",       "dlc_jungle"),
+    "Jungle: Upgrade Purification Filter Tier 3": LocationData(_J + 448, "Utara Village",       "dlc_jungle"),
+}
+
 recipe_unlock_locations.update({
     "Unlock Recipe: Seagrapes Jellyfish Sushi (Vincent)": LocationData(BASE_ID + 820, "Bancho Sushi", "recipe"),
     "Unlock Recipe: Tropical Fish Sushi Set (Michael Bang)": LocationData(BASE_ID + 821, "Bancho Sushi", "recipe"),
@@ -1071,6 +1256,16 @@ location_table: Dict[str, LocationData] = {
     **collectible_locations,
     **kaiju_figurine_locations,
     **ichiban_locations,
+    **jungle_story_locations,
+    **jungle_boss_locations,
+    **jungle_staff_locations,
+    **jungle_villager_locations,
+    **jungle_minigame_locations,
+    **jungle_insect_locations,
+    **jungle_fish_locations,
+    **jungle_ingredient_locations,
+    **jungle_restaurant_locations,
+    **jungle_exploration_locations,
     **minigame_locations,
     **ingredient_locations,
     **weapon_locations,

@@ -198,6 +198,124 @@ def set_rules(world):
         lambda state: state.has("Sea People's Trust", player)
     )
 
+    # === JUNGLE DLC RULES ===
+    # All jungle content requires the dlc_jungle option — locations are filtered
+    # out by should_include_location() when disabled, so rules only need to cover
+    # access ordering within the DLC itself.
+
+    # Utara Village — DLC entry point, always accessible once DLC is enabled
+    set_rule(
+        multiworld.get_entrance("Travel to Utara Village", player),
+        lambda state: True  # No extra gate — DLC option toggle handles it
+    )
+
+    # Bancho Grill — unlocked during Chapter 1
+    set_rule(
+        multiworld.get_entrance("Open Bancho Grill", player),
+        lambda state: state.has("Jungle Chapter 1 Complete", player)
+    )
+
+    # Utara Lake - Lower — requires Purification Filter tier 1
+    set_rule(
+        multiworld.get_entrance("Dive to Lower Lake", player),
+        lambda state: state.has("Progressive Purification Filter", player, 1)
+    )
+
+    # Lakebed Sea — requires Chapter 4 + Advanced Filter (tier 3)
+    set_rule(
+        multiworld.get_entrance("Enter Lakebed Sea", player),
+        lambda state: (
+            state.has("Jungle Chapter 4 Complete", player) and
+            state.has("Progressive Purification Filter", player, 3)
+        )
+    )
+
+    # Setah Forest — requires Chapter 3
+    set_rule(
+        multiworld.get_entrance("Enter Setah Forest", player),
+        lambda state: state.has("Jungle Chapter 3 Complete", player)
+    )
+
+    # Murau Temple — inside Setah Forest (Chapter 3+)
+    set_rule(
+        multiworld.get_entrance("Enter Murau Temple", player),
+        lambda state: state.has("Jungle Chapter 3 Complete", player)
+    )
+
+    # Surga Falls — gated behind sub-mission (Cinta quest)
+    set_rule(
+        multiworld.get_entrance("Reach Surga Falls", player),
+        lambda state: state.has("Jungle Chapter 2 Complete", player)
+    )
+
+    # Machete-gated area (Pirarucu zone in lower lake)
+    _set_location_rule(multiworld, player,
+        "Jungle: Unlock Machete Path (Pirarucu Area)",
+        lambda state: state.has("Machete", player)
+    )
+    _set_location_rule(multiworld, player,
+        "First Catch: Pirarucu",
+        lambda state: state.has("Machete", player)
+    )
+
+    # Bug-catching requires Bug Net
+    for loc_name in [
+        "Jungle Insectagram: First Bug Caught",
+        "Jungle Insectagram: 10 Bugs Caught",
+        "Jungle Insectagram: 20 Bugs Caught",
+        "Jungle Insectagram: 30 Bugs Caught (Complete)",
+        "Jungle Insectagram: 50% Complete",
+        "Jungle Staff: Unlock Udo",  # Requires 50% Insectagram
+    ]:
+        _set_location_rule(multiworld, player, loc_name,
+            lambda state: state.has("Bug Net", player)
+        )
+
+    # Land fishing requires Fishing Rod
+    _set_location_rule(multiworld, player,
+        "Jungle Minigame: First Land Fishing Catch",
+        lambda state: state.has("Fishing Rod", player)
+    )
+
+    # Marinca Bloom 50% required for Sato staff + Udo (handled via insectagram above for Udo)
+    _set_location_rule(multiworld, player,
+        "Jungle Staff: Unlock Sato",
+        lambda state: state.has("Bug Net", player)  # Requires 50 Marinca Bloom entries
+    )
+
+    # Temple access requires 3 villagers at 3-hearts (Villager Trust items)
+    _set_location_rule(multiworld, player,
+        "Jungle: Discover Murau Temple",
+        lambda state: state.has("Villager Trust", player, 3)
+    )
+    _set_location_rule(multiworld, player,
+        "Jungle: Chapter 3 - Diving Suit of the Sunang Civ",
+        lambda state: state.has("Villager Trust", player, 3)
+    )
+
+    # Boss sequence gates
+    _set_location_rule(multiworld, player,
+        "Jungle Boss: Defeat Stethacanthus",
+        lambda state: (
+            state.has("Jungle Chapter 4 Complete", player) and
+            state.has("Progressive Purification Filter", player, 3)
+        )
+    )
+    _set_location_rule(multiworld, player,
+        "Jungle Boss: Defeat Xiphactinus",
+        lambda state: (
+            state.has("Jungle Chapter 4 Complete", player) and
+            state.has("Progressive Purification Filter", player, 3)
+        )
+    )
+    _set_location_rule(multiworld, player,
+        "Jungle Boss: Defeat Basilosaurus",
+        lambda state: (
+            state.has("Jungle Chapter 7 Complete", player) and
+            state.has("Progressive Purification Filter", player, 3)
+        )
+    )
+
     # === VICTORY CONDITION ===
     set_completion_condition(world)
 

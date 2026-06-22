@@ -17,6 +17,17 @@ Region map:
           ├─> Glacier Zone [Route 3: teleport mirror + dest + cold suit + tech suit parts]
           ├─> Blue Hole - Deep [teleport back, QoL]
           └─> Fish Farm (unlocked via Otto's quest)
+
+  Jungle DLC (dlc_jungle):
+    Bancho Sushi
+      └─> Utara Village (always open once DLC started)
+            ├─> Bancho Grill (Chapter 1, new restaurant)
+            ├─> Utara Lake - Upper (0-35m, always open)
+            │     └─> Utara Lake - Lower (35-75m, Purification Filter)
+            │               └─> Lakebed Sea (story-gated Ch4+, Advanced Filter)
+            ├─> Setah Forest (Chapter 3+)
+            │     └─> Murau Temple (Chapter 3+)
+            └─> Surga Falls (sub-mission gated)
 """
 
 from BaseClasses import Region
@@ -41,6 +52,15 @@ REGION_NAMES = {
     "Jellyfish Basin",     # Vortex 1: jellyfish/squid/crab aberrations
     "Fog Coast",           # Vortex 2: eel/shark/barracuda aberrations
     "Black Cliff",         # Vortex 3: wreckfish/stonefish/sturgeon aberrations
+    # === JUNGLE DLC REGIONS ===
+    "Utara Village",       # Central hub of the jungle DLC
+    "Utara Lake - Upper",  # Freshwater lake 0-35m (always open once DLC started)
+    "Utara Lake - Lower",  # Freshwater lake 35-75m (requires Purification Filter tier 1)
+    "Lakebed Sea",         # Ancient underwater ecosystem (story-gated, Ch4+)
+    "Setah Forest",        # Jungle/temple area (Chapter 3+)
+    "Murau Temple",        # Ancient temple inside Setah Forest (Chapter 3+)
+    "Surga Falls",         # Waterfall area (sub-mission gated, bug catching spot)
+    "Bancho Grill",        # New jungle restaurant (replaces Bancho Sushi for jungle content)
 }
 
 
@@ -141,6 +161,38 @@ def create_regions(world):
 
     # ── Chicken Farm (same location as Vegetable Farm, separate unlock) ──────
     regions["Bancho Sushi"].connect(regions["Chicken Farm"], "Visit Chicken Farm")
+
+    # ── JUNGLE DLC REGIONS ───────────────────────────────────────────────────
+    # All jungle regions are gated behind the dlc_jungle option being enabled.
+    # When enabled, Utara Village connects from Bancho Sushi (travel to jungle).
+
+    # Bancho Sushi → Utara Village (DLC entry point)
+    regions["Bancho Sushi"].connect(regions["Utara Village"], "Travel to Utara Village")
+
+    # Utara Village → Bancho Grill (unlocked in Chapter 1 of DLC)
+    regions["Utara Village"].connect(regions["Bancho Grill"], "Open Bancho Grill")
+
+    # Utara Village → Utara Lake - Upper (always open once in village)
+    regions["Utara Village"].connect(regions["Utara Lake - Upper"], "Dive into Utara Lake")
+
+    # Utara Lake - Upper → Utara Lake - Lower (requires Purification Filter tier 1)
+    regions["Utara Lake - Upper"].connect(
+        regions["Utara Lake - Lower"], "Dive to Lower Lake"
+    )
+
+    # Utara Lake - Lower → Lakebed Sea (story-gated: Chapter 4 + Advanced Filter)
+    regions["Utara Lake - Lower"].connect(
+        regions["Lakebed Sea"], "Enter Lakebed Sea"
+    )
+
+    # Utara Village → Setah Forest (story-gated: Chapter 3)
+    regions["Utara Village"].connect(regions["Setah Forest"], "Enter Setah Forest")
+
+    # Setah Forest → Murau Temple (inside the forest, Chapter 3+)
+    regions["Setah Forest"].connect(regions["Murau Temple"], "Enter Murau Temple")
+
+    # Utara Village → Surga Falls (sub-mission gated)
+    regions["Utara Village"].connect(regions["Surga Falls"], "Reach Surga Falls")
 
     # ── Register all regions ─────────────────────────────────────────────────
     multiworld.regions += list(regions.values())

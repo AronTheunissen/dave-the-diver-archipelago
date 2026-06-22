@@ -458,6 +458,60 @@ filler_items: Dict[str, ItemData] = {
     # Farm ingredients — rare/spicy (×2 per item received)
     "Habanero x2":            ItemData(ITEM_BASE + 651, ItemClassification.filler),
     "Grade A Egg x2":         ItemData(ITEM_BASE + 652, ItemClassification.filler),
+
+    # === JUNGLE DLC FILLER ITEMS ===
+    # Jungle herbs/spices
+    "Thai Chili x5":          ItemData(ITEM_BASE + 660, ItemClassification.filler, category="dlc_jungle"),
+    "Palm Sugar x5":          ItemData(ITEM_BASE + 661, ItemClassification.filler, category="dlc_jungle"),
+    "Calamansi x5":           ItemData(ITEM_BASE + 662, ItemClassification.filler, category="dlc_jungle"),
+    "Lemongrass x5":          ItemData(ITEM_BASE + 663, ItemClassification.filler, category="dlc_jungle"),
+    # Jungle fruits (farmed)
+    "Pineapple x3":           ItemData(ITEM_BASE + 664, ItemClassification.filler, category="dlc_jungle"),
+    "Watermelon x3":          ItemData(ITEM_BASE + 665, ItemClassification.filler, category="dlc_jungle"),
+    "Honeydew x3":            ItemData(ITEM_BASE + 666, ItemClassification.filler, category="dlc_jungle"),
+    "Dragon Fruit x3":        ItemData(ITEM_BASE + 667, ItemClassification.filler, category="dlc_jungle"),
+    "Banana x5":              ItemData(ITEM_BASE + 668, ItemClassification.filler, category="dlc_jungle"),
+    # Jungle rare ingredients
+    "Sunang Stone x1":        ItemData(ITEM_BASE + 669, ItemClassification.filler, category="dlc_jungle"),
+}
+
+# === JUNGLE DLC ITEMS ===
+# Progression items for the Jungle DLC (dlc_jungle)
+
+jungle_progression_items: Dict[str, ItemData] = {
+    # --- Purification Filter (progressive, 3 tiers) ---
+    # Allows diving deeper into Utara Lake hazard zones
+    # Tier 1: Crude (basic), Tier 2: Improved (to 55m), Tier 3: Advanced (to 75m + Lakebed Sea)
+    # IDs start at ITEM_BASE + 800 to avoid all existing item ranges (max existing is ~700)
+    "Progressive Purification Filter": ItemData(ITEM_BASE + 800, ItemClassification.progression, count=3, category="dlc_jungle"),
+
+    # --- Jungle story key items ---
+    "Jungle Chapter 1 Complete":  ItemData(ITEM_BASE + 801, ItemClassification.progression, category="dlc_jungle"),
+    "Jungle Chapter 2 Complete":  ItemData(ITEM_BASE + 802, ItemClassification.progression, category="dlc_jungle"),
+    "Jungle Chapter 3 Complete":  ItemData(ITEM_BASE + 803, ItemClassification.progression, category="dlc_jungle"),
+    "Jungle Chapter 4 Complete":  ItemData(ITEM_BASE + 804, ItemClassification.progression, category="dlc_jungle"),
+    "Jungle Chapter 5 Complete":  ItemData(ITEM_BASE + 805, ItemClassification.progression, category="dlc_jungle"),
+    "Jungle Chapter 6 Complete":  ItemData(ITEM_BASE + 806, ItemClassification.progression, category="dlc_jungle"),
+    "Jungle Chapter 7 Complete":  ItemData(ITEM_BASE + 807, ItemClassification.progression, category="dlc_jungle"),
+
+    # --- Access/tool items ---
+    "Machete":                    ItemData(ITEM_BASE + 810, ItemClassification.progression, category="dlc_jungle"),  # Opens vine-blocked areas
+    "Bug Net":                    ItemData(ITEM_BASE + 811, ItemClassification.progression, category="dlc_jungle"),  # Required for insect catching
+    "Fishing Rod":                ItemData(ITEM_BASE + 812, ItemClassification.progression, category="dlc_jungle"),  # Land fishing + night fish
+    "Pickaxe":                    ItemData(ITEM_BASE + 813, ItemClassification.useful,      category="dlc_jungle"),  # Mining ore
+    "Axe":                        ItemData(ITEM_BASE + 814, ItemClassification.useful,      category="dlc_jungle"),  # Chopping trees for ingredients
+    "Laser Emitter":              ItemData(ITEM_BASE + 815, ItemClassification.useful,      category="dlc_jungle"),  # Collecting Sunang Stones
+    "Ancient Breathing Apparatus":ItemData(ITEM_BASE + 816, ItemClassification.progression, category="dlc_jungle"),  # Deep lake diving (Ch2)
+
+    # --- Jungle Gun (4 weapon forms, each unlocked separately) ---
+    "Jungle Rifle":               ItemData(ITEM_BASE + 820, ItemClassification.progression, category="dlc_jungle"),
+    "Jungle Shotgun":             ItemData(ITEM_BASE + 821, ItemClassification.useful,      category="dlc_jungle"),
+    "Jungle Sniper":              ItemData(ITEM_BASE + 822, ItemClassification.useful,      category="dlc_jungle"),
+    "Jungle Net Gun":             ItemData(ITEM_BASE + 823, ItemClassification.progression, category="dlc_jungle"),  # Needed for live captures
+
+    # --- Jungle villager friendship milestones (items received from NPC rewards) ---
+    # 3-heart rewards from key NPCs that gate content
+    "Villager Trust":             ItemData(ITEM_BASE + 830, ItemClassification.progression, count=3, category="dlc_jungle"),  # 3 needed to enter temple
 }
 
 # === TRAP ITEMS (Optional) ===
@@ -480,6 +534,7 @@ item_table: Dict[str, ItemData] = {
     **dish_upgrade_items,
     **filler_items,
     **trap_items,
+    **jungle_progression_items,
 }
 
 # Create lookup dictionaries
