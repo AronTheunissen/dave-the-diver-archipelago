@@ -1,7 +1,7 @@
 # Dave the Diver Archipelago - TODO List
 
-> Last updated: June 15, 2026
-> Current status: APWorld complete, C# client complete with real class names, awaiting TID mapping and in-game testing
+> Last updated: June 22, 2026
+> Current status: APWorld complete with full DLC content structure, C# client complete with real class names, awaiting TID mapping and in-game testing
 
 ---
 
@@ -9,22 +9,42 @@
 
 ### APWorld (Python)
 - [x] Core world class (`__init__.py`) with item pool, location placement, slot data
-- [x] 1,134 locations across 15 regions
-- [x] 276 items (fish, weapons, recipes, charms, ingredients, progressive equipment, etc.)
+- [x] 1,300+ locations across 23 regions (incl. all DLC)
+- [x] 300+ items (fish, weapons, recipes, charms, ingredients, progressive equipment, DLC items)
 - [x] 5 victory conditions (Defeat Yawie, All Bosses, Diamond Rank, Master Diver, 100%)
 - [x] Full logic rules with game-accurate region gating
-- [x] All fish species (203) placed in correct depth zones
-- [x] All weapon trees (79 variants across 9 weapons)
+- [x] All base game fish species (203) placed in correct depth zones
+- [x] All weapon trees (79 variants across 9 weapons + Jungle Gun 4 forms)
 - [x] All dish upgrades (549 checks) with correct max levels
 - [x] Cooksta rank system (5 ranks, 12 requirement checks)
 - [x] Ecowatcher missions (44 real checks from wiki data)
 - [x] Ingredient first-find checks + filler items
 - [x] Charm system (12 charms from missions + Ecowatcher)
-- [x] DLC support: DREDGE, Godzilla, Ichiban, Jungle toggles
 - [x] `should_include_item()` and `should_include_location()` filtering
 - [x] `fill_slot_data()` passing all 25 options to client
 - [x] 7 chapters with correct story structure
 - [x] Unit tests (55/55 passing)
+
+### DLC Content
+- [x] **DREDGE DLC** — Aberration vortex fish (34), Drain Gun tree, Leo Keychain, tagged `dlc_dredge`
+- [x] **Godzilla DLC** — 2 recipes + 20 Kaiju figurine checks (all regions, gated by Ebirah), tagged `dlc_godzilla`
+- [x] **Ichiban DLC** — 4 recipe unlocks + dish upgrades, Buckwheat crop, Beat 'Em Up, Karaoke, Hero's Bat, tagged `dlc_ichiban`
+- [x] **Jungle DLC structure** — 8 regions, 30+ items, 100+ location checks (see below for TODOs), tagged `dlc_jungle`
+
+### Jungle DLC (Structure Complete — Data TODOs Remain)
+- [x] 8 new regions: Utara Village, Bancho Grill, Utara Lake Upper/Lower, Lakebed Sea, Setah Forest, Murau Temple, Surga Falls
+- [x] 7 chapter + epilogue story checks
+- [x] 6 boss defeat checks (Caiman, Snapping Turtle, Sulong, Stethacanthus, Xiphactinus, Basilosaurus)
+- [x] 9 staff unlock checks (Yasuto, Martin Tweed, Rover, Om Nom, Charlie Bonnet III, William Longbottom, Mita, Udo, Sato)
+- [x] 28 villager friendship reward checks (14 confirmed villagers × 2 tiers)
+- [x] 8 minigame checks (beetle battles, hide & seek, shooting range, duck hunting, rope puzzle, land fishing)
+- [x] 5 Insectagram checks
+- [x] 20 fish first-catch placeholders (known species)
+- [x] 10 jungle ingredient first-find checks
+- [x] 5 Bancho Grill restaurant milestone checks
+- [x] 9 exploration milestone checks
+- [x] Progressive Purification Filter (3 tiers), Machete, Bug Net, Fishing Rod, Villager Trust, Jungle Gun forms
+- [x] Full logic rules (region gating, tool requirements, boss sequence)
 
 ### C# Client Mod
 - [x] Plugin entry point (BepInEx 6 IL2CPP)
@@ -40,8 +60,8 @@
 - [x] Save/restore session state
 - [x] SlotData parsing (all 25 options)
 - [x] 17 Harmony patches — **all real class names confirmed via dump.cs** ✅
-- [x] ItemHandler stubs for all 276 items
-- [x] LocationTracker stubs for all 1,134 locations
+- [x] ItemHandler stubs for all items
+- [x] LocationTracker stubs for all locations
 
 ### Reverse Engineering
 - [x] Generated dump.cs via Il2CppDumper on game machine
@@ -91,6 +111,34 @@ All `ItemHandler.cs` methods are stubs. Need real SaveSystem API calls to actual
 - [ ] `UpgradeCookstaRank()` — apply Cooksta rank via `SNSInfoSave`
 - [ ] `GiveCharm()` — equip/unlock charm via `LobbyCharmSwapPanel.AutoEquipCharmItem()`
 
+### In-Game Testing
+- [ ] Build mod on game machine (`dotnet build` in `client/DaveDiverAP/`)
+- [ ] Install and connect to a test Archipelago server
+- [ ] Verify fish catches trigger correctly
+- [ ] Verify boss defeats trigger correctly
+- [ ] Verify boat-only item delivery works
+- [ ] Verify goal completion fires correctly
+
+---
+
+## 🟡 IMPORTANT — Data To Fill In (Requires Playing)
+
+### Godzilla DLC
+- [ ] Confirm exact Kaiju figurine locations per region (currently estimated) — update `locations.py`
+
+### Jungle DLC — Fish & Recipes (~60 fish + all recipes still needed)
+Fill these in by pasting wiki data (same process as base game fish list):
+- [ ] Full fish list for Utara Lake Upper (IDs `_J+210` to `_J+249` reserved)
+- [ ] Full fish list for Utara Lake Lower (IDs `_J+258` to `_J+299` reserved)
+- [ ] Full fish list for Lakebed Sea (IDs `_J+302` to `_J+349` reserved)
+- [ ] Rod-fished species at Surga Falls / Setah Forest (IDs `_J+350` to `_J+399` reserved)
+- [ ] All Bancho Grill recipes (fish-catch unlocks + Artisan Flame research + VIP + rank)
+- [ ] Remaining ~18 villagers (IDs `_J+88` to `_J+123` reserved)
+- [ ] Dish upgrade checks for all Jungle recipes (same pattern as base game)
+
+### Base Game
+- [ ] Verify Ichiban DLC recipe unlock conditions (are they VIP quests or staff training?)
+
 ---
 
 ## 🟡 IMPORTANT — Quality & Completeness
@@ -103,22 +151,6 @@ All `ItemHandler.cs` methods are stubs. Need real SaveSystem API calls to actual
 - [x] `fill_slot_data()` key coverage and value types
 - [ ] Test region access rules (needs Archipelago State mock)
 - [ ] Test victory conditions end-to-end (needs full world generation)
-
-### In the Jungle DLC Content (Available June 18, 2026 — Thursday!)
-- [ ] New fish species (freshwater lake ecosystem)
-- [ ] New locations (Bancho Grill, Utara Village, jungle lake, ancient temples)
-- [ ] New items (jungle ingredients, new recipes)
-- [ ] New regions (Jungle Lake, Bancho Grill, Utara Village, Ancient Temple)
-- [ ] New goals or goal extensions
-- [ ] Tag all new content with `dlc_jungle` category
-
-### In-Game Testing
-- [ ] Build mod on game machine (`dotnet build` in `client/DaveDiverAP/`)
-- [ ] Install and connect to a test Archipelago server
-- [ ] Verify fish catches trigger correctly
-- [ ] Verify boss defeats trigger correctly
-- [ ] Verify boat-only item delivery works
-- [ ] Verify goal completion fires correctly
 
 ---
 
