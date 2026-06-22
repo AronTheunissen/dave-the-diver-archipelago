@@ -166,6 +166,9 @@ weapon_items: Dict[str, ItemData] = {
     # --- Melee weapons ---
     "Dive Knife":                       ItemData(_W + 79, ItemClassification.progression),
     "Upgraded Dive Knife":              ItemData(_W + 80, ItemClassification.useful),
+
+    # --- Ichiban DLC weapon ---
+    "Hero's Bat":                       ItemData(_W + 81, ItemClassification.useful, category="dlc_ichiban"),
 }
 
 # === AREA UNLOCK ITEMS (Specific Items) ===
@@ -445,7 +448,7 @@ filler_items: Dict[str, ItemData] = {
 
     # Farm ingredients — uncommon (×5 per item received)
     "Bean x5":                ItemData(ITEM_BASE + 644, ItemClassification.filler),
-    "Buckwheat x5":           ItemData(ITEM_BASE + 645, ItemClassification.filler),
+    "Buckwheat x5":           ItemData(ITEM_BASE + 645, ItemClassification.filler, category="dlc_ichiban"),
     "Carrot x5":              ItemData(ITEM_BASE + 646, ItemClassification.filler),
     "Cherry Tomato x5":       ItemData(ITEM_BASE + 647, ItemClassification.filler),
     "Eggplant x5":            ItemData(ITEM_BASE + 648, ItemClassification.filler),

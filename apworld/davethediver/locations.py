@@ -296,10 +296,10 @@ restaurant_milestones: Dict[str, LocationData] = {
 # Format: "Upgrade [Dish Name] to Level N"
 # Max levels sourced from the game wiki recipe table.
 
-def _dish_upgrades(dish: str, max_level: int, base: int) -> dict:
+def _dish_upgrades(dish: str, max_level: int, base: int, category: str = "dish_upgrade") -> dict:
     """Generate upgrade locations for a dish from level 2 to max_level."""
     return {
-        f"Upgrade {dish} to Level {lvl}": LocationData(base + (lvl - 2), "Bancho Sushi", "dish_upgrade")
+        f"Upgrade {dish} to Level {lvl}": LocationData(base + (lvl - 2), "Bancho Sushi", category)
         for lvl in range(2, max_level + 1)
     }
 
@@ -333,7 +333,7 @@ dish_upgrade_locations: Dict[str, LocationData] = {
     **_dish_upgrades("Dried Stingray",                        12, _D + 22*15),  # max 12
     **_dish_upgrades("Dumbo Takoyaki",                        9,  _D + 23*15),  # max 9
     **_dish_upgrades("Dusky Grouper Steak",                   7,  _D + 24*15),  # max 7
-    **_dish_upgrades("Eggplant Soba Oyaki",                   9,  _D + 25*15),  # max 9
+    **_dish_upgrades("Eggplant Soba Oyaki",                   9,  _D + 25*15, "dlc_ichiban"),  # max 9
     **_dish_upgrades("Falcatus Soybean Paste Soup",           7,  _D + 26*15),  # max 7
     **_dish_upgrades("Fried Habanero Fangtooth",              7,  _D + 27*15),  # max 7
     **_dish_upgrades("Fried Onion Cuttlefish",                7,  _D + 28*15),  # max 7
@@ -380,12 +380,12 @@ dish_upgrade_locations: Dict[str, LocationData] = {
     **_dish_upgrades("Shark Karaage",                         9,  _D + 69*15),  # max 9
     **_dish_upgrades("Smallspotted Dart Kajime Soup",         7,  _D + 70*15),  # max 7
     **_dish_upgrades("Smoked Atlantic Mackerel Scramble",     6,  _D + 71*15),  # max 6
-    **_dish_upgrades("Spear Squid Soba Futomaki",             9,  _D + 72*15),  # max 9
+    **_dish_upgrades("Spear Squid Soba Futomaki",             9,  _D + 72*15, "dlc_ichiban"),  # max 9
     **_dish_upgrades("Special Fried Shrimp Sushi",            1,  _D + 73*15),  # max 1 — no upgrades
     **_dish_upgrades("Steamed Kronosaurus Tongue",            1,  _D + 74*15),  # boss — no upgrades
     **_dish_upgrades("Steamed Wolf Eel",                      1,  _D + 75*15),  # boss — no upgrades
     **_dish_upgrades("Stellate Puffer Nicogori",              7,  _D + 76*15),  # max 7
-    **_dish_upgrades("Stingray Sashimi Cold Noodles",         9,  _D + 77*15),  # max 9
+    **_dish_upgrades("Stingray Sashimi Cold Noodles",         9,  _D + 77*15, "dlc_ichiban"),  # max 9
     **_dish_upgrades("Stir-Fried Hermit Crab and Seaweed",   1,  _D + 78*15),  # boss — no upgrades
     **_dish_upgrades("Stir-fried Habanero Lobster",          7,  _D + 79*15),  # max 7
     **_dish_upgrades("Striped Red Mullet Tangle Roll",        7,  _D + 80*15),  # max 7
@@ -404,6 +404,8 @@ dish_upgrade_locations: Dict[str, LocationData] = {
     **_dish_upgrades("Yawie Steamed Meat",                    1,  _D + 93*15),  # boss — no upgrades
     **_dish_upgrades("Yellowfin Tuna Steak",                  9,  _D + 94*15),  # max 9
     **_dish_upgrades("Atlantic Bonito Curry",                 12, _D + 3*15),   # max 12 (corrected from duplicate)
+    # --- Ichiban DLC dishes ---
+    **_dish_upgrades("Warm Atlantic Mackerel Soba",           9,  _D + 95*15, "dlc_ichiban"),  # max 9
 }
 # Filter out any entries that somehow have no upgrades (defensive)
 dish_upgrade_locations = {k: v for k, v in dish_upgrade_locations.items()}
@@ -431,6 +433,12 @@ recipe_unlock_locations: Dict[str, LocationData] = {
     "Unlock Recipe: Humphead Parrotfish Sushi": LocationData(BASE_ID + 817, "Bancho Sushi", "recipe"),
 
     # --- VIP mission recipes ---
+    # --- Ichiban DLC recipes ---
+    "Unlock Recipe: Stingray Sashimi Cold Noodles (Ichiban)": LocationData(BASE_ID + 877, "Bancho Sushi", "dlc_ichiban"),
+    "Unlock Recipe: Spear Squid Soba Futomaki (Ichiban)":     LocationData(BASE_ID + 878, "Bancho Sushi", "dlc_ichiban"),
+    "Unlock Recipe: Eggplant Soba Oyaki (Ichiban)":           LocationData(BASE_ID + 879, "Bancho Sushi", "dlc_ichiban"),
+    "Unlock Recipe: Warm Atlantic Mackerel Soba (Ichiban)":   LocationData(BASE_ID + 880, "Bancho Sushi", "dlc_ichiban"),
+
     # --- Godzilla DLC recipes ---
     "Unlock Recipe: Godzilla vs. Ebirah Curry": LocationData(BASE_ID + 855, "Bancho Sushi", "dlc_godzilla"),
     "Unlock Recipe: Ebirah Chasing Sashimi":    LocationData(BASE_ID + 856, "Bancho Sushi", "dlc_godzilla"),
@@ -462,6 +470,14 @@ kaiju_figurine_locations: Dict[str, LocationData] = {
     "Kaiju Figurine 18": LocationData(BASE_ID + 874, "Glacier Zone",         "dlc_godzilla"),
     "Kaiju Figurine 19": LocationData(BASE_ID + 875, "Hydrothermal Vents",   "dlc_godzilla"),
     "Kaiju Figurine 20": LocationData(BASE_ID + 876, "Hydrothermal Vents",   "dlc_godzilla"),
+}
+
+# === ICHIBAN DLC LOCATIONS ===
+ichiban_locations: Dict[str, LocationData] = {
+    "Ichiban: Complete Ichiban's Holiday Mission":  LocationData(BASE_ID + 881, "Bancho Sushi", "dlc_ichiban"),
+    "Ichiban: Complete Beat 'Em Up Minigame":       LocationData(BASE_ID + 882, "Bancho Sushi", "dlc_ichiban"),
+    "Ichiban: Complete Karaoke Minigame":           LocationData(BASE_ID + 883, "Bancho Sushi", "dlc_ichiban"),
+    "Ichiban: Find Hero's Bat":                    LocationData(BASE_ID + 884, "Blue Hole - Deep", "dlc_ichiban"),
 }
 
 recipe_unlock_locations.update({
@@ -797,7 +813,7 @@ farming_locations: Dict[str, LocationData] = {
     "Veg Farm: First Harvest - Wasabi": LocationData(BASE_ID + 1014, "Vegetable Farm", "farming"),
     "Veg Farm: First Harvest - Ginger": LocationData(BASE_ID + 1015, "Vegetable Farm", "farming"),
     "Veg Farm: First Harvest - Seaweed": LocationData(BASE_ID + 1016, "Vegetable Farm", "farming"),
-    "Veg Farm: First Harvest - Buckwheat": LocationData(BASE_ID + 1017, "Vegetable Farm", "farming"),
+    "Veg Farm: First Harvest - Buckwheat": LocationData(BASE_ID + 1017, "Vegetable Farm", "dlc_ichiban"),
     "Veg Farm: First Harvest - Perilla": LocationData(BASE_ID + 1018, "Vegetable Farm", "farming"),
 
     # Vegetable farm milestones
@@ -877,7 +893,7 @@ ingredient_locations: Dict[str, LocationData] = {
     # --- Farm ingredients (first harvest — separate from farm upgrade checks) ---
     "First Find: Rice":               LocationData(BASE_ID + 1312, "Vegetable Farm", "farming"),
     "First Find: Bean":               LocationData(BASE_ID + 1313, "Vegetable Farm", "farming"),
-    "First Find: Buckwheat":          LocationData(BASE_ID + 1314, "Vegetable Farm", "farming"),
+    "First Find: Buckwheat":          LocationData(BASE_ID + 1314, "Vegetable Farm", "dlc_ichiban"),
     "First Find: Carrot":             LocationData(BASE_ID + 1315, "Vegetable Farm", "farming"),
     "First Find: Cherry Tomato":      LocationData(BASE_ID + 1316, "Vegetable Farm", "farming"),
     "First Find: Cucumber":           LocationData(BASE_ID + 1317, "Vegetable Farm", "farming"),
@@ -1054,6 +1070,7 @@ location_table: Dict[str, LocationData] = {
     **fish_farm_locations,
     **collectible_locations,
     **kaiju_figurine_locations,
+    **ichiban_locations,
     **minigame_locations,
     **ingredient_locations,
     **weapon_locations,
