@@ -434,7 +434,34 @@ recipe_unlock_locations: Dict[str, LocationData] = {
     # --- Godzilla DLC recipes ---
     "Unlock Recipe: Godzilla vs. Ebirah Curry": LocationData(BASE_ID + 855, "Bancho Sushi", "dlc_godzilla"),
     "Unlock Recipe: Ebirah Chasing Sashimi":    LocationData(BASE_ID + 856, "Bancho Sushi", "dlc_godzilla"),
+}
 
+# Godzilla DLC: Kaiju figurines collectible after defeating Ebirah.
+# Figurines are scattered across the Blue Hole and can be collected post-Ebirah fight.
+kaiju_figurine_locations: Dict[str, LocationData] = {
+    "Kaiju Figurine 1":  LocationData(BASE_ID + 857, "Blue Hole - Shallow",  "dlc_godzilla"),
+    "Kaiju Figurine 2":  LocationData(BASE_ID + 858, "Blue Hole - Shallow",  "dlc_godzilla"),
+    "Kaiju Figurine 3":  LocationData(BASE_ID + 859, "Blue Hole - Shallow",  "dlc_godzilla"),
+    "Kaiju Figurine 4":  LocationData(BASE_ID + 860, "Blue Hole - Shallow",  "dlc_godzilla"),
+    "Kaiju Figurine 5":  LocationData(BASE_ID + 861, "Blue Hole - Shallow",  "dlc_godzilla"),
+    "Kaiju Figurine 6":  LocationData(BASE_ID + 862, "Blue Hole - Mid",      "dlc_godzilla"),
+    "Kaiju Figurine 7":  LocationData(BASE_ID + 863, "Blue Hole - Mid",      "dlc_godzilla"),
+    "Kaiju Figurine 8":  LocationData(BASE_ID + 864, "Blue Hole - Mid",      "dlc_godzilla"),
+    "Kaiju Figurine 9":  LocationData(BASE_ID + 865, "Blue Hole - Mid",      "dlc_godzilla"),
+    "Kaiju Figurine 10": LocationData(BASE_ID + 866, "Blue Hole - Mid",      "dlc_godzilla"),
+    "Kaiju Figurine 11": LocationData(BASE_ID + 867, "Blue Hole - Deep",     "dlc_godzilla"),
+    "Kaiju Figurine 12": LocationData(BASE_ID + 868, "Blue Hole - Deep",     "dlc_godzilla"),
+    "Kaiju Figurine 13": LocationData(BASE_ID + 869, "Blue Hole - Deep",     "dlc_godzilla"),
+    "Kaiju Figurine 14": LocationData(BASE_ID + 870, "Blue Hole - Deep",     "dlc_godzilla"),
+    "Kaiju Figurine 15": LocationData(BASE_ID + 871, "Blue Hole - Deep",     "dlc_godzilla"),
+    "Kaiju Figurine 16": LocationData(BASE_ID + 872, "Sea People Village",   "dlc_godzilla"),
+    "Kaiju Figurine 17": LocationData(BASE_ID + 873, "Sea People Village",   "dlc_godzilla"),
+    "Kaiju Figurine 18": LocationData(BASE_ID + 874, "Glacier Zone",         "dlc_godzilla"),
+    "Kaiju Figurine 19": LocationData(BASE_ID + 875, "Glacier Zone",         "dlc_godzilla"),
+    "Kaiju Figurine 20": LocationData(BASE_ID + 876, "Glacier Zone",         "dlc_godzilla"),
+}
+
+recipe_unlock_locations.update({
     "Unlock Recipe: Seagrapes Jellyfish Sushi (Vincent)": LocationData(BASE_ID + 820, "Bancho Sushi", "recipe"),
     "Unlock Recipe: Tropical Fish Sushi Set (Michael Bang)": LocationData(BASE_ID + 821, "Bancho Sushi", "recipe"),
     "Unlock Recipe: Vegetable Sushi (Sammy)": LocationData(BASE_ID + 822, "Bancho Sushi", "recipe"),
@@ -468,7 +495,7 @@ recipe_unlock_locations: Dict[str, LocationData] = {
     "Unlock Recipe: Nasu Dengaku (Cooksta Diamond)": LocationData(BASE_ID + 852, "Bancho Sushi", "recipe"),
     "Unlock Recipe: Dumbo Takoyaki (Cooksta Diamond)": LocationData(BASE_ID + 853, "Bancho Sushi", "recipe"),
     "Unlock Recipe: Great Barracuda Canape (Cooksta Diamond)": LocationData(BASE_ID + 854, "Bancho Sushi", "recipe"),
-}
+})
 
 # === BOSS BATTLES ===
 # All 14 bosses in the game
@@ -1023,6 +1050,7 @@ location_table: Dict[str, LocationData] = {
     **chicken_farm_locations,
     **fish_farm_locations,
     **collectible_locations,
+    **kaiju_figurine_locations,
     **minigame_locations,
     **ingredient_locations,
     **weapon_locations,

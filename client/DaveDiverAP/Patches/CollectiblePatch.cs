@@ -57,6 +57,27 @@ namespace DaveDiverAP.Patches
                 ArchipelagoClient.CheckLocation(locationName);
         }
 
+        // ── Godzilla DLC: Kaiju figurines ────────────────────────────────────
+        // Figurines are scattered across the Blue Hole after defeating Ebirah.
+        // Each figurine is a collectible item in the world — hook the same
+        // SuccessInteract pattern as treasure chests.
+        // TODO: Find the figurine-specific class name via Il2CppDumper.
+        //       Search dump.cs for: "KaijuFigurine", "GodzillaFigurine", "Figurine", "Kaiju"
+        //       It likely extends InstanceItemChest or a similar interactable.
+        private static int _figurineCount = 0;
+
+        // [HarmonyPatch(typeof(KaijuFigurine), "SuccessInteract")]  // TODO: confirm class name
+        // [HarmonyPostfix]
+        public static void KaijuFigurine_Postfix()
+        {
+            if (!ArchipelagoClient.IsConnected) return;
+            // Only active if Godzilla DLC is enabled in slot data
+            if (ArchipelagoClient.SlotData == null || !ArchipelagoClient.SlotData.HasGodzillaDLC) return;
+            _figurineCount++;
+            if (_figurineCount <= 20)
+                ArchipelagoClient.CheckLocation($"Kaiju Figurine {_figurineCount}");
+        }
+
         // ── Duff shop purchases ───────────────────────────────────────────────
         // ✅ CONFIRMED via dump.cs: "DuffShopManager" does NOT exist as a class.
         //    DuffShop is a PhoneAppList constant (value 14060002) — it's a phone app, not a manager.

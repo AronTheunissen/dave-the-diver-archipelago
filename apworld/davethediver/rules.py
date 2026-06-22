@@ -162,6 +162,15 @@ def set_rules(world):
         )
     )
 
+    # === GODZILLA DLC: KAIJU FIGURINE RULES ===
+    # All 20 figurines require defeating Ebirah first.
+    # The figurines also inherit their region access rules (depth/village/glacier).
+    for i in range(1, 21):
+        _set_location_rule(multiworld, player,
+            f"Kaiju Figurine {i}",
+            lambda state: state.has("Defeat: Ebirah", player)
+        )
+
     # === FARM ACCESS RULES ===
     # Each farm requires its unlock item to enter the region
 
