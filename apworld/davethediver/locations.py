@@ -439,26 +439,29 @@ recipe_unlock_locations: Dict[str, LocationData] = {
 # Godzilla DLC: Kaiju figurines collectible after defeating Ebirah.
 # Figurines are scattered across the Blue Hole and can be collected post-Ebirah fight.
 kaiju_figurine_locations: Dict[str, LocationData] = {
+    # NOTE: Exact figurine-per-region breakdown is a TODO — confirm in-game.
+    # Current estimate based on known regions: Blue Hole (shallow/mid/deep),
+    # Sea People Village, Glacial Passage, Glacier Zone, Hydrothermal Vents.
     "Kaiju Figurine 1":  LocationData(BASE_ID + 857, "Blue Hole - Shallow",  "dlc_godzilla"),
     "Kaiju Figurine 2":  LocationData(BASE_ID + 858, "Blue Hole - Shallow",  "dlc_godzilla"),
     "Kaiju Figurine 3":  LocationData(BASE_ID + 859, "Blue Hole - Shallow",  "dlc_godzilla"),
-    "Kaiju Figurine 4":  LocationData(BASE_ID + 860, "Blue Hole - Shallow",  "dlc_godzilla"),
-    "Kaiju Figurine 5":  LocationData(BASE_ID + 861, "Blue Hole - Shallow",  "dlc_godzilla"),
+    "Kaiju Figurine 4":  LocationData(BASE_ID + 860, "Blue Hole - Mid",      "dlc_godzilla"),
+    "Kaiju Figurine 5":  LocationData(BASE_ID + 861, "Blue Hole - Mid",      "dlc_godzilla"),
     "Kaiju Figurine 6":  LocationData(BASE_ID + 862, "Blue Hole - Mid",      "dlc_godzilla"),
-    "Kaiju Figurine 7":  LocationData(BASE_ID + 863, "Blue Hole - Mid",      "dlc_godzilla"),
-    "Kaiju Figurine 8":  LocationData(BASE_ID + 864, "Blue Hole - Mid",      "dlc_godzilla"),
-    "Kaiju Figurine 9":  LocationData(BASE_ID + 865, "Blue Hole - Mid",      "dlc_godzilla"),
-    "Kaiju Figurine 10": LocationData(BASE_ID + 866, "Blue Hole - Mid",      "dlc_godzilla"),
-    "Kaiju Figurine 11": LocationData(BASE_ID + 867, "Blue Hole - Deep",     "dlc_godzilla"),
-    "Kaiju Figurine 12": LocationData(BASE_ID + 868, "Blue Hole - Deep",     "dlc_godzilla"),
-    "Kaiju Figurine 13": LocationData(BASE_ID + 869, "Blue Hole - Deep",     "dlc_godzilla"),
-    "Kaiju Figurine 14": LocationData(BASE_ID + 870, "Blue Hole - Deep",     "dlc_godzilla"),
-    "Kaiju Figurine 15": LocationData(BASE_ID + 871, "Blue Hole - Deep",     "dlc_godzilla"),
-    "Kaiju Figurine 16": LocationData(BASE_ID + 872, "Sea People Village",   "dlc_godzilla"),
-    "Kaiju Figurine 17": LocationData(BASE_ID + 873, "Sea People Village",   "dlc_godzilla"),
+    "Kaiju Figurine 7":  LocationData(BASE_ID + 863, "Blue Hole - Deep",     "dlc_godzilla"),
+    "Kaiju Figurine 8":  LocationData(BASE_ID + 864, "Blue Hole - Deep",     "dlc_godzilla"),
+    "Kaiju Figurine 9":  LocationData(BASE_ID + 865, "Blue Hole - Deep",     "dlc_godzilla"),
+    "Kaiju Figurine 10": LocationData(BASE_ID + 866, "Sea People Village",   "dlc_godzilla"),
+    "Kaiju Figurine 11": LocationData(BASE_ID + 867, "Sea People Village",   "dlc_godzilla"),
+    "Kaiju Figurine 12": LocationData(BASE_ID + 868, "Sea People Village",   "dlc_godzilla"),
+    "Kaiju Figurine 13": LocationData(BASE_ID + 869, "Glacial Passage",      "dlc_godzilla"),
+    "Kaiju Figurine 14": LocationData(BASE_ID + 870, "Glacial Passage",      "dlc_godzilla"),
+    "Kaiju Figurine 15": LocationData(BASE_ID + 871, "Glacier Zone",         "dlc_godzilla"),
+    "Kaiju Figurine 16": LocationData(BASE_ID + 872, "Glacier Zone",         "dlc_godzilla"),
+    "Kaiju Figurine 17": LocationData(BASE_ID + 873, "Glacier Zone",         "dlc_godzilla"),
     "Kaiju Figurine 18": LocationData(BASE_ID + 874, "Glacier Zone",         "dlc_godzilla"),
-    "Kaiju Figurine 19": LocationData(BASE_ID + 875, "Glacier Zone",         "dlc_godzilla"),
-    "Kaiju Figurine 20": LocationData(BASE_ID + 876, "Glacier Zone",         "dlc_godzilla"),
+    "Kaiju Figurine 19": LocationData(BASE_ID + 875, "Hydrothermal Vents",   "dlc_godzilla"),
+    "Kaiju Figurine 20": LocationData(BASE_ID + 876, "Hydrothermal Vents",   "dlc_godzilla"),
 }
 
 recipe_unlock_locations.update({
