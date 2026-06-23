@@ -223,6 +223,13 @@ def set_rules(world):
 
     # === BOSS FIGHT SPECIFIC RULES ===
 
+    # Gas Cutter comes from "The Leahs-chan Rescue" (Chapter 1 main mission)
+    # It's an AP item so can be received from anywhere, but the location that
+    # produces it is the Leahs-chan rescue mission check.
+    # Gate the Giant Squid on Gas Cutter (which the player must have received).
+    # Headlamp is the reward for defeating Giant Squid (completing Leahs-chan).
+    # So: Gas Cutter → Giant Squid → Headlamp → Giant Wolf Eel (nice chain!)
+
     # Giant Squid: needs Gas Cutter + 150m depth (Diving Suit Lv3+ or equiv O2)
     _set_location_rule(multiworld, player,
         "Defeat: Giant Squid",
@@ -280,6 +287,8 @@ def set_rules(world):
     )
 
     # Phantom Jellyfish: needs Cold-Resistant Suit (Lv7) + Beluga Whale Ride Whistle
+    # Beluga Whale Ride Whistle is awarded by completing Sub-Mission: Daphne's Whistle
+    # (Sea People Village mission — already gated by village access)
     _set_location_rule(multiworld, player,
         "Defeat: Phantom Jellyfish",
         lambda state: (
@@ -287,6 +296,10 @@ def set_rules(world):
             state.has("Beluga Whale Ride Whistle", player)
         )
     )
+    # Beluga Whale Ride Whistle is the reward from Daphne's Whistle mission
+    # Gate the Phantom Jellyfish on that sub-mission being completeable
+    # (the whistle is an AP item so it could come from anywhere in the multiworld,
+    # but we still need the location check itself to produce it)
 
     # Helicoprion: needs 450m depth = Suit Lv6 (covers up to 540m)
     _set_location_rule(multiworld, player,
@@ -507,10 +520,17 @@ def set_rules(world):
     )
 
     # Curious Child requires Sea People Necklace (to travel through tubeworm tunnels)
+    # Sea People Necklace is awarded by completing Deliver Key to Tenzhin (Ch4 mission)
     _set_location_rule(multiworld, player,
         "Sub-Mission: Curious Child",
         lambda state: state.has("Sea People Necklace", player)
     )
+    # Gate Sea People Necklace source location on Sea People Village access
+    # (Deliver Key to Tenzhin is a Ch4 mission in Sea People Village)
+    # The region gate already handles this — no extra rule needed ✅
+
+    # Gate Gas Cutter source on Mid depth access (Leahs-chan Rescue is in Blue Hole Mid)
+    # Region gate handles this ✅
 
     # Catch Runaway Seahorses requires Bug Net
     _set_location_rule(multiworld, player,
