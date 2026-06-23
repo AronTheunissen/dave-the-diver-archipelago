@@ -36,6 +36,14 @@ namespace DaveDiverAP.Patches
     {
         private static ManualLogSource Log => Plugin.Log;
 
+        // Track whether we've reapplied items since the game was loaded.
+        // Reset to false whenever the game save is (re)loaded so that switching
+        // saves still triggers a full reapply on the next boat entry.
+        private static bool _itemsReapplied = false;
+
+        /// <summary>Called by Plugin when a save file is loaded/reloaded.</summary>
+        public static void OnSaveLoaded() => _itemsReapplied = false;
+
         // ── Boat (safe state — process items here) ────────────────────────────
         // ✅ CONFIRMED via dump.cs: LobbyPlayer is the real class (MonoBehaviour)
         //    LobbyPlayer.LobbyPlayerState enum confirmed:
@@ -52,6 +60,14 @@ namespace DaveDiverAP.Patches
                 case LobbyPlayer.LobbyPlayerState.InBoat:
                     Log.LogInfo("Game state: IN BOAT — item processing enabled.");
                     ItemQueue.SetGameReady(true);
+                    // Reapply all received items on the first boat entry after a save load,
+                    // so progressive upgrades, key items, etc. persist across sessions.
+                    if (!_itemsReapplied)
+                    {
+                        _itemsReapplied = true;
+                        Log.LogInfo("Game state: First boat entry — reapplying all items.");
+                        ItemHandler.ReapplyAllItems();
+                    }
                     break;
 
                 case LobbyPlayer.LobbyPlayerState.Diving:

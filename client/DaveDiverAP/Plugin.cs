@@ -5,6 +5,7 @@ using HarmonyLib;
 using UnityEngine;
 using DaveDiverAP.Patches;
 using DaveDiverAP.UI;
+using System;
 
 namespace DaveDiverAP
 {
@@ -46,6 +47,7 @@ namespace DaveDiverAP
             _harmony.PatchAll(typeof(CollectiblePatch));
             _harmony.PatchAll(typeof(IngredientPatch));
             _harmony.PatchAll(typeof(CharmPatch));
+            _harmony.PatchAll(typeof(SaveLoadPatch));
 
             Log.LogInfo("Harmony patches applied.");
 
