@@ -577,10 +577,31 @@ def set_rules(world):
             )
         )
 
+    # === DISH UPGRADE RULES ===
+    # All dish research tiers (Level 2+) require the recipe to be unlocked first.
+    # We match "Upgrade [Dish] to Level N" with "Unlock Recipe: [Dish]" via name.
+    # For base game sushi (auto-unlocked by catching fish), the region gate already
+    # handles access — but for Menu dishes gated by VIP/staff/Cooksta, this ensures
+    # the player can't research a dish they haven't unlocked the recipe for.
+    if world.options.dish_upgrades.value > 0 and world.options.recipe_checks.value > 0:
+        recipe_names = {
+            # Build set of recipe names that have explicit unlock locations
+            loc.name[len("Unlock Recipe: "):] 
+            for loc in multiworld.get_locations(player)
+            if loc.name.startswith("Unlock Recipe: ")
+        }
+        for loc in multiworld.get_locations(player):
+            if loc.name.startswith("Upgrade ") and " to Level " in loc.name:
+                # Extract dish name from "Upgrade [Dish] to Level N"
+                dish = loc.name[len("Upgrade "):loc.name.rfind(" to Level ")]
+                if dish in recipe_names:
+                    unlock_loc = f"Unlock Recipe: {dish}"
+                    add_rule(loc,
+                        lambda state, ul=unlock_loc: state.can_reach(ul, "Location", player)
+                    )
+
     # === GODZILLA DISH UPGRADE RULES ===
-    # Dish research tiers require the recipe to be unlocked first.
-    # Godzilla recipes unlock after Ebirah is defeated — so their
-    # dish upgrade locations must also be gated on Ebirah.
+    # Godzilla recipes unlock after Ebirah is defeated — dish upgrades also gated.
     if world.options.has_godzilla_dlc.value:
         for godzilla_dish in [
             "Godzilla vs. Ebirah Curry",
@@ -588,7 +609,7 @@ def set_rules(world):
             "Deep Sea Kaiju Ramen",
         ]:
             for loc in multiworld.get_locations(player):
-                if loc.name.startswith(f"Dish Research: {godzilla_dish}"):
+                if loc.name.startswith(f"Upgrade {godzilla_dish} to Level"):
                     add_rule(loc,
                         lambda state: state.can_reach("Defeat: Ebirah", "Location", player)
                     )
