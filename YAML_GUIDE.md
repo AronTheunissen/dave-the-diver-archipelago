@@ -17,7 +17,7 @@
 - Default balanced settings
 
 ### **player-options-speedrun.yaml** ⚡
-- Beat Chapter 6 ASAP
+- Defeat Yawie ASAP (minimal checks)
 - Minimal checks (~50)
 - Good starting equipment
 - 5-10 hour completion
@@ -29,7 +29,7 @@
 - 100+ hour completion
 
 ### **player-options-restaurant-focus.yaml** 🍣
-- Restaurant Tycoon goal
+- Diamond Rank goal (Cooksta + restaurant focus)
 - Focus on recipes and dishes
 - Cooksta and farming included
 - 30-40 hour completion
@@ -46,13 +46,14 @@
 
 ### 🎯 **Goal Options**
 
+> **Available goals:** `defeat_yawie` (default) · `defeat_all_bosses` · `diamond_rank` · `master_diver` · `hundred_percent`
+
 **goal:**
-- `final_chapter_only` - Beat Chapter 6 only (5-10h)
-- `all_chapters` - Beat all 6 chapters ⭐ DEFAULT (15-25h)
-- `chapters_plus_cooksta` - Chapters + 10K followers (30-40h)
-- `restaurant_tycoon` - Chapters + 5 stars + recipes (30-40h)
-- `master_diver` - Chapters + all fish + Ecowatcher (50-70h)
-- `hundred_percent` - EVERYTHING (100+h)
+- `defeat_yawie` - Defeat the final boss (default, 15-25h)
+- `defeat_all_bosses` - Defeat Yawie + all 15 story/vortex bosses (20-35h)
+- `diamond_rank` - Defeat Yawie + 720 Cooksta followers + 375 Best Taste + 32 recipes (30-45h)
+- `master_diver` - Defeat Yawie + catch every fish species (40-60h)
+- `hundred_percent` - All of the above (80-120h)
 
 ---
 

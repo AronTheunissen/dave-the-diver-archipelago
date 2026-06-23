@@ -1,7 +1,7 @@
 # Dave the Diver Archipelago - TODO List
 
-> Last updated: June 22, 2026
-> Current status: APWorld complete with full DLC content structure, C# client complete with real class names, awaiting TID mapping and in-game testing
+> Last updated: June 23, 2026
+> Current status: APWorld complete, C# client complete with all game API calls implemented. Awaiting TID mapping (weapons/recipes/quests) and in-game testing.
 
 ---
 
@@ -54,14 +54,15 @@
 - [x] 3-tab in-game UI (F9): Connection · Hints · Progress
 - [x] Goal tracker for all 5 victory conditions
 - [x] Hint system (request by item or location name)
-- [x] Progress tracker with category breakdown
+- [x] Progress tracker with item tracker (Equipment/Key Items/Charms/Weapons tabs) + live category breakdown
 - [x] Toast notifications (item received, death, connection, goal)
 - [x] BepInEx config file support
-- [x] Save/restore session state
+- [x] Save/restore session state (full persistent state for all item types)
 - [x] SlotData parsing (all 25 options)
 - [x] 17 Harmony patches — **all real class names confirmed via dump.cs** ✅
-- [x] ItemHandler stubs for all items
-- [x] LocationTracker stubs for all locations
+- [x] **ItemHandler — all game API calls implemented** (PhoneAppUpgradeManager, MissionManager, SaveData, ChapterManager, etc.)
+- [x] SaveLoadPatch — reapplies all items on save load via first boat entry
+- [x] LocationTracker for all location categories
 
 ### Reverse Engineering
 - [x] Generated dump.cs via Il2CppDumper on game machine
@@ -98,18 +99,18 @@ static const values near the relevant classes.
 | `IngredientNameMapper._map` | ~12 entries (ingredient TID → name) | `IngredientPatch.cs` |
 | `CharmMapper._map` | 8 entries (charm TID → name + source) | `CharmPatch.cs` |
 
-### Implement ItemHandler Game API Calls
-All `ItemHandler.cs` methods are stubs. Need real SaveSystem API calls to actually give items to the player.
-**Class names are now confirmed from dump.cs — just need to call the right methods.**
-
-- [ ] `GiveWeapon()` — add weapon to Duff's shop / inventory via `SaveData`
-- [ ] `UnlockRecipe()` — unlock recipe via `SaveData.AddUnlockRecipeSaveData()`
-- [ ] `UpgradeDish()` — apply dish research level via `SaveData.UpdateUnlockRecipeSave()`
-- [ ] `GiveIngredient()` — add ingredient via `SaveData.AddIngredientsSaveData()`
-- [ ] `UpgradeDivingSuit()` / `UpgradeOxygenTank()` / `UpgradeHarpoon()` — iDiver upgrades
-- [ ] `UnlockRegion()` — unlock area (teleport/access) via `SaveData`
-- [ ] `UpgradeCookstaRank()` — apply Cooksta rank via `SNSInfoSave`
-- [ ] `GiveCharm()` — equip/unlock charm via `LobbyCharmSwapPanel.AutoEquipCharmItem()`
+### ~~Implement ItemHandler Game API Calls~~ ✅ DONE
+All `ItemHandler.cs` methods now use real game API calls:
+- `PhoneAppUpgradeManager.ApplyUpgrade()` — progressive equipment (oxygen/harpoon/suit/cargo)
+- `MissionManager.UpdateMission()` — key items (gloves, translator, teleports, farms, etc.)
+- `DREventTriggerManager.WeaponCraftTreeEventTrigger()` — weapon unlocks
+- `SaveData.AddUnlockRecipeSaveData()` / `UpdateUnlockRecipeSave()` — recipes/dish upgrades
+- `SNSInfoSave.set_grade()` — Cooksta rank
+- `ChapterManager.SetChapterComplete()` — chapter completion
+- `LobbyCharmSwapPanel.AutoEquipCharmItem()` — charms
+- `IngredientsStorage.AddIngredients()` — ingredients + counter key items
+- `PlayerInfoSave.set_Gold()` / `set_bei()` — currency
+- `ReapplyAllItems()` fires on first boat entry after every save load
 
 ### In-Game Testing
 - [ ] Build mod on game machine (`dotnet build` in `client/DaveDiverAP/`)

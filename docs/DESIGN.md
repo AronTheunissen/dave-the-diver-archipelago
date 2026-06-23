@@ -159,63 +159,61 @@ Update save file
 
 ## Implementation Phases
 
-### Phase 1: Foundation (Week 1-2)
+> **Status as of June 2026:** Phases 1–5 complete. Phase 6 (Jungle DLC) in progress pending wiki data.
+
+### Phase 1: Foundation ✅
 - [x] Set up development environment
 - [ ] Complete game analysis (items, locations)
 - [ ] Define complete item/location lists
 - [ ] Create basic APWorld structure
 
-### Phase 2: APWorld Development (Week 3-4)
-- [ ] Implement all items
-- [ ] Implement all locations
-- [ ] Create regions and connections
-- [ ] Write logic rules
-- [ ] Add YAML options
-- [ ] Test generation
+### Phase 2: APWorld Development ✅
+- [x] Implement all items (276 items across all categories)
+- [x] Implement all locations (1,134 locations across 15 regions)
+- [x] Create regions and connections (15 regions with dual-route access)
+- [x] Write logic rules (depth gating, key item requirements, region access)
+- [x] Add YAML options (25 options covering all systems)
+- [x] Unit tests (55/55 passing)
 
-### Phase 3: Client Mod Basics (Week 5-6)
-- [ ] Set up BepInEx project
-- [ ] Implement AP connection
-- [ ] Create basic Harmony patches
-- [ ] Implement save/load integration
+### Phase 3: Client Mod Basics ✅
+- [x] Set up BepInEx 6 IL2CPP project
+- [x] Implement AP connection with auto-reconnect
+- [x] Create 17 Harmony patches (all real class names confirmed via dump.cs)
+- [x] Implement save/load integration (SaveData + SaveLoadPatch)
 
-### Phase 4: Feature Implementation (Week 7-10)
-- [ ] Fish catch tracking
-- [ ] Recipe/equipment randomization
-- [ ] Story progress tracking
-- [ ] Restaurant milestone tracking
-- [ ] Item granting system
+### Phase 4: Feature Implementation ✅
+- [x] Fish catch tracking (203 species via FishCatchPatch)
+- [x] Recipe/dish upgrade randomization (RecipeUnlockPatch + 549 dish checks)
+- [x] Story progress tracking (StoryProgressPatch, ChapterManager)
+- [x] Restaurant/Cooksta milestone tracking (CookstaPatch, RestaurantPatch)
+- [x] Item granting system (ItemHandler — all game API calls implemented)
+- [x] Weapon tracking (WeaponCraftPatch, 79 variants)
+- [x] Death Link, hints, goal tracker, progress UI, toast notifications
 
-### Phase 5: Testing & Polish (Week 11-12)
-- [ ] Solo playthrough testing
+### Phase 5: Testing & Polish 🔧 (In Progress)
+- [ ] Solo playthrough testing (blocked on TID mapping)
+- [ ] Fill in weapon/recipe/quest TID mapper dictionaries via UnityExplorer
 - [ ] Multiworld testing
 - [ ] Balance adjustments
 - [ ] Bug fixes
-- [ ] Documentation
 
-## Open Questions
+### Phase 6: Jungle DLC ⏳
+- [x] Region structure (8 regions) and logic rules
+- [x] Placeholder locations (100+) — ready for wiki data
+- [ ] Full fish list for all Jungle regions (wiki not yet updated)
+- [ ] All Bancho Grill recipes
 
-1. **Fish Granularity**: Should every fish species be a location, or only rare/story ones?
-   - **Decision**: Only rare, boss, and story-required fish
+## Design Decisions
 
-2. **Recipe Randomization**: Should recipes be items or auto-unlock on catching fish?
-   - **Decision**: Recipes as items for better progression control
+All major design questions have been resolved:
 
-3. **Death Link**: Should the game support death link?
-   - **Decision**: Optional, off by default
+1. **Fish Granularity** — Every fish species is a location (203 base game + DLC), filterable by `fish_checks` option (none / rare_only / all)
+2. **Recipe Randomization** — Recipes are AP items; dish research tiers are location checks (549 checks)
+3. **Death Link** — Implemented, optional, off by default
+4. **Difficulty Options** — 25 YAML options covering starting equipment, fish rarity, content toggles, and DLC flags
+5. **Progressive Equipment** — 8-level diving suit (40m→800m), 6 oxygen tanks, 4 harpoon levels
+6. **Depth Gating** — Lenient OR logic (suit OR oxygen) so players are never hard-blocked
 
-4. **Difficulty Options**: Should YAML include difficulty modifiers?
-   - **Decision**: Yes - include options for starting equipment, fish rarity, etc.
+## Current Status
 
-## Next Steps
-
-1. Play through the entire game while documenting:
-   - All equipment and upgrades
-   - All recipes
-   - All story checkpoints
-   - All side quests
-   - All minigames
-
-2. Create comprehensive spreadsheets for items and locations
-
-3. Begin APWorld implementation
+See **[TODO.md](../TODO.md)** for the full prioritized task list.
