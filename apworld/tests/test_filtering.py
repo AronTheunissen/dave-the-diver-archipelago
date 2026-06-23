@@ -165,8 +165,8 @@ class TestLocationFiltering(unittest.TestCase):
     def test_photography_toggle(self):
         self._test_toggle("photography", "include_photography")
 
-    def test_challenge_toggle(self):
-        self._test_toggle("challenge", "include_challenges")
+    # test_challenge_toggle removed — challenge locations were placeholder invented
+    # content, not verified real in-game locations. Removed to prevent softlocks.
 
     def test_farming_toggle(self):
         self._test_toggle("farming", "include_farming")
@@ -208,7 +208,7 @@ class TestLocationFiltering(unittest.TestCase):
         """Empty-category locations (story, bosses, quests) are always included."""
         world = MockWorld(fish_checks=0, dish_upgrades=0, include_cooksta=0,
                           include_ecowatcher=0, include_photography=0,
-                          include_challenges=0, include_farming=0,
+                          include_farming=0,
                           include_chicken_farm=0, include_fish_farm=0,
                           include_minigames=0, include_weapon_shop=0,
                           has_dredge_dlc=0, has_godzilla_dlc=0)

@@ -1211,24 +1211,10 @@ photography_locations: Dict[str, LocationData] = {
 
 # === CHALLENGES ===
 # In-game challenges and special objectives
-challenge_locations: Dict[str, LocationData] = {
-    # Time attack challenges
-    "Challenge: Catch 5 Fish in 60 Seconds": LocationData(BASE_ID + 550, "Blue Hole - Shallow", "challenge"),
-    "Challenge: Earn 1000g in One Dive": LocationData(BASE_ID + 551, "Blue Hole - Shallow", "challenge"),
-    "Challenge: Defeat 3 Sharks Without Taking Damage": LocationData(BASE_ID + 552, "Blue Hole - Deep", "challenge"),
-    
-    # Weapon challenges
-    "Challenge: Kill 10 Fish with Harpoon Only": LocationData(BASE_ID + 560, "Blue Hole - Shallow", "challenge"),
-    "Challenge: Kill 10 Fish with Melee Only": LocationData(BASE_ID + 561, "Blue Hole - Shallow", "challenge"),
-    "Challenge: Net Gun 20 Fish Alive": LocationData(BASE_ID + 562, "Blue Hole - Shallow", "challenge"),
-    
-    # Special challenges
-    "Challenge: Serve 10 Customers with Perfect Timing": LocationData(BASE_ID + 570, "Bancho Sushi", "challenge"),
-    "Challenge: Complete a Dive Without Using Oxygen Refills": LocationData(BASE_ID + 571, "Blue Hole - Shallow", "challenge"),
-    "Challenge: Reach Max Depth Without Equipment Damage": LocationData(BASE_ID + 572, "Blue Hole - Deep", "challenge"),
-    
-    # TODO: Add all in-game challenges
-}
+# Challenge locations removed — these were placeholder invented content,
+# not verified real in-game locations. Removing to prevent softlocks.
+# Will be re-added if/when real challenge content is confirmed.
+challenge_locations: Dict[str, LocationData] = {}
 
 # === VEGETABLE FARM ===
 # Vegetable garden farming milestones (unlocked via "Unlock Vegetable Farm")
