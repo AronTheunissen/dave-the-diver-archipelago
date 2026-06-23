@@ -175,11 +175,23 @@ class DaveDiverWorld(World):
         if item_data is None:
             return True
 
-        # Always keep progression items — removing them could break logic
+        category = item_data.category
+
+        # DLC items are filtered by DLC flag FIRST — even if they are progression.
+        # A progression item for disabled DLC content should never be in the pool,
+        # since its locations don't exist either (filtered by should_include_location).
+        if category == "dlc_dredge":
+            return bool(self.options.has_dredge_dlc.value)
+        if category == "dlc_godzilla":
+            return bool(self.options.has_godzilla_dlc.value)
+        if category == "dlc_ichiban":
+            return bool(self.options.has_ichiban_dlc.value)
+        if category == "dlc_jungle":
+            return bool(self.options.has_jungle_dlc.value)
+
+        # Non-DLC progression items are always kept — removing them could break logic
         if item_data.classification == ItemClassification.progression:
             return True
-
-        category = item_data.category
 
         # --- Trap items ---
         if category == "trap":
@@ -199,19 +211,6 @@ class DaveDiverWorld(World):
             has_dish_content = self.options.dish_upgrades.value > 0    # 0 = none
             has_recipe_content = self.options.recipe_checks.value > 0  # 0 = key_only (no recipes as items)
             return has_dish_content or has_recipe_content
-
-        # --- DLC item categories ---
-        if category == "dlc_dredge":
-            return bool(self.options.has_dredge_dlc.value)
-
-        if category == "dlc_godzilla":
-            return bool(self.options.has_godzilla_dlc.value)
-
-        if category == "dlc_ichiban":
-            return bool(self.options.has_ichiban_dlc.value)
-
-        if category == "dlc_jungle":
-            return bool(self.options.has_jungle_dlc.value)
 
         # All other items (diving equipment, abilities, filler, story items) always included
         return True

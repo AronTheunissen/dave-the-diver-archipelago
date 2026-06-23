@@ -148,10 +148,14 @@ def create_regions(world):
         regions["Blue Hole - Deep"], "Teleport to Deep Blue Hole"
     )
 
-    # ── Vortex regions (aberrations, night only, require Vortex Entry) ─────────
-    regions["Blue Hole - Deep"].connect(regions["Jellyfish Basin"], "Enter Jellyfish Basin Vortex")
-    regions["Blue Hole - Deep"].connect(regions["Fog Coast"], "Enter Fog Coast Vortex")
-    regions["Blue Hole - Deep"].connect(regions["Black Cliff"], "Enter Black Cliff Vortex")
+    # ── Vortex regions (DREDGE DLC — aberrations, red fog nights only) ─────────
+    # Only connect these regions when the DREDGE DLC is enabled. When disabled,
+    # the regions still exist in REGION_NAMES (for the registry) but have no
+    # entrance, so their locations can never be reached — matching the DLC filter.
+    if world.options.has_dredge_dlc.value:
+        regions["Blue Hole - Deep"].connect(regions["Jellyfish Basin"], "Enter Jellyfish Basin Vortex")
+        regions["Blue Hole - Deep"].connect(regions["Fog Coast"], "Enter Fog Coast Vortex")
+        regions["Blue Hole - Deep"].connect(regions["Black Cliff"], "Enter Black Cliff Vortex")
 
     # ── Fish Farm (unlocked via Otto's quest + Unlock Fish Farm item) ────────
     regions["Bancho Sushi"].connect(regions["Fish Farm"], "Visit Fish Farm")
@@ -163,36 +167,35 @@ def create_regions(world):
     regions["Bancho Sushi"].connect(regions["Chicken Farm"], "Visit Chicken Farm")
 
     # ── JUNGLE DLC REGIONS ───────────────────────────────────────────────────
-    # All jungle regions are gated behind the dlc_jungle option being enabled.
-    # When enabled, Utara Village connects from Bancho Sushi (travel to jungle).
+    # Only connect jungle regions when the Jungle DLC is enabled.
+    if world.options.has_jungle_dlc.value:
+        # Bancho Sushi → Utara Village (DLC entry point)
+        regions["Bancho Sushi"].connect(regions["Utara Village"], "Travel to Utara Village")
 
-    # Bancho Sushi → Utara Village (DLC entry point)
-    regions["Bancho Sushi"].connect(regions["Utara Village"], "Travel to Utara Village")
+        # Utara Village → Bancho Grill (unlocked in Chapter 1 of DLC)
+        regions["Utara Village"].connect(regions["Bancho Grill"], "Open Bancho Grill")
 
-    # Utara Village → Bancho Grill (unlocked in Chapter 1 of DLC)
-    regions["Utara Village"].connect(regions["Bancho Grill"], "Open Bancho Grill")
+        # Utara Village → Utara Lake - Upper (always open once in village)
+        regions["Utara Village"].connect(regions["Utara Lake - Upper"], "Dive into Utara Lake")
 
-    # Utara Village → Utara Lake - Upper (always open once in village)
-    regions["Utara Village"].connect(regions["Utara Lake - Upper"], "Dive into Utara Lake")
+        # Utara Lake - Upper → Utara Lake - Lower (requires Purification Filter tier 1)
+        regions["Utara Lake - Upper"].connect(
+            regions["Utara Lake - Lower"], "Dive to Lower Lake"
+        )
 
-    # Utara Lake - Upper → Utara Lake - Lower (requires Purification Filter tier 1)
-    regions["Utara Lake - Upper"].connect(
-        regions["Utara Lake - Lower"], "Dive to Lower Lake"
-    )
+        # Utara Lake - Lower → Lakebed Sea (story-gated: Chapter 4 + Advanced Filter)
+        regions["Utara Lake - Lower"].connect(
+            regions["Lakebed Sea"], "Enter Lakebed Sea"
+        )
 
-    # Utara Lake - Lower → Lakebed Sea (story-gated: Chapter 4 + Advanced Filter)
-    regions["Utara Lake - Lower"].connect(
-        regions["Lakebed Sea"], "Enter Lakebed Sea"
-    )
+        # Utara Village → Setah Forest (story-gated: Chapter 3)
+        regions["Utara Village"].connect(regions["Setah Forest"], "Enter Setah Forest")
 
-    # Utara Village → Setah Forest (story-gated: Chapter 3)
-    regions["Utara Village"].connect(regions["Setah Forest"], "Enter Setah Forest")
+        # Setah Forest → Murau Temple (inside the forest, Chapter 3+)
+        regions["Setah Forest"].connect(regions["Murau Temple"], "Enter Murau Temple")
 
-    # Setah Forest → Murau Temple (inside the forest, Chapter 3+)
-    regions["Setah Forest"].connect(regions["Murau Temple"], "Enter Murau Temple")
-
-    # Utara Village → Surga Falls (sub-mission gated)
-    regions["Utara Village"].connect(regions["Surga Falls"], "Reach Surga Falls")
+        # Utara Village → Surga Falls (sub-mission gated)
+        regions["Utara Village"].connect(regions["Surga Falls"], "Reach Surga Falls")
 
     # ── Register all regions ─────────────────────────────────────────────────
     multiworld.regions += list(regions.values())

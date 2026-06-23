@@ -183,7 +183,7 @@ area_unlock_items: Dict[str, ItemData] = {
     "Laser Device": ItemData(ITEM_BASE + 105, ItemClassification.progression),  # Required to open Broken Control Room
     "Control Room Button": ItemData(ITEM_BASE + 106, ItemClassification.progression, count=3),  # 3 needed for Ch7 finale
     "Sea People's Trust": ItemData(ITEM_BASE + 107, ItemClassification.progression),  # Unlocks Duff's Dream Concert + Ch4
-    "Vortex Entry": ItemData(ITEM_BASE + 119, ItemClassification.progression, count=5),  # Needed to enter vortex fights (optional bosses)
+    "Vortex Entry": ItemData(ITEM_BASE + 119, ItemClassification.progression, count=5, category="dlc_dredge"),  # DREDGE DLC vortex regions
 
     # Teleport system - allows bypassing physical routes
     "Teleport Mirror": ItemData(ITEM_BASE + 108, ItemClassification.progression),  # Base teleport ability
