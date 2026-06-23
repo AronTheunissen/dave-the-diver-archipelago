@@ -235,7 +235,7 @@ class TestItemFiltering(unittest.TestCase):
         that is tested separately in test_dredge_dlc_items_excluded_when_dlc_off etc.
         """
         from BaseClasses import ItemClassification
-        DLC_CATEGORIES = {"dlc_dredge", "dlc_godzilla", "dlc_ichiban", "dlc_jungle"}
+        DLC_CATEGORIES = {"dlc_dredge", "dlc_godzilla", "dlc_ichiban", "dlc_jungle", "restaurant"}
         # Turn everything off
         world = MockWorld(fish_checks=0, dish_upgrades=0, recipe_checks=0,
                           include_cooksta=0, trap_frequency=0,

@@ -516,6 +516,163 @@ jungle_boss_locations: Dict[str, LocationData] = {
 }
 
 # --- Jungle staff unlocks ---
+# =====================================================================
+# STAFF LOCATIONS
+# Each staff member has:
+#   - "Staff: Hire [Name]"          — 1 check when recruited
+#   - "Staff: Train [Name] Lv 5/10/15/20" — 4 training milestone checks
+# Training levels 5, 10, 15 gate specific recipes; level 20 is completionist.
+# Base offset: BASE_ID + 1500 (hire) and BASE_ID + 1600 (training)
+# =====================================================================
+
+_SH = BASE_ID + 1500   # Staff Hire base
+_ST = BASE_ID + 1600   # Staff Training base (4 levels × up to 31 staff, 124 entries max)
+
+# Staff list with index for ID calculation:
+# Base game (0-20): Billy, Carolina, Charlie, Cohh, Davina, Drae, El Nino,
+#   Itsuki, James, Jandi, Kyoko, Liu, Maki, Masayoshi, Mitchell, Pai, Raptor,
+#   Raul, Tohoku, Yone, Yusuke
+# Ichiban DLC (21-23): Hamako, Etsuko, Chitose
+# Jungle DLC (24-30): via jungle_staff_locations
+
+def _staff_hire(idx: int, region: str = "Bancho Sushi", category: str = "") -> LocationData:
+    return LocationData(_SH + idx, region, category)
+
+def _staff_train(staff_idx: int, level_idx: int, region: str = "Bancho Sushi", category: str = "") -> LocationData:
+    """level_idx: 0=Lv5, 1=Lv10, 2=Lv15, 3=Lv20"""
+    return LocationData(_ST + staff_idx * 4 + level_idx, region, category)
+
+staff_hire_locations: Dict[str, LocationData] = {
+    # Base game staff (idx 0-20)
+    "Staff: Hire Billy":      _staff_hire(0),
+    "Staff: Hire Carolina":   _staff_hire(1),
+    "Staff: Hire Charlie":    _staff_hire(2),
+    "Staff: Hire Cohh":       _staff_hire(3),
+    "Staff: Hire Davina":     _staff_hire(4),
+    "Staff: Hire Drae":       _staff_hire(5),
+    "Staff: Hire El Nino":    _staff_hire(6),
+    "Staff: Hire Itsuki":     _staff_hire(7),
+    "Staff: Hire James":      _staff_hire(8),
+    "Staff: Hire Jandi":      _staff_hire(9),
+    "Staff: Hire Kyoko":      _staff_hire(10),
+    "Staff: Hire Liu":        _staff_hire(11),
+    "Staff: Hire Maki":       _staff_hire(12),
+    "Staff: Hire Masayoshi":  _staff_hire(13),
+    "Staff: Hire Mitchell":   _staff_hire(14),
+    "Staff: Hire Pai":        _staff_hire(15),
+    "Staff: Hire Raptor":     _staff_hire(16),
+    "Staff: Hire Raul":       _staff_hire(17),
+    "Staff: Hire Tohoku":     _staff_hire(18),
+    "Staff: Hire Yone":       _staff_hire(19),
+    "Staff: Hire Yusuke":     _staff_hire(20),
+    # Ichiban DLC staff (idx 21-23)
+    "Staff: Hire Hamako":     _staff_hire(21, category="dlc_ichiban"),
+    "Staff: Hire Etsuko":     _staff_hire(22, category="dlc_ichiban"),
+    "Staff: Hire Chitose":    _staff_hire(23, category="dlc_ichiban"),
+}
+
+staff_training_locations: Dict[str, LocationData] = {
+    # Base game staff training milestones
+    "Staff: Train Billy to Level 5":       _staff_train(0, 0),
+    "Staff: Train Billy to Level 10":      _staff_train(0, 1),
+    "Staff: Train Billy to Level 15":      _staff_train(0, 2),
+    "Staff: Train Billy to Level 20":      _staff_train(0, 3),
+    "Staff: Train Carolina to Level 5":    _staff_train(1, 0),
+    "Staff: Train Carolina to Level 10":   _staff_train(1, 1),
+    "Staff: Train Carolina to Level 15":   _staff_train(1, 2),
+    "Staff: Train Carolina to Level 20":   _staff_train(1, 3),
+    "Staff: Train Charlie to Level 5":     _staff_train(2, 0),
+    "Staff: Train Charlie to Level 10":    _staff_train(2, 1),
+    "Staff: Train Charlie to Level 15":    _staff_train(2, 2),
+    "Staff: Train Charlie to Level 20":    _staff_train(2, 3),
+    "Staff: Train Cohh to Level 5":        _staff_train(3, 0),
+    "Staff: Train Cohh to Level 10":       _staff_train(3, 1),
+    "Staff: Train Cohh to Level 15":       _staff_train(3, 2),
+    "Staff: Train Cohh to Level 20":       _staff_train(3, 3),
+    "Staff: Train Davina to Level 5":      _staff_train(4, 0),
+    "Staff: Train Davina to Level 10":     _staff_train(4, 1),
+    "Staff: Train Davina to Level 15":     _staff_train(4, 2),
+    "Staff: Train Davina to Level 20":     _staff_train(4, 3),
+    "Staff: Train Drae to Level 5":        _staff_train(5, 0),
+    "Staff: Train Drae to Level 10":       _staff_train(5, 1),
+    "Staff: Train Drae to Level 15":       _staff_train(5, 2),
+    "Staff: Train Drae to Level 20":       _staff_train(5, 3),
+    "Staff: Train El Nino to Level 5":     _staff_train(6, 0),
+    "Staff: Train El Nino to Level 10":    _staff_train(6, 1),
+    "Staff: Train El Nino to Level 15":    _staff_train(6, 2),
+    "Staff: Train El Nino to Level 20":    _staff_train(6, 3),
+    "Staff: Train Itsuki to Level 5":      _staff_train(7, 0),
+    "Staff: Train Itsuki to Level 10":     _staff_train(7, 1),
+    "Staff: Train Itsuki to Level 15":     _staff_train(7, 2),
+    "Staff: Train Itsuki to Level 20":     _staff_train(7, 3),
+    "Staff: Train James to Level 5":       _staff_train(8, 0),
+    "Staff: Train James to Level 10":      _staff_train(8, 1),
+    "Staff: Train James to Level 15":      _staff_train(8, 2),
+    "Staff: Train James to Level 20":      _staff_train(8, 3),
+    "Staff: Train Jandi to Level 5":       _staff_train(9, 0),
+    "Staff: Train Jandi to Level 10":      _staff_train(9, 1),
+    "Staff: Train Jandi to Level 15":      _staff_train(9, 2),
+    "Staff: Train Jandi to Level 20":      _staff_train(9, 3),
+    "Staff: Train Kyoko to Level 5":       _staff_train(10, 0),
+    "Staff: Train Kyoko to Level 10":      _staff_train(10, 1),
+    "Staff: Train Kyoko to Level 15":      _staff_train(10, 2),
+    "Staff: Train Kyoko to Level 20":      _staff_train(10, 3),
+    "Staff: Train Liu to Level 5":         _staff_train(11, 0),
+    "Staff: Train Liu to Level 10":        _staff_train(11, 1),
+    "Staff: Train Liu to Level 15":        _staff_train(11, 2),
+    "Staff: Train Liu to Level 20":        _staff_train(11, 3),
+    "Staff: Train Maki to Level 5":        _staff_train(12, 0),
+    "Staff: Train Maki to Level 10":       _staff_train(12, 1),
+    "Staff: Train Maki to Level 15":       _staff_train(12, 2),
+    "Staff: Train Maki to Level 20":       _staff_train(12, 3),
+    "Staff: Train Masayoshi to Level 5":   _staff_train(13, 0),
+    "Staff: Train Masayoshi to Level 10":  _staff_train(13, 1),
+    "Staff: Train Masayoshi to Level 15":  _staff_train(13, 2),
+    "Staff: Train Masayoshi to Level 20":  _staff_train(13, 3),
+    "Staff: Train Mitchell to Level 5":    _staff_train(14, 0),
+    "Staff: Train Mitchell to Level 10":   _staff_train(14, 1),
+    "Staff: Train Mitchell to Level 15":   _staff_train(14, 2),
+    "Staff: Train Mitchell to Level 20":   _staff_train(14, 3),
+    "Staff: Train Pai to Level 5":         _staff_train(15, 0),
+    "Staff: Train Pai to Level 10":        _staff_train(15, 1),
+    "Staff: Train Pai to Level 15":        _staff_train(15, 2),
+    "Staff: Train Pai to Level 20":        _staff_train(15, 3),
+    "Staff: Train Raptor to Level 5":      _staff_train(16, 0),
+    "Staff: Train Raptor to Level 10":     _staff_train(16, 1),
+    "Staff: Train Raptor to Level 15":     _staff_train(16, 2),
+    "Staff: Train Raptor to Level 20":     _staff_train(16, 3),
+    "Staff: Train Raul to Level 5":        _staff_train(17, 0),
+    "Staff: Train Raul to Level 10":       _staff_train(17, 1),
+    "Staff: Train Raul to Level 15":       _staff_train(17, 2),
+    "Staff: Train Raul to Level 20":       _staff_train(17, 3),
+    "Staff: Train Tohoku to Level 5":      _staff_train(18, 0),
+    "Staff: Train Tohoku to Level 10":     _staff_train(18, 1),
+    "Staff: Train Tohoku to Level 15":     _staff_train(18, 2),
+    "Staff: Train Tohoku to Level 20":     _staff_train(18, 3),
+    "Staff: Train Yone to Level 5":        _staff_train(19, 0),
+    "Staff: Train Yone to Level 10":       _staff_train(19, 1),
+    "Staff: Train Yone to Level 15":       _staff_train(19, 2),
+    "Staff: Train Yone to Level 20":       _staff_train(19, 3),
+    "Staff: Train Yusuke to Level 5":      _staff_train(20, 0),
+    "Staff: Train Yusuke to Level 10":     _staff_train(20, 1),
+    "Staff: Train Yusuke to Level 15":     _staff_train(20, 2),
+    "Staff: Train Yusuke to Level 20":     _staff_train(20, 3),
+    # Ichiban DLC staff training
+    "Staff: Train Hamako to Level 5":      _staff_train(21, 0, category="dlc_ichiban"),
+    "Staff: Train Hamako to Level 10":     _staff_train(21, 1, category="dlc_ichiban"),
+    "Staff: Train Hamako to Level 15":     _staff_train(21, 2, category="dlc_ichiban"),
+    "Staff: Train Hamako to Level 20":     _staff_train(21, 3, category="dlc_ichiban"),
+    "Staff: Train Etsuko to Level 5":      _staff_train(22, 0, category="dlc_ichiban"),
+    "Staff: Train Etsuko to Level 10":     _staff_train(22, 1, category="dlc_ichiban"),
+    "Staff: Train Etsuko to Level 15":     _staff_train(22, 2, category="dlc_ichiban"),
+    "Staff: Train Etsuko to Level 20":     _staff_train(22, 3, category="dlc_ichiban"),
+    "Staff: Train Chitose to Level 5":     _staff_train(23, 0, category="dlc_ichiban"),
+    "Staff: Train Chitose to Level 10":    _staff_train(23, 1, category="dlc_ichiban"),
+    "Staff: Train Chitose to Level 15":    _staff_train(23, 2, category="dlc_ichiban"),
+    "Staff: Train Chitose to Level 20":    _staff_train(23, 3, category="dlc_ichiban"),
+}
+
+# ── Jungle staff (hire only — training is in the Jungle DLC options block) ──
 jungle_staff_locations: Dict[str, LocationData] = {
     "Jungle Staff: Unlock Yasuto":            LocationData(_J + 40, "Utara Village", "dlc_jungle"),
     "Jungle Staff: Unlock Martin Tweed":      LocationData(_J + 41, "Utara Village", "dlc_jungle"),
@@ -1264,6 +1421,8 @@ location_table: Dict[str, LocationData] = {
     **ichiban_locations,
     **jungle_story_locations,
     **jungle_boss_locations,
+    **staff_hire_locations,
+    **staff_training_locations,
     **jungle_staff_locations,
     **jungle_villager_locations,
     **jungle_minigame_locations,

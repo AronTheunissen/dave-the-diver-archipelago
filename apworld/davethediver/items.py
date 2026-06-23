@@ -216,10 +216,34 @@ diving_equipment: Dict[str, ItemData] = {
 
 # === RESTAURANT & RECIPES ===
 restaurant_items: Dict[str, ItemData] = {
-    # Staff
-    "Hire Waiter": ItemData(ITEM_BASE + 200, ItemClassification.useful, count=3, category="restaurant"),
-    "Hire Chef": ItemData(ITEM_BASE + 205, ItemClassification.useful, count=2, category="restaurant"),
-    "Hire Bartender": ItemData(ITEM_BASE + 206, ItemClassification.useful, category="restaurant"),
+    # Named staff members — base game (21 staff, each is a unique progression item)
+    # Receiving "[Name]" unlocks that staff member for Bancho Sushi.
+    # Training milestones are location checks; staff items gate recipe unlocks.
+    "Billy":      ItemData(ITEM_BASE + 850, ItemClassification.progression, category="restaurant"),
+    "Carolina":   ItemData(ITEM_BASE + 851, ItemClassification.progression, category="restaurant"),
+    "Charlie":    ItemData(ITEM_BASE + 852, ItemClassification.progression, category="restaurant"),
+    "Cohh":       ItemData(ITEM_BASE + 853, ItemClassification.progression, category="restaurant"),
+    "Davina":     ItemData(ITEM_BASE + 854, ItemClassification.progression, category="restaurant"),
+    "Drae":       ItemData(ITEM_BASE + 855, ItemClassification.progression, category="restaurant"),
+    "El Nino":    ItemData(ITEM_BASE + 856, ItemClassification.progression, category="restaurant"),
+    "Itsuki":     ItemData(ITEM_BASE + 857, ItemClassification.progression, category="restaurant"),
+    "James":      ItemData(ITEM_BASE + 858, ItemClassification.progression, category="restaurant"),
+    "Jandi":      ItemData(ITEM_BASE + 859, ItemClassification.progression, category="restaurant"),
+    "Kyoko":      ItemData(ITEM_BASE + 860, ItemClassification.progression, category="restaurant"),
+    "Liu":        ItemData(ITEM_BASE + 861, ItemClassification.progression, category="restaurant"),
+    "Maki":       ItemData(ITEM_BASE + 862, ItemClassification.progression, category="restaurant"),
+    "Masayoshi":  ItemData(ITEM_BASE + 863, ItemClassification.progression, category="restaurant"),
+    "Mitchell":   ItemData(ITEM_BASE + 864, ItemClassification.progression, category="restaurant"),
+    "Pai":        ItemData(ITEM_BASE + 865, ItemClassification.progression, category="restaurant"),
+    "Raptor":     ItemData(ITEM_BASE + 866, ItemClassification.progression, category="restaurant"),
+    "Raul":       ItemData(ITEM_BASE + 867, ItemClassification.progression, category="restaurant"),
+    "Tohoku":     ItemData(ITEM_BASE + 868, ItemClassification.progression, category="restaurant"),
+    "Yone":       ItemData(ITEM_BASE + 869, ItemClassification.progression, category="restaurant"),
+    "Yusuke":     ItemData(ITEM_BASE + 870, ItemClassification.progression, category="restaurant"),
+    # Ichiban DLC staff
+    "Hamako":     ItemData(ITEM_BASE + 871, ItemClassification.progression, category="dlc_ichiban"),
+    "Etsuko":     ItemData(ITEM_BASE + 872, ItemClassification.progression, category="dlc_ichiban"),
+    "Chitose":    ItemData(ITEM_BASE + 873, ItemClassification.progression, category="dlc_ichiban"),
 
     # Restaurant Upgrades
     "Dining Area Expansion": ItemData(ITEM_BASE + 320, ItemClassification.useful, count=3, category="restaurant"),

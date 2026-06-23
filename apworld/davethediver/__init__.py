@@ -177,6 +177,11 @@ class DaveDiverWorld(World):
 
         category = item_data.category
 
+        # Restaurant/staff items — filtered before the progression blanket rule.
+        # Staff members are progression items but meaningless if restaurant is disabled.
+        if category == "restaurant":
+            return bool(self.options.dish_upgrades.value > 0 or self.options.recipe_checks.value > 0)
+
         # DLC items are filtered by DLC flag FIRST — even if they are progression.
         # A progression item for disabled DLC content should never be in the pool,
         # since its locations don't exist either (filtered by should_include_location).
