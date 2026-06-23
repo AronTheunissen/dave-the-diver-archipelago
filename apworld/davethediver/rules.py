@@ -378,6 +378,32 @@ def set_rules(world):
             lambda state: ebirah_defeated(state)
         )
 
+    # === PHOTOGRAPHY RULES ===
+    # Underwater Camera is given by Dr. Bacon after completing "Beyond the Rock Pile"
+    # (Chapter 1 main mission). All photography locations require the camera.
+    if world.options.include_photography.value:
+        for loc in multiworld.get_locations(player):
+            if loc.name.startswith("Photography:"):
+                add_rule(loc,
+                    lambda state: state.has("Underwater Camera", player)
+                )
+
+    # === GODZILLA DISH UPGRADE RULES ===
+    # Dish research tiers require the recipe to be unlocked first.
+    # Godzilla recipes unlock after Ebirah is defeated — so their
+    # dish upgrade locations must also be gated on Ebirah.
+    if world.options.has_godzilla_dlc.value:
+        for godzilla_dish in [
+            "Godzilla vs. Ebirah Curry",
+            "Ebirah Chasing Sashimi",
+            "Deep Sea Kaiju Ramen",
+        ]:
+            for loc in multiworld.get_locations(player):
+                if loc.name.startswith(f"Dish Research: {godzilla_dish}"):
+                    add_rule(loc,
+                        lambda state: state.can_reach("Defeat: Ebirah", "Location", player)
+                    )
+
     # === FARM ACCESS RULES ===
     # Each farm requires its unlock item to enter the region
 
