@@ -1,7 +1,7 @@
 # Dave the Diver Archipelago - TODO List
 
-> Last updated: June 23, 2026
-> Current status: APWorld complete, C# client complete with all game API calls implemented. Awaiting TID mapping (weapons/recipes/quests) and in-game testing.
+> Last updated: June 23, 2026 (evening)
+> Current status: APWorld complete with full logic rules, 1,400+ locations, 320+ items. C# client complete. Awaiting TID mapping and in-game testing.
 
 ---
 
@@ -9,21 +9,26 @@
 
 ### APWorld (Python)
 - [x] Core world class (`__init__.py`) with item pool, location placement, slot data
-- [x] 1,300+ locations across 23 regions (incl. all DLC)
-- [x] 300+ items (fish, weapons, recipes, charms, ingredients, progressive equipment, DLC items)
+- [x] 1,400+ locations across 23 regions (incl. all DLC)
+- [x] 320+ items (fish, weapons, recipes, charms, ingredients, progressive equipment, DLC items)
 - [x] 5 victory conditions (Defeat Yawie, All Bosses, Diamond Rank, Master Diver, 100%)
-- [x] Full logic rules with game-accurate region gating
-- [x] All base game fish species (203) placed in correct depth zones
-- [x] All weapon trees (79 variants across 9 weapons + Jungle Gun 4 forms)
-- [x] All dish upgrades (549 checks) with correct max levels
-- [x] Cooksta rank system (5 ranks, 12 requirement checks)
-- [x] Ecowatcher missions (44 real checks from wiki data)
+- [x] Comprehensive logic rules — boss gates, item chains, quest prerequisites (see `docs/LOGIC_NOTES.md`)
+- [x] All base game fish species (203) placed in correct depth zones with night dive rules
+- [x] All weapon trees (79 variants across 9 weapons)
+- [x] All dish upgrades (549 checks) with correct max levels + recipe unlock prerequisite rules
+- [x] Cooksta rank system (5 ranks, 12 requirement checks, gated by A Scolding from Yoshie)
+- [x] Ecowatcher missions (44+ real checks with depth/region gates)
 - [x] Ingredient first-find checks + filler items
 - [x] Charm system (12 charms from missions + Ecowatcher)
+- [x] Staff system (24 named staff, hire + training, configurable depth)
+- [x] Sub-missions (29 checks, toggleable, with quest chains)
+- [x] Cooking competition chain (4 fights with ingredient gates)
+- [x] VIP quest locations with ingredient access gates
+- [x] Photography system (20 real photo spots + 8 murals, all gated on Underwater Camera)
 - [x] `should_include_item()` and `should_include_location()` filtering
-- [x] `fill_slot_data()` passing all 25 options to client
+- [x] `fill_slot_data()` passing all 28 options to client
 - [x] 7 chapters with correct story structure
-- [x] Unit tests (55/55 passing)
+- [x] Unit tests (54/54 passing)
 
 ### DLC Content
 - [x] **DREDGE DLC** — Aberration vortex fish (34), Drain Gun tree, Leo Keychain, tagged `dlc_dredge`

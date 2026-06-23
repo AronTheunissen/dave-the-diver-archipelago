@@ -62,6 +62,7 @@ An [Archipelago](https://archipelago.gg/) multiworld randomizer integration for 
 
 ### Playing the randomizer
 See **[docs/SETUP_GUIDE.md](docs/SETUP_GUIDE.md)** for the complete player guide.
+See **[docs/YAML_GUIDE.md](docs/YAML_GUIDE.md)** for all YAML option descriptions.
 
 **Quick version:**
 1. Install BepInEx 6 IL2CPP in your Dave the Diver folder
@@ -89,8 +90,9 @@ cd ..\client
 dotnet build DaveDiverAP/DaveDiverAP.csproj
 ```
 
-See **[DEVELOPMENT_GUIDE.md](DEVELOPMENT_GUIDE.md)** for architecture, key files, and contribution workflow.
-See **[TODO.md](TODO.md)** for current tasks and priorities.
+See **[docs/DEVELOPMENT_GUIDE.md](docs/DEVELOPMENT_GUIDE.md)** for architecture, key files, and contribution workflow.
+See **[docs/TODO.md](docs/TODO.md)** for current tasks and priorities.
+See **[docs/LOGIC_NOTES.md](docs/LOGIC_NOTES.md)** for logic rules and remaining gaps.
 
 ## Project Structure
 
@@ -115,12 +117,14 @@ dave-the-diver-archipelago/
 │   └── UI/                    # In-game UI (F9): Connection · Hints · Progress
 ├── docs/
 │   ├── SETUP_GUIDE.md             # Player installation guide
+│   ├── YAML_GUIDE.md              # All YAML options documented
 │   ├── DEVELOPMENT_GUIDE.md       # Architecture, workflows, design decisions
+│   ├── TODO.md                    # Current task list
+│   ├── LOGIC_NOTES.md             # Logic rules implemented + remaining gaps
 │   ├── CLASS_NAME_CHEAT_SHEET.md  # Confirmed class/method names from dump.cs
 │   ├── MODDING_NOTES.md           # IL2CPP / BepInEx technical notes
 │   └── TID_RECORDING_SHEET.md     # Guide for recording TID values in-game
-├── player-options-*.yaml          # Example YAML configurations
-└── TODO.md                        # Current task list
+└── player-options-*.yaml          # Example YAML configurations
 ```
 
 ## Resources
