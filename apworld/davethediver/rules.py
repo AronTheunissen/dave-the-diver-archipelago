@@ -190,6 +190,51 @@ def set_rules(world):
             lambda state: can_access_ichiban(state)
         )
 
+    # === VINCENT VIP VISIT CHAIN ===
+    # Vincent visits must be completed in order — each unlocks the next.
+    # Visit 3 completion grants Cocktails Unlocked (which gates Ichiban DLC).
+    # We gate each visit on the previous visit's location being reachable+collected.
+    _set_location_rule(multiworld, player,
+        "Quest: Serve Vincent Yamaoka - Visit 2",
+        lambda state: state.can_reach("Quest: Serve Vincent Yamaoka - Visit 1", "Location", player)
+    )
+    _set_location_rule(multiworld, player,
+        "Quest: Serve Vincent Yamaoka - Visit 3 (Unlock Cocktails)",
+        lambda state: state.can_reach("Quest: Serve Vincent Yamaoka - Visit 2", "Location", player)
+    )
+
+    # === STAFF TRAINING RULES ===
+    # Training locations require having the staff member first.
+    # Works for both milestone mode (item = "Maki") and all_levels mode
+    # (item = "Progressive Maki") — we check for either.
+    # Training must also be in order: Lv10 requires Lv5 done, etc.
+    # We enforce ordering via can_reach on the previous training location.
+
+    _BASE_STAFF = [
+        "Billy", "Carolina", "Charlie", "Cohh", "Davina", "Drae", "El Nino",
+        "Itsuki", "James", "Jandi", "Kyoko", "Liu", "Maki", "Masayoshi", "Mitchell",
+        "Pai", "Raptor", "Raul", "Tohoku", "Yone", "Yusuke",
+    ]
+    _DLC_STAFF = {"Hamako": "dlc_ichiban", "Etsuko": "dlc_ichiban", "Chitose": "dlc_ichiban"}
+    _ALL_STAFF = {name: "" for name in _BASE_STAFF}
+    _ALL_STAFF.update(_DLC_STAFF)
+    _TRAINING_LEVELS = [5, 10, 15, 20]
+
+    for staff_name in _ALL_STAFF:
+        # Gate every training location on having the staff member first.
+        # Covers both milestone mode (item = "Maki") and all_levels mode
+        # (item = "Progressive Maki" ×20) by checking for either item name.
+        # Levels 1-20 covers both milestone (5/10/15/20) and all_levels (1-20) —
+        # _set_location_rule is a no-op if the location doesn't exist in the seed.
+        for lvl in range(1, 21):
+            _set_location_rule(multiworld, player,
+                f"Staff: Train {staff_name} to Level {lvl}",
+                lambda state, n=staff_name: (
+                    state.has(n, player) or
+                    state.has(f"Progressive {n}", player, 1)
+                )
+            )
+
     # === GODZILLA DLC: EBIRAH + KAIJU FIGURINE RULES ===
     # The Godzilla DLC story triggers the morning after completing Chapter 5.
     # Gate Ebirah's defeat location on having Chapter 5 Complete in inventory.
