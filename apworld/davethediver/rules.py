@@ -593,6 +593,16 @@ def set_rules(world):
                         lambda state: state.can_reach("Defeat: Ebirah", "Location", player)
                     )
 
+    # === OTTO'S GIFT / FISH FARM RULE ===
+    # Otto's Gift? is gated by completing A Noisy Customer sub-mission
+    # (Otto appears as a noisy customer first, then offers his gift/fish farm)
+    _set_location_rule(multiworld, player,
+        "Quest: Otto's Gift?",
+        lambda state: state.can_reach("Quest: Complete A Noisy Customer (Unlock Fish Farm)", "Location", player)
+    )
+    # Fish Farm unlock comes from Otto's quest chain
+    # (already gated by region/item — Unlock Fish Farm item gates the farm region)
+
     # === FARM ACCESS RULES ===
     # Each farm requires its unlock item to enter the region
 
