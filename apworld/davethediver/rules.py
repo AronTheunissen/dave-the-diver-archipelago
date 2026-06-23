@@ -588,9 +588,18 @@ def set_rules(world):
     def ebirah_defeated(state) -> bool:
         return state.can_reach("Defeat: Ebirah", "Location", player)
 
-    for i in range(1, 21):
+    # Gate all named Kaiju figurines on Ebirah being defeated
+    kaiju_names = [
+        "Godzilla (1965)", "Ebirah (1966)", "Minilla (1967)", "Hedorah (1971)",
+        "Gigan (1972)", "Jet Jaguar (1973)", "King Caesar (1974)", "Mechagodzilla (1975)",
+        "Biolante (1989)", "King Ghidorah (1991)", "Mecha-King Ghidorah (1991)",
+        "Rodan (1993)", "Godzilla (1994)", "SpaceGodzilla (1994)", "Little Godzilla (1994)",
+        "Destoroyah (1995)", "Godzilla (1995)", "Anguirus (2004)", "Mothra (1961)",
+        "Godzilla (2016)",
+    ]
+    for name in kaiju_names:
         _set_location_rule(multiworld, player,
-            f"Kaiju Figurine {i}",
+            f"Kaiju Figurine: {name}",
             lambda state: ebirah_defeated(state)
         )
 

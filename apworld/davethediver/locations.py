@@ -458,29 +458,28 @@ recipe_unlock_locations: Dict[str, LocationData] = {
 # Godzilla DLC: Kaiju figurines collectible after defeating Ebirah.
 # Figurines are scattered across the Blue Hole and can be collected post-Ebirah fight.
 kaiju_figurine_locations: Dict[str, LocationData] = {
-    # NOTE: Exact figurine-per-region breakdown is a TODO — confirm in-game.
-    # Current estimate based on known regions: Blue Hole (shallow/mid/deep),
-    # Sea People Village, Glacial Passage, Glacier Zone, Hydrothermal Vents.
-    "Kaiju Figurine 1":  LocationData(BASE_ID + 857, "Blue Hole - Shallow",  "dlc_godzilla"),
-    "Kaiju Figurine 2":  LocationData(BASE_ID + 858, "Blue Hole - Shallow",  "dlc_godzilla"),
-    "Kaiju Figurine 3":  LocationData(BASE_ID + 859, "Blue Hole - Shallow",  "dlc_godzilla"),
-    "Kaiju Figurine 4":  LocationData(BASE_ID + 860, "Blue Hole - Mid",      "dlc_godzilla"),
-    "Kaiju Figurine 5":  LocationData(BASE_ID + 861, "Blue Hole - Mid",      "dlc_godzilla"),
-    "Kaiju Figurine 6":  LocationData(BASE_ID + 862, "Blue Hole - Mid",      "dlc_godzilla"),
-    "Kaiju Figurine 7":  LocationData(BASE_ID + 863, "Blue Hole - Deep",     "dlc_godzilla"),
-    "Kaiju Figurine 8":  LocationData(BASE_ID + 864, "Blue Hole - Deep",     "dlc_godzilla"),
-    "Kaiju Figurine 9":  LocationData(BASE_ID + 865, "Blue Hole - Deep",     "dlc_godzilla"),
-    "Kaiju Figurine 10": LocationData(BASE_ID + 866, "Sea People Village",   "dlc_godzilla"),
-    "Kaiju Figurine 11": LocationData(BASE_ID + 867, "Sea People Village",   "dlc_godzilla"),
-    "Kaiju Figurine 12": LocationData(BASE_ID + 868, "Sea People Village",   "dlc_godzilla"),
-    "Kaiju Figurine 13": LocationData(BASE_ID + 869, "Glacial Passage",      "dlc_godzilla"),
-    "Kaiju Figurine 14": LocationData(BASE_ID + 870, "Glacial Passage",      "dlc_godzilla"),
-    "Kaiju Figurine 15": LocationData(BASE_ID + 871, "Glacier Zone",         "dlc_godzilla"),
-    "Kaiju Figurine 16": LocationData(BASE_ID + 872, "Glacier Zone",         "dlc_godzilla"),
-    "Kaiju Figurine 17": LocationData(BASE_ID + 873, "Glacier Zone",         "dlc_godzilla"),
-    "Kaiju Figurine 18": LocationData(BASE_ID + 874, "Glacier Zone",         "dlc_godzilla"),
-    "Kaiju Figurine 19": LocationData(BASE_ID + 875, "Hydrothermal Vents",   "dlc_godzilla"),
-    "Kaiju Figurine 20": LocationData(BASE_ID + 876, "Hydrothermal Vents",   "dlc_godzilla"),
+    # All 20 Kaiju figurines with confirmed locations (from player research)
+    # All gated on Ebirah defeated (Chapter 5 Complete) in rules.py
+    "Kaiju Figurine: Godzilla (1965)":         LocationData(BASE_ID + 857, "Blue Hole - Shallow",  "dlc_godzilla"),  # Near surface, far right
+    "Kaiju Figurine: Ebirah (1966)":           LocationData(BASE_ID + 858, "Blue Hole - Mid",      "dlc_godzilla"),  # Shipwreck
+    "Kaiju Figurine: Minilla (1967)":          LocationData(BASE_ID + 859, "Glacier Zone",         "dlc_godzilla"),  # First Glacial Cave, top right
+    "Kaiju Figurine: Hedorah (1971)":          LocationData(BASE_ID + 860, "Hydrothermal Vents",   "dlc_godzilla"),  # Bottom right corner
+    "Kaiju Figurine: Gigan (1972)":            LocationData(BASE_ID + 861, "Glacial Passage",      "dlc_godzilla"),  # Left side puzzle room
+    "Kaiju Figurine: Jet Jaguar (1973)":       LocationData(BASE_ID + 862, "Sea People Village",   "dlc_godzilla"),  # Right of Game Parlor
+    "Kaiju Figurine: King Caesar (1974)":      LocationData(BASE_ID + 863, "Blue Hole - Deep",     "dlc_godzilla"),  # Ramo/Suwam rescue room
+    "Kaiju Figurine: Mechagodzilla (1975)":    LocationData(BASE_ID + 864, "Blue Hole - Mid",      "dlc_godzilla"),  # Sea People Record Chamber
+    "Kaiju Figurine: Biolante (1989)":         LocationData(BASE_ID + 865, "Blue Hole - Deep",     "dlc_godzilla"),  # Tsuchi's house, turtle left side
+    "Kaiju Figurine: King Ghidorah (1991)":    LocationData(BASE_ID + 866, "Sea People Village",   "dlc_godzilla"),  # Tenzhin's House
+    "Kaiju Figurine: Mecha-King Ghidorah (1991)":LocationData(BASE_ID + 867, "Blue Hole - Deep",  "dlc_godzilla"),  # Near right side entrance
+    "Kaiju Figurine: Rodan (1993)":            LocationData(BASE_ID + 868, "Glacier Zone",         "dlc_godzilla"),  # Ice Maze
+    "Kaiju Figurine: Godzilla (1994)":         LocationData(BASE_ID + 869, "Blue Hole - Deep",     "dlc_godzilla"),  # Near whale skeleton
+    "Kaiju Figurine: SpaceGodzilla (1994)":    LocationData(BASE_ID + 870, "Glacier Zone",         "dlc_godzilla"),  # Glacial Seaweed Cave, right jetstream
+    "Kaiju Figurine: Little Godzilla (1994)":  LocationData(BASE_ID + 871, "Blue Hole - Deep",     "dlc_godzilla"),  # Blue Hole Depths
+    "Kaiju Figurine: Destoroyah (1995)":       LocationData(BASE_ID + 872, "Hydrothermal Vents",   "dlc_godzilla"),  # Control room, left volcano puzzle
+    "Kaiju Figurine: Godzilla (1995)":         LocationData(BASE_ID + 873, "Blue Hole - Deep",     "dlc_godzilla"),  # Near Sea People Village entrance
+    "Kaiju Figurine: Anguirus (2004)":         LocationData(BASE_ID + 874, "Blue Hole - Mid",      "dlc_godzilla"),  # Limestone Caves
+    "Kaiju Figurine: Mothra (1961)":           LocationData(BASE_ID + 875, "Blue Hole - Deep",     "dlc_godzilla"),  # Underwater Lake
+    "Kaiju Figurine: Godzilla (2016)":         LocationData(BASE_ID + 876, "Glacial Passage",      "dlc_godzilla"),  # Right side puzzle room, 4th depth level
 }
 
 # === ICHIBAN DLC LOCATIONS ===
