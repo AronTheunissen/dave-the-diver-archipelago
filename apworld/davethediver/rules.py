@@ -289,10 +289,14 @@ def set_rules(world):
     # Most sub-missions inherit region access rules automatically.
     # The following have explicit prerequisites or chains:
 
-    # Chapter 1: Dolphin chain (request → follow-up)
+    # Chapter 1: Dolphin chain (request → follow-up → defeat pirates)
     _set_location_rule(multiworld, player,
         "Sub-Mission: What Happened to the Dolphins?",
         lambda state: state.can_reach("Sub-Mission: A Dolphin's Request", "Location", player)
+    )
+    _set_location_rule(multiworld, player,
+        "Sub-Mission: Defeat Pirates",
+        lambda state: state.can_reach("Sub-Mission: What Happened to the Dolphins?", "Location", player)
     )
 
     # Chapter 2: Clione chain (find → defeat queen)
@@ -326,8 +330,19 @@ def set_rules(world):
         lambda state: state.has("Sea People Necklace", player)
     )
 
-    # Weaponsmith Duff — requires talking to Duff (Prologue complete)
-    # No extra gate needed — Bancho Sushi region is always accessible ✅
+    # Weaponsmith Duff — always accessible (Bancho Sushi region), no extra gate.
+    # Completing it unlocks Duff's Weapon Shop — so all weapon craft locations
+    # require this sub-mission to have been completed (or sub-missions to be off,
+    # in which case the weapon shop is gated by having any weapon in inventory).
+    # Gate all weapon craft locations on Weaponsmith Duff being reachable+collected
+    # OR on sub-missions being disabled (in which case no gate needed since
+    # Duff's shop would be assumed open from the start).
+    if world.options.include_sub_missions.value and world.options.include_weapon_shop.value:
+        for loc_name in list(multiworld.get_locations(player)):
+            if loc_name.name.startswith("Craft:"):
+                add_rule(loc_name,
+                    lambda state: state.can_reach("Sub-Mission: Weaponsmith Duff", "Location", player)
+                )
 
     # === GODZILLA DLC: EBIRAH + KAIJU FIGURINE RULES ===
     # The Godzilla DLC story triggers the morning after completing Chapter 5.
