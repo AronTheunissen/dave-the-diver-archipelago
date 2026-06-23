@@ -301,10 +301,16 @@ def set_rules(world):
     # (the whistle is an AP item so it could come from anywhere in the multiworld,
     # but we still need the location check itself to produce it)
 
-    # Helicoprion: needs 450m depth = Suit Lv6 (covers up to 540m)
+    # Helicoprion: needs Cold-Resistant Suit (Lv7, 560m) + 450m depth
     _set_location_rule(multiworld, player,
         "Defeat: Helicoprion",
-        lambda state: state.has("Progressive Diving Suit", player, 6)
+        lambda state: state.has("Progressive Diving Suit", player, 7)
+    )
+
+    # Giant Gadon: needs Glacial Passage access + Cobra's Lost Crowbar
+    _set_location_rule(multiworld, player,
+        "Defeat: Giant Gadon",
+        lambda state: state.has("Cobra's Lost Crowbar", player)
     )
 
     # Lusca: secret post-game optional boss
@@ -673,13 +679,19 @@ def set_rules(world):
                 )
 
         # Specific photo spots require mission chains to be completed first:
-        # Manta Ray — triggered by the night-diving lighting mission
+        # Manta Ray — triggered by the night-diving lighting mission + Night Dive required
         _set_location_rule(multiworld, player,
             "Photo: Manta Ray",
             lambda state: (
                 state.has("Underwater Camera", player) and
+                state.has("Night Dive Unlock", player) and
                 state.can_reach("Sub-Mission: Take Pictures of Manta Ray", "Location", player)
             )
+        )
+        # Take Pictures of Manta Ray sub-mission also needs Night Dive Unlock
+        _set_location_rule(multiworld, player,
+            "Sub-Mission: Take Pictures of Manta Ray",
+            lambda state: state.has("Night Dive Unlock", player)
         )
         # Loggerhead Turtle — spawns after Finding the Seaweed Collector (= Stormy Night chain)
         _set_location_rule(multiworld, player,

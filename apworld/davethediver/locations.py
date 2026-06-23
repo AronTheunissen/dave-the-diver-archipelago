@@ -43,6 +43,10 @@ story_locations: Dict[str, LocationData] = {
     # Key story milestones within chapters (not chapter completions, but important events)
     "Story: Complete The Leahs-chan Rescue":    LocationData(BASE_ID + 10, "Blue Hole - Mid"),   # Ch1 — gives Gas Cutter; defeating Giant Squid gives Headlamp
     "Story: Complete Deliver Key to Tenzhin":  LocationData(BASE_ID + 11, "Sea People Village"), # Ch4 — gives Sea People Necklace (tubeworm tunnels)
+    "Story: Complete Cobra's Lost Crowbar":    LocationData(BASE_ID + 12, "Glacial Passage"),    # Ch5 — gives Cobra's Lost Crowbar, required for Giant Gadon
+    "iDiver App: Upgrade Slot 1":              LocationData(BASE_ID + 13, "Bancho Sushi"),        # iDiver app checks — give AP items to other games
+    "iDiver App: Upgrade Slot 2":              LocationData(BASE_ID + 14, "Bancho Sushi"),
+    "iDiver App: Upgrade Slot 3":              LocationData(BASE_ID + 15, "Bancho Sushi"),
 }
 
 # === FISH CATCHING ===
