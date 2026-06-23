@@ -220,6 +220,11 @@ def set_rules(world):
             has_depth_access(state, player, 2)  # Mid for Bluefin + Cuttlefish
         )
     )
+    # Michael Bang's Inspiration: Coral Trout (Shallow) + Titan Triggerfish (Shallow) + Rice (Farm)
+    _set_location_rule(multiworld, player,
+        "Quest: Complete Michael Bang's Inspiration",
+        lambda state: state.has("Unlock Vegetable Farm", player)
+    )
 
     # === COOKING COMPETITION CHAIN ===
     # Sequential chain: each fight requires beating the previous one.
@@ -334,6 +339,28 @@ def set_rules(world):
         lambda state: state.has("Sea People Necklace", player)
     )
 
+    # Catch Runaway Seahorses requires Bug Net
+    _set_location_rule(multiworld, player,
+        "Sub-Mission: Catch the Runaway Seahorses",
+        lambda state: state.has("Bug Net", player)
+    )
+    # Talk to Yami requires Catch Runaway Seahorses done first
+    _set_location_rule(multiworld, player,
+        "Sub-Mission: Talk to Yami at the Game Parlor",
+        lambda state: (
+            state.has("Bug Net", player) and
+            state.can_reach("Sub-Mission: Catch the Runaway Seahorses", "Location", player)
+        )
+    )
+
+    # Stormy Night = Truck Hermit Crab vortex boss.
+    # Unlocked after receiving Sea People Gloves (grip gloves) in vanilla.
+    # The gloves aren't used to enter but are the unlock trigger.
+    _set_location_rule(multiworld, player,
+        "Sub-Mission: Stormy Night",
+        lambda state: state.has("Sea People Gloves", player)
+    )
+
     # Weaponsmith Duff — always accessible (Bancho Sushi region), no extra gate.
     # Completing it unlocks Duff's Weapon Shop — so all weapon craft locations
     # require this sub-mission to have been completed (or sub-missions to be off,
@@ -378,6 +405,70 @@ def set_rules(world):
             lambda state: ebirah_defeated(state)
         )
 
+    # === ECOWATCHER DEPTH RULES ===
+    # Ecowatcher missions require access to the region where their target
+    # organisms live. Most Blue Hole missions are already in the correct
+    # region, but we add explicit depth gates for missions that need
+    # specific depth tiers or special regions.
+    if world.options.include_ecowatcher.value:
+        # Glacial Area missions require Glacial Passage access
+        glacial_missions = [
+            "Ecowatcher: Investigate Regional Ecology 1",
+            "Ecowatcher: Investigate Regional Ecology 2",
+            "Ecowatcher: Investigate Glacial Marine Plants 1",
+            "Ecowatcher: Investigate Glacial Marine Plants 2",
+            "Ecowatcher: Investigate Glacial Marine Plants 3",
+            "Ecowatcher: Collect Glacial Clams 1",
+            "Ecowatcher: Collect Glacial Clams 2",
+            "Ecowatcher: Defeat Invasive Starfish 1",
+            "Ecowatcher: Defeat Invasive Starfish 2",
+            "Ecowatcher: Investigate Sea People's Artifact 1",
+            "Ecowatcher: Investigate Sea People's Artifact 2",
+            "Ecowatcher: Investigate Dangerous Gemstones 1",
+            "Ecowatcher: Investigate Dangerous Gemstones 2",
+        ]
+        for mission in glacial_missions:
+            _set_location_rule(multiworld, player, mission,
+                # Glacial Passage: needs Key to Tenzhin + Cold-Resistant suit (level 7+)
+                lambda state: (
+                    state.has("Key to Tenzhin", player) and
+                    (state.has("Progressive Diving Suit", player, 7) or
+                     (state.has("Teleport Mirror", player) and state.has("Teleport to Glacier", player)))
+                )
+            )
+
+        # Hydrothermal Vents missions — deepest region, requires Glacier Zone access
+        vents_missions = [
+            "Ecowatcher: Investigate Regional Ecology 3",
+            "Ecowatcher: Investigate Dangerous Gemstones 3",
+        ]
+        for mission in vents_missions:
+            _set_location_rule(multiworld, player, mission,
+                lambda state: (
+                    state.has("Progressive Diving Suit", player, 8) and
+                    state.has("Tech Suit Parts", player, 3) and
+                    (state.has("Key to Tenzhin", player) or
+                     (state.has("Teleport Mirror", player) and state.has("Teleport to Glacier", player)))
+                )
+            )
+
+        # Deep Blue Hole missions (Overpopulated Invasive Fish 4-6, Remove Jellyfish 3-4)
+        # target deep-sea species like Fangtooth and Bluespotted Stargazer
+        deep_missions = [
+            "Ecowatcher: Cull Invasive Fish 4",
+            "Ecowatcher: Cull Invasive Fish 5",
+            "Ecowatcher: Remove Jellyfish 3",
+            "Ecowatcher: Remove Jellyfish 4",
+            "Ecowatcher: Research Starfish 4",
+            "Ecowatcher: Research Starfish 5",
+            "Ecowatcher: Research Shell 4",
+            "Ecowatcher: Research Shell 5",
+        ]
+        for mission in deep_missions:
+            _set_location_rule(multiworld, player, mission,
+                lambda state: has_depth_access(state, player, 3)  # Deep
+            )
+
     # === PHOTOGRAPHY RULES ===
     # Underwater Camera is given by Dr. Bacon after completing "Beyond the Rock Pile"
     # (Chapter 1 main mission). All photography locations require the camera.
@@ -419,6 +510,14 @@ def set_rules(world):
             lambda state: (
                 state.has("Underwater Camera", player) and
                 state.can_reach("Sub-Mission: Curious Child", "Location", player)
+            )
+        )
+        # Pink Dolphin — triggered by the dolphin quest chain
+        _set_location_rule(multiworld, player,
+            "Photo: Pink Dolphin",
+            lambda state: (
+                state.has("Underwater Camera", player) and
+                state.can_reach("Sub-Mission: What Happened to the Dolphins?", "Location", player)
             )
         )
 
