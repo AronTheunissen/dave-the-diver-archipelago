@@ -92,6 +92,19 @@
 
 ---
 
+### 👨‍🍳 **Staff Options**
+
+**staff_training_depth:**
+- `none` — No staff checks
+- `hire_only` — One check per staff when recruited (24 checks)
+- `milestones` — Hire + Level 5/10/15/20 training checks *(default)*
+- `all_levels` — Hire + every level 1–20; items become "Progressive [Name]" ×20
+
+**include_ingredient_checks:** (true/false, default: true)
+First-find checks for sea plants, rare forageables, and farm crops (~25 checks).
+
+---
+
 ### 📱 **Side Content Options**
 
 **include_cooksta:** (true/false)

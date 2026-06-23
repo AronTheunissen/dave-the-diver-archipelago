@@ -224,9 +224,53 @@ public static void MyPatch_Postfix(object __instance)
 
 ---
 
-## Key Design Decisions
+## Design Decisions
 
-See **[docs/DESIGN.md](docs/DESIGN.md)** for full rationale. Quick summary:
+### Goals & Victory Conditions
+- **5 goals**: Defeat Yawie (default) → Defeat All Bosses → Diamond Rank → Master Diver → 100%
+- Defeat All Bosses is DLC-aware: Ebirah (Godzilla), Torben (Ichiban), Jungle bosses all required when DLC enabled
+- Diamond Rank requires 720 followers + 375 Best Taste + 32 researched recipes (all tracked live in ProgressUI)
+
+### Region & Depth Gating
+- Depth uses **lenient OR logic** — suit level OR oxygen tanks, so players are never hard-blocked
+- Diving Suit: 8 levels (40m → 800m), levels 7-8 = cold-resistant tiers that gate Glacial Passage and Glacier Zone
+- Sea People Village: two routes (Sea People Gloves OR Teleport Mirror), both require Translator
+- Glacier: two routes (Key to Tenzhin swim path OR Teleport), both require suit level 7+
+- DLC regions (vortex zones, Jungle) only connected when DLC is enabled in options
+
+### Region Map
+```
+Menu
+└── Bancho Sushi (always accessible)
+    ├── Blue Hole - Shallow (0–50m, always accessible)
+    │   ├── Blue Hole - Mid (50–130m) ← suit lvl 2+ OR 2 oxygen tanks
+    │   │   └── Blue Hole - Deep (130–250m) ← suit lvl 3+ OR 3 O2 tanks + harpoon
+    │   │       ├── Glacial Passage ← Key to Tenzhin + suit lvl 7+
+    │   │       │   └── Glacier Zone ← suit lvl 8 + Tech Suit Parts ×3
+    │   │       │       └── Hydrothermal Vents (deepest)
+    │   │       ├── Jellyfish Basin  ⟩ DREDGE DLC only,
+    │   │       ├── Fog Coast        ⟩ require Vortex Entry
+    │   │       └── Black Cliff      ⟩
+    └── Sea People Village ← (Sea People Gloves OR Teleport) AND Translator
+        └── Fish Farm ← Unlock Fish Farm
+    ├── Vegetable Farm ← Unlock Vegetable Farm
+    ├── Chicken Farm   ← Unlock Chicken Farm
+    └── Utara Village  ← Jungle DLC only (Chapter 5 + travels to jungle)
+        └── [8 Jungle sub-regions]
+```
+
+### DLC Isolation (end-to-end)
+1. **Locations** — filtered by `should_include_location()` with DLC category check
+2. **Items** — filtered by `should_include_item()` with DLC check before progression blanket rule
+3. **Region connections** — only created when DLC option is enabled
+4. **Goal conditions** — DLC bosses only required when DLC is enabled
+
+### Staff System
+- 24 named staff (21 base + 3 Ichiban DLC), each is a progression item
+- `staff_training_depth` option controls check depth: none / hire_only / milestones / all_levels
+- In `all_levels` mode, items become `Progressive [Name]` ×20 — finding Maki a 3rd time trains her to level 3
+
+### Key Design Decisions (Summary)
 
 - **Boat-only item delivery** — prevents items arriving mid-dive or during cutscenes
 - **Lenient depth gating** — OR logic between suit/oxygen so no single item blocks depth

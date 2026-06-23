@@ -28,7 +28,7 @@
 ### DLC Content
 - [x] **DREDGE DLC** — Aberration vortex fish (34), Drain Gun tree, Leo Keychain, tagged `dlc_dredge`
 - [x] **Godzilla DLC** — 2 recipes + 20 Kaiju figurine checks (all regions, gated by Ebirah), tagged `dlc_godzilla`
-- [x] **Ichiban DLC** — 4 recipe unlocks + dish upgrades, Buckwheat crop, Beat 'Em Up, Karaoke, Hero's Bat, tagged `dlc_ichiban`
+- [x] **Ichiban DLC** — 4 recipe unlocks + dish upgrades, Buckwheat crop, Beat 'Em Up, Karaoke, 3 staff (Hamako/Etsuko/Chitose), Torben boss, 2 missions (Operation Sea Blue Eradication + Cold Noodles), gated by Chapter 5 + Cocktails Unlocked, tagged `dlc_ichiban`
 - [x] **Jungle DLC structure** — 8 regions, 30+ items, 100+ location checks (see below for TODOs), tagged `dlc_jungle`
 
 ### Jungle DLC (Structure Complete — Data TODOs Remain)
@@ -138,7 +138,7 @@ Fill these in by pasting wiki data (same process as base game fish list):
 - [ ] Dish upgrade checks for all Jungle recipes (same pattern as base game)
 
 ### Base Game
-- [ ] Verify Ichiban DLC recipe unlock conditions (are they VIP quests or staff training?)
+- [x] Ichiban DLC recipe unlock conditions confirmed — staff training recipes ✅
 
 ---
 
