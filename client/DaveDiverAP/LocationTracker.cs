@@ -105,7 +105,7 @@ namespace DaveDiverAP
 
         public static void OnRecipeUnlocked(string recipeName)
         {
-            ArchipelagoClient.CheckLocation($"Unlock Recipe: {recipeName}");
+            ArchipelagoClient.CheckLocation($"Recipe Unlock: {recipeName}");
         }
 
         // ── Dish upgrades ─────────────────────────────────────────────────────
@@ -113,7 +113,7 @@ namespace DaveDiverAP
         public static void OnDishUpgraded(string dishName, int newLevel)
         {
             if (newLevel >= 2)
-                ArchipelagoClient.CheckLocation($"Upgrade {dishName} to Level {newLevel}");
+                ArchipelagoClient.CheckLocation($"Dish Research: {dishName} Level {newLevel}");
         }
 
         // ── Restaurant milestones ─────────────────────────────────────────────
@@ -238,7 +238,7 @@ namespace DaveDiverAP
 
         public static void OnIngredientFirstFound(string ingredientName)
         {
-            ArchipelagoClient.CheckLocation($"First Find: {ingredientName}");
+            ArchipelagoClient.CheckLocation($"Ingredient: First {ingredientName}");
         }
 
         // ── Charm acquisition ─────────────────────────────────────────────────

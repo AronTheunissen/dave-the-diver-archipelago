@@ -7,6 +7,8 @@ using Archipelago.MultiClient.Net.Models;
 using Archipelago.MultiClient.Net.Packets;
 using BepInEx.Logging;
 
+using DaveDiverAP.UI;
+
 namespace DaveDiverAP
 {
     /// <summary>
@@ -168,6 +170,8 @@ namespace DaveDiverAP
             }
 
             CheckLocation(locationId);
+            // Notify ProgressUI so the category breakdown updates live
+            ProgressUI.OnLocationChecked(locationName);
         }
 
         /// <summary>
