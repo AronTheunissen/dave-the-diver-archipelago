@@ -100,7 +100,7 @@ static const values near the relevant classes.
 | `WeaponNameMapper._idMap` | ~79 entries (craft TID → weapon name) | `WeaponCraftPatch.cs` |
 | `RecipeNameMapper._map` | ~54 entries (recipe TID → recipe name) | `RecipeUnlockPatch.cs` |
 | `QuestNameMapper._map` | ~20 entries (mission TID → quest name) | `StoryProgressPatch.cs` |
-| `ChallengeNameMapper._map` | 9 entries (mission TID → challenge name) | `ChallengePatch.cs` |
+| `ChallengeNameMapper._map` | ~~9 entries~~ — challenges removed (placeholder content) | ~~`ChallengePatch.cs`~~ |
 | `IngredientNameMapper._map` | ~12 entries (ingredient TID → name) | `IngredientPatch.cs` |
 | `CharmMapper._map` | 8 entries (charm TID → name + source) | `CharmPatch.cs` |
 
@@ -130,7 +130,7 @@ All `ItemHandler.cs` methods now use real game API calls:
 ## 🟡 IMPORTANT — Data To Fill In (Requires Playing)
 
 ### Godzilla DLC
-- [ ] Confirm exact Kaiju figurine locations per region (currently estimated) — update `locations.py`
+- [x] Confirm exact Kaiju figurine locations per region — all 20 named figurines with correct regions ✅
 
 ### Jungle DLC — Fish & Recipes (~60 fish + all recipes still needed)
 Fill these in by pasting wiki data (same process as base game fish list):
@@ -149,7 +149,7 @@ Fill these in by pasting wiki data (same process as base game fish list):
 
 ## 🟡 IMPORTANT — Quality & Completeness
 
-### Unit Tests (55/55 passing ✅)
+### Unit Tests (54/54 passing ✅)
 - [x] ID uniqueness, no duplicate IDs, no item/location collisions
 - [x] `should_include_item()` filtering — all categories, DLC flags, traps
 - [x] `should_include_location()` filtering — fish 3-way, all toggles, DLC
