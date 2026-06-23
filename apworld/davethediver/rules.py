@@ -285,6 +285,50 @@ def set_rules(world):
                 )
             )
 
+    # === SUB-MISSION RULES ===
+    # Most sub-missions inherit region access rules automatically.
+    # The following have explicit prerequisites or chains:
+
+    # Chapter 1: Dolphin chain (request → follow-up)
+    _set_location_rule(multiworld, player,
+        "Sub-Mission: What Happened to the Dolphins?",
+        lambda state: state.can_reach("Sub-Mission: A Dolphin's Request", "Location", player)
+    )
+
+    # Chapter 2: Clione chain (find → defeat queen)
+    _set_location_rule(multiworld, player,
+        "Sub-Mission: Defeat the Clione Queen",
+        lambda state: state.can_reach("Sub-Mission: Catch Clione", "Location", player)
+    )
+
+    # Chapter 2: Whale chain (hear cry → find baby)
+    _set_location_rule(multiworld, player,
+        "Sub-Mission: Finding the Baby Whale",
+        lambda state: state.can_reach("Sub-Mission: Whale Cry", "Location", player)
+    )
+
+    # Chapter 3 Sea People Village chains:
+    # Kinglong's Statue chain (offer flowers → repair statue)
+    _set_location_rule(multiworld, player,
+        "Sub-Mission: Repair Kinglong's Statue",
+        lambda state: state.can_reach("Sub-Mission: Offer Flowers to King Long's Statue", "Location", player)
+    )
+
+    # Pet Squid Selgio requires Bug Net (used to catch Selgio)
+    _set_location_rule(multiworld, player,
+        "Sub-Mission: Pet Squid Selgio",
+        lambda state: state.has("Bug Net", player)
+    )
+
+    # Curious Child requires Sea People Necklace (to travel through tubeworm tunnels)
+    _set_location_rule(multiworld, player,
+        "Sub-Mission: Curious Child",
+        lambda state: state.has("Sea People Necklace", player)
+    )
+
+    # Weaponsmith Duff — requires talking to Duff (Prologue complete)
+    # No extra gate needed — Bancho Sushi region is always accessible ✅
+
     # === GODZILLA DLC: EBIRAH + KAIJU FIGURINE RULES ===
     # The Godzilla DLC story triggers the morning after completing Chapter 5.
     # Gate Ebirah's defeat location on having Chapter 5 Complete in inventory.
