@@ -944,7 +944,9 @@ quest_locations: Dict[str, LocationData] = {
     "Quest: Complete A Noisy Customer (Unlock Fish Farm)": LocationData(BASE_ID + 388, "Bancho Sushi"),
 
     # --- VIP guests ---
-    "Quest: Serve Vincent Yamaoka (The Gourmet)": LocationData(BASE_ID + 389, "Bancho Sushi"),
+    "Quest: Serve Vincent Yamaoka - Visit 1":      LocationData(BASE_ID + 389, "Bancho Sushi"),
+    "Quest: Serve Vincent Yamaoka - Visit 2":      LocationData(BASE_ID + 420, "Bancho Sushi"),
+    "Quest: Serve Vincent Yamaoka - Visit 3 (Unlock Cocktails)": LocationData(BASE_ID + 421, "Bancho Sushi"),
     "Quest: Serve Michael Bang (Movie Director)": LocationData(BASE_ID + 390, "Bancho Sushi"),
     "Quest: Serve Sammy (Rapper)": LocationData(BASE_ID + 391, "Bancho Sushi"),
     "Quest: Serve Wang Pang (Chef Competitor)": LocationData(BASE_ID + 392, "Bancho Sushi"),

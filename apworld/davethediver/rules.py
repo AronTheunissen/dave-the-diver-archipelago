@@ -162,13 +162,33 @@ def set_rules(world):
         )
     )
 
-    # === ICHIBAN DLC: TORBEN RULE ===
-    # Torben is fought as part of Operation Sea Blue Eradication.
-    # No special items required beyond the DLC being active — the mission
-    # becomes available naturally during the DLC story, so Torben is reachable
-    # as long as the player can access Bancho Sushi (always true in base game).
-    # The "Defeat: Torben" check IS the completion of Operation Sea Blue Eradication.
-    # No additional rule needed — region access (Blue Hole - Deep) is sufficient.
+    # === ICHIBAN DLC: UNLOCK REQUIREMENTS ===
+    # The Ichiban DLC requires completing Chapter 5 AND unlocking Cocktails
+    # (completing Vincent Yamaoka's 3rd VIP visit). All Ichiban DLC content
+    # is gated behind both of these requirements.
+    def can_access_ichiban(state) -> bool:
+        return (
+            state.has("Chapter 5 Complete", player) and
+            state.has("Cocktails Unlocked", player)
+        )
+
+    # Gate all Ichiban DLC mission/boss locations
+    for ichiban_loc in [
+        "Ichiban: Complete Operation Sea Blue Eradication",
+        "Ichiban: Complete Cold Noodles Mission",
+        "Ichiban: Complete Beat 'Em Up Minigame",
+        "Ichiban: Complete Karaoke Minigame",
+        "Defeat: Torben",
+    ]:
+        _set_location_rule(multiworld, player, ichiban_loc,
+            lambda state: can_access_ichiban(state)
+        )
+
+    # Gate Ichiban staff hiring on DLC access too
+    for staff_name in ["Hamako", "Etsuko", "Chitose"]:
+        _set_location_rule(multiworld, player, f"Staff: Hire {staff_name}",
+            lambda state: can_access_ichiban(state)
+        )
 
     # === GODZILLA DLC: EBIRAH + KAIJU FIGURINE RULES ===
     # The Godzilla DLC story triggers the morning after completing Chapter 5.

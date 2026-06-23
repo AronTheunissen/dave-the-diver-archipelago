@@ -180,7 +180,8 @@ area_unlock_items: Dict[str, ItemData] = {
     "Tech Suit Parts": ItemData(ITEM_BASE + 104, ItemClassification.progression, count=3),  # Needed for Glacier Zone
     "Laser Device": ItemData(ITEM_BASE + 105, ItemClassification.progression),  # Required to open Broken Control Room
     "Control Room Button": ItemData(ITEM_BASE + 106, ItemClassification.progression, count=3),  # 3 needed for Ch7 finale
-    "Sea People's Trust": ItemData(ITEM_BASE + 107, ItemClassification.progression),  # Unlocks Duff's Dream Concert + Ch4
+    "Sea People's Trust":   ItemData(ITEM_BASE + 107, ItemClassification.progression),  # Unlocks Duff's Dream Concert + Ch4
+    "Cocktails Unlocked":   ItemData(ITEM_BASE + 112, ItemClassification.progression),  # Vincent Visit 3 — gates Ichiban DLC
     "Vortex Entry": ItemData(ITEM_BASE + 119, ItemClassification.progression, count=5, category="dlc_dredge"),  # DREDGE DLC vortex regions
 
     # Teleport system - allows bypassing physical routes
