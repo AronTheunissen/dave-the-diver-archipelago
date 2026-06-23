@@ -190,17 +190,67 @@ def set_rules(world):
             lambda state: can_access_ichiban(state)
         )
 
-    # === VINCENT VIP VISIT CHAIN ===
-    # Vincent visits must be completed in order — each unlocks the next.
-    # Visit 3 completion grants Cocktails Unlocked (which gates Ichiban DLC).
-    # We gate each visit on the previous visit's location being reachable+collected.
+    # === VIP VISIT RULES ===
+    # Vincent Yamaoka appears as a recurring VIP judge across all 3 visits.
+    # His visits are NOT part of the competition chain — they're independent.
+    # All 3 visits require being able to get to Bancho Sushi (always accessible).
+    # No special rules needed for Vincent visits — region access handles it.
+
+    # Independent VIP quests — gated by ingredient access:
+    # Sammy: rice, eggplant, carrot → Vegetable Farm (already in correct region)
+    # Michael Bang: coral trout (Shallow) + farm → Bancho Sushi (Shallow always accessible)
+    # Otto: Moray Eel (Shallow) + Turmeric (vendor) → always accessible
+    # Jango: Bluefin Tuna Chutoro (Mid) + Habanero (farm) + Sea Grape (Mid)
     _set_location_rule(multiworld, player,
-        "Quest: Serve Vincent Yamaoka - Visit 2",
-        lambda state: state.can_reach("Quest: Serve Vincent Yamaoka - Visit 1", "Location", player)
+        "Quest: Complete Jango's Secret Recipe",
+        lambda state: (
+            has_depth_access(state, player, 2) and  # Blue Hole Mid for Bluefin + Sea Grape
+            state.has("Unlock Vegetable Farm", player)  # Farm for Habanero
+        )
     )
+    # Mxmtoon: Green Sea Urchin needs Sea People Gloves + Bluefin Tuna (Mid) + Cuttlefish (Mid)
     _set_location_rule(multiworld, player,
-        "Quest: Serve Vincent Yamaoka - Visit 3 (Unlock Cocktails)",
-        lambda state: state.can_reach("Quest: Serve Vincent Yamaoka - Visit 2", "Location", player)
+        "Quest: Serve Mxmtoon",
+        lambda state: (
+            state.has("Sea People Gloves", player) and
+            has_depth_access(state, player, 2)  # Mid for Bluefin + Cuttlefish
+        )
+    )
+
+    # === COOKING COMPETITION CHAIN ===
+    # Sequential chain: each fight requires beating the previous one.
+    # Ingredient access gates each fight; Alex Cooper's defeat grants Cocktails Unlocked.
+
+    # Vincent fight: Sea Grape (Limestone Cave = Mid) + White Spotted Jellyfish (Mid) + Salt
+    _set_location_rule(multiworld, player,
+        "Competition: Defeat Vincent Yamaoka",
+        lambda state: has_depth_access(state, player, 2)  # Blue Hole Mid
+    )
+    # Wang Pang: beat Vincent + Bluespotted Stargazer (Deep) + Egg (Chicken Farm)
+    _set_location_rule(multiworld, player,
+        "Competition: Defeat Wang Pang",
+        lambda state: (
+            state.can_reach("Competition: Defeat Vincent Yamaoka", "Location", player) and
+            has_depth_access(state, player, 3) and  # Blue Hole Deep
+            state.has("Unlock Chicken Farm", player)  # For Egg
+        )
+    )
+    # Alex Cooper: beat Wang Pang + Cookiecutter Shark + Vampire Squid + Barreleye (all Deep) + Kelp
+    _set_location_rule(multiworld, player,
+        "Competition: Defeat Alex Cooper",
+        lambda state: (
+            state.can_reach("Competition: Defeat Wang Pang", "Location", player) and
+            has_depth_access(state, player, 3)  # Blue Hole Deep for all fish
+        )
+    )
+    # Pastro: beat Alex + Humboldt Squid (Mid Night or Glacier) + White Shrimp (Mid/Vents) + farm
+    _set_location_rule(multiworld, player,
+        "Competition: Defeat Pastro Antogiovani",
+        lambda state: (
+            state.can_reach("Competition: Defeat Alex Cooper", "Location", player) and
+            has_depth_access(state, player, 2) and  # Min Mid for White Shrimp baseline
+            state.has("Unlock Vegetable Farm", player)  # Farm for Wheat + Garlic
+        )
     )
 
     # === STAFF TRAINING RULES ===

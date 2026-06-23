@@ -944,15 +944,31 @@ quest_locations: Dict[str, LocationData] = {
     "Quest: Complete A Noisy Customer (Unlock Fish Farm)": LocationData(BASE_ID + 388, "Bancho Sushi"),
 
     # --- VIP guests ---
+    # ── VIP Quests (independent — gated by ingredient access) ────────────────
+    # Vincent Yamaoka appears multiple times as a VIP judge — each visit is separate
     "Quest: Serve Vincent Yamaoka - Visit 1":      LocationData(BASE_ID + 389, "Bancho Sushi"),
     "Quest: Serve Vincent Yamaoka - Visit 2":      LocationData(BASE_ID + 420, "Bancho Sushi"),
-    "Quest: Serve Vincent Yamaoka - Visit 3 (Unlock Cocktails)": LocationData(BASE_ID + 421, "Bancho Sushi"),
-    "Quest: Serve Michael Bang (Movie Director)": LocationData(BASE_ID + 390, "Bancho Sushi"),
-    "Quest: Serve Sammy (Rapper)": LocationData(BASE_ID + 391, "Bancho Sushi"),
-    "Quest: Serve Wang Pang (Chef Competitor)": LocationData(BASE_ID + 392, "Bancho Sushi"),
-    "Quest: Serve Alex Cooper (Chef Competitor)": LocationData(BASE_ID + 393, "Bancho Sushi"),
-    "Quest: Serve Pastro Antogiovani (Chef Competitor)": LocationData(BASE_ID + 394, "Bancho Sushi"),
-
+    "Quest: Serve Vincent Yamaoka - Visit 3":      LocationData(BASE_ID + 421, "Bancho Sushi"),
+    # Sammy — needs Vegetable Farm (rice, eggplant, carrot)
+    "Quest: Complete Good Ol' Vegetable Sushi!":   LocationData(BASE_ID + 422, "Vegetable Farm"),
+    # Michael Bang — needs Shallow + Vegetable Farm (coral trout, titan triggerfish + rice)
+    "Quest: Complete Michael Bang's Inspiration":  LocationData(BASE_ID + 423, "Bancho Sushi"),
+    # Otto — needs Moray Eel (Shallow) + Turmeric (vendor/dispatch)
+    "Quest: Complete Otto's Moray Eel Dish":       LocationData(BASE_ID + 424, "Bancho Sushi"),
+    # Jango — needs Bluefin Tuna Chutoro (Mid) + Habanero (farm) + Sea Grape (Mid) + Sesame
+    "Quest: Complete Jango's Secret Recipe":       LocationData(BASE_ID + 425, "Blue Hole - Mid"),
+    # Mxmtoon — needs Green Sea Urchin (requires Sea People Gloves) + Bluefin Tuna + Cuttlefish
+    "Quest: Serve Mxmtoon":                        LocationData(BASE_ID + 426, "Bancho Sushi"),
+    # ── Cooking Competition Chain ─────────────────────────────────────────────
+    # Each fight unlocks the next. Alex Cooper's defeat grants Cocktails Unlocked.
+    # Vincent fight: needs Sea Grape (Limestone Cave = Blue Hole Mid) + White Spotted Jellyfish + Salt
+    "Competition: Defeat Vincent Yamaoka":         LocationData(BASE_ID + 427, "Blue Hole - Mid"),
+    # Wang Pang: needs Bluespotted Stargazer (Deep) + Egg (Chicken Farm) + Wheat + Olive Oil
+    "Competition: Defeat Wang Pang":               LocationData(BASE_ID + 428, "Blue Hole - Deep"),
+    # Alex Cooper: needs Cookiecutter Shark + Vampire Squid + Barreleye (all Deep) + Kelp
+    "Competition: Defeat Alex Cooper":             LocationData(BASE_ID + 429, "Blue Hole - Deep"),
+    # Pastro: needs Humboldt Squid (Glacier or Deep Night) + White Shrimp (Vents/Deep) + Wheat + Garlic
+    "Competition: Defeat Pastro Antogiovani":      LocationData(BASE_ID + 430, "Blue Hole - Deep"),
     # --- Sea People Village ---
     "Quest: Gain Trust of Sea People": LocationData(BASE_ID + 395, "Sea People Village"),
     "Quest: Complete Niamo's Request": LocationData(BASE_ID + 396, "Sea People Village"),
