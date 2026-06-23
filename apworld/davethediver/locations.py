@@ -1005,6 +1005,7 @@ quest_locations: Dict[str, LocationData] = {
     # Chapter 6 sub-missions (Glacier Zone)
     "Sub-Mission: Lost Baby Manatee":             LocationData(BASE_ID + 1727, "Glacier Zone", "sub_mission"),
     "Sub-Mission: Trapped in the Glacial Cave":   LocationData(BASE_ID + 1728, "Glacial Passage", "sub_mission"),
+    "Sub-Mission: Clara's Omani (Klaus Quest)":   LocationData(BASE_ID + 1729, "Blue Hole - Shallow", "sub_mission"),
 
     # --- Sea People Village ---
     "Quest: Gain Trust of Sea People": LocationData(BASE_ID + 395, "Sea People Village"),

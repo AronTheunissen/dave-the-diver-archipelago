@@ -221,6 +221,97 @@ def set_rules(world):
         )
     )
 
+    # === BOSS FIGHT SPECIFIC RULES ===
+
+    # Giant Squid: needs Gas Cutter + 150m depth (Diving Suit Lv3+ or equiv O2)
+    _set_location_rule(multiworld, player,
+        "Defeat: Giant Squid",
+        lambda state: (
+            state.has("Gas Cutter", player) and
+            has_depth_access(state, player, 2)  # Mid depth covers 150m
+        )
+    )
+
+    # Clione Queen: needs Bug Net + 200m depth (Deep)
+    _set_location_rule(multiworld, player,
+        "Defeat: Clione Queen",
+        lambda state: (
+            state.has("Bug Net", player) and
+            has_depth_access(state, player, 3)  # Deep 130-250m
+        )
+    )
+
+    # Giant Wolf Eel: needs Sea People Gloves + Headlamp + 250m depth (Deep)
+    _set_location_rule(multiworld, player,
+        "Defeat: Giant Wolf Eel",
+        lambda state: (
+            state.has("Sea People Gloves", player) and
+            state.has("Headlamp", player) and
+            has_depth_access(state, player, 3)  # Deep
+        )
+    )
+
+    # Goblin Shark: needs Salvage Drone + Underwater Camera (Yellow Shipwreck)
+    _set_location_rule(multiworld, player,
+        "Defeat: Goblin Shark",
+        lambda state: (
+            state.has("Salvage Drone", player) and
+            state.has("Underwater Camera", player) and
+            has_depth_access(state, player, 3)  # Deep
+        )
+    )
+
+    # John Watson: 2 fights — Fight 1 needs Translator + 130m, Fight 2 needs cold suit
+    # John Watson is already in Sea People Village region which requires Translator.
+    # We add the cold suit requirement since Fight 2 is at 400m.
+    _set_location_rule(multiworld, player,
+        "Defeat: John Watson",
+        lambda state: (
+            state.has("Sea People Translator", player) and
+            state.has("Progressive Diving Suit", player, 7)  # Cold-Resistant Suit = Lv7
+        )
+    )
+
+    # Kronosaurus: needs Heat-Resistant Gloves + Hydrothermal Vents access
+    _set_location_rule(multiworld, player,
+        "Defeat: Kronosaurus",
+        lambda state: state.has("Heat-Resistant Gloves", player)
+        # Hydrothermal Vents region gate already handles depth/cold suit
+    )
+
+    # Yawie: needs 550m+ (suit lv7+), 3 buttons, Laser Device, Glacier Zone access
+    # Already gated by defeated_yawie() in victory conditions, but add explicit rule
+    _set_location_rule(multiworld, player,
+        "Defeat: Yawie",
+        lambda state: (
+            state.has("Control Room Button", player, 3) and
+            state.has("Laser Device", player) and
+            state.has("Progressive Diving Suit", player, 7)
+        )
+    )
+
+    # Vortex boss chain: Stormy Night → Mantis Shrimp → Klaus (Clara's Omani side quest)
+    _set_location_rule(multiworld, player,
+        "Defeat: Mantis Shrimp",
+        lambda state: state.can_reach("Defeat: Truck Hermit Crab", "Location", player)
+    )
+    _set_location_rule(multiworld, player,
+        "Defeat: Great White Shark Klaus",
+        lambda state: (
+            state.can_reach("Defeat: Mantis Shrimp", "Location", player) and
+            state.can_reach("Sub-Mission: Clara's Omani (Klaus Quest)", "Location", player)
+        )
+    )
+
+    # Hydrothermal Vents entrance gate: also needs Heat-Resistant Gloves
+    try:
+        vents_entrance = multiworld.get_entrance("Enter Hydrothermal Vents", player)
+        add_rule(vents_entrance,
+            lambda state: state.has("Heat-Resistant Gloves", player)
+        )
+    except Exception:
+        pass  # Entrance may not exist if Vents region is filtered
+
     # === ICHIBAN DLC: UNLOCK REQUIREMENTS ===
     # The Ichiban DLC requires completing Chapter 5 AND unlocking Cocktails
     # (completing Vincent Yamaoka's 3rd VIP visit). All Ichiban DLC content
