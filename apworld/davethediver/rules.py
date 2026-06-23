@@ -139,6 +139,61 @@ def set_rules(world):
         )
     )
 
+    # === NIGHT DIVE RULES ===
+    # Night Dive Unlock is obtained from "Giant Stingray at Night" in vanilla,
+    # but in AP it's a receivable item. Night-only fish require it.
+    # Night-only fish by region:
+    # Shallow: Blue Lobster, Blacktip Reefshark, Box Jellyfish, Clearfin Lionfish,
+    #          Crystal Lobster, Devil Scorpionfish, Longspine Porcupinefish,
+    #          Longspine Squirrelfish, Red-banded Lobster, Moray Eel
+    # Mid: Blackfin Barracuda, Crystal Lobster, Devil Scorpionfish,
+    #      Fan Lobster, Giant Squid, Humboldt Squid, Spear Squid
+    night_only_fish = [
+        # Shallow night fish
+        "First Catch: Blue Lobster",
+        "First Catch: Blacktip Reefshark",
+        "First Catch: Box Jellyfish",
+        "First Catch: Clearfin Lionfish",
+        "First Catch: Crystal Lobster",
+        "First Catch: Devil Scorpionfish",
+        "First Catch: Longspine Porcupinefish",
+        "First Catch: Longspine Squirrelfish",
+        "First Catch: Red-banded Lobster",
+        "First Catch: Moray Eel",
+        # Mid night fish
+        "First Catch: Blackfin Barracuda",
+        "First Catch: Fan Lobster",
+        "First Catch: Giant Squid",
+        "First Catch: Humboldt Squid",
+        "First Catch: Spear Squid",
+    ]
+    for fish_loc in night_only_fish:
+        _set_location_rule(multiworld, player, fish_loc,
+            lambda state: state.has("Night Dive Unlock", player)
+        )
+
+    # Humboldt Squid is Mid depth + Night Dive (not Glacier Zone as previously thought)
+    # The Mid region gate already handles depth; we just add Night Dive on top
+    _set_location_rule(multiworld, player,
+        "First Catch: Humboldt Squid",
+        lambda state: (
+            has_depth_access(state, player, 2) and  # Mid depth
+            state.has("Night Dive Unlock", player)
+        )
+    )
+
+    # Cooksta App is unlocked after "A Scolding from Yoshie" sub-mission
+    # Gate all Cooksta locations on this sub-mission being completeable
+    if world.options.include_cooksta.value and world.options.include_sub_missions.value:
+        for loc in multiworld.get_locations(player):
+            if loc.name.startswith("Cooksta:"):
+                add_rule(loc,
+                    lambda state: state.can_reach("Sub-Mission: A Scolding from Yoshie", "Location", player)
+                )
+
+    # Night Dive Unlock itself is obtained from Giant Stingray at Night
+    # (no prerequisite needed — it's a vanilla night encounter that can happen early)
+
     # === VORTEX REGION RULES (DREDGE DLC) ===
     # The red fog appears on random nights once Sammy's Chicken Farm is unlocked.
     # Each vortex (whirlpool seen from the Dredge boat) also requires a Vortex Entry.
@@ -252,12 +307,13 @@ def set_rules(world):
             has_depth_access(state, player, 3)  # Blue Hole Deep for all fish
         )
     )
-    # Pastro: beat Alex + Humboldt Squid (Mid Night or Glacier) + White Shrimp (Mid/Vents) + farm
+    # Pastro: beat Alex + Humboldt Squid (Mid + Night Dive) + White Shrimp (Mid) + farm
     _set_location_rule(multiworld, player,
         "Competition: Defeat Pastro Antogiovani",
         lambda state: (
             state.can_reach("Competition: Defeat Alex Cooper", "Location", player) and
-            has_depth_access(state, player, 2) and  # Min Mid for White Shrimp baseline
+            has_depth_access(state, player, 2) and  # Mid for Humboldt Squid + White Shrimp
+            state.has("Night Dive Unlock", player) and  # Humboldt Squid is night-only
             state.has("Unlock Vegetable Farm", player)  # Farm for Wheat + Garlic
         )
     )
