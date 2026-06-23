@@ -718,7 +718,10 @@ boss_locations: Dict[str, LocationData] = {
     "Defeat: Kronosaurus": LocationData(BASE_ID + 908, "Glacier Zone"),
     # Sea People Village bosses
     "Defeat: John Watson": LocationData(BASE_ID + 909, "Sea People Village"),
-    "Defeat: Ebirah": LocationData(BASE_ID + 910, "Sea People Village"),
+    # Ebirah is a Godzilla DLC exclusive boss — only included when dlc_godzilla is enabled.
+    # The DLC story triggers after Chapter 5 (the "earthquake" event the next morning).
+    # Placed in Blue Hole - Deep because the submarine fight happens in the deep ocean.
+    "Defeat: Ebirah": LocationData(BASE_ID + 910, "Blue Hole - Deep", "dlc_godzilla"),
     # Optional/legendary bosses
     "Defeat: Great White Shark Klaus": LocationData(BASE_ID + 911, "Blue Hole - Deep"),
     "Defeat: Mantis Shrimp": LocationData(BASE_ID + 912, "Blue Hole - Deep"),

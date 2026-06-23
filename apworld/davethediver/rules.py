@@ -162,13 +162,24 @@ def set_rules(world):
         )
     )
 
-    # === GODZILLA DLC: KAIJU FIGURINE RULES ===
-    # All 20 figurines require defeating Ebirah first.
-    # The figurines also inherit their region access rules (depth/village/glacier).
+    # === GODZILLA DLC: EBIRAH + KAIJU FIGURINE RULES ===
+    # The Godzilla DLC story triggers the morning after completing Chapter 5.
+    # Gate Ebirah's defeat location on having Chapter 5 Complete in inventory.
+    _set_location_rule(multiworld, player,
+        "Defeat: Ebirah",
+        lambda state: state.has("Chapter 5 Complete", player)
+    )
+
+    # All 20 Kaiju figurines are collectible after Ebirah is defeated.
+    # We gate them on Chapter 5 Complete (same as Ebirah) rather than the
+    # location check "Defeat: Ebirah", because state.has() checks items,
+    # not completed locations. Chapter 5 Complete is the progression item
+    # that naturally precedes the Ebirah encounter.
+    # Figurines also inherit their region's depth/area access rules automatically.
     for i in range(1, 21):
         _set_location_rule(multiworld, player,
             f"Kaiju Figurine {i}",
-            lambda state: state.has("Defeat: Ebirah", player)
+            lambda state: state.has("Chapter 5 Complete", player)
         )
 
     # === FARM ACCESS RULES ===
@@ -508,7 +519,6 @@ def defeated_all_bosses(state: CollectionState, player: int) -> bool:
         state.has("Defeat: Helicoprion", player) and
         state.has("Defeat: Kronosaurus", player) and
         state.has("Defeat: John Watson", player) and
-        state.has("Defeat: Ebirah", player) and
         # Optional/vortex bosses — require Vortex Entry items
         state.has("Defeat: Great White Shark Klaus", player) and
         state.has("Defeat: Mantis Shrimp", player) and
