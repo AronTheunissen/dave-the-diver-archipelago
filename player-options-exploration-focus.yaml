@@ -34,6 +34,12 @@ Dave the Diver:
   # Weapon shop — useful for hunting deep sea creatures
   include_weapon_shop: true
 
+  # Hire-only staff checks — exploration is the focus, not training
+  staff_training_depth: hire_only
+
+  # Find ingredients while exploring
+  include_ingredient_checks: true
+
   # DLC — enable what you own (DREDGE adds 34 aberration fish!)
   has_dredge_dlc: false
   has_godzilla_dlc: false

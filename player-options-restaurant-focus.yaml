@@ -37,6 +37,12 @@ Dave the Diver:
   # Weapon shop — useful but not the focus
   include_weapon_shop: false
 
+  # Staff training is core to this build — recipes are gated on staff levels!
+  staff_training_depth: milestones
+
+  # Ingredients matter for cooking
+  include_ingredient_checks: true
+
   # DLC — Godzilla adds 2 extra recipe locations if you have it
   has_dredge_dlc: false
   has_godzilla_dlc: false

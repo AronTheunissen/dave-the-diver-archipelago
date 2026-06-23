@@ -30,6 +30,12 @@ Dave the Diver:
   include_minigames: false
   include_weapon_shop: false
 
+  # No staff checks for speedruns
+  staff_training_depth: none
+
+  # No ingredient checks for speedruns
+  include_ingredient_checks: false
+
   # No DLC for clean speedruns
   has_dredge_dlc: false
   has_godzilla_dlc: false

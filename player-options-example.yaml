@@ -80,6 +80,17 @@ Dave the Diver:
   # Duff's weapon shop crafting — 79 checks
   include_weapon_shop: true
 
+  # Staff hire + training checks
+  # Options: none | hire_only | milestones | all_levels
+  #   none       - No staff checks
+  #   hire_only  - One check per staff when recruited (24 checks)
+  #   milestones - Hire + Level 5/10/15/20 training checks [DEFAULT]
+  #   all_levels - Hire + every level 1-20; items become "Progressive [Name]" x20
+  staff_training_depth: milestones
+
+  # First-find ingredient checks (sea plants, rare forageables, farm crops) — ~25 checks
+  include_ingredient_checks: true
+
   # ==================== DLC ====================
   # Only enable DLC you actually own! Enabling DLC you don't have will add
   # unreachable locations and softlock your game.

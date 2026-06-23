@@ -31,6 +31,12 @@ Dave the Diver:
   include_minigames: true
   include_weapon_shop: true
 
+  # All staff checks at all levels — the completionist wants everything!
+  staff_training_depth: all_levels
+
+  # Every ingredient first-find
+  include_ingredient_checks: true
+
   # DLC — enable what you own
   has_dredge_dlc: false
   has_godzilla_dlc: false
