@@ -167,8 +167,6 @@ weapon_items: Dict[str, ItemData] = {
     "Dive Knife":                       ItemData(_W + 79, ItemClassification.progression),
     "Upgraded Dive Knife":              ItemData(_W + 80, ItemClassification.useful),
 
-    # --- Ichiban DLC weapon ---
-    "Hero's Bat":                       ItemData(_W + 81, ItemClassification.useful, category="dlc_ichiban"),
 }
 
 # === AREA UNLOCK ITEMS (Specific Items) ===

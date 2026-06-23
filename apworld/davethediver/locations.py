@@ -481,7 +481,6 @@ ichiban_locations: Dict[str, LocationData] = {
     "Ichiban: Complete Ichiban's Holiday Mission":  LocationData(BASE_ID + 881, "Bancho Sushi", "dlc_ichiban"),
     "Ichiban: Complete Beat 'Em Up Minigame":       LocationData(BASE_ID + 882, "Bancho Sushi", "dlc_ichiban"),
     "Ichiban: Complete Karaoke Minigame":           LocationData(BASE_ID + 883, "Bancho Sushi", "dlc_ichiban"),
-    "Ichiban: Find Hero's Bat":                    LocationData(BASE_ID + 884, "Blue Hole - Deep", "dlc_ichiban"),
 }
 
 # =====================================================================
