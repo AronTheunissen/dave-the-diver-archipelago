@@ -969,6 +969,43 @@ quest_locations: Dict[str, LocationData] = {
     "Competition: Defeat Alex Cooper":             LocationData(BASE_ID + 429, "Blue Hole - Deep"),
     # Pastro: needs Humboldt Squid (Glacier or Deep Night) + White Shrimp (Vents/Deep) + Wheat + Garlic
     "Competition: Defeat Pastro Antogiovani":      LocationData(BASE_ID + 430, "Blue Hole - Deep"),
+    # ── Sub-Missions (category="sub_mission", toggle via include_sub_missions) ──
+    # Prologue sub-missions
+    # Sub-missions use BASE_ID+1700 onwards (safe: staff training ends at 1695)
+    "Sub-Mission: Red Ecological Data":           LocationData(BASE_ID + 1700, "Blue Hole - Shallow", "sub_mission"),
+    "Sub-Mission: Weaponsmith Duff":              LocationData(BASE_ID + 1701, "Bancho Sushi", "sub_mission"),
+    # Chapter 1 sub-missions
+    "Sub-Mission: A Dolphin's Request":           LocationData(BASE_ID + 1702, "Blue Hole - Shallow", "sub_mission"),
+    "Sub-Mission: Not Enough Workers":            LocationData(BASE_ID + 1703, "Bancho Sushi", "sub_mission"),
+    "Sub-Mission: A Scolding from Yoshie":        LocationData(BASE_ID + 1704, "Blue Hole - Shallow", "sub_mission"),
+    "Sub-Mission: What Happened to the Dolphins?":LocationData(BASE_ID + 1705, "Blue Hole - Shallow", "sub_mission"),
+    "Sub-Mission: Assisting Ellie":               LocationData(BASE_ID + 1706, "Blue Hole - Shallow", "sub_mission"),
+    "Sub-Mission: Defeat Pirates":                LocationData(BASE_ID + 1707, "Blue Hole - Shallow", "sub_mission"),
+    # Chapter 2 sub-missions
+    "Sub-Mission: Reticent Girl":                 LocationData(BASE_ID + 1708, "Bancho Sushi", "sub_mission"),
+    "Sub-Mission: Catch Clione":                  LocationData(BASE_ID + 1709, "Blue Hole - Deep", "sub_mission"),
+    "Sub-Mission: Defeat the Clione Queen":       LocationData(BASE_ID + 1710, "Blue Hole - Deep", "sub_mission"),
+    "Sub-Mission: Giant Stingray at Night":       LocationData(BASE_ID + 1711, "Blue Hole - Shallow", "sub_mission"),
+    "Sub-Mission: Take Pictures of Manta Ray":    LocationData(BASE_ID + 1712, "Blue Hole - Mid", "sub_mission"),
+    "Sub-Mission: Whale Cry":                     LocationData(BASE_ID + 1713, "Blue Hole - Mid", "sub_mission"),
+    "Sub-Mission: Finding the Baby Whale":        LocationData(BASE_ID + 1714, "Blue Hole - Mid", "sub_mission"),
+    "Sub-Mission: Stormy Night":                  LocationData(BASE_ID + 1715, "Bancho Sushi", "sub_mission"),
+    # Chapter 3 sub-missions (Sea People Village)
+    "Sub-Mission: Offer Flowers to King Long's Statue": LocationData(BASE_ID + 1716, "Sea People Village", "sub_mission"),
+    "Sub-Mission: Deliver Mima's Lunch Boxes":    LocationData(BASE_ID + 1717, "Sea People Village", "sub_mission"),
+    "Sub-Mission: Catch the Runaway Seahorses":   LocationData(BASE_ID + 1718, "Sea People Village", "sub_mission"),
+    "Sub-Mission: Talk to Yami at the Game Parlor":LocationData(BASE_ID + 1719, "Sea People Village", "sub_mission"),
+    "Sub-Mission: Pet Squid Selgio":              LocationData(BASE_ID + 1720, "Sea People Village", "sub_mission"),
+    "Sub-Mission: Daphne's Whistle":              LocationData(BASE_ID + 1721, "Sea People Village", "sub_mission"),
+    "Sub-Mission: Find the Children's Ball":      LocationData(BASE_ID + 1722, "Sea People Village", "sub_mission"),
+    "Sub-Mission: Sea Person at the Workshop":    LocationData(BASE_ID + 1723, "Sea People Village", "sub_mission"),
+    "Sub-Mission: Wedding Song Record":           LocationData(BASE_ID + 1724, "Sea People Village", "sub_mission"),
+    "Sub-Mission: Repair Kinglong's Statue":      LocationData(BASE_ID + 1725, "Sea People Village", "sub_mission"),
+    "Sub-Mission: Curious Child":                 LocationData(BASE_ID + 1726, "Sea People Village", "sub_mission"),
+    # Chapter 6 sub-missions (Glacier Zone)
+    "Sub-Mission: Lost Baby Manatee":             LocationData(BASE_ID + 1727, "Glacier Zone", "sub_mission"),
+    "Sub-Mission: Trapped in the Glacial Cave":   LocationData(BASE_ID + 1728, "Glacial Passage", "sub_mission"),
+
     # --- Sea People Village ---
     "Quest: Gain Trust of Sea People": LocationData(BASE_ID + 395, "Sea People Village"),
     "Quest: Complete Niamo's Request": LocationData(BASE_ID + 396, "Sea People Village"),

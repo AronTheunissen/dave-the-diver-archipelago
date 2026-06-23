@@ -39,6 +39,7 @@ def make_options(**overrides):
         "include_weapon_shop":        V(1),
         "staff_training_depth":       V(2),  # milestones
         "include_ingredient_checks":  V(1),
+        "include_sub_missions":       V(1),
         "has_dredge_dlc":             V(1),
         "has_godzilla_dlc":         V(1),
         "has_ichiban_dlc":          V(1),
@@ -334,7 +335,7 @@ class TestCategoryCompleteness(unittest.TestCase):
         "", "fish", "dish_upgrade", "recipe", "restaurant",
         "cooksta", "ecowatcher", "photography", "challenge",
         "farming", "chicken_farm", "fish_farm", "minigame", "weapon",
-        "ingredient", "charm",
+        "ingredient", "charm", "sub_mission",
         "dlc_dredge", "dlc_godzilla", "dlc_ichiban", "dlc_jungle",
         "staff_all_levels", "staff_all_levels_ichiban",
     }

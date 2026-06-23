@@ -145,6 +145,10 @@ class DaveDiverWorld(World):
         if category == "ingredient":
             return bool(self.options.include_ingredient_checks.value)
 
+        # Sub-missions
+        if category == "sub_mission":
+            return bool(self.options.include_sub_missions.value)
+
         if category == "ecowatcher":
             return bool(self.options.include_ecowatcher.value)
 
@@ -332,6 +336,7 @@ class DaveDiverWorld(World):
             "include_weapon_shop":        self.options.include_weapon_shop.value,
             "staff_training_depth":       self.options.staff_training_depth.value,
             "include_ingredient_checks":  self.options.include_ingredient_checks.value,
+            "include_sub_missions":       self.options.include_sub_missions.value,
 
             # ── DLC ownership (0=no, 1=yes) ──────────────────────────────────
             "has_dredge_dlc":   self.options.has_dredge_dlc.value,

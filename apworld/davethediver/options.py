@@ -194,6 +194,13 @@ class IncludeIngredientChecks(DefaultOnToggle):
     display_name = "Include Ingredient Checks"
 
 
+class IncludeSubMissions(DefaultOnToggle):
+    """Include side quest / sub-mission completion checks (~25 checks).
+    These are optional story missions like A Dolphin's Request, Whale Cry,
+    Trapped in the Glacial Cave, etc. Toggle off for a more streamlined experience."""
+    display_name = "Include Sub-Missions"
+
+
 # === DLC OPTIONS ===
 # Each DLC adds new content — only include it if the player actually owns it.
 # DREDGE DLC is free; Godzilla was free but time-limited; others are paid.
@@ -333,6 +340,7 @@ class DaveDiverOptions(PerGameCommonOptions):
     include_weapon_shop: IncludeWeaponShop
     staff_training_depth: StaffTrainingDepth
     include_ingredient_checks: IncludeIngredientChecks
+    include_sub_missions: IncludeSubMissions
 
     # DLC ownership
     has_dredge_dlc: HasDredgeDLC
