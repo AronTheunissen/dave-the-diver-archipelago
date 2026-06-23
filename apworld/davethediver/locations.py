@@ -478,9 +478,13 @@ kaiju_figurine_locations: Dict[str, LocationData] = {
 
 # === ICHIBAN DLC LOCATIONS ===
 ichiban_locations: Dict[str, LocationData] = {
-    "Ichiban: Complete Ichiban's Holiday Mission":  LocationData(BASE_ID + 881, "Bancho Sushi", "dlc_ichiban"),
-    "Ichiban: Complete Beat 'Em Up Minigame":       LocationData(BASE_ID + 882, "Bancho Sushi", "dlc_ichiban"),
-    "Ichiban: Complete Karaoke Minigame":           LocationData(BASE_ID + 883, "Bancho Sushi", "dlc_ichiban"),
+    # Ichiban DLC has 2 missions (which are the two main story beats of the DLC):
+    # - Operation Sea Blue Eradication: culminates in defeating Torben (boss check handles completion)
+    # - Cold Noodles: side mission unlocking Stingray Sashimi Cold Noodles recipe
+    "Ichiban: Complete Operation Sea Blue Eradication": LocationData(BASE_ID + 881, "Bancho Sushi", "dlc_ichiban"),
+    "Ichiban: Complete Cold Noodles Mission":            LocationData(BASE_ID + 886, "Bancho Sushi", "dlc_ichiban"),
+    "Ichiban: Complete Beat 'Em Up Minigame":            LocationData(BASE_ID + 882, "Bancho Sushi", "dlc_ichiban"),
+    "Ichiban: Complete Karaoke Minigame":                LocationData(BASE_ID + 883, "Bancho Sushi", "dlc_ichiban"),
 }
 
 # =====================================================================

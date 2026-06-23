@@ -162,6 +162,14 @@ def set_rules(world):
         )
     )
 
+    # === ICHIBAN DLC: TORBEN RULE ===
+    # Torben is fought as part of Operation Sea Blue Eradication.
+    # No special items required beyond the DLC being active — the mission
+    # becomes available naturally during the DLC story, so Torben is reachable
+    # as long as the player can access Bancho Sushi (always true in base game).
+    # The "Defeat: Torben" check IS the completion of Operation Sea Blue Eradication.
+    # No additional rule needed — region access (Blue Hole - Deep) is sufficient.
+
     # === GODZILLA DLC: EBIRAH + KAIJU FIGURINE RULES ===
     # The Godzilla DLC story triggers the morning after completing Chapter 5.
     # Gate Ebirah's defeat location on having Chapter 5 Complete in inventory.
