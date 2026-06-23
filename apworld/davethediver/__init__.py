@@ -117,6 +117,34 @@ class DaveDiverWorld(World):
         if category == "cooksta":
             return bool(self.options.include_cooksta.value)
 
+        # Staff filtering — depends on staff_training_depth option:
+        # 0=none, 1=hire_only, 2=milestones (Lv5/10/15/20), 3=all_levels (Lv1-20)
+        depth = self.options.staff_training_depth.value
+        if location_name.startswith("Staff: Hire"):
+            return depth >= 1
+        if location_name.startswith("Staff: Train"):
+            if depth == 0:
+                return False
+            if depth == 1:  # hire_only — no training
+                return False
+            # Extract level from name e.g. "Staff: Train Maki to Level 10" → 10
+            try:
+                lvl = int(location_name.rsplit("Level ", 1)[1])
+            except (IndexError, ValueError):
+                lvl = 0
+            is_milestone = lvl in (5, 10, 15, 20)
+            is_ichiban = category == "staff_all_levels_ichiban"
+            if is_ichiban and not bool(self.options.has_ichiban_dlc.value):
+                return False
+            if depth == 2:  # milestones only
+                return is_milestone
+            if depth == 3:  # all levels
+                return True
+
+        # Ingredient checks
+        if category == "ingredient":
+            return bool(self.options.include_ingredient_checks.value)
+
         if category == "ecowatcher":
             return bool(self.options.include_ecowatcher.value)
 
@@ -178,9 +206,28 @@ class DaveDiverWorld(World):
         category = item_data.category
 
         # Restaurant/staff items — filtered before the progression blanket rule.
-        # Staff members are progression items but meaningless if restaurant is disabled.
+        depth = self.options.staff_training_depth.value
+        restaurant_on = bool(self.options.dish_upgrades.value > 0 or self.options.recipe_checks.value > 0)
+
+        # Named staff (single copy) — used in hire_only and milestones modes
+        if category == "restaurant" and item_name in (
+            "Billy","Carolina","Charlie","Cohh","Davina","Drae","El Nino",
+            "Itsuki","James","Jandi","Kyoko","Liu","Maki","Masayoshi","Mitchell",
+            "Pai","Raptor","Raul","Tohoku","Yone","Yusuke"
+        ):
+            return restaurant_on and 1 <= depth <= 2
+
+        # Progressive staff (×20) — used in all_levels mode only
+        if category == "restaurant" and item_name.startswith("Progressive ") and item_name[12:] in (
+            "Billy","Carolina","Charlie","Cohh","Davina","Drae","El Nino",
+            "Itsuki","James","Jandi","Kyoko","Liu","Maki","Masayoshi","Mitchell",
+            "Pai","Raptor","Raul","Tohoku","Yone","Yusuke"
+        ):
+            return restaurant_on and depth == 3
+
+        # Other restaurant items (upgrades, etc.)
         if category == "restaurant":
-            return bool(self.options.dish_upgrades.value > 0 or self.options.recipe_checks.value > 0)
+            return restaurant_on
 
         # DLC items are filtered by DLC flag FIRST — even if they are progression.
         # A progression item for disabled DLC content should never be in the pool,
@@ -282,7 +329,9 @@ class DaveDiverWorld(World):
             "include_chicken_farm": self.options.include_chicken_farm.value,
             "include_fish_farm":    self.options.include_fish_farm.value,
             "include_minigames":    self.options.include_minigames.value,
-            "include_weapon_shop":  self.options.include_weapon_shop.value,
+            "include_weapon_shop":        self.options.include_weapon_shop.value,
+            "staff_training_depth":       self.options.staff_training_depth.value,
+            "include_ingredient_checks":  self.options.include_ingredient_checks.value,
 
             # ── DLC ownership (0=no, 1=yes) ──────────────────────────────────
             "has_dredge_dlc":   self.options.has_dredge_dlc.value,

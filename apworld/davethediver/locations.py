@@ -672,6 +672,32 @@ staff_training_locations: Dict[str, LocationData] = {
     "Staff: Train Chitose to Level 20":    _staff_train(23, 3, category="dlc_ichiban"),
 }
 
+# ── All-levels training (Lv1-20, for staff_training_depth=all_levels) ────────
+# ID block: BASE_ID + 3500 + staff_idx*20 + (level-1)  →  max offset = 3500+23*20+19 = 3979 (safe before jungle at 4000)
+# category "staff_all_levels" (base game) or "staff_all_levels_ichiban" (DLC)
+_SA = BASE_ID + 3500  # Staff All-levels base (dishes end ~3469, jungle starts at 4000)
+
+_BASE_STAFF_NAMES = [
+    "Billy", "Carolina", "Charlie", "Cohh", "Davina", "Drae", "El Nino",
+    "Itsuki", "James", "Jandi", "Kyoko", "Liu", "Maki", "Masayoshi", "Mitchell",
+    "Pai", "Raptor", "Raul", "Tohoku", "Yone", "Yusuke",
+]
+_ICHIBAN_STAFF_NAMES = ["Hamako", "Etsuko", "Chitose"]
+
+staff_all_levels_locations: Dict[str, LocationData] = {
+    f"Staff: Train {name} to Level {lvl}": LocationData(
+        _SA + idx * 20 + (lvl - 1), "Bancho Sushi", "staff_all_levels"
+    )
+    for idx, name in enumerate(_BASE_STAFF_NAMES)
+    for lvl in range(1, 21)
+} | {
+    f"Staff: Train {name} to Level {lvl}": LocationData(
+        _SA + (21 + i) * 20 + (lvl - 1), "Bancho Sushi", "staff_all_levels_ichiban"
+    )
+    for i, name in enumerate(_ICHIBAN_STAFF_NAMES)
+    for lvl in range(1, 21)
+}
+
 # ── Jungle staff (hire only — training is in the Jungle DLC options block) ──
 jungle_staff_locations: Dict[str, LocationData] = {
     "Jungle Staff: Unlock Yasuto":            LocationData(_J + 40, "Utara Village", "dlc_jungle"),
@@ -1422,7 +1448,7 @@ location_table: Dict[str, LocationData] = {
     **jungle_story_locations,
     **jungle_boss_locations,
     **staff_hire_locations,
-    **staff_training_locations,
+    **staff_all_levels_locations,  # covers both milestone (Lv5/10/15/20) and all_levels (Lv1-20) modes
     **jungle_staff_locations,
     **jungle_villager_locations,
     **jungle_minigame_locations,

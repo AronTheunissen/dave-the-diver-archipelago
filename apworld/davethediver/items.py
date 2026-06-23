@@ -240,10 +240,38 @@ restaurant_items: Dict[str, ItemData] = {
     "Tohoku":     ItemData(ITEM_BASE + 868, ItemClassification.progression, category="restaurant"),
     "Yone":       ItemData(ITEM_BASE + 869, ItemClassification.progression, category="restaurant"),
     "Yusuke":     ItemData(ITEM_BASE + 870, ItemClassification.progression, category="restaurant"),
-    # Ichiban DLC staff
+    # Ichiban DLC staff (single-copy, milestone mode)
     "Hamako":     ItemData(ITEM_BASE + 871, ItemClassification.progression, category="dlc_ichiban"),
     "Etsuko":     ItemData(ITEM_BASE + 872, ItemClassification.progression, category="dlc_ichiban"),
     "Chitose":    ItemData(ITEM_BASE + 873, ItemClassification.progression, category="dlc_ichiban"),
+
+    # Progressive staff items (×20 each) for staff_training_depth=all_levels
+    # Finding "Progressive Maki" the Nth time trains her to level N.
+    # IDs at ITEM_BASE + 900 + idx*1 (21 base game + 3 Ichiban DLC = 24 items)
+    "Progressive Billy":      ItemData(ITEM_BASE + 900, ItemClassification.progression, count=20, category="restaurant"),
+    "Progressive Carolina":   ItemData(ITEM_BASE + 901, ItemClassification.progression, count=20, category="restaurant"),
+    "Progressive Charlie":    ItemData(ITEM_BASE + 902, ItemClassification.progression, count=20, category="restaurant"),
+    "Progressive Cohh":       ItemData(ITEM_BASE + 903, ItemClassification.progression, count=20, category="restaurant"),
+    "Progressive Davina":     ItemData(ITEM_BASE + 904, ItemClassification.progression, count=20, category="restaurant"),
+    "Progressive Drae":       ItemData(ITEM_BASE + 905, ItemClassification.progression, count=20, category="restaurant"),
+    "Progressive El Nino":    ItemData(ITEM_BASE + 906, ItemClassification.progression, count=20, category="restaurant"),
+    "Progressive Itsuki":     ItemData(ITEM_BASE + 907, ItemClassification.progression, count=20, category="restaurant"),
+    "Progressive James":      ItemData(ITEM_BASE + 908, ItemClassification.progression, count=20, category="restaurant"),
+    "Progressive Jandi":      ItemData(ITEM_BASE + 909, ItemClassification.progression, count=20, category="restaurant"),
+    "Progressive Kyoko":      ItemData(ITEM_BASE + 910, ItemClassification.progression, count=20, category="restaurant"),
+    "Progressive Liu":        ItemData(ITEM_BASE + 911, ItemClassification.progression, count=20, category="restaurant"),
+    "Progressive Maki":       ItemData(ITEM_BASE + 912, ItemClassification.progression, count=20, category="restaurant"),
+    "Progressive Masayoshi":  ItemData(ITEM_BASE + 913, ItemClassification.progression, count=20, category="restaurant"),
+    "Progressive Mitchell":   ItemData(ITEM_BASE + 914, ItemClassification.progression, count=20, category="restaurant"),
+    "Progressive Pai":        ItemData(ITEM_BASE + 915, ItemClassification.progression, count=20, category="restaurant"),
+    "Progressive Raptor":     ItemData(ITEM_BASE + 916, ItemClassification.progression, count=20, category="restaurant"),
+    "Progressive Raul":       ItemData(ITEM_BASE + 917, ItemClassification.progression, count=20, category="restaurant"),
+    "Progressive Tohoku":     ItemData(ITEM_BASE + 918, ItemClassification.progression, count=20, category="restaurant"),
+    "Progressive Yone":       ItemData(ITEM_BASE + 919, ItemClassification.progression, count=20, category="restaurant"),
+    "Progressive Yusuke":     ItemData(ITEM_BASE + 920, ItemClassification.progression, count=20, category="restaurant"),
+    "Progressive Hamako":     ItemData(ITEM_BASE + 921, ItemClassification.progression, count=20, category="dlc_ichiban"),
+    "Progressive Etsuko":     ItemData(ITEM_BASE + 922, ItemClassification.progression, count=20, category="dlc_ichiban"),
+    "Progressive Chitose":    ItemData(ITEM_BASE + 923, ItemClassification.progression, count=20, category="dlc_ichiban"),
 
     # Restaurant Upgrades
     "Dining Area Expansion": ItemData(ITEM_BASE + 320, ItemClassification.useful, count=3, category="restaurant"),

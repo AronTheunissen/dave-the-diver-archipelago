@@ -36,8 +36,10 @@ def make_options(**overrides):
         "include_chicken_farm":     V(1),
         "include_fish_farm":        V(1),
         "include_minigames":        V(1),
-        "include_weapon_shop":      V(1),
-        "has_dredge_dlc":           V(1),
+        "include_weapon_shop":        V(1),
+        "staff_training_depth":       V(2),  # milestones
+        "include_ingredient_checks":  V(1),
+        "has_dredge_dlc":             V(1),
         "has_godzilla_dlc":         V(1),
         "has_ichiban_dlc":          V(1),
         "has_jungle_dlc":           V(1),
@@ -287,17 +289,33 @@ class TestItemFiltering(unittest.TestCase):
                              f"Restaurant item '{name}' should be excluded when no restaurant content")
 
     def test_restaurant_items_included_when_dish_upgrades_on(self):
-        world = MockWorld(dish_upgrades=1, recipe_checks=0)
+        # Use milestones mode — named staff (not Progressive) are included
+        world_milestones = MockWorld(dish_upgrades=1, recipe_checks=0, staff_training_depth=2)
+        # Use all_levels mode — Progressive staff are included
+        world_all_levels = MockWorld(dish_upgrades=1, recipe_checks=0, staff_training_depth=3)
         restaurant_items = items_with_category("restaurant")
         self.assertGreater(len(restaurant_items), 0, "No restaurant items found")
         for name, data in restaurant_items:
+            is_progressive_staff = name.startswith("Progressive ") and name[12:] in (
+                "Billy","Carolina","Charlie","Cohh","Davina","Drae","El Nino",
+                "Itsuki","James","Jandi","Kyoko","Liu","Maki","Masayoshi","Mitchell",
+                "Pai","Raptor","Raul","Tohoku","Yone","Yusuke"
+            )
+            world = world_all_levels if is_progressive_staff else world_milestones
             self.assertTrue(world.should_include_item(name),
                             f"Restaurant item '{name}' should be included when dish_upgrades>0")
 
     def test_restaurant_items_included_when_recipe_checks_on(self):
-        world = MockWorld(dish_upgrades=0, recipe_checks=1)
+        world_milestones = MockWorld(dish_upgrades=0, recipe_checks=1, staff_training_depth=2)
+        world_all_levels = MockWorld(dish_upgrades=0, recipe_checks=1, staff_training_depth=3)
         restaurant_items = items_with_category("restaurant")
         for name, data in restaurant_items:
+            is_progressive_staff = name.startswith("Progressive ") and name[12:] in (
+                "Billy","Carolina","Charlie","Cohh","Davina","Drae","El Nino",
+                "Itsuki","James","Jandi","Kyoko","Liu","Maki","Masayoshi","Mitchell",
+                "Pai","Raptor","Raul","Tohoku","Yone","Yusuke"
+            )
+            world = world_all_levels if is_progressive_staff else world_milestones
             self.assertTrue(world.should_include_item(name),
                             f"Restaurant item '{name}' should be included when recipe_checks>0")
 
@@ -316,7 +334,9 @@ class TestCategoryCompleteness(unittest.TestCase):
         "", "fish", "dish_upgrade", "recipe", "restaurant",
         "cooksta", "ecowatcher", "photography", "challenge",
         "farming", "chicken_farm", "fish_farm", "minigame", "weapon",
+        "ingredient", "charm",
         "dlc_dredge", "dlc_godzilla", "dlc_ichiban", "dlc_jungle",
+        "staff_all_levels", "staff_all_levels_ichiban",
     }
 
     KNOWN_ITEM_CATEGORIES = {

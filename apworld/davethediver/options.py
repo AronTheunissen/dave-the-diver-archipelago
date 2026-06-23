@@ -169,6 +169,31 @@ class IncludeWeaponShop(DefaultOnToggle):
     display_name = "Include Weapon Shop"
 
 
+class StaffTrainingDepth(Choice):
+    """How deep does staff training go as checks?
+
+    - None: No staff checks at all
+    - Hire Only: One check per staff member when recruited (21 checks)
+    - Milestones: Hire + Level 5/10/15/20 training checks (105 checks).
+      Items are named staff members (e.g. 'Maki').
+    - All Levels: Hire + every level 1-20 (420 checks).
+      Items become 'Progressive [Name]' (×20) — finding Maki a 2nd time
+      trains her to level 2, 3rd time to level 3, etc.
+    """
+    display_name = "Staff Training Depth"
+    option_none = 0
+    option_hire_only = 1
+    option_milestones = 2
+    option_all_levels = 3
+    default = 2  # Milestones
+
+
+class IncludeIngredientChecks(DefaultOnToggle):
+    """Include first-find ingredient checks (sea plants, rare forageables, farm crops).
+    Each ingredient gives one check the first time it's collected (~25 checks)."""
+    display_name = "Include Ingredient Checks"
+
+
 # === DLC OPTIONS ===
 # Each DLC adds new content — only include it if the player actually owns it.
 # DREDGE DLC is free; Godzilla was free but time-limited; others are paid.
@@ -306,6 +331,8 @@ class DaveDiverOptions(PerGameCommonOptions):
     include_fish_farm: IncludeFishFarm
     include_minigames: IncludeMinigames
     include_weapon_shop: IncludeWeaponShop
+    staff_training_depth: StaffTrainingDepth
+    include_ingredient_checks: IncludeIngredientChecks
 
     # DLC ownership
     has_dredge_dlc: HasDredgeDLC
