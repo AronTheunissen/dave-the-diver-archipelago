@@ -279,6 +279,32 @@ def set_rules(world):
         # Hydrothermal Vents region gate already handles depth/cold suit
     )
 
+    # Phantom Jellyfish: needs Cold-Resistant Suit (Lv7) + Beluga Whale Ride Whistle
+    _set_location_rule(multiworld, player,
+        "Defeat: Phantom Jellyfish",
+        lambda state: (
+            state.has("Progressive Diving Suit", player, 7) and  # Cold-Resistant
+            state.has("Beluga Whale Ride Whistle", player)
+        )
+    )
+
+    # Helicoprion: needs 450m depth = Suit Lv6 (covers up to 540m)
+    _set_location_rule(multiworld, player,
+        "Defeat: Helicoprion",
+        lambda state: state.has("Progressive Diving Suit", player, 6)
+    )
+
+    # Lusca: secret post-game optional boss
+    # Requires: Marinca Completion Trophy + Stormy Night unlocked + Sea People Village
+    # Sea People Village access is already gated by region rules ✅
+    _set_location_rule(multiworld, player,
+        "Defeat: Lusca",
+        lambda state: (
+            state.has("Marinca Completion Trophy", player) and
+            state.has("Sea People Gloves", player)  # Stormy Night unlock trigger
+        )
+    )
+
     # Yawie: needs 550m+ (suit lv7+), 3 buttons, Laser Device, Glacier Zone access
     # Already gated by defeated_yawie() in victory conditions, but add explicit rule
     _set_location_rule(multiworld, player,

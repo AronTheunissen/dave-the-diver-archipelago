@@ -182,7 +182,9 @@ area_unlock_items: Dict[str, ItemData] = {
     "Control Room Button": ItemData(ITEM_BASE + 106, ItemClassification.progression, count=3),  # 3 needed for Ch7 finale
     "Sea People's Trust":   ItemData(ITEM_BASE + 107, ItemClassification.progression),  # Unlocks Duff's Dream Concert + Ch4
     "Underwater Camera":    ItemData(ITEM_BASE + 113, ItemClassification.progression),   # Given by Dr. Bacon after Beyond the Rock Pile — gates photography
-    "Gas Cutter":           ItemData(ITEM_BASE + 250, ItemClassification.progression),   # Required for Giant Squid fight (150m)
+    "Gas Cutter":               ItemData(ITEM_BASE + 250, ItemClassification.progression),   # Required for Giant Squid fight (150m)
+    "Beluga Whale Ride Whistle":ItemData(ITEM_BASE + 254, ItemClassification.progression),  # Required for Phantom Jellyfish fight
+    "Marinca Completion Trophy":ItemData(ITEM_BASE + 255, ItemClassification.progression),  # Required for Lusca — complete Marinca collection
     "Headlamp":             ItemData(ITEM_BASE + 251, ItemClassification.progression),   # Required for Giant Wolf Eel fight (250m)
     "Heat-Resistant Gloves":ItemData(ITEM_BASE + 252, ItemClassification.progression),  # Required for Kronosaurus / Hydrothermal Vents
     "Salvage Drone":        ItemData(ITEM_BASE + 253, ItemClassification.progression),  # Required for Goblin Shark (Yellow Shipwreck)

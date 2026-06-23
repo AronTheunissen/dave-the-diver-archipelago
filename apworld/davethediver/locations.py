@@ -1184,6 +1184,10 @@ ecowatcher_locations: Dict[str, LocationData] = {
     # Completion milestones (kept as useful overall goals)
     "Ecowatcher: Complete All Marinca": LocationData(BASE_ID + 1117, "Blue Hole - Shallow", "ecowatcher"),
     "Ecowatcher: Complete All Fish": LocationData(BASE_ID + 1118, "Blue Hole - Shallow", "ecowatcher"),
+    # Marinca Completion Trophy — awarded when all Marinca entries are complete
+    # Placed in Hydrothermal Vents since the last possible entry (Ruby Seadragon) is there
+    # This item gates the Lusca boss fight (secret post-game boss)
+    "Marinca: Complete All Entries (Trophy)": LocationData(BASE_ID + 1119, "Hydrothermal Vents", "ecowatcher"),
 }
 
 # === PHOTOGRAPHY / PICTURES ===
