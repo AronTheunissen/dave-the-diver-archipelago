@@ -285,8 +285,8 @@ story_key_items: Dict[str, ItemData] = {
 # These are sent as AP items when a player completes a dish research check.
 # Classification: useful (they improve restaurant income but aren't progression gates).
 
-def _prog_dish(base_id: int, max_level: int) -> ItemData:
-    return ItemData(base_id, ItemClassification.useful, count=max_level - 1, category="dish_upgrade")
+def _prog_dish(base_id: int, max_level: int, category: str = "dish_upgrade") -> ItemData:
+    return ItemData(base_id, ItemClassification.useful, count=max_level - 1, category=category)
 
 _PD = ITEM_BASE + 3000  # Start at 3000 to avoid all other item ID ranges
 
@@ -308,7 +308,9 @@ dish_upgrade_items: Dict[str, ItemData] = {
     "Progressive Crimson Fish Roll":                       _prog_dish(_PD + 14,  9),
     "Progressive Crystal Lobster Roll":                    _prog_dish(_PD + 15,  9),
     "Progressive Deep Fish Tempura":                       _prog_dish(_PD + 16,  7),
-    "Progressive Deep Sea Kaiju Ramen":                    _prog_dish(_PD + 17,  6),
+    "Progressive Deep Sea Kaiju Ramen":                    _prog_dish(_PD + 17,  6, "dlc_godzilla"),
+    "Progressive Godzilla vs. Ebirah Curry":               _prog_dish(_PD + 96,  9, "dlc_godzilla"),
+    "Progressive Ebirah Chasing Sashimi":                  _prog_dish(_PD + 97,  9, "dlc_godzilla"),
     "Progressive Deep-Fried Eggplant Shrimp Meatballs":   _prog_dish(_PD + 18,  7),
     "Progressive Deep-Fried Red Lionfish":                 _prog_dish(_PD + 19,  4),
     "Progressive Deep-Fried Vegetables":                   _prog_dish(_PD + 20,  3),

@@ -326,7 +326,7 @@ dish_upgrade_locations: Dict[str, LocationData] = {
     **_dish_upgrades("Crimson Fish Roll",                     9,  _D + 15*15),  # max 9
     **_dish_upgrades("Crystal Lobster Roll",                  9,  _D + 16*15),  # max 9
     **_dish_upgrades("Deep Fish Tempura",                     7,  _D + 17*15),  # max 7
-    **_dish_upgrades("Deep Sea Kaiju Ramen",                  6,  _D + 18*15),  # max 6
+    **_dish_upgrades("Deep Sea Kaiju Ramen",                  6,  _D + 18*15, "dlc_godzilla"),  # max 6 — Godzilla DLC
     **_dish_upgrades("Deep-Fried Eggplant Shrimp Meatballs", 7,  _D + 19*15),  # max 7
     **_dish_upgrades("Deep-Fried Red Lionfish",               4,  _D + 20*15),  # max 4
     **_dish_upgrades("Deep-Fried Vegetables",                 3,  _D + 21*15),  # max 3
@@ -406,6 +406,9 @@ dish_upgrade_locations: Dict[str, LocationData] = {
     **_dish_upgrades("Atlantic Bonito Curry",                 12, _D + 3*15),   # max 12 (corrected from duplicate)
     # --- Ichiban DLC dishes ---
     **_dish_upgrades("Warm Atlantic Mackerel Soba",           9,  _D + 95*15, "dlc_ichiban"),  # max 9
+    # --- Godzilla DLC dishes ---
+    **_dish_upgrades("Godzilla vs. Ebirah Curry",             9,  _D + 96*15, "dlc_godzilla"),  # max 9
+    **_dish_upgrades("Ebirah Chasing Sashimi",                9,  _D + 97*15, "dlc_godzilla"),  # max 9
 }
 # Filter out any entries that somehow have no upgrades (defensive)
 dish_upgrade_locations = {k: v for k, v in dish_upgrade_locations.items()}
@@ -439,9 +442,10 @@ recipe_unlock_locations: Dict[str, LocationData] = {
     "Unlock Recipe: Eggplant Soba Oyaki (Ichiban)":           LocationData(BASE_ID + 879, "Bancho Sushi", "dlc_ichiban"),
     "Unlock Recipe: Warm Atlantic Mackerel Soba (Ichiban)":   LocationData(BASE_ID + 880, "Bancho Sushi", "dlc_ichiban"),
 
-    # --- Godzilla DLC recipes ---
+    # --- Godzilla DLC recipes (all 3 unlocked via the DLC story) ---
     "Unlock Recipe: Godzilla vs. Ebirah Curry": LocationData(BASE_ID + 855, "Bancho Sushi", "dlc_godzilla"),
     "Unlock Recipe: Ebirah Chasing Sashimi":    LocationData(BASE_ID + 856, "Bancho Sushi", "dlc_godzilla"),
+    "Unlock Recipe: Deep Sea Kaiju Ramen":       LocationData(BASE_ID + 885, "Bancho Sushi", "dlc_godzilla"),
 }
 
 # Godzilla DLC: Kaiju figurines collectible after defeating Ebirah.
