@@ -1188,25 +1188,31 @@ ecowatcher_locations: Dict[str, LocationData] = {
 # === PHOTOGRAPHY / PICTURES ===
 # Tako's photography missions and special photo spots
 photography_locations: Dict[str, LocationData] = {
-    # Tako's photography missions
-    "Photography: Complete Mission 1": LocationData(BASE_ID + 500, "Blue Hole - Shallow", "photography"),
-    "Photography: Complete Mission 2": LocationData(BASE_ID + 501, "Blue Hole - Shallow", "photography"),
-    "Photography: Complete Mission 3": LocationData(BASE_ID + 502, "Blue Hole - Shallow", "photography"),
-    "Photography: Complete Mission 4": LocationData(BASE_ID + 503, "Blue Hole - Shallow", "photography"),
-    "Photography: Complete Mission 5": LocationData(BASE_ID + 504, "Blue Hole - Shallow", "photography"),
-    
-    # Special photo spots
-    "Photo: Giant Squid": LocationData(BASE_ID + 510, "Blue Hole - Deep", "photography"),
-    "Photo: Whale Shark": LocationData(BASE_ID + 511, "Blue Hole - Deep", "photography"),
-    "Photo: Sea People Elder": LocationData(BASE_ID + 512, "Sea People Village", "photography"),
-    "Photo: Glacier Scenery": LocationData(BASE_ID + 513, "Glacier Zone", "photography"),
-    
-    # Photography milestones
-    "Photography: Take 50 Photos": LocationData(BASE_ID + 520, "Blue Hole - Shallow", "photography"),
-    "Photography: Take 100 Photos": LocationData(BASE_ID + 521, "Blue Hole - Shallow", "photography"),
-    "Photography: Perfect Score on 10 Missions": LocationData(BASE_ID + 522, "Blue Hole - Shallow", "photography"),
-    
-    # TODO: Add all Tako photography missions
+    # ── Wildlife Photography Spots ──────────────────────────────────────────
+    # Each requires the Underwater Camera (gated in rules.py).
+    # Spots are contextual — triggered by missions or random map seeds.
+    "Photo: Pink Dolphin":                  LocationData(BASE_ID + 500, "Blue Hole - Shallow", "photography"),
+    "Photo: Manta Ray":                     LocationData(BASE_ID + 501, "Blue Hole - Shallow", "photography"),  # night mission with lighting
+    "Photo: Loggerhead Turtle":             LocationData(BASE_ID + 502, "Blue Hole - Shallow", "photography"),  # after seaweed collector mission
+    "Photo: Baby Humpback Whale":           LocationData(BASE_ID + 503, "Blue Hole - Shallow", "photography"),  # whale rescue chain
+    "Photo: Underwater Lake":               LocationData(BASE_ID + 504, "Blue Hole - Mid",     "photography"),  # caves during Curious Child
+    "Photo: Opah":                          LocationData(BASE_ID + 505, "Blue Hole - Deep",    "photography"),
+    "Photo: Bathynomus (Giant Isopod)":     LocationData(BASE_ID + 506, "Glacier Zone",        "photography"),
+    "Photo: Lion's Mane Jellyfish":         LocationData(BASE_ID + 507, "Glacier Zone",        "photography"),
+    "Photo: Southern Right Whale Dolphin":  LocationData(BASE_ID + 508, "Glacier Zone",        "photography"),
+    "Photo: Beluga Whale":                  LocationData(BASE_ID + 509, "Glacier Zone",        "photography"),
+    "Photo: Arandaspis":                    LocationData(BASE_ID + 510, "Hydrothermal Vents",  "photography"),
+    "Photo: Coelacanth":                    LocationData(BASE_ID + 511, "Hydrothermal Vents",  "photography"),
+    # ── Sea People Murals (Dr. Bacon's quest) ──────────────────────────────
+    # 8 murals total — completing all triggers a boat cutscene with Dr. Bacon
+    "Photo: Sea People Mural 1 (King Long)":     LocationData(BASE_ID + 512, "Blue Hole - Shallow", "photography"),  # Ch1 Beyond the Rock Pile
+    "Photo: Sea People Mural 2":                 LocationData(BASE_ID + 513, "Glacial Passage",     "photography"),
+    "Photo: Sea People Mural 3":                 LocationData(BASE_ID + 514, "Glacial Passage",     "photography"),
+    "Photo: Sea People Mural 4":                 LocationData(BASE_ID + 515, "Glacial Passage",     "photography"),
+    "Photo: Sea People Mural 5":                 LocationData(BASE_ID + 516, "Glacial Passage",     "photography"),  # missable
+    "Photo: Sea People Mural 6":                 LocationData(BASE_ID + 517, "Glacial Passage",     "photography"),
+    "Photo: Sea People Mural 7":                 LocationData(BASE_ID + 518, "Glacial Passage",     "photography"),
+    "Photo: Sea People Mural 8":                 LocationData(BASE_ID + 519, "Glacial Passage",     "photography"),  # missable (Giant Gadon room)
 }
 
 # === CHALLENGES ===

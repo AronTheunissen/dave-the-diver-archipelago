@@ -383,10 +383,44 @@ def set_rules(world):
     # (Chapter 1 main mission). All photography locations require the camera.
     if world.options.include_photography.value:
         for loc in multiworld.get_locations(player):
-            if loc.name.startswith("Photography:"):
+            if loc.name.startswith("Photo:"):
                 add_rule(loc,
                     lambda state: state.has("Underwater Camera", player)
                 )
+
+        # Specific photo spots require mission chains to be completed first:
+        # Manta Ray — triggered by the night-diving lighting mission
+        _set_location_rule(multiworld, player,
+            "Photo: Manta Ray",
+            lambda state: (
+                state.has("Underwater Camera", player) and
+                state.can_reach("Sub-Mission: Take Pictures of Manta Ray", "Location", player)
+            )
+        )
+        # Loggerhead Turtle — spawns after Finding the Seaweed Collector (= Stormy Night chain)
+        _set_location_rule(multiworld, player,
+            "Photo: Loggerhead Turtle",
+            lambda state: (
+                state.has("Underwater Camera", player) and
+                state.can_reach("Sub-Mission: Stormy Night", "Location", player)
+            )
+        )
+        # Baby Humpback Whale — unlocked during whale rescue chain
+        _set_location_rule(multiworld, player,
+            "Photo: Baby Humpback Whale",
+            lambda state: (
+                state.has("Underwater Camera", player) and
+                state.can_reach("Sub-Mission: Finding the Baby Whale", "Location", player)
+            )
+        )
+        # Underwater Lake — found during Curious Child mission
+        _set_location_rule(multiworld, player,
+            "Photo: Underwater Lake",
+            lambda state: (
+                state.has("Underwater Camera", player) and
+                state.can_reach("Sub-Mission: Curious Child", "Location", player)
+            )
+        )
 
     # === GODZILLA DISH UPGRADE RULES ===
     # Dish research tiers require the recipe to be unlocked first.
