@@ -139,8 +139,9 @@ def set_rules(world):
         )
     )
 
-    # === VORTEX REGION RULES ===
-    # Each vortex requires Deep Blue Hole access + a Vortex Entry item.
+    # === VORTEX REGION RULES (DREDGE DLC) ===
+    # The red fog appears on random nights once Sammy's Chicken Farm is unlocked.
+    # Each vortex (whirlpool seen from the Dredge boat) also requires a Vortex Entry.
     for vortex_entrance in [
         "Enter Jellyfish Basin Vortex",
         "Enter Fog Coast Vortex",
@@ -148,7 +149,10 @@ def set_rules(world):
     ]:
         set_rule(
             multiworld.get_entrance(vortex_entrance, player),
-            lambda state: state.has("Vortex Entry", player, 1)
+            lambda state: (
+                state.has("Vortex Entry", player, 1) and
+                state.has("Unlock Chicken Farm", player)  # Unlocks red fog nights
+            )
         )
 
     # === VORTEX BOSS RULES ===
@@ -352,16 +356,26 @@ def set_rules(world):
         lambda state: state.has("Chapter 5 Complete", player)
     )
 
-    # All 20 Kaiju figurines are collectible after Ebirah is defeated.
-    # We gate them on Chapter 5 Complete (same as Ebirah) rather than the
-    # location check "Defeat: Ebirah", because state.has() checks items,
-    # not completed locations. Chapter 5 Complete is the progression item
-    # that naturally precedes the Ebirah encounter.
-    # Figurines also inherit their region's depth/area access rules automatically.
+    # Kaiju figurines and Godzilla recipes unlock after defeating Ebirah.
+    # We use can_reach("Defeat: Ebirah") — the correct AP primitive for checking
+    # that a location has been collected. This naturally chains from Chapter 5 Complete.
+    def ebirah_defeated(state) -> bool:
+        return state.can_reach("Defeat: Ebirah", "Location", player)
+
     for i in range(1, 21):
         _set_location_rule(multiworld, player,
             f"Kaiju Figurine {i}",
-            lambda state: state.has("Chapter 5 Complete", player)
+            lambda state: ebirah_defeated(state)
+        )
+
+    # Godzilla recipes also unlock after Ebirah is defeated
+    for recipe_loc in [
+        "Unlock Recipe: Godzilla vs. Ebirah Curry",
+        "Unlock Recipe: Ebirah Chasing Sashimi",
+        "Unlock Recipe: Deep Sea Kaiju Ramen",
+    ]:
+        _set_location_rule(multiworld, player, recipe_loc,
+            lambda state: ebirah_defeated(state)
         )
 
     # === FARM ACCESS RULES ===
