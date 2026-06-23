@@ -728,8 +728,8 @@ boss_locations: Dict[str, LocationData] = {
     "Defeat: Lusca": LocationData(BASE_ID + 913, "Sea People Village"),
     # Final boss
     "Defeat: Yawie (Final Boss)": LocationData(BASE_ID + 914, "Sea People Village"),
-    # Optional: Torben
-    "Defeat: Torben": LocationData(BASE_ID + 915, "Blue Hole - Deep"),
+    # Torben is an Ichiban DLC exclusive boss
+    "Defeat: Torben": LocationData(BASE_ID + 915, "Blue Hole - Deep", "dlc_ichiban"),
 }
 
 # === QUEST COMPLETION ===

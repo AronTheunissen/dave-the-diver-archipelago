@@ -459,7 +459,7 @@ def set_completion_condition(world):
     elif goal == 1:  # Defeat All Bosses
         world.multiworld.completion_condition[player] = lambda state: (
             defeated_yawie(state, player) and
-            defeated_all_bosses(state, player)
+            defeated_all_bosses(state, player, world.options)
         )
 
     elif goal == 2:  # Diamond Rank — all Cooksta Diamond requirements
@@ -479,7 +479,7 @@ def set_completion_condition(world):
     elif goal == 4:  # 100% Completion
         world.multiworld.completion_condition[player] = lambda state: (
             defeated_yawie(state, player) and
-            defeated_all_bosses(state, player) and
+            defeated_all_bosses(state, player, world.options) and
             state.has("Ecowatcher: Complete All Fish", player) and
             state.has("Cooksta: 720 Followers", player) and
             state.has("Cooksta: 375 Best Taste", player) and
@@ -501,30 +501,70 @@ def defeated_yawie(state: CollectionState, player: int) -> bool:
     )
 
 
-def defeated_all_bosses(state: CollectionState, player: int) -> bool:
-    """Check if all bosses have been defeated, including optional vortex bosses.
-    
-    The vortex bosses (Klaus, Mantis Shrimp, Torben, Lusca, etc.) require
-    a Vortex Entry item to initiate their encounters.
+def defeated_all_bosses(state: CollectionState, player: int, options=None) -> bool:
+    """Check if all bosses (base game + enabled DLC) have been defeated.
+
+    Boss defeat locations are checked via state.can_reach() — this verifies
+    the location is both reachable and collected (checked off), which is the
+    correct AP primitive for location-based victory conditions.
+
+    DLC bosses are only required when their DLC is enabled in options:
+    - Godzilla DLC: Ebirah
+    - Ichiban DLC: Torben (note: Torben is NOT a base-game boss)
+    - Jungle DLC: the 6 Jungle bosses
     """
-    return (
-        # Story bosses — covered by story/chapter progression
-        state.has("Defeat: Giant Squid", player) and
-        state.has("Defeat: Clione Queen", player) and
-        state.has("Defeat: Truck Hermit Crab", player) and
-        state.has("Defeat: Giant Wolf Eel", player) and
-        state.has("Defeat: Goblin Shark", player) and
-        state.has("Defeat: Phantom Jellyfish", player) and
-        state.has("Defeat: Giant Gadon", player) and
-        state.has("Defeat: Helicoprion", player) and
-        state.has("Defeat: Kronosaurus", player) and
-        state.has("Defeat: John Watson", player) and
-        # Optional/vortex bosses — require Vortex Entry items
-        state.has("Defeat: Great White Shark Klaus", player) and
-        state.has("Defeat: Mantis Shrimp", player) and
-        state.has("Defeat: Lusca", player) and
-        state.has("Defeat: Torben", player)
-    )
+    # Helper: safely check if a location exists and has been reached
+    def boss_done(loc_name: str) -> bool:
+        try:
+            return state.can_reach(loc_name, "Location", player)
+        except KeyError:
+            return True  # Location filtered out (DLC disabled) — skip requirement
+
+    # Base game story bosses
+    base_bosses = [
+        "Defeat: Giant Squid",
+        "Defeat: Clione Queen",
+        "Defeat: Truck Hermit Crab",
+        "Defeat: Giant Wolf Eel",
+        "Defeat: Goblin Shark",
+        "Defeat: Phantom Jellyfish",
+        "Defeat: Giant Gadon",
+        "Defeat: Helicoprion",
+        "Defeat: Kronosaurus",
+        "Defeat: John Watson",
+        # Optional/vortex bosses (base game)
+        "Defeat: Great White Shark Klaus",
+        "Defeat: Mantis Shrimp",
+        "Defeat: Lusca",
+    ]
+
+    if not all(boss_done(b) for b in base_bosses):
+        return False
+
+    # Godzilla DLC boss
+    if options is not None and options.has_godzilla_dlc.value:
+        if not boss_done("Defeat: Ebirah"):
+            return False
+
+    # Ichiban DLC boss (Torben) — this is an Ichiban-exclusive boss
+    if options is not None and options.has_ichiban_dlc.value:
+        if not boss_done("Defeat: Torben"):
+            return False
+    
+    # Jungle DLC bosses
+    if options is not None and options.has_jungle_dlc.value:
+        jungle_bosses = [
+            "Jungle Boss: Defeat Giant Snapping Turtle",
+            "Jungle Boss: Defeat Sulong",
+            "Jungle Boss: Defeat Black Caiman",
+            "Jungle Boss: Defeat Stethacanthus",
+            "Jungle Boss: Defeat Xiphactinus",
+            "Jungle Boss: Defeat Basilosaurus",
+        ]
+        if not all(boss_done(b) for b in jungle_bosses):
+            return False
+
+    return True
 
 
 def has_all_chapters(state: CollectionState, player: int) -> bool:
