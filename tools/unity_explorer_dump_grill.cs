@@ -1,48 +1,40 @@
 // ============================================================
-// Dave the Diver — Jungle DLC: Bancho Grill Recipe Dumper v9
-// Access via JungleSushiBarSystem static class instead
+// Dave the Diver — Jungle DLC: Bancho Grill Recipe Dumper v10
+// Try JDLC namespace prefix for all types
 // ============================================================
 
 var sb = new System.Text.StringBuilder();
 sb.AppendLine("=== BANCHO GRILL RECIPE DUMP ===");
 
-// JungleSushiBarManagerSystem is a static class with GrillRecipeDataDic
-// Try accessing it directly
-try
-{
-    // List all recipes via JungleSushiBarManagerSystem static methods
-    var sysType = System.Type.GetType("JungleSushiBarManagerSystem, Assembly-CSharp");
-    sb.AppendLine("JungleSushiBarManagerSystem: " + (sysType != null ? "found" : "NULL"));
-    
-    if (sysType != null)
-    {
-        // List static properties
-        var props = sysType.GetProperties(System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic);
-        foreach (var p in props)
-            sb.AppendLine("StaticProp: " + p.Name + " : " + p.PropertyType.Name);
-        
-        // List static methods
-        var methods = sysType.GetMethods(System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic);
-        foreach (var m in methods)
-            sb.AppendLine("StaticMethod: " + m.Name);
-    }
-}
-catch (System.Exception ex) { sb.AppendLine("Error: " + ex.Message); }
+// Try various type name combinations
+string[] typeNames = new string[] {
+    "JDLC.JungleSushiBarManagerSystem, Assembly-CSharp",
+    "JDLC.GrillRecipeEntity, Assembly-CSharp",
+    "JDLC.GrillRecipe, Assembly-CSharp",
+    "JDLC.SaveSystemGameDataManager, Assembly-CSharp",
+    "JDLC.JungleSushiBarSave, Assembly-CSharp",
+    "SaveSystemGameDataManager, Assembly-CSharp",
+    "GrillRecipeEntity, Assembly-CSharp",
+};
 
-// Also try GrillRecipe design sheet directly
-try
+foreach (var typeName in typeNames)
 {
-    var grillRecipeType = System.Type.GetType("GrillRecipe, Assembly-CSharp");
-    sb.AppendLine("GrillRecipe type: " + (grillRecipeType != null ? "found" : "NULL"));
-    
-    if (grillRecipeType != null)
-    {
-        var staticMethods = grillRecipeType.GetMethods(System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic);
-        foreach (var m in staticMethods)
-            sb.AppendLine("GrillRecipe.StaticMethod: " + m.Name);
-    }
+    var t = System.Type.GetType(typeName);
+    sb.AppendLine(typeName.Split(',')[0] + ": " + (t != null ? "FOUND" : "null"));
 }
-catch (System.Exception ex2) { sb.AppendLine("GrillRecipe Error: " + ex2.Message); }
+
+// Also try using the working ingredient approach to get to SaveData
+// IngredientsStorage.Instance works - let's see what assembly it's in
+var ingredType = IngredientsStorage.Instance.GetType();
+sb.AppendLine("IngredientsStorage assembly: " + ingredType.Assembly.GetName().Name);
+
+// Now try to find SaveSystemGameDataManager in the same assembly
+var asm = ingredType.Assembly;
+foreach (var asmType in asm.GetTypes())
+{
+    if (asmType.Name.Contains("SaveSystem") || asmType.Name.Contains("GrillRecipe"))
+        sb.AppendLine("Found: " + asmType.FullName);
+}
 
 var result = sb.ToString();
 Debug.Log(result);
