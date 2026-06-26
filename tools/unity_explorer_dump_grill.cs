@@ -1,38 +1,48 @@
 // ============================================================
-// Dave the Diver — Jungle DLC: Bancho Grill Recipe Dumper v8
-// Step by step debug to find the null
+// Dave the Diver — Jungle DLC: Bancho Grill Recipe Dumper v9
+// Access via JungleSushiBarSystem static class instead
 // ============================================================
 
 var sb = new System.Text.StringBuilder();
 sb.AppendLine("=== BANCHO GRILL RECIPE DUMP ===");
 
-// Try Il2CppSystem.Type lookup
-var il2cppType = Il2CppSystem.Type.GetType("SaveSystemGameDataManager, Assembly-CSharp");
-sb.AppendLine("Step 1 - Il2cppType: " + (il2cppType != null ? il2cppType.Name : "NULL"));
-
-if (il2cppType != null)
+// JungleSushiBarManagerSystem is a static class with GrillRecipeDataDic
+// Try accessing it directly
+try
 {
-    var managers = GameObject.FindObjectsOfType(il2cppType);
-    sb.AppendLine("Step 2 - Managers: " + managers.Length.ToString());
-
-    if (managers.Length > 0)
+    // List all recipes via JungleSushiBarManagerSystem static methods
+    var sysType = System.Type.GetType("JungleSushiBarManagerSystem, Assembly-CSharp");
+    sb.AppendLine("JungleSushiBarManagerSystem: " + (sysType != null ? "found" : "NULL"));
+    
+    if (sysType != null)
     {
-        sb.AppendLine("Step 3 - Manager type: " + managers[0].GetType().Name);
+        // List static properties
+        var props = sysType.GetProperties(System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic);
+        foreach (var p in props)
+            sb.AppendLine("StaticProp: " + p.Name + " : " + p.PropertyType.Name);
         
-        // Try getting GameSave via reflection using System.Type
-        var sysType = managers[0].GetType();
-        sb.AppendLine("Step 4 - sysType: " + sysType.Name);
-        
-        var gameSaveProp = sysType.GetProperty("GameSave");
-        sb.AppendLine("Step 5 - GameSave prop: " + (gameSaveProp != null ? "found" : "NULL"));
-        
-        if (gameSaveProp != null)
-        {
-            var saveData = gameSaveProp.GetValue(managers[0]);
-            sb.AppendLine("Step 6 - SaveData: " + (saveData != null ? saveData.GetType().Name : "NULL"));
-        }
+        // List static methods
+        var methods = sysType.GetMethods(System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic);
+        foreach (var m in methods)
+            sb.AppendLine("StaticMethod: " + m.Name);
     }
 }
+catch (System.Exception ex) { sb.AppendLine("Error: " + ex.Message); }
+
+// Also try GrillRecipe design sheet directly
+try
+{
+    var grillRecipeType = System.Type.GetType("GrillRecipe, Assembly-CSharp");
+    sb.AppendLine("GrillRecipe type: " + (grillRecipeType != null ? "found" : "NULL"));
+    
+    if (grillRecipeType != null)
+    {
+        var staticMethods = grillRecipeType.GetMethods(System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic);
+        foreach (var m in staticMethods)
+            sb.AppendLine("GrillRecipe.StaticMethod: " + m.Name);
+    }
+}
+catch (System.Exception ex2) { sb.AppendLine("GrillRecipe Error: " + ex2.Message); }
 
 var result = sb.ToString();
 Debug.Log(result);
