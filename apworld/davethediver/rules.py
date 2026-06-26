@@ -981,6 +981,43 @@ def set_rules(world):
         lambda state: state.has("Jungle Chapter 7 Complete", player)
     )
 
+    # Boss recipes — gated on defeating the boss
+    _set_location_rule(multiworld, player,
+        "Grill Recipe: Stethacanthus Coconut Stew",
+        lambda state: state.can_reach("Jungle Boss: Defeat Stethacanthus", "Location", player)
+    )
+    _set_location_rule(multiworld, player,
+        "Grill Recipe: Sulong Foreleg Seasoned",
+        lambda state: state.can_reach("Jungle Boss: Defeat Sulong", "Location", player)
+    )
+    _set_location_rule(multiworld, player,
+        "Grill Recipe: Giant Turtle Seafood Soup",
+        lambda state: state.can_reach("Jungle Boss: Defeat Giant Snapping Turtle", "Location", player)
+    )
+    _set_location_rule(multiworld, player,
+        "Grill Recipe: Xiphactinus Spicy Soup",
+        lambda state: state.can_reach("Jungle Boss: Defeat Xiphactinus", "Location", player)
+    )
+    _set_location_rule(multiworld, player,
+        "Grill Recipe: Basilosaurus Belly Hotpot",
+        lambda state: state.can_reach("Jungle Boss: Defeat Basilosaurus", "Location", player)
+    )
+
+    # Lakebed Sea recipes gated on Lakebed Sea access
+    for loc_name in [
+        "Grill Recipe: Ciurcopterus Stir-fried", "Grill Recipe: Tumidocarcinus Tamarind Stir-fried",
+        "Grill Recipe: Tuzoia Soup", "Grill Recipe: Ammonite Salad",
+        "Grill Recipe: Ophtalmosaurus Grilled", "Grill Recipe: Sacabambaspis Sate",
+        "Grill Recipe: Eagle Shark Stew", "Grill Recipe: Squid Mix Stir-fried",
+        "Grill Recipe: Stylonurus Honeydew Salad", "Grill Recipe: Parameteraspides Tom Yum",
+        "Grill Recipe: Burgessomedusa Pink Honeydew Jelly",
+        "Grill Recipe: Stethacanthus Coconut Stew", "Grill Recipe: Xiphactinus Spicy Soup",
+        "Grill Recipe: Basilosaurus Belly Hotpot",
+    ]:
+        _set_location_rule(multiworld, player, loc_name,
+            lambda state: state.can_reach("Lakebed Sea", "Region", player)
+        )
+
     # Marinca Bloom 50% required for Sato staff + Udo (handled via insectagram above for Udo)
     _set_location_rule(multiworld, player,
         "Jungle Staff: Unlock Sato",

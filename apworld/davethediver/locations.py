@@ -932,11 +932,86 @@ jungle_ingredient_locations: Dict[str, LocationData] = {
 
 # --- Jungle Bancho Grill milestones ---
 jungle_restaurant_locations: Dict[str, LocationData] = {
-    "Jungle: Open Bancho Grill":                  LocationData(_J + 420, "Bancho Grill", "dlc_jungle"),
-    "Jungle: Serve 10 Customers":                 LocationData(_J + 421, "Bancho Grill", "dlc_jungle"),
-    "Jungle: Serve 50 Customers":                 LocationData(_J + 422, "Bancho Grill", "dlc_jungle"),
-    "Jungle: Serve 100 Customers":                LocationData(_J + 423, "Bancho Grill", "dlc_jungle"),
-    "Jungle: Unlock Stir-fried Crocodile Tail":   LocationData(_J + 424, "Bancho Grill", "dlc_jungle"),
+    # === Bancho Grill milestones ===
+    "Jungle: Open Bancho Grill":                  LocationData(_J + 420, "Bancho Grill",       "dlc_jungle"),
+    "Jungle: Serve 10 Customers":                 LocationData(_J + 421, "Bancho Grill",       "dlc_jungle"),
+    "Jungle: Serve 50 Customers":                 LocationData(_J + 422, "Bancho Grill",       "dlc_jungle"),
+    "Jungle: Serve 100 Customers":                LocationData(_J + 423, "Bancho Grill",       "dlc_jungle"),
+
+    # === Complex recipe unlocks (Artisan Flame research) — TIDs from UnityExplorer 2026-06-26 ===
+    # UnlockType=0 means unlocked by first catch/ingredient
+    # UnlockType=1/2/3/4 means villager rank-up reward
+    # UnlockType=410012031 = Bird-of-Paradise rank, 410016111 = Monkey rank
+    "Grill Recipe: Tilapia with Calamansi":       LocationData(_J + 500, "Bancho Grill",       "dlc_jungle"),  # 8054101
+    "Grill Recipe: Tropical Fish Steamed":        LocationData(_J + 501, "Bancho Grill",       "dlc_jungle"),  # 8054102
+    "Grill Recipe: Black Caiman Taco":            LocationData(_J + 502, "Bancho Grill",       "dlc_jungle"),  # 8054103
+    "Grill Recipe: Gourami Fried":                LocationData(_J + 503, "Bancho Grill",       "dlc_jungle"),  # 8054105
+    "Grill Recipe: Largemouth Bass Boiled":       LocationData(_J + 504, "Bancho Grill",       "dlc_jungle"),  # 8054106
+    "Grill Recipe: Pirarucu Banana Lasagna":      LocationData(_J + 505, "Bancho Grill",       "dlc_jungle"),  # 8054107
+    "Grill Recipe: Lemon Yellow Lab Banana Fried":LocationData(_J + 506, "Bancho Grill",       "dlc_jungle"),  # 8054108
+    "Grill Recipe: Piranha Head Soup":            LocationData(_J + 507, "Bancho Grill",       "dlc_jungle"),  # 8054110
+    "Grill Recipe: Bamboo Shoot Soup":            LocationData(_J + 508, "Bancho Grill",       "dlc_jungle"),  # 8054111
+    "Grill Recipe: King Trumpet Mushroom Stir-fried": LocationData(_J + 509, "Bancho Grill",   "dlc_jungle"),  # 8054112
+    "Grill Recipe: Banana Halo-Halo":             LocationData(_J + 510, "Bancho Grill",       "dlc_jungle"),  # 8054113
+    "Grill Recipe: Banana Blossom Salad":         LocationData(_J + 511, "Bancho Grill",       "dlc_jungle"),  # 8054114
+    "Grill Recipe: Mud Carp Grilled in Banana Leaf": LocationData(_J + 512, "Bancho Grill",    "dlc_jungle"),  # 8054115
+    "Grill Recipe: Grass Carp Bamboo Shoot Steamed": LocationData(_J + 513, "Bancho Grill",    "dlc_jungle"),  # 8054116
+    "Grill Recipe: Indonesian Tiger Perch Sate":  LocationData(_J + 514, "Bancho Grill",       "dlc_jungle"),  # 8054117
+    "Grill Recipe: Piraiba Catfish Tamarind Soup":LocationData(_J + 515, "Bancho Grill",       "dlc_jungle"),  # 8054118
+    "Grill Recipe: Electric Eel Sliced":          LocationData(_J + 516, "Bancho Grill",       "dlc_jungle"),  # 8054119
+    "Grill Recipe: Giant Freshwater Stingray Barbecued": LocationData(_J + 517, "Bancho Grill", "dlc_jungle"),  # 8054120
+    "Grill Recipe: Giant Snakehead Soup":         LocationData(_J + 518, "Bancho Grill",       "dlc_jungle"),  # 8054124
+    "Grill Recipe: Crayfish Sambal Stir-fried":   LocationData(_J + 519, "Bancho Grill",       "dlc_jungle"),  # 8054125
+    "Grill Recipe: Crayfish Lemongrass Steamed":  LocationData(_J + 520, "Bancho Grill",       "dlc_jungle"),  # 8054126
+    "Grill Recipe: Ciurcopterus Stir-fried":      LocationData(_J + 521, "Lakebed Sea",        "dlc_jungle"),  # 8054127
+    "Grill Recipe: Tumidocarcinus Tamarind Stir-fried": LocationData(_J + 522, "Lakebed Sea",  "dlc_jungle"),  # 8054128
+    "Grill Recipe: Tuzoia Soup":                  LocationData(_J + 523, "Lakebed Sea",        "dlc_jungle"),  # 8054129
+    "Grill Recipe: Duck with Water Chestnut":     LocationData(_J + 524, "Bancho Grill",       "dlc_jungle"),  # 8054130
+    "Grill Recipe: Bluegill Steamed":             LocationData(_J + 525, "Bancho Grill",       "dlc_jungle"),  # 8054133
+    "Grill Recipe: Striped Snakehead Fried":      LocationData(_J + 526, "Bancho Grill",       "dlc_jungle"),  # 8054134
+    "Grill Recipe: Tambaqui Grilled":             LocationData(_J + 527, "Bancho Grill",       "dlc_jungle"),  # 8054135
+    "Grill Recipe: Ammonite Salad":               LocationData(_J + 528, "Lakebed Sea",        "dlc_jungle"),  # 8054138
+    "Grill Recipe: Ophtalmosaurus Grilled":       LocationData(_J + 529, "Lakebed Sea",        "dlc_jungle"),  # 8054139
+    "Grill Recipe: Clown Featherback Taro Fried": LocationData(_J + 530, "Bancho Grill",       "dlc_jungle"),  # 8054140
+    "Grill Recipe: Goliath Tigerfish Salad":      LocationData(_J + 531, "Bancho Grill",       "dlc_jungle"),  # 8054141
+    "Grill Recipe: Giant Sturgeon Steak":         LocationData(_J + 532, "Bancho Grill",       "dlc_jungle"),  # 8054142
+    "Grill Recipe: Sacabambaspis Sate":           LocationData(_J + 533, "Lakebed Sea",        "dlc_jungle"),  # 8054143
+    "Grill Recipe: Eagle Shark Stew":             LocationData(_J + 534, "Lakebed Sea",        "dlc_jungle"),  # 8054144
+    "Grill Recipe: Stir-fried Crocodile Tail":    LocationData(_J + 535, "Bancho Grill",       "dlc_jungle"),  # 8054145 (Bonita VIP)
+    "Grill Recipe: Tangsuyuk":                    LocationData(_J + 536, "Bancho Grill",       "dlc_jungle"),  # 8054146 (Monkey rank)
+    "Grill Recipe: Walking Catfish Tom Yum":      LocationData(_J + 537, "Bancho Grill",       "dlc_jungle"),  # 8054147
+    "Grill Recipe: Tropical Fruit Salad":         LocationData(_J + 538, "Bancho Grill",       "dlc_jungle"),  # 8054148 (Bird-of-Paradise)
+    "Grill Recipe: Dragon Fruit Salad":           LocationData(_J + 539, "Bancho Grill",       "dlc_jungle"),  # 8054150 (Bird-of-Paradise)
+    "Grill Recipe: Premium Fruit Salad":          LocationData(_J + 540, "Bancho Grill",       "dlc_jungle"),  # 8054151 (Bird-of-Paradise)
+    "Grill Recipe: Pink Durian Pudding":          LocationData(_J + 541, "Bancho Grill",       "dlc_jungle"),  # 8054152 (Bird-of-Paradise)
+    "Grill Recipe: Salmon Watermelon Salad":      LocationData(_J + 542, "Bancho Grill",       "dlc_jungle"),  # 8054153 (Bird-of-Paradise)
+    "Grill Recipe: Alligator Gar Durian Head Curry": LocationData(_J + 543, "Bancho Grill",    "dlc_jungle"),  # 8054154 (Bird-of-Paradise)
+    "Grill Recipe: Electric Eel Pineapple Stir-fried": LocationData(_J + 544, "Bancho Grill",  "dlc_jungle"),  # 8054156 (Bird-of-Paradise)
+    "Grill Recipe: Parameteraspides Tom Yum":     LocationData(_J + 545, "Lakebed Sea",        "dlc_jungle"),  # 8054159
+    "Grill Recipe: Burgessomedusa Pink Honeydew Jelly": LocationData(_J + 546, "Lakebed Sea",  "dlc_jungle"),  # 8054160 (Bird-of-Paradise)
+    "Grill Recipe: Black Caiman Red Pineapple Stir-fried": LocationData(_J + 547, "Bancho Grill", "dlc_jungle"),  # 8054161 (Bird-of-Paradise)
+    "Grill Recipe: Catfish Mix Fried":            LocationData(_J + 548, "Bancho Grill",       "dlc_jungle"),  # 8054164
+    "Grill Recipe: Perch Mix Steamed":            LocationData(_J + 549, "Bancho Grill",       "dlc_jungle"),  # 8054165
+    "Grill Recipe: Shellfish Hotpot":             LocationData(_J + 550, "Bancho Grill",       "dlc_jungle"),  # 8054166
+    "Grill Recipe: Squid Mix Stir-fried":         LocationData(_J + 551, "Lakebed Sea",        "dlc_jungle"),  # 8054167
+    "Grill Recipe: Stylonurus Honeydew Salad":    LocationData(_J + 552, "Lakebed Sea",        "dlc_jungle"),  # 8054168 (Bird-of-Paradise)
+    "Grill Recipe: Banana Dragon Fruit Pudding":  LocationData(_J + 553, "Bancho Grill",       "dlc_jungle"),  # 8054169 (Bird-of-Paradise)
+    "Grill Recipe: Mangosteen Coconut Dessert":   LocationData(_J + 554, "Bancho Grill",       "dlc_jungle"),  # 8054170
+    "Grill Recipe: Bird Mix Seasoned":            LocationData(_J + 555, "Setah Forest",       "dlc_jungle"),  # 8054171
+    "Grill Recipe: Snake Mix Spicy Soup":         LocationData(_J + 556, "Setah Forest",       "dlc_jungle"),  # 8054172
+    "Grill Recipe: Hindleg Mix Fried":            LocationData(_J + 557, "Setah Forest",       "dlc_jungle"),  # 8054173
+    "Grill Recipe: Fried Egg":                    LocationData(_J + 558, "Bancho Grill",       "dlc_jungle"),  # 8054174
+    "Grill Recipe: Fiddlehead Fern Boiled":       LocationData(_J + 559, "Setah Forest",       "dlc_jungle"),  # 8054201
+
+    # === Boss recipes (8 — each unlocked by defeating the boss) ===
+    "Grill Recipe: Stethacanthus Coconut Stew":   LocationData(_J + 560, "Lakebed Sea",        "dlc_jungle"),  # 8054301
+    "Grill Recipe: Sulong Foreleg Seasoned":      LocationData(_J + 561, "Utara Lake - Upper", "dlc_jungle"),  # 8054302
+    "Grill Recipe: Giant Turtle Seafood Soup":    LocationData(_J + 562, "Utara Lake - Lower", "dlc_jungle"),  # 8054303
+    "Grill Recipe: Xiphactinus Spicy Soup":       LocationData(_J + 563, "Lakebed Sea",        "dlc_jungle"),  # 8054304
+    "Grill Recipe: Giant Blenny Herb Roast":      LocationData(_J + 564, "Utara Lake - Lower", "dlc_jungle"),  # 8054305
+    "Grill Recipe: Giant Mudskipper Cheek Steamed": LocationData(_J + 565, "Setah Forest",     "dlc_jungle"),  # 8054306
+    "Grill Recipe: Giant Snakehead Fin Soup":     LocationData(_J + 566, "Utara Lake - Lower", "dlc_jungle"),  # 8054307
+    "Grill Recipe: Basilosaurus Belly Hotpot":    LocationData(_J + 567, "Lakebed Sea",        "dlc_jungle"),  # 8054308
 }
 
 # --- Jungle exploration milestones ---
