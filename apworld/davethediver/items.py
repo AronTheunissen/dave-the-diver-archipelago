@@ -564,11 +564,14 @@ jungle_progression_items: Dict[str, ItemData] = {
     "Laser Emitter":              ItemData(ITEM_BASE + 815, ItemClassification.useful,      category="dlc_jungle"),  # Collecting Sunang Stones
     "Ancient Breathing Apparatus":ItemData(ITEM_BASE + 816, ItemClassification.progression, category="dlc_jungle"),  # Deep lake diving (Ch2)
 
-    # --- Jungle Gun (4 weapon forms, each unlocked separately) ---
-    "Jungle Rifle":               ItemData(ITEM_BASE + 820, ItemClassification.progression, category="dlc_jungle"),
-    "Jungle Shotgun":             ItemData(ITEM_BASE + 821, ItemClassification.useful,      category="dlc_jungle"),
-    "Jungle Sniper":              ItemData(ITEM_BASE + 822, ItemClassification.useful,      category="dlc_jungle"),
-    "Jungle Net Gun":             ItemData(ITEM_BASE + 823, ItemClassification.progression, category="dlc_jungle"),  # Needed for live captures
+    # --- Jungle Gun (4 weapon modes, each progressive up to level 6) ---
+    # Each mode starts at level 1 and has 5 upgrades → 6 levels total.
+    # Picking a branch locks out the other branch, so each mode is fully Progressive.
+    # Jungle Rifle is progression (needed for combat), others are useful.
+    "Progressive Jungle Rifle":   ItemData(ITEM_BASE + 820, ItemClassification.progression, count=6, category="dlc_jungle"),
+    "Progressive Jungle Shotgun": ItemData(ITEM_BASE + 821, ItemClassification.useful,      count=6, category="dlc_jungle"),
+    "Progressive Jungle Sniper":  ItemData(ITEM_BASE + 822, ItemClassification.useful,      count=6, category="dlc_jungle"),
+    "Progressive Jungle Net Gun": ItemData(ITEM_BASE + 823, ItemClassification.progression, count=6, category="dlc_jungle"),  # Needed for live captures
 
     # --- Jungle villager friendship milestones (items received from NPC rewards) ---
     # 3-heart rewards from key NPCs that gate content

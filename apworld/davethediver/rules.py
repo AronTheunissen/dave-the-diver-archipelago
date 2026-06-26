@@ -882,10 +882,76 @@ def set_rules(world):
             lambda state: state.has("Bug Net", player)
         )
 
-    # Land fishing requires Fishing Rod
+    # Land fishing + rod-caught fish require Fishing Rod
     _set_location_rule(multiworld, player,
         "Jungle Minigame: First Land Fishing Catch",
         lambda state: state.has("Fishing Rod", player)
+    )
+    for loc_name in [
+        "First Catch: Moonlight Gourami", "First Catch: Three Spot Gourami",
+        "First Catch: Malayan Leaf Fish", "First Catch: Snakeskin Gourami",
+        "First Catch: Giant Gourami", "First Catch: Emperor Snakehead",
+        "First Catch: Striped Snakehead", "First Catch: Peacock Bass",
+        "First Catch: Tambaqui", "First Catch: Malayan Mahseer",
+        "First Catch: Redtail Catfish", "First Catch: Tapah",
+    ]:
+        _set_location_rule(multiworld, player, loc_name,
+            lambda state: state.has("Fishing Rod", player)
+        )
+
+    # Jungle boss fish — first catch requires defeating the boss first
+    _set_location_rule(multiworld, player,
+        "First Catch: Giant Snapping Turtle",
+        lambda state: state.can_reach("Jungle Boss: Defeat Giant Snapping Turtle", "Location", player)
+    )
+    _set_location_rule(multiworld, player,
+        "First Catch: Black Caiman",
+        lambda state: state.can_reach("Jungle Boss: Defeat Black Caiman", "Location", player)
+    )
+    _set_location_rule(multiworld, player,
+        "First Catch: Sulong",
+        lambda state: state.can_reach("Jungle Boss: Defeat Sulong", "Location", player)
+    )
+    _set_location_rule(multiworld, player,
+        "First Catch: Stethacanthus",
+        lambda state: state.can_reach("Jungle Boss: Defeat Stethacanthus", "Location", player)
+    )
+    _set_location_rule(multiworld, player,
+        "First Catch: Xiphactinus",
+        lambda state: state.can_reach("Jungle Boss: Defeat Xiphactinus", "Location", player)
+    )
+    _set_location_rule(multiworld, player,
+        "First Catch: Basilosaurus",
+        lambda state: state.can_reach("Jungle Boss: Defeat Basilosaurus", "Location", player)
+    )
+
+    # Jungle gun upgrades — each mode requires having at least 1 copy of that weapon
+    for i in range(1, 7):
+        _set_location_rule(multiworld, player,
+            f"Jungle Gun: Rifle Level {i}",
+            lambda state, lvl=i: state.has("Progressive Jungle Rifle", player, lvl)
+        )
+        _set_location_rule(multiworld, player,
+            f"Jungle Gun: Shotgun Level {i}",
+            lambda state, lvl=i: state.has("Progressive Jungle Shotgun", player, lvl)
+        )
+        _set_location_rule(multiworld, player,
+            f"Jungle Gun: Sniper Level {i}",
+            lambda state, lvl=i: state.has("Progressive Jungle Sniper", player, lvl)
+        )
+        _set_location_rule(multiworld, player,
+            f"Jungle Gun: Net Gun Level {i}",
+            lambda state, lvl=i: state.has("Progressive Jungle Net Gun", player, lvl)
+        )
+
+    # Jungle boss sequence
+    _set_location_rule(multiworld, player,
+        "Jungle Boss: Defeat Black Caiman",
+        lambda state: state.has("Jungle Chapter 2 Complete", player)
+    )
+    _set_location_rule(multiworld, player,
+        "Jungle Boss: Defeat Sulong",
+        lambda state: state.has("Jungle Chapter 7 Complete", player)
     )
 
     # Marinca Bloom 50% required for Sato staff + Udo (handled via insectagram above for Udo)

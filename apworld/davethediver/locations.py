@@ -791,38 +791,90 @@ jungle_insect_locations: Dict[str, LocationData] = {
 #   Stethacanthus (boss), Xiphactinus (boss), Basilosaurus (boss)
 # IDs _J+200 to _J+399 reserved for fish first-catch locations.
 jungle_fish_locations: Dict[str, LocationData] = {
-    # === Utara Lake - Upper (0-35m) ===
-    # TODO: Replace placeholder names with real names from wiki
-    "First Catch: Tilapia":                  LocationData(_J + 200, "Utara Lake - Upper", "dlc_jungle"),
-    "First Catch: Archerfish":               LocationData(_J + 201, "Utara Lake - Upper", "dlc_jungle"),
-    "First Catch: Red Discus":               LocationData(_J + 202, "Utara Lake - Upper", "dlc_jungle"),
-    "First Catch: Brown Discus":             LocationData(_J + 203, "Utara Lake - Upper", "dlc_jungle"),
-    "First Catch: Green Discus":             LocationData(_J + 204, "Utara Lake - Upper", "dlc_jungle"),
-    "First Catch: Blue Discus":              LocationData(_J + 205, "Utara Lake - Upper", "dlc_jungle"),
-    "First Catch: Heckel Discus":            LocationData(_J + 206, "Utara Lake - Upper", "dlc_jungle"),
-    "First Catch: Walking Catfish":          LocationData(_J + 207, "Utara Lake - Upper", "dlc_jungle"),
-    "First Catch: Red-Bellied Piranha":      LocationData(_J + 208, "Utara Lake - Upper", "dlc_jungle"),
-    "First Catch: Neon Tetra":               LocationData(_J + 209, "Utara Lake - Upper", "dlc_jungle"),
-    # TODO: Add remaining upper lake species (IDs _J+210 to _J+249 reserved)
+    # === Utara Lake - Upper (shallow zone) ===
+    # Caught by diving / net — no special tool required beyond lake access
+    "First Catch: Kissing Gourami":       LocationData(_J + 200, "Utara Lake - Upper", "dlc_jungle"),
+    "First Catch: Walking Catfish":       LocationData(_J + 201, "Utara Lake - Upper", "dlc_jungle"),
+    "First Catch: Clown Loach":           LocationData(_J + 202, "Utara Lake - Upper", "dlc_jungle"),
+    "First Catch: Tilapia":               LocationData(_J + 203, "Utara Lake - Upper", "dlc_jungle"),
+    "First Catch: Red Discus":            LocationData(_J + 204, "Utara Lake - Upper", "dlc_jungle"),
+    "First Catch: Banana Cichlid":        LocationData(_J + 205, "Utara Lake - Upper", "dlc_jungle"),
+    "First Catch: Blue-Gray Mbuna":       LocationData(_J + 206, "Utara Lake - Upper", "dlc_jungle"),
+    "First Catch: Archerfish":            LocationData(_J + 207, "Utara Lake - Upper", "dlc_jungle"),
+    "First Catch: Chocolate Gourami":     LocationData(_J + 208, "Utara Lake - Upper", "dlc_jungle"),
+    "First Catch: Red-Bellied Piranha":   LocationData(_J + 209, "Utara Lake - Upper", "dlc_jungle"),
+    "First Catch: Bluegill":              LocationData(_J + 210, "Utara Lake - Upper", "dlc_jungle"),
+    "First Catch: Pearl Gourami":         LocationData(_J + 211, "Utara Lake - Upper", "dlc_jungle"),
+    "First Catch: Brown Discus":          LocationData(_J + 212, "Utara Lake - Upper", "dlc_jungle"),
+    "First Catch: Green Discus":          LocationData(_J + 213, "Utara Lake - Upper", "dlc_jungle"),
+    "First Catch: Blue Discus":           LocationData(_J + 214, "Utara Lake - Upper", "dlc_jungle"),
+    "First Catch: Heckel Discus":         LocationData(_J + 215, "Utara Lake - Upper", "dlc_jungle"),
+    "First Catch: Malaysian Pikehead":    LocationData(_J + 216, "Utara Lake - Upper", "dlc_jungle"),
+    "First Catch: Pirarucu":              LocationData(_J + 217, "Utara Lake - Upper", "dlc_jungle"),
+    "First Catch: Black Piranha":         LocationData(_J + 218, "Utara Lake - Upper", "dlc_jungle"),
+    "First Catch: Goliath Tigerfish":     LocationData(_J + 219, "Utara Lake - Upper", "dlc_jungle"),
+    "First Catch: Blue Yabby":            LocationData(_J + 220, "Utara Lake - Upper", "dlc_jungle"),
+    "First Catch: Tricolor":              LocationData(_J + 221, "Utara Lake - Upper", "dlc_jungle"),
+    "First Catch: Red Swamp Crayfish":    LocationData(_J + 222, "Utara Lake - Upper", "dlc_jungle"),
 
-    # === Utara Lake - Lower (35-75m) ===
+    # === Utara Lake - Lower (deep zone — requires Purification Filter) ===
     "First Catch: Giant Freshwater Stingray": LocationData(_J + 250, "Utara Lake - Lower", "dlc_jungle"),
     "First Catch: Electric Eel":              LocationData(_J + 251, "Utara Lake - Lower", "dlc_jungle"),
-    "First Catch: Piraiba Catfish":           LocationData(_J + 252, "Utara Lake - Lower", "dlc_jungle"),
-    "First Catch: Asian Arowana":             LocationData(_J + 253, "Utara Lake - Lower", "dlc_jungle"),
-    "First Catch: Platinum Alligator Gar":    LocationData(_J + 254, "Utara Lake - Lower", "dlc_jungle"),
-    "First Catch: Sockeye Salmon":            LocationData(_J + 255, "Utara Lake - Lower", "dlc_jungle"),
-    "First Catch: Fire Eel":                  LocationData(_J + 256, "Utara Lake - Lower", "dlc_jungle"),
-    "First Catch: Pirarucu":                  LocationData(_J + 257, "Utara Lake - Lower", "dlc_jungle"),
-    # TODO: Add remaining lower lake species (IDs _J+258 to _J+299 reserved)
+    "First Catch: Nile Perch":                LocationData(_J + 252, "Utara Lake - Lower", "dlc_jungle"),
+    "First Catch: Horseface Loach":           LocationData(_J + 253, "Utara Lake - Lower", "dlc_jungle"),
+    "First Catch: Giant Snakehead":           LocationData(_J + 254, "Utara Lake - Lower", "dlc_jungle"),
+    "First Catch: Armored Catfish":           LocationData(_J + 255, "Utara Lake - Lower", "dlc_jungle"),
+    "First Catch: Largemouth Bass":           LocationData(_J + 256, "Utara Lake - Lower", "dlc_jungle"),
+    "First Catch: Mud Carp":                  LocationData(_J + 257, "Utara Lake - Lower", "dlc_jungle"),
+    "First Catch: Piraiba Catfish":           LocationData(_J + 258, "Utara Lake - Lower", "dlc_jungle"),
+    "First Catch: Indonesian Tiger Perch":    LocationData(_J + 259, "Utara Lake - Lower", "dlc_jungle"),
+    "First Catch: Grass Carp":                LocationData(_J + 260, "Utara Lake - Lower", "dlc_jungle"),
+    "First Catch: Asian Arowana":             LocationData(_J + 261, "Utara Lake - Lower", "dlc_jungle"),
+    "First Catch: Platinum Alligator Gar":    LocationData(_J + 262, "Utara Lake - Lower", "dlc_jungle"),
+    "First Catch: Giant Sturgeon":            LocationData(_J + 263, "Utara Lake - Lower", "dlc_jungle"),
+    "First Catch: Sockeye Salmon":            LocationData(_J + 264, "Utara Lake - Lower", "dlc_jungle"),
+    "First Catch: Fire Eel":                  LocationData(_J + 265, "Utara Lake - Lower", "dlc_jungle"),
+    "First Catch: Clown Featherback":         LocationData(_J + 266, "Utara Lake - Lower", "dlc_jungle"),
+    "First Catch: Murray Spiny Crayfish":     LocationData(_J + 267, "Utara Lake - Lower", "dlc_jungle"),
+    "First Catch: Marron":                    LocationData(_J + 268, "Utara Lake - Lower", "dlc_jungle"),
+    "First Catch: Signal Crayfish":           LocationData(_J + 269, "Utara Lake - Lower", "dlc_jungle"),
 
-    # === Lakebed Sea (ancient ecosystem) ===
-    "First Catch: Ammonite":      LocationData(_J + 300, "Lakebed Sea", "dlc_jungle"),
-    "First Catch: Orthoceras":    LocationData(_J + 301, "Lakebed Sea", "dlc_jungle"),
-    # TODO: Add remaining lakebed species (IDs _J+302 to _J+349 reserved)
+    # === Lakebed Sea (ancient ecosystem — requires Jungle Chapter 4 + Purification Filter Tier 3) ===
+    "First Catch: Aquilolamna":            LocationData(_J + 300, "Lakebed Sea", "dlc_jungle"),
+    "First Catch: Ophtalmosaurus":         LocationData(_J + 301, "Lakebed Sea", "dlc_jungle"),
+    "First Catch: Parameteoraspis":        LocationData(_J + 302, "Lakebed Sea", "dlc_jungle"),
+    "First Catch: Trilobite":              LocationData(_J + 303, "Lakebed Sea", "dlc_jungle"),
+    "First Catch: Stylonurus":             LocationData(_J + 304, "Lakebed Sea", "dlc_jungle"),
+    "First Catch: Ammonite":               LocationData(_J + 305, "Lakebed Sea", "dlc_jungle"),
+    "First Catch: Tullimonstrum":          LocationData(_J + 306, "Lakebed Sea", "dlc_jungle"),
+    "First Catch: Promissum":              LocationData(_J + 307, "Lakebed Sea", "dlc_jungle"),
+    "First Catch: Hensodon":               LocationData(_J + 308, "Lakebed Sea", "dlc_jungle"),
+    "First Catch: Red Sea Lily":           LocationData(_J + 309, "Lakebed Sea", "dlc_jungle"),
+    "First Catch: Eomesodon":              LocationData(_J + 310, "Lakebed Sea", "dlc_jungle"),
+    "First Catch: Exellia":                LocationData(_J + 311, "Lakebed Sea", "dlc_jungle"),
+    "First Catch: Poreia":                 LocationData(_J + 312, "Lakebed Sea", "dlc_jungle"),
+    "First Catch: Orthoceras":             LocationData(_J + 313, "Lakebed Sea", "dlc_jungle"),
+    "First Catch: Burgessomedusa":         LocationData(_J + 314, "Lakebed Sea", "dlc_jungle"),
+    "First Catch: Gyrodus":                LocationData(_J + 315, "Lakebed Sea", "dlc_jungle"),
+    "First Catch: Sacabambaspis":          LocationData(_J + 316, "Lakebed Sea", "dlc_jungle"),
+    "First Catch: Platyceramus":           LocationData(_J + 317, "Lakebed Sea", "dlc_jungle"),
+    "First Catch: Ciurcopterus":           LocationData(_J + 318, "Lakebed Sea", "dlc_jungle"),
+    "First Catch: Tumidocarcinus Giganteus": LocationData(_J + 319, "Lakebed Sea", "dlc_jungle"),
+    "First Catch: Tuzoia":                 LocationData(_J + 320, "Lakebed Sea", "dlc_jungle"),
 
-    # === Surga Falls / Setah Forest (rod fishing) ===
-    # TODO: Add rod-fished species (IDs _J+350 to _J+399 reserved)
+    # === Rod Fishing (Surga Falls / Setah Forest — requires Fishing Rod) ===
+    "First Catch: Moonlight Gourami":      LocationData(_J + 350, "Setah Forest", "dlc_jungle"),
+    "First Catch: Three Spot Gourami":     LocationData(_J + 351, "Setah Forest", "dlc_jungle"),
+    "First Catch: Malayan Leaf Fish":      LocationData(_J + 352, "Setah Forest", "dlc_jungle"),
+    "First Catch: Snakeskin Gourami":      LocationData(_J + 353, "Setah Forest", "dlc_jungle"),
+    "First Catch: Giant Gourami":          LocationData(_J + 354, "Setah Forest", "dlc_jungle"),
+    "First Catch: Emperor Snakehead":      LocationData(_J + 355, "Setah Forest", "dlc_jungle"),
+    "First Catch: Striped Snakehead":      LocationData(_J + 356, "Setah Forest", "dlc_jungle"),
+    "First Catch: Peacock Bass":           LocationData(_J + 357, "Setah Forest", "dlc_jungle"),
+    "First Catch: Tambaqui":               LocationData(_J + 358, "Setah Forest", "dlc_jungle"),
+    "First Catch: Malayan Mahseer":        LocationData(_J + 359, "Setah Forest", "dlc_jungle"),
+    "First Catch: Redtail Catfish":        LocationData(_J + 360, "Setah Forest", "dlc_jungle"),
+    "First Catch: Tapah":                  LocationData(_J + 361, "Setah Forest", "dlc_jungle"),
 }
 
 # --- Jungle ingredient first finds ---
@@ -859,6 +911,46 @@ jungle_exploration_locations: Dict[str, LocationData] = {
     "Jungle: Complete Marinca Bloom 100%":        LocationData(_J + 446, "Utara Village",       "dlc_jungle"),
     "Jungle: Upgrade Purification Filter Tier 2": LocationData(_J + 447, "Utara Village",       "dlc_jungle"),
     "Jungle: Upgrade Purification Filter Tier 3": LocationData(_J + 448, "Utara Village",       "dlc_jungle"),
+}
+
+# --- Jungle Gun weapon upgrade locations ---
+# 4 modes × 6 levels = 24 locations (level 1 is the base unlock, levels 2-6 are upgrades)
+# Each mode is independent — upgrading one doesn't affect the others.
+jungle_weapon_locations: Dict[str, LocationData] = {
+    "Jungle Gun: Rifle Level 1":   LocationData(_J + 460, "Utara Village",  "dlc_jungle"),
+    "Jungle Gun: Rifle Level 2":   LocationData(_J + 461, "Utara Village",  "dlc_jungle"),
+    "Jungle Gun: Rifle Level 3":   LocationData(_J + 462, "Utara Village",  "dlc_jungle"),
+    "Jungle Gun: Rifle Level 4":   LocationData(_J + 463, "Utara Village",  "dlc_jungle"),
+    "Jungle Gun: Rifle Level 5":   LocationData(_J + 464, "Utara Village",  "dlc_jungle"),
+    "Jungle Gun: Rifle Level 6":   LocationData(_J + 465, "Utara Village",  "dlc_jungle"),
+    "Jungle Gun: Shotgun Level 1": LocationData(_J + 466, "Utara Village",  "dlc_jungle"),
+    "Jungle Gun: Shotgun Level 2": LocationData(_J + 467, "Utara Village",  "dlc_jungle"),
+    "Jungle Gun: Shotgun Level 3": LocationData(_J + 468, "Utara Village",  "dlc_jungle"),
+    "Jungle Gun: Shotgun Level 4": LocationData(_J + 469, "Utara Village",  "dlc_jungle"),
+    "Jungle Gun: Shotgun Level 5": LocationData(_J + 470, "Utara Village",  "dlc_jungle"),
+    "Jungle Gun: Shotgun Level 6": LocationData(_J + 471, "Utara Village",  "dlc_jungle"),
+    "Jungle Gun: Sniper Level 1":  LocationData(_J + 472, "Utara Village",  "dlc_jungle"),
+    "Jungle Gun: Sniper Level 2":  LocationData(_J + 473, "Utara Village",  "dlc_jungle"),
+    "Jungle Gun: Sniper Level 3":  LocationData(_J + 474, "Utara Village",  "dlc_jungle"),
+    "Jungle Gun: Sniper Level 4":  LocationData(_J + 475, "Utara Village",  "dlc_jungle"),
+    "Jungle Gun: Sniper Level 5":  LocationData(_J + 476, "Utara Village",  "dlc_jungle"),
+    "Jungle Gun: Sniper Level 6":  LocationData(_J + 477, "Utara Village",  "dlc_jungle"),
+    "Jungle Gun: Net Gun Level 1": LocationData(_J + 478, "Utara Village",  "dlc_jungle"),
+    "Jungle Gun: Net Gun Level 2": LocationData(_J + 479, "Utara Village",  "dlc_jungle"),
+    "Jungle Gun: Net Gun Level 3": LocationData(_J + 480, "Utara Village",  "dlc_jungle"),
+    "Jungle Gun: Net Gun Level 4": LocationData(_J + 481, "Utara Village",  "dlc_jungle"),
+    "Jungle Gun: Net Gun Level 5": LocationData(_J + 482, "Utara Village",  "dlc_jungle"),
+    "Jungle Gun: Net Gun Level 6": LocationData(_J + 483, "Utara Village",  "dlc_jungle"),
+}
+
+# --- Jungle boss fish (in boss_fish_locations for fish_checks filter compatibility) ---
+jungle_boss_fish_locations: Dict[str, LocationData] = {
+    "First Catch: Giant Snapping Turtle": LocationData(_J + 490, "Utara Lake - Lower", "dlc_jungle"),
+    "First Catch: Black Caiman":          LocationData(_J + 491, "Utara Lake - Upper", "dlc_jungle"),
+    "First Catch: Sulong":                LocationData(_J + 492, "Utara Lake - Upper", "dlc_jungle"),
+    "First Catch: Stethacanthus":         LocationData(_J + 493, "Lakebed Sea",        "dlc_jungle"),
+    "First Catch: Xiphactinus":           LocationData(_J + 494, "Lakebed Sea",        "dlc_jungle"),
+    "First Catch: Basilosaurus":          LocationData(_J + 495, "Lakebed Sea",        "dlc_jungle"),
 }
 
 recipe_unlock_locations.update({
@@ -1516,9 +1608,11 @@ location_table: Dict[str, LocationData] = {
     **jungle_minigame_locations,
     **jungle_insect_locations,
     **jungle_fish_locations,
+    **jungle_boss_fish_locations,
     **jungle_ingredient_locations,
     **jungle_restaurant_locations,
     **jungle_exploration_locations,
+    **jungle_weapon_locations,
     **minigame_locations,
     **ingredient_locations,
     **weapon_locations,
