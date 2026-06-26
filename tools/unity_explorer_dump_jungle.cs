@@ -1,6 +1,6 @@
 // ============================================================
-// Dave the Diver — Jungle DLC: Insect Dumper
-// Uses Il2CppSystem enumerator with explicit cast.
+// Dave the Diver — Jungle DLC: Insect Dumper v8
+// Uses UnhollowerBaseLib style iteration via Il2CppSystem
 // ============================================================
 
 System.Text.StringBuilder sb = new System.Text.StringBuilder();
@@ -9,20 +9,29 @@ sb.AppendLine("TID | IsUnlocked | IsBattle | CardThumbnail");
 
 JDLC.JungleInsectCodex codex = JDLC.JungleInsectCodex.Instance;
 
+// Get the enumerator via reflection on the Il2Cpp object
 System.Type codexType = typeof(JDLC.JungleInsectCodex);
 object datasObj = codexType.GetProperty("InsectCodexDatas").GetValue(codex);
 
-// Cast to Il2CppSystem IEnumerable and get enumerator
-Il2CppSystem.Collections.Generic.IEnumerable<JDLC.JungleInsectCodexData> il2cppEnumerable =
-    datasObj.Cast<Il2CppSystem.Collections.Generic.IEnumerable<JDLC.JungleInsectCodexData>>();
+// Use reflection to call GetEnumerator and iterate
+System.Reflection.MethodInfo getEnumMethod = datasObj.GetType().GetMethod("GetEnumerator");
+object rawEnum = getEnumMethod.Invoke(datasObj, null);
 
-Il2CppSystem.Collections.Generic.IEnumerator<JDLC.JungleInsectCodexData> enumerator =
-    il2cppEnumerable.GetEnumerator();
+// The enumerator returned is an Il2CppSystem wrapper — get its pointer and wrap it
+Il2CppSystem.Object il2cppEnum = rawEnum as Il2CppSystem.Object;
+
+// Cast to IEnumerator via IntPtr
+System.IntPtr ptr = il2cppEnum.Pointer;
+Il2CppSystem.Collections.IEnumerator enumerator =
+    new Il2CppSystem.Collections.IEnumerator(ptr);
 
 int count = 0;
 while (enumerator.MoveNext())
 {
-    JDLC.JungleInsectCodexData data = enumerator.Current;
+    Il2CppSystem.Object currentObj = enumerator.Current;
+    if (currentObj == null) continue;
+
+    JDLC.JungleInsectCodexData data = currentObj.TryCast<JDLC.JungleInsectCodexData>();
     if (data == null) continue;
     count++;
 
