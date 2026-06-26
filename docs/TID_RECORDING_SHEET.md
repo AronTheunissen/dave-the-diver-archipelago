@@ -21,6 +21,7 @@ Use this sheet during your UnityExplorer session to record TID numbers.
 | `QuestNameMapper` | `StoryProgressPatch.cs` | 🟡 Ready to fill | Patch now auto-logs TIDs via `GetClearMissionDialogData` hook — just play and watch BepInEx log |
 | `ChallengeNameMapper` | `ChallengePatch.cs` | 🔴 Empty | All challenge mission TIDs unknown |
 | Rainbow Cap TID | `IngredientPatch.cs` | ✅ Complete | `1026012` — confirmed via UnityExplorer 2026-06-26 |
+| Jungle Insect TIDs | `InsectPatch.cs` (future) | ✅ Complete | Range `41010302`–`41010338` (35 insects, sequential with gap at 41010307) |
 
 **Priority order for in-game TID capture:**
 1. 🔴 Quest TIDs — complete a quest, read BepInEx log for `MissionManager.UpdateMission` calls
