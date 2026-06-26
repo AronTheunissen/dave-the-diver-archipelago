@@ -243,6 +243,28 @@ CharmSpecData                                 // Design data for each charm
 
 ---
 
+## 🌿 Jungle DLC Class Names (confirmed via dump.cs 2026-06-26)
+
+| Purpose | Class Name | Notes |
+|---|---|---|
+| Rod fishing catch | `FishingRodHandler` | `MonoBehaviour` — hook catch completion method |
+| Jungle NPC manager | `VillageManager` | `Singleton<VillageManager>` — manages all villager relationships |
+| Villager NPC state | `VillageNPCState` | Per-NPC state machine |
+| Bancho Grill restaurant | `JungleSushiBarManagerSystem` | `static class` — Bancho Grill manager |
+| Grill recipes | `GrillRecipeEntity` | Design data for Bancho Grill recipes |
+| Grill recipe save | `SaveData.GrillRecipeDataDic` | `Dictionary<int, GrillRecipeEntity>` |
+| Jungle equipment | `JungleEquipmentLevelEntity` | Purification Filter, Machete etc. levels |
+| Jungle equipment UI | `JungleEquipmentLevelUpCell` | Level-up UI — hook here for equipment upgrades |
+| Jungle ingredients | `JungleIngredientGroup` | Design data for jungle ingredients |
+| Jungle missions | `JungleMissionPhoneAlarmController` | Mission phone alerts for jungle |
+| Jungle special cond. | `JungleMissionSpecialConditionCheck` | Special mission conditions (NPC agree etc.) |
+| Jungle lake | `JungleLakeEnvironmentController` | Lake environment controller |
+| Bancho Grill rank | `JungleSushiBarRankEntity` | Design data for Bancho Grill rank |
+| Jungle equipment const | `ItemType.JungleFishingRod = 60` | Fishing rod item type enum value |
+| Jungle commit mission | `JDLC_JUNGLE_COMMIT_MISSION_TID = 410010001` | Jungle main commit mission TID |
+
+---
+
 ## 🚫 Classes That Do NOT Exist (old placeholder names)
 
 These names appeared in old docs but are **NOT in the game**:

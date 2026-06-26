@@ -18,7 +18,7 @@ Use this sheet during your UnityExplorer session to record TID numbers.
 | `IngredientNameMapper` | `IngredientPatch.cs` | ✅ Complete | 10 sea plants + Truffle mapped |
 | `CharmMapper` | `CharmPatch.cs` | ✅ Complete | 8 charms mapped (3017xxx TIDs) |
 | `VIPNameMapper` | `RestaurantPatch.cs` | 🟡 Partial | WangPang/Alex/Pastro confirmed — **needs in-game verify** |
-| `QuestNameMapper` | `StoryProgressPatch.cs` | 🔴 Empty | All quest/story mission TIDs unknown |
+| `QuestNameMapper` | `StoryProgressPatch.cs` | 🟡 Ready to fill | Patch now auto-logs TIDs via `GetClearMissionDialogData` hook — just play and watch BepInEx log |
 | `ChallengeNameMapper` | `ChallengePatch.cs` | 🔴 Empty | All challenge mission TIDs unknown |
 | Rainbow Cap TID | `IngredientPatch.cs` | 🔴 Unknown | Not found in dump.cs — needs in-game capture |
 
