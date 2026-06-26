@@ -575,6 +575,18 @@ jungle_progression_items: Dict[str, ItemData] = {
 
     # --- Jungle villager friendship milestones (items received from NPC rewards) ---
     # 3-heart rewards from key NPCs that gate content
+    # --- Jungle Bancho Grill staff (9 members, all unlocked via quests) ---
+    # These are progression items — each staff member expands what Bancho Grill can do.
+    "Yasuto":            ItemData(ITEM_BASE + 840, ItemClassification.progression, category="dlc_jungle"),
+    "Martin Tweed":      ItemData(ITEM_BASE + 841, ItemClassification.progression, category="dlc_jungle"),
+    "Rover":             ItemData(ITEM_BASE + 842, ItemClassification.progression, category="dlc_jungle"),
+    "Om Nom":            ItemData(ITEM_BASE + 843, ItemClassification.progression, category="dlc_jungle"),
+    "Charlie Bonnet III":ItemData(ITEM_BASE + 844, ItemClassification.progression, category="dlc_jungle"),
+    "William Longbottom":ItemData(ITEM_BASE + 845, ItemClassification.progression, category="dlc_jungle"),
+    "Mita":              ItemData(ITEM_BASE + 846, ItemClassification.progression, category="dlc_jungle"),
+    "Udo":               ItemData(ITEM_BASE + 847, ItemClassification.progression, category="dlc_jungle"),
+    "Sato":              ItemData(ITEM_BASE + 848, ItemClassification.progression, category="dlc_jungle"),
+
     "Villager Trust":             ItemData(ITEM_BASE + 830, ItemClassification.progression, count=3, category="dlc_jungle"),  # 3 needed to enter temple
 }
 
