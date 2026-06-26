@@ -772,12 +772,48 @@ jungle_minigame_locations: Dict[str, LocationData] = {
 
 # --- Jungle insect catching (Insectagram) ---
 jungle_insect_locations: Dict[str, LocationData] = {
-    "Jungle Insectagram: First Bug Caught":           LocationData(_J + 150, "Utara Village",  "dlc_jungle"),
-    "Jungle Insectagram: 10 Bugs Caught":             LocationData(_J + 151, "Setah Forest",   "dlc_jungle"),
-    "Jungle Insectagram: 20 Bugs Caught":             LocationData(_J + 152, "Setah Forest",   "dlc_jungle"),
-    "Jungle Insectagram: 30 Bugs Caught (Complete)":  LocationData(_J + 153, "Surga Falls",    "dlc_jungle"),
-    "Jungle Insectagram: 50% Complete":               LocationData(_J + 154, "Utara Village",  "dlc_jungle"),
-    # NOTE: Full insect list (~30 species) to be verified in-game
+    # === Net-caught insects (19 species, caught with Bug Net) ===
+    "Insect: Catch Ulysses Swallowtail":                  LocationData(_J + 150, "Setah Forest",   "dlc_jungle"),
+    "Insect: Catch Loquinianus Swallowtail":               LocationData(_J + 151, "Setah Forest",   "dlc_jungle"),
+    "Insect: Catch Gigon Swallowtail":                     LocationData(_J + 152, "Setah Forest",   "dlc_jungle"),
+    "Insect: Catch Mountain Yellow Butterfly":             LocationData(_J + 153, "Setah Forest",   "dlc_jungle"),
+    "Insect: Catch Albina White Butterfly":                LocationData(_J + 154, "Setah Forest",   "dlc_jungle"),
+    "Insect: Catch Blanchard's Giant Striped Monarch":     LocationData(_J + 155, "Setah Forest",   "dlc_jungle"),
+    "Insect: Catch Blue-Banded Nymph Butterfly":           LocationData(_J + 156, "Setah Forest",   "dlc_jungle"),
+    "Insect: Catch Three-Lined Butterfly":                 LocationData(_J + 157, "Setah Forest",   "dlc_jungle"),
+    "Insect: Catch Mulciber Spotted Monarch Butterfly":    LocationData(_J + 158, "Setah Forest",   "dlc_jungle"),
+    "Insect: Catch Giant Tiger Butterfly":                 LocationData(_J + 159, "Setah Forest",   "dlc_jungle"),
+    "Insect: Catch Priamus Birdwing Butterfly":            LocationData(_J + 160, "Setah Forest",   "dlc_jungle"),
+    "Insect: Catch Rajah Brooke's Birdwing Butterfly":     LocationData(_J + 161, "Setah Forest",   "dlc_jungle"),
+    "Insect: Catch Moth":                                  LocationData(_J + 162, "Setah Forest",   "dlc_jungle"),
+    "Insect: Catch Atlas Moth":                            LocationData(_J + 163, "Setah Forest",   "dlc_jungle"),
+    "Insect: Catch Takua Cicada":                          LocationData(_J + 164, "Setah Forest",   "dlc_jungle"),
+    "Insect: Catch Stick Insect":                          LocationData(_J + 165, "Setah Forest",   "dlc_jungle"),
+    "Insect: Catch Gigas Giant Longhorn Beetle":           LocationData(_J + 166, "Setah Forest",   "dlc_jungle"),
+    "Insect: Catch Diving Beetle":                         LocationData(_J + 167, "Utara Lake - Upper", "dlc_jungle"),
+    "Insect: Catch Firefly":                               LocationData(_J + 168, "Setah Forest",   "dlc_jungle"),
+
+    # === Battle insects (16 beetles — fight using battle insect minigame) ===
+    "Insect Battle: Defeat Lesser Stag Beetle":            LocationData(_J + 170, "Setah Forest",   "dlc_jungle"),
+    "Insect Battle: Defeat Zebra Stag Beetle":             LocationData(_J + 171, "Setah Forest",   "dlc_jungle"),
+    "Insect Battle: Defeat Five-Horned Rhinoceros Beetle": LocationData(_J + 172, "Setah Forest",   "dlc_jungle"),
+    "Insect Battle: Defeat Siamese Rhinoceros Beetle":     LocationData(_J + 173, "Setah Forest",   "dlc_jungle"),
+    "Insect Battle: Defeat Striata Stag Beetle":           LocationData(_J + 174, "Setah Forest",   "dlc_jungle"),
+    "Insect Battle: Defeat Gideon Beetle":                 LocationData(_J + 175, "Setah Forest",   "dlc_jungle"),
+    "Insect Battle: Defeat Stevens' Stag Beetle":          LocationData(_J + 176, "Setah Forest",   "dlc_jungle"),
+    "Insect Battle: Defeat Rosenberg's Golden Stag Beetle":LocationData(_J + 177, "Setah Forest",   "dlc_jungle"),
+    "Insect Battle: Defeat Giraffe Stag Beetle":           LocationData(_J + 178, "Setah Forest",   "dlc_jungle"),
+    "Insect Battle: Defeat Antaeus Stag Beetle":           LocationData(_J + 179, "Setah Forest",   "dlc_jungle"),
+    "Insect Battle: Defeat Femoralis Stag Beetle":         LocationData(_J + 180, "Setah Forest",   "dlc_jungle"),
+    "Insect Battle: Defeat Metallic Stag Beetle":          LocationData(_J + 181, "Setah Forest",   "dlc_jungle"),
+    "Insect Battle: Defeat Atlas Stag Beetle":             LocationData(_J + 182, "Setah Forest",   "dlc_jungle"),
+    "Insect Battle: Defeat Giant Stag Beetle":             LocationData(_J + 183, "Setah Forest",   "dlc_jungle"),
+    "Insect Battle: Defeat Caucasus Beetle":               LocationData(_J + 184, "Setah Forest",   "dlc_jungle"),
+    "Insect Battle: Defeat Flamecrest Stag Beetle":        LocationData(_J + 185, "Setah Forest",   "dlc_jungle"),
+
+    # === Insectagram milestones ===
+    "Jungle Insectagram: 50% Complete":               LocationData(_J + 190, "Utara Village",  "dlc_jungle"),
+    "Jungle Insectagram: 100% Complete":              LocationData(_J + 191, "Utara Village",  "dlc_jungle"),
 }
 
 # --- Jungle fish (first catch) — PLACEHOLDER ---

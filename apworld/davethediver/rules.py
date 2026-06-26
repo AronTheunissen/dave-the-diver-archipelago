@@ -882,6 +882,31 @@ def set_rules(world):
             lambda state: state.has("Bug Net", player)
         )
 
+    # All insects (net-caught + battle) require Bug Net
+    for insect_name in [
+        "Insect: Catch Ulysses Swallowtail", "Insect: Catch Loquinianus Swallowtail",
+        "Insect: Catch Gigon Swallowtail", "Insect: Catch Mountain Yellow Butterfly",
+        "Insect: Catch Albina White Butterfly", "Insect: Catch Blanchard's Giant Striped Monarch",
+        "Insect: Catch Blue-Banded Nymph Butterfly", "Insect: Catch Three-Lined Butterfly",
+        "Insect: Catch Mulciber Spotted Monarch Butterfly", "Insect: Catch Giant Tiger Butterfly",
+        "Insect: Catch Priamus Birdwing Butterfly", "Insect: Catch Rajah Brooke's Birdwing Butterfly",
+        "Insect: Catch Moth", "Insect: Catch Atlas Moth", "Insect: Catch Takua Cicada",
+        "Insect: Catch Stick Insect", "Insect: Catch Gigas Giant Longhorn Beetle",
+        "Insect: Catch Diving Beetle", "Insect: Catch Firefly",
+        "Insect Battle: Defeat Lesser Stag Beetle", "Insect Battle: Defeat Zebra Stag Beetle",
+        "Insect Battle: Defeat Five-Horned Rhinoceros Beetle", "Insect Battle: Defeat Siamese Rhinoceros Beetle",
+        "Insect Battle: Defeat Striata Stag Beetle", "Insect Battle: Defeat Gideon Beetle",
+        "Insect Battle: Defeat Stevens' Stag Beetle", "Insect Battle: Defeat Rosenberg's Golden Stag Beetle",
+        "Insect Battle: Defeat Giraffe Stag Beetle", "Insect Battle: Defeat Antaeus Stag Beetle",
+        "Insect Battle: Defeat Femoralis Stag Beetle", "Insect Battle: Defeat Metallic Stag Beetle",
+        "Insect Battle: Defeat Atlas Stag Beetle", "Insect Battle: Defeat Giant Stag Beetle",
+        "Insect Battle: Defeat Caucasus Beetle", "Insect Battle: Defeat Flamecrest Stag Beetle",
+        "Jungle Insectagram: 50% Complete", "Jungle Insectagram: 100% Complete",
+    ]:
+        _set_location_rule(multiworld, player, insect_name,
+            lambda state: state.has("Bug Net", player)
+        )
+
     # Land fishing + rod-caught fish require Fishing Rod
     _set_location_rule(multiworld, player,
         "Jungle Minigame: First Land Fishing Catch",
