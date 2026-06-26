@@ -1,81 +1,86 @@
 // ============================================================
-// Dave the Diver — Jungle DLC: Bancho Grill Recipe Dumper v5
-// All variables declared at top to avoid REPL scoping issues
+// Dave the Diver — Jungle DLC: Bancho Grill Recipe Dumper v6
+// Uses var (which works in UE REPL) and Type.GetType for SaveSystemGameDataManager
 // ============================================================
 
-System.Text.StringBuilder sb = new System.Text.StringBuilder();
-SaveSystemGameDataManager saveManager = null;
-SaveData saveData = null;
-JDLC.SaveDataJungle jungle = null;
-System.Reflection.FieldInfo sushiBarField = null;
-object sushiBarSave = null;
-System.Reflection.PropertyInfo dictProp = null;
-object dictObj = null;
-object values = null;
-System.Reflection.MethodInfo getEnum = null;
-object enumerator = null;
-System.Reflection.MethodInfo moveNext = null;
-System.Reflection.PropertyInfo current = null;
-int i = 0;
-
+var sb = new System.Text.StringBuilder();
 sb.AppendLine("=== BANCHO GRILL RECIPE DUMP ===");
 
-saveManager = GameObject.FindObjectOfType<SaveSystemGameDataManager>();
-sb.AppendLine("SaveManager: " + (saveManager != null).ToString());
-if (saveManager != null) saveData = saveManager.GameSave;
-sb.AppendLine("SaveData: " + (saveData != null).ToString());
-if (saveData != null) jungle = saveData.JDLCContents;
-sb.AppendLine("JDLCContents: " + (jungle != null).ToString());
+// Find SaveSystemGameDataManager by type name since it may not be in REPL scope
+var managerType = System.Type.GetType("SaveSystemGameDataManager, Assembly-CSharp");
+sb.AppendLine("ManagerType: " + (managerType != null ? managerType.Name : "NULL"));
 
-if (jungle != null)
+var managers = GameObject.FindObjectsOfType(managerType);
+sb.AppendLine("Managers found: " + managers.Length.ToString());
+
+if (managers.Length > 0)
 {
-    sushiBarField = typeof(JDLC.SaveDataJungle).GetField("jungleSushiBarSave",
-        System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-    sb.AppendLine("SushiBarField: " + (sushiBarField != null).ToString());
-    if (sushiBarField != null) sushiBarSave = sushiBarField.GetValue(jungle);
-    sb.AppendLine("SushiBarSave null: " + (sushiBarSave == null).ToString());
-}
-
-if (sushiBarSave != null)
-{
-    dictProp = sushiBarSave.GetType().GetProperty("GrillRecipeDataDic");
-    sb.AppendLine("DictProp: " + (dictProp != null).ToString());
-    if (dictProp != null) dictObj = dictProp.GetValue(sushiBarSave);
-    sb.AppendLine("Dict null: " + (dictObj == null).ToString());
-}
-
-if (dictObj != null)
-{
-    int count = (int)dictObj.GetType().GetProperty("Count").GetValue(dictObj);
-    sb.AppendLine("Recipe count: " + count.ToString());
-    sb.AppendLine("TID | IsUnlocked | Cat | NameTextID | Icon");
-
-    values = dictObj.GetType().GetProperty("Values").GetValue(dictObj);
-    getEnum = values.GetType().GetMethod("GetEnumerator");
-    enumerator = getEnum.Invoke(values, null);
-    moveNext = enumerator.GetType().GetMethod("MoveNext");
-    current = enumerator.GetType().GetProperty("Current");
-
-    while ((bool)moveNext.Invoke(enumerator, null))
+    var manager = managers[0];
+    var gameSaveProp = managerType.GetProperty("GameSave");
+    sb.AppendLine("GameSave prop: " + (gameSaveProp != null).ToString());
+    
+    var saveData = gameSaveProp.GetValue(manager);
+    sb.AppendLine("SaveData: " + (saveData != null).ToString());
+    
+    var jungleProp = saveData.GetType().GetProperty("JDLCContents");
+    sb.AppendLine("JDLCContents prop: " + (jungleProp != null).ToString());
+    
+    var jungle = jungleProp.GetValue(saveData);
+    sb.AppendLine("Jungle: " + (jungle != null).ToString());
+    
+    if (jungle != null)
     {
-        object entity = current.GetValue(enumerator);
-        if (entity != null)
+        var sushiBarField = jungle.GetType().GetField("jungleSushiBarSave",
+            System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+        sb.AppendLine("SushiBarField: " + (sushiBarField != null).ToString());
+        
+        var sushiBar = sushiBarField.GetValue(jungle);
+        sb.AppendLine("SushiBar: " + (sushiBar != null).ToString());
+        
+        if (sushiBar != null)
         {
-            i++;
-            System.Type t = entity.GetType();
-            int tid = (int)t.GetProperty("TID").GetValue(entity);
-            string name = (string)t.GetProperty("NameTextID").GetValue(entity) ?? "?";
-            string icon = (string)t.GetProperty("Icon").GetValue(entity) ?? "?";
-            int cat = (int)t.GetProperty("Category").GetValue(entity);
-            bool unlocked = false;
-            try { unlocked = (bool)t.GetMethod("IsUnlocked").Invoke(entity, null); } catch { }
-            sb.AppendLine(tid.ToString() + " | " + unlocked.ToString() + " | " + cat.ToString() + " | " + name + " | " + icon);
+            var dictProp = sushiBar.GetType().GetProperty("GrillRecipeDataDic");
+            sb.AppendLine("DictProp: " + (dictProp != null).ToString());
+            
+            var dict = dictProp.GetValue(sushiBar);
+            sb.AppendLine("Dict: " + (dict != null).ToString());
+            
+            if (dict != null)
+            {
+                int count = (int)dict.GetType().GetProperty("Count").GetValue(dict);
+                sb.AppendLine("Count: " + count.ToString());
+                sb.AppendLine("TID | Unlocked | Cat | NameTextID | Icon");
+                
+                var vals = dict.GetType().GetProperty("Values").GetValue(dict);
+                var getE = vals.GetType().GetMethod("GetEnumerator");
+                var e = getE.Invoke(vals, null);
+                var mn = e.GetType().GetMethod("MoveNext");
+                var cur = e.GetType().GetProperty("Current");
+                int i = 0;
+                
+                while ((bool)mn.Invoke(e, null))
+                {
+                    var entity = cur.GetValue(e);
+                    if (entity != null)
+                    {
+                        i++;
+                        var t = entity.GetType();
+                        int tid = (int)t.GetProperty("TID").GetValue(entity);
+                        string name = (string)t.GetProperty("NameTextID").GetValue(entity) ?? "?";
+                        string icon = (string)t.GetProperty("Icon").GetValue(entity) ?? "?";
+                        int cat = (int)t.GetProperty("Category").GetValue(entity);
+                        bool unlocked = false;
+                        try { unlocked = (bool)t.GetMethod("IsUnlocked").Invoke(entity, null); } catch { }
+                        sb.AppendLine(tid + " | " + unlocked + " | " + cat + " | " + name + " | " + icon);
+                    }
+                }
+                sb.AppendLine("Total: " + i);
+            }
         }
     }
-    sb.AppendLine("Total: " + i.ToString());
 }
 
-string result = sb.ToString();
+var result = sb.ToString();
 Debug.Log(result);
 GUIUtility.systemCopyBuffer = result;
 try
