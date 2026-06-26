@@ -20,7 +20,7 @@ Use this sheet during your UnityExplorer session to record TID numbers.
 | `VIPNameMapper` | `RestaurantPatch.cs` | 🟡 Partial | WangPang/Alex/Pastro confirmed — **needs in-game verify** |
 | `QuestNameMapper` | `StoryProgressPatch.cs` | 🟡 Ready to fill | Patch now auto-logs TIDs via `GetClearMissionDialogData` hook — just play and watch BepInEx log |
 | `ChallengeNameMapper` | `ChallengePatch.cs` | 🔴 Empty | All challenge mission TIDs unknown |
-| Rainbow Cap TID | `IngredientPatch.cs` | 🔴 Unknown | Not found in dump.cs — needs in-game capture |
+| Rainbow Cap TID | `IngredientPatch.cs` | ✅ Complete | `1026012` — confirmed via UnityExplorer 2026-06-26 |
 
 **Priority order for in-game TID capture:**
 1. 🔴 Quest TIDs — complete a quest, read BepInEx log for `MissionManager.UpdateMission` calls
@@ -172,3 +172,6 @@ var saveData = SaveSystem.Instance?.CurrentSaveData;
 | 2026-06-19 | Boss types from EnumBossFishType enum | See above |
 | 2026-06-19 | Fish farm areas from FishFarmAreaType enum | A=1, B=2, C=3, D=4, E=5, F=6, G=7, H=8 |
 | 2026-06-19 | Seahorse race divisions | C=Easy, B=Medium, A=Hard, S=Expert |
+| 2026-06-26 | Rainbow Cap ingredient TID via UnityExplorer | `1026012` |
+| 2026-06-26 | Fixed farm vegetable IDs (Bean/Buckwheat/Onion/Cucumber were wrong) | Bean=1027003, Buckwheat=1027019, Onion=1027011, Cucumber=1027015 |
+| 2026-06-26 | Full ingredient dump (235 entries) obtained via UnityExplorer | All sea plants, farm veg, seasonings, fish confirmed |

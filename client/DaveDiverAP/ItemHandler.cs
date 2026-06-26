@@ -776,10 +776,10 @@ namespace DaveDiverAP
             { "Southern Bull Kelp", 1027108 },
             { "Black Coral",        1027107 },
             { "Buckbean",           1027109 },
-            // Rare forageables (vendor / Mushroomer)
+            // Rare forageables (vendor / Mushroomer) — ✅ confirmed via UnityExplorer 2026-06-26
             { "Truffle",            1026011 },
-            { "Rainbow Cap",        1026012 },  // TODO: verify TID via UnityExplorer
-            // Farm vegetables
+            { "Rainbow Cap",        1026012 },
+            // Farm vegetables — ✅ confirmed via UnityExplorer 2026-06-26
             { "Rice",               1027002 },
             { "Carrot",             1027001 },
             { "Wheat",              1027004 },
@@ -789,10 +789,10 @@ namespace DaveDiverAP
             { "Egg",                1027014 },
             { "Habanero",           1027013 },
             { "Cherry Tomato",      1027008 },
-            { "Bean",               1027005 },
-            { "Buckwheat",          1027006 },
-            { "Onion",              1027003 },
-            { "Cucumber",           1027007 },
+            { "Bean",               1027003 },
+            { "Buckwheat",          1027019 },
+            { "Onion",              1027011 },
+            { "Cucumber",           1027015 },
             // Seasonings (bought from Jango / dispatch)
             { "Soy Sauce",          1026001 },
             { "Olive Oil",          1026003 },

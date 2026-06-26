@@ -56,9 +56,9 @@ namespace DaveDiverAP.Patches
             { 1027108, "Southern Bull Kelp" },
             { 1027107, "Black Coral" },
             { 1027109, "Buckbean" },
-            // Rare forageables (vendor) — Truffle is Type: Seasoning, Rainbow Cap not in dump (may be missing):
+            // Rare forageables (vendor) — ✅ both confirmed via UnityExplorer 2026-06-26
             { 1026011, "Truffle" },
-            // Rainbow Cap not found in dump — TID unknown, TODO when found
+            { 1026012, "Rainbow Cap" },
         };
 
         public static string? GetDisplayName(int tid) =>
