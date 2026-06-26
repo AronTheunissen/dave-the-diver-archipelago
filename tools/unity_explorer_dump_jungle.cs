@@ -1,69 +1,35 @@
 // ============================================================
-// Dave the Diver — Jungle DLC: Insect Dumper v11
-// Pure reflection on enumerator - no Il2CppSystem generics
+// Dave the Diver — Jungle DLC: Insect Dumper v12
+// Access via SaveData which stores insect collection state,
+// then cross-reference with JungleInsectInfo design sheet.
 // ============================================================
 
 System.Text.StringBuilder sb = new System.Text.StringBuilder();
 sb.AppendLine("=== JUNGLE INSECT DUMP ===");
-sb.AppendLine("TID | IsUnlocked | IsBattle | CardThumbnail");
 
-JDLC.JungleInsectCodex codex = JDLC.JungleInsectCodex.Instance;
-object datasObj = typeof(JDLC.JungleInsectCodex).GetProperty("InsectCodexDatas").GetValue(codex);
-object rawEnum = datasObj.GetType().GetMethod("GetEnumerator").Invoke(datasObj, null);
+// Strategy: iterate JungleInsectInfo design sheet via its static DataDic property
+// DesignSheetDataHelper<int, JungleInsectInfo> has a static DataDic dictionary
 
-// MoveNext is not shown but should exist on the underlying type - check all interfaces
-System.Type enumType = rawEnum.GetType();
-System.Reflection.MethodInfo moveNextMethod = null;
+System.Type insectInfoType = typeof(JDLC.JungleInsectInfo);
+sb.AppendLine("JungleInsectInfo type: " + insectInfoType.FullName);
 
-// Search all interfaces for MoveNext
-System.Type[] interfaces = enumType.GetInterfaces();
-for (int i = 0; i < interfaces.Length; i++)
-{
-    System.Reflection.MethodInfo m = interfaces[i].GetMethod("MoveNext");
-    if (m != null) { moveNextMethod = m; break; }
-}
+// List all static fields and properties
+System.Reflection.FieldInfo[] staticFields = insectInfoType.GetFields(
+    System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic);
+for (int i = 0; i < staticFields.Length; i++)
+    sb.AppendLine("StaticField: " + staticFields[i].Name + " : " + staticFields[i].FieldType.Name);
 
-// Also try direct
-if (moveNextMethod == null)
-    moveNextMethod = enumType.GetMethod("MoveNext", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.FlattenHierarchy);
+System.Reflection.PropertyInfo[] staticProps = insectInfoType.GetProperties(
+    System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic);
+for (int i = 0; i < staticProps.Length; i++)
+    sb.AppendLine("StaticProp: " + staticProps[i].Name + " : " + staticProps[i].PropertyType.Name);
 
-sb.AppendLine("MoveNext found: " + (moveNextMethod != null).ToString());
-
-if (moveNextMethod != null)
-{
-    System.Reflection.PropertyInfo currentProp = enumType.GetProperty("Current");
-    int count = 0;
-    while ((bool)moveNextMethod.Invoke(rawEnum, null))
-    {
-        object dataObj = currentProp.GetValue(rawEnum);
-        if (dataObj == null) continue;
-        count++;
-
-        System.Type dataType = dataObj.GetType();
-        int tid = (int)dataType.GetProperty("TID").GetValue(dataObj);
-        bool isUnlocked = (bool)dataType.GetProperty("IsUnlocked").GetValue(dataObj);
-        object infoObj = dataType.GetProperty("Info").GetValue(dataObj);
-        string cardName = "?";
-        bool isBattle = false;
-        if (infoObj != null)
-        {
-            System.Type infoType = infoObj.GetType();
-            object card = infoType.GetProperty("CardThumbnail").GetValue(infoObj);
-            if (card != null) cardName = card.ToString();
-            isBattle = (bool)infoType.GetProperty("IsBattle").GetValue(infoObj);
-        }
-        sb.AppendLine(tid.ToString() + " | Unlocked=" + isUnlocked.ToString() + " | Battle=" + isBattle.ToString() + " | Card=" + cardName);
-    }
-    sb.AppendLine("Total: " + count.ToString());
-}
+System.Reflection.MethodInfo[] staticMethods = insectInfoType.GetMethods(
+    System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic);
+for (int i = 0; i < staticMethods.Length; i++)
+    sb.AppendLine("StaticMethod: " + staticMethods[i].Name);
 
 string result = sb.ToString();
 Debug.Log(result);
 GUIUtility.systemCopyBuffer = result;
-try
-{
-    System.IO.File.WriteAllText(System.IO.Path.Combine(Application.persistentDataPath, "insect_dump.txt"), result);
-    Debug.Log("Saved!");
-}
-catch (System.Exception ex) { Debug.Log("Save failed: " + ex.Message); }
 Debug.Log("=== DONE ===");
