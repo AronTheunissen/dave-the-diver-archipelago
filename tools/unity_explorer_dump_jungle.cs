@@ -25,10 +25,9 @@ catch (System.Exception ex)
     sb.AppendLine("Trying JungleInsectInfo.GetAll() fallback...");
     try
     {
-        System.Collections.Generic.IEnumerable<JungleInsectInfo> all = JungleInsectInfo.GetAll();
-        foreach (JungleInsectInfo info in all)
+        foreach (JungleInsectInfo infoFallback in JungleInsectInfo.GetAll())
         {
-            sb.AppendLine(info.TID.ToString() + " | Battle=" + info.IsBattle.ToString() + " | Quality=" + info.Quality.ToString() + " | Card=" + (info.CardThumbnail ?? "?"));
+            sb.AppendLine(infoFallback.TID.ToString() + " | Battle=" + infoFallback.IsBattle.ToString() + " | Quality=" + infoFallback.Quality.ToString() + " | Card=" + (infoFallback.CardThumbnail ?? "?"));
         }
     }
     catch (System.Exception ex2)
