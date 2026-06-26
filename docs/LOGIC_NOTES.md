@@ -1,6 +1,6 @@
 # Logic Notes — Dave the Diver Archipelago
 
-> Last updated: June 23, 2026
+> Last updated: June 26, 2026
 > This document tracks what logic rules are implemented and what still needs work.
 
 ---
@@ -41,6 +41,12 @@
 | Yawie | 3 Control Room Buttons + Laser Device + Suit Lv7 |
 | Ebirah | Chapter 5 Complete (Godzilla DLC) |
 | Torben | Chapter 5 + Cocktails Unlocked (Ichiban DLC) |
+| Caiman | Jungle DLC + Chapter 1-2 |
+| Snapping Turtle | Jungle DLC + Utara Lake Upper access + appropriate tools |
+| Sulong | Jungle DLC + Lakebed Sea access + Bug Net |
+| Stethacanthus | Jungle DLC + Lakebed Sea deep + appropriate fishing |
+| Xiphactinus | Jungle DLC + Lakebed Sea deep + appropriate fishing |
+| Basilosaurus | Jungle DLC + Final jungle chapter gates |
 
 ### Item Chains
 | Item | Source |
@@ -133,10 +139,16 @@
 ### Jungle DLC
 | Content | Status |
 |---|---|
-| All fish | Placeholders — wiki data needed |
-| All recipes | Placeholders — wiki data needed |
-| Boss logic | Structure complete, real gates unknown |
-| Villager friendship | Structure complete, details unknown |
+| 57 lake fish + 6 boss fish | ✅ Fully implemented |
+| 36 insects (net + battle beetles) | ✅ Fully implemented with TIDs 40001-40038 |
+| 32 skewer recipes | ✅ Fully implemented with TIDs 48150001-48150109 |
+| 71 Bancho Grill complex + boss recipes | ✅ Fully implemented with confirmed TIDs |
+| 24 Jungle Gun upgrades | ✅ Fully implemented (4 modes × 6 levels) |
+| 9 jungle staff unlocks | ✅ Structure complete, gate rules implemented |
+| Villager friendship (14 villagers × 2 tiers) | ✅ Structure complete, details pending wiki data |
+| Boss logic (6 bosses) | ✅ Structure complete, gate rules implemented |
+| Jungle ingredient details | 🟡 TIDs confirmed, wiki unlock data needed |
+| Dr. Bacon jungle research | ❓ Structure needed, triggers unknown |
 
 ---
 

@@ -39,7 +39,7 @@ and applies items received from the multiworld.
 - Chapter structure, boss list, region access requirements confirmed
 
 ### ✅ Phase 2 — APWorld Implementation (Complete)
-- **1,134 locations** across 15 regions
+- **1,134+ locations** across 23 regions (including all DLC)
 - **276 items** with correct IDs, counts, and categories
 - **Logic rules** with game-accurate region gating
 - **5 victory conditions** implemented
@@ -67,8 +67,8 @@ and applies items received from the multiworld.
 All 17 Harmony patches now use real class/method names confirmed via dump.cs (Il2CppDumper).
 See `docs/CLASS_NAME_CHEAT_SHEET.md` for the full reference.
 
-### 🔧 Phase 5 — TID Mapping & ItemHandler (In Progress)
-The patches fire correctly but need design-sheet TID integers filled into the `*NameMapper`
+### 🔧 Phase 5 — TID Mapping & ItemHandler (Substantially Complete)
+TID mappers mostly complete; StoryProgressPatch redesigned with auto-logging for quest TIDs
 dictionaries, and `ItemHandler.cs` stubs need real `SaveData` API calls implemented.
 
 **Step 1 — Fill in class names (partially done)**
@@ -104,8 +104,8 @@ See `docs/CLASS_NAME_CHEAT_SHEET.md` for guidance.
 - Test all 5 victory conditions end-to-end
 - Full playthrough verification
 
-### ⏳ Phase 6 — In the Jungle DLC (June 18, 2026)
-- New fish (freshwater lake ecosystem)
+### ✅ Phase 6 — Jungle DLC Implementation (Substantially Complete)
+- ✅ 57 lake fish (Utara Lake Upper/Lower, Lakebed Sea)
 - New regions (Jungle Lake, Bancho Grill, Utara Village)
 - New items and recipes
 - Wire up `has_jungle_dlc` option to new content

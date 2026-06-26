@@ -21,7 +21,11 @@ Use this sheet during your UnityExplorer session to record TID numbers.
 | `QuestNameMapper` | `StoryProgressPatch.cs` | 🟡 Ready to fill | Patch now auto-logs TIDs via `GetClearMissionDialogData` hook — just play and watch BepInEx log |
 | `ChallengeNameMapper` | `ChallengePatch.cs` | 🔴 Empty | All challenge mission TIDs unknown |
 | Rainbow Cap TID | `IngredientPatch.cs` | ✅ Complete | `1026012` — confirmed via UnityExplorer 2026-06-26 |
-| Jungle Insect TIDs | `InsectPatch.cs` (future) | ✅ Complete | Range `41010302`–`41010338` (35 insects, sequential with gap at 41010307) |
+| Jungle Insect TIDs | `InsectPatch.cs` (future) | ✅ Complete | Range `40001`–`40038` (36 insects: 19 net-caught + 17 battle beetles) |
+| Jungle Skewer Recipe TIDs | `RecipeUnlockPatch.cs` | ✅ Complete | Range `48150001`–`48150109` (32 skewers) |
+| Jungle Grill Recipe TIDs | `RecipeUnlockPatch.cs` | ✅ Complete | 71 Bancho Grill complex + boss recipes with confirmed TIDs from UnityExplorer |
+| Jungle Gun Upgrade TIDs | `WeaponCraftPatch.cs` (future) | ✅ Complete | 24 locations (4 modes × 6 levels) confirmed |
+| Farm Vegetable TIDs | `IngredientPatch.cs` | ✅ Complete | Bean=1027003, Buckwheat=1027019, Onion=1027011, Cucumber=1027015 |
 
 **Priority order for in-game TID capture:**
 1. 🔴 Quest TIDs — complete a quest, read BepInEx log for `MissionManager.UpdateMission` calls
@@ -176,3 +180,8 @@ var saveData = SaveSystem.Instance?.CurrentSaveData;
 | 2026-06-26 | Rainbow Cap ingredient TID via UnityExplorer | `1026012` |
 | 2026-06-26 | Fixed farm vegetable IDs (Bean/Buckwheat/Onion/Cucumber were wrong) | Bean=1027003, Buckwheat=1027019, Onion=1027011, Cucumber=1027015 |
 | 2026-06-26 | Full ingredient dump (235 entries) obtained via UnityExplorer | All sea plants, farm veg, seasonings, fish confirmed |
+| 2026-06-26 | Jungle Insect TIDs confirmed (36 total) | 40001-40038 (19 net-caught + 17 battle beetles) |
+| 2026-06-26 | Jungle Skewer Recipe TIDs confirmed (32 total) | 48150001-48150109 |
+| 2026-06-26 | Jungle Grill complex & boss recipe TIDs confirmed (71 total) | All verified via UnityExplorer |
+| 2026-06-26 | Jungle Gun upgrade locations confirmed (24 total) | 4 modes × 6 levels fully mapped |
+| 2026-06-26 | StoryProgressPatch redesigned with auto-logging | GetClearMissionDialogData hook logs quest TIDs to BepInEx log |

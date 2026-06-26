@@ -1,7 +1,7 @@
 # Dave the Diver Archipelago - TODO List
 
-> Last updated: June 23, 2026 (evening)
-> Current status: APWorld complete with full logic rules, 1,400+ locations, 320+ items. C# client complete. Awaiting TID mapping and in-game testing.
+> Last updated: June 26, 2026 (evening)
+> Current status: APWorld complete with full logic rules, 1,134+ locations, 320+ items. C# client complete with StoryProgressPatch auto-logging. Jungle DLC substantially implemented. Awaiting quest TID capture and in-game testing.
 
 ---
 
@@ -36,7 +36,7 @@
 - [x] **Ichiban DLC** — 4 recipe unlocks + dish upgrades, Buckwheat crop, Beat 'Em Up, Karaoke, 3 staff (Hamako/Etsuko/Chitose), Torben boss, 2 missions (Operation Sea Blue Eradication + Cold Noodles), gated by Chapter 5 + Cocktails Unlocked, tagged `dlc_ichiban`
 - [x] **Jungle DLC structure** — 8 regions, 30+ items, 100+ location checks (see below for TODOs), tagged `dlc_jungle`
 
-### Jungle DLC (Structure Complete — Data TODOs Remain)
+### Jungle DLC (Substantially Implemented)
 - [x] 8 new regions: Utara Village, Bancho Grill, Utara Lake Upper/Lower, Lakebed Sea, Setah Forest, Murau Temple, Surga Falls
 - [x] 7 chapter + epilogue story checks
 - [x] 6 boss defeat checks (Caiman, Snapping Turtle, Sulong, Stethacanthus, Xiphactinus, Basilosaurus)
@@ -44,7 +44,11 @@
 - [x] 28 villager friendship reward checks (14 confirmed villagers × 2 tiers)
 - [x] 8 minigame checks (beetle battles, hide & seek, shooting range, duck hunting, rope puzzle, land fishing)
 - [x] 5 Insectagram checks
-- [x] 20 fish first-catch placeholders (known species)
+- [x] 57 lake fish (Utara Lake Upper/Lower, Lakebed Sea) + 6 boss fish across 4 zones
+- [x] 36 insects (19 net-caught + 17 battle beetles) with TIDs 40001-40038
+- [x] 32 skewer recipes with TIDs 48150001-48150109
+- [x] 71 Bancho Grill complex recipe unlock locations with confirmed TIDs
+- [x] 24 Jungle Gun upgrade locations (4 modes × 6 levels)
 - [x] 10 jungle ingredient first-find checks
 - [x] 5 Bancho Grill restaurant milestone checks
 - [x] 9 exploration milestone checks
@@ -63,11 +67,13 @@
 - [x] Toast notifications (item received, death, connection, goal)
 - [x] BepInEx config file support
 - [x] Save/restore session state (full persistent state for all item types)
-- [x] SlotData parsing (all 25 options)
+- [x] SlotData parsing (all 28 options)
 - [x] 17 Harmony patches — **all real class names confirmed via dump.cs** ✅
 - [x] **ItemHandler — all game API calls implemented** (PhoneAppUpgradeManager, MissionManager, SaveData, ChapterManager, etc.)
 - [x] SaveLoadPatch — reapplies all items on save load via first boat entry
 - [x] LocationTracker for all location categories
+- [x] **StoryProgressPatch redesigned** — uses GetClearMissionDialogData hook, auto-logs mission TIDs to BepInEx log
+- [x] **QuestNameMapper** — all quest entries as commented placeholders, ready to fill during gameplay
 
 ### Reverse Engineering
 - [x] Generated dump.cs via Il2CppDumper on game machine
@@ -99,7 +105,7 @@ static const values near the relevant classes.
 | `BossNameMapper._map` | 16 entries (scene name substring → boss name) | `BossDefeatedPatch.cs` ✅ Already populated! |
 | `WeaponNameMapper._idMap` | ~79 entries (craft TID → weapon name) | `WeaponCraftPatch.cs` |
 | `RecipeNameMapper._map` | ~54 entries (recipe TID → recipe name) | `RecipeUnlockPatch.cs` |
-| `QuestNameMapper._map` | ~20 entries (mission TID → quest name) | `StoryProgressPatch.cs` |
+| `QuestNameMapper._map` | ~20 entries (mission TID → quest name) | `StoryProgressPatch.cs` | 🟡 Auto-logs TIDs via GetClearMissionDialogData hook — watch BepInEx log during gameplay |
 | `ChallengeNameMapper._map` | ~~9 entries~~ — challenges removed (placeholder content) | ~~`ChallengePatch.cs`~~ |
 | `IngredientNameMapper._map` | ~12 entries (ingredient TID → name) | `IngredientPatch.cs` |
 | `CharmMapper._map` | 8 entries (charm TID → name + source) | `CharmPatch.cs` |
@@ -132,15 +138,16 @@ All `ItemHandler.cs` methods now use real game API calls:
 ### Godzilla DLC
 - [x] Confirm exact Kaiju figurine locations per region — all 20 named figurines with correct regions ✅
 
-### Jungle DLC — Fish & Recipes (~60 fish + all recipes still needed)
-Fill these in by pasting wiki data (same process as base game fish list):
-- [ ] Full fish list for Utara Lake Upper (IDs `_J+210` to `_J+249` reserved)
-- [ ] Full fish list for Utara Lake Lower (IDs `_J+258` to `_J+299` reserved)
-- [ ] Full fish list for Lakebed Sea (IDs `_J+302` to `_J+349` reserved)
-- [ ] Rod-fished species at Surga Falls / Setah Forest (IDs `_J+350` to `_J+399` reserved)
-- [ ] All Bancho Grill recipes (fish-catch unlocks + Artisan Flame research + VIP + rank)
-- [ ] Remaining ~18 villagers (IDs `_J+88` to `_J+123` reserved)
-- [ ] Dish upgrade checks for all Jungle recipes (same pattern as base game)
+### Jungle DLC — Remaining Gaps
+- [x] 57 lake fish (Utara Lake Upper/Lower, Lakebed Sea) — fully implemented ✅
+- [x] 6 boss fish across jungle zones — fully implemented ✅
+- [x] 36 insects (net + battle beetles) — fully implemented with TIDs 40001-40038 ✅
+- [x] 32 skewer recipes — fully implemented with TIDs 48150001-48150109 ✅
+- [x] 71 Bancho Grill complex recipe unlocks — fully implemented with confirmed TIDs ✅
+- [x] 24 Jungle Gun upgrade locations — fully implemented ✅
+- [ ] Jungle ingredient wiki data (crop types, unlocks, exact locations) — still needed for detailed item descriptions
+- [ ] Villager friendship quest details (exact friendship gates, item unlock conditions) — structure in place, details pending
+- [ ] Dr. Bacon research checks (jungle-specific research progression) — needs verification
 
 ### Base Game
 - [x] Ichiban DLC recipe unlock conditions confirmed — staff training recipes ✅
