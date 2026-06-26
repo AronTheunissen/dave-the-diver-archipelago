@@ -1,44 +1,60 @@
 // ============================================================
-// Dave the Diver — Jungle DLC: Bancho Grill Recipe Dumper v15
-// Use JDLC.JungleSushiBarSave directly via Resources
-// + list its members to find GrillRecipeDataDic
+// Dave the Diver — Jungle DLC: Bancho Grill Recipe Dumper v16
+// GrillRecipeDataDic is on DataManager : Singleton<DataManager>
 // ============================================================
 
 var sb = new System.Text.StringBuilder();
 sb.AppendLine("=== BANCHO GRILL RECIPE DUMP ===");
+sb.AppendLine("TID | Cat | NameTextID | Icon | UnlockType | UnlockTypeValue");
 
-var asm = IngredientsStorage.Instance.GetType().Assembly;
+// DataManager is Singleton<DataManager> which extends MonoBehaviour
+var dataManager = DataManager.Instance;
+sb.AppendLine("DataManager: " + (dataManager != null ? "FOUND" : "NULL"));
 
-// Check JDLC.JungleSushiBarSave members
-var sushiBarSaveType = asm.GetType("JDLC.JungleSushiBarSave");
-sb.AppendLine("JungleSushiBarSave: " + (sushiBarSaveType != null ? "FOUND" : "NULL"));
-
-if (sushiBarSaveType != null)
+if (dataManager != null)
 {
-    var flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic;
-    var props = sushiBarSaveType.GetProperties(flags);
-    foreach (var p in props)
-        if (!p.Name.StartsWith("Native"))
-            sb.AppendLine("Prop: " + p.Name + " : " + p.PropertyType.Name);
-    
-    var fields = sushiBarSaveType.GetFields(flags);
-    foreach (var f in fields)
-        if (!f.Name.StartsWith("Native") && !f.Name.StartsWith("isWrapped") && !f.Name.StartsWith("pooled"))
-            sb.AppendLine("Field: " + f.Name + " : " + f.FieldType.Name);
-}
+    var dictProp = dataManager.GetType().GetProperty("GrillRecipeDataDic");
+    sb.AppendLine("GrillRecipeDataDic: " + (dictProp != null ? "found" : "NULL"));
 
-// Try to find JungleSushiBarSave instance via PhoneAppManager or similar
-// Also try accessing InGameManager which might have save data
-var inGameManagerType = asm.GetType("InGameManager");
-sb.AppendLine("InGameManager: " + (inGameManagerType != null ? "FOUND" : "NULL"));
-if (inGameManagerType != null)
-{
-    // Check if it has a static Instance or singleton
-    var instProp = inGameManagerType.GetProperty("Instance", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public);
-    sb.AppendLine("InGameManager.Instance: " + (instProp != null ? "found" : "NULL"));
+    if (dictProp != null)
+    {
+        var dict = dictProp.GetValue(dataManager);
+        sb.AppendLine("Dict: " + (dict != null ? "count=" + dict.GetType().GetProperty("Count").GetValue(dict) : "NULL"));
+
+        if (dict != null)
+        {
+            var vals = dict.GetType().GetProperty("Values").GetValue(dict);
+            var e = vals.GetType().GetMethod("GetEnumerator").Invoke(vals, null);
+            var mn = e.GetType().GetMethod("MoveNext");
+            var cur = e.GetType().GetProperty("Current");
+            int idx = 0;
+
+            while ((bool)mn.Invoke(e, null))
+            {
+                var entity = cur.GetValue(e);
+                if (entity != null)
+                {
+                    idx++;
+                    var t = entity.GetType();
+                    int tid = (int)t.GetProperty("TID").GetValue(entity);
+                    string nm = (string)t.GetProperty("NameTextID").GetValue(entity) ?? "?";
+                    string ic = (string)t.GetProperty("Icon").GetValue(entity) ?? "?";
+                    int cat = (int)t.GetProperty("Category").GetValue(entity);
+                    string unlockType = "?";
+                    int unlockVal = 0;
+                    try { unlockType = (string)t.GetProperty("UnlockType").GetValue(entity) ?? "?"; } catch { }
+                    try { unlockVal = (int)t.GetProperty("UnlockTypeValue").GetValue(entity); } catch { }
+                    sb.AppendLine(tid + " | " + cat + " | " + nm + " | " + ic + " | " + unlockType + " | " + unlockVal);
+                }
+            }
+            sb.AppendLine("Total: " + idx);
+        }
+    }
 }
 
 var result = sb.ToString();
 Debug.Log(result);
 GUIUtility.systemCopyBuffer = result;
+try { System.IO.File.WriteAllText(System.IO.Path.Combine(Application.persistentDataPath, "grill_dump.txt"), result); Debug.Log("Saved!"); }
+catch (System.Exception ex) { Debug.Log("Save failed: " + ex.Message); }
 Debug.Log("=== DONE ===");
