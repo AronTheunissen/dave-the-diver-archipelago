@@ -1,6 +1,6 @@
 // ============================================================
-// Dave the Diver — Jungle DLC: Insect Dumper v9
-// Pure reflection - no Il2CppSystem generics at all
+// Dave the Diver — Jungle DLC: Insect Dumper v10
+// MoveNext is on base IEnumerator interface - invoke via reflection
 // ============================================================
 
 System.Text.StringBuilder sb = new System.Text.StringBuilder();
@@ -8,25 +8,41 @@ sb.AppendLine("=== JUNGLE INSECT DUMP ===");
 sb.AppendLine("TID | IsUnlocked | IsBattle | CardThumbnail");
 
 JDLC.JungleInsectCodex codex = JDLC.JungleInsectCodex.Instance;
-
-// Get InsectCodexDatas via reflection
 object datasObj = typeof(JDLC.JungleInsectCodex).GetProperty("InsectCodexDatas").GetValue(codex);
-
-// Debug: what does GetEnumerator return?
 object rawEnum = datasObj.GetType().GetMethod("GetEnumerator").Invoke(datasObj, null);
-sb.AppendLine("Enumerator type: " + rawEnum.GetType().FullName);
 
-// List methods on enumerator
-System.Reflection.MethodInfo[] enumMethods = rawEnum.GetType().GetMethods();
-for (int m = 0; m < enumMethods.Length; m++)
-    sb.AppendLine("  EnumMethod: " + enumMethods[m].Name);
+// Get the Il2CppSystem enumerator pointer and wrap as generic IEnumerator
+System.IntPtr enumPtr = (System.IntPtr)rawEnum.GetType().GetProperty("Pointer").GetValue(rawEnum);
+Il2CppSystem.Collections.Generic.IEnumerator<JDLC.JungleInsectCodexData> enumerator =
+    new Il2CppSystem.Collections.Generic.IEnumerator<JDLC.JungleInsectCodexData>(enumPtr);
 
-// List properties on enumerator  
-System.Reflection.PropertyInfo[] enumProps = rawEnum.GetType().GetProperties();
-for (int p = 0; p < enumProps.Length; p++)
-    sb.AppendLine("  EnumProp: " + enumProps[p].Name);
+int count = 0;
+while (enumerator.MoveNext())
+{
+    JDLC.JungleInsectCodexData data = enumerator.Current;
+    if (data == null) continue;
+    count++;
+
+    JDLC.JungleInsectInfo info = data.Info;
+    string cardName = (info != null && info.CardThumbnail != null) ? info.CardThumbnail : "?";
+    bool isBattle = (info != null) && info.IsBattle;
+
+    sb.AppendLine(data.TID.ToString() + " | Unlocked=" + data.IsUnlocked.ToString() + " | Battle=" + isBattle.ToString() + " | Card=" + cardName);
+}
+
+sb.AppendLine("Total: " + count.ToString() + " insects");
 
 string result = sb.ToString();
 Debug.Log(result);
 GUIUtility.systemCopyBuffer = result;
+
+try
+{
+    System.IO.File.WriteAllText(
+        System.IO.Path.Combine(Application.persistentDataPath, "insect_dump.txt"),
+        result);
+    Debug.Log("Saved!");
+}
+catch (System.Exception ex) { Debug.Log("Save failed: " + ex.Message); }
+
 Debug.Log("=== DONE ===");
