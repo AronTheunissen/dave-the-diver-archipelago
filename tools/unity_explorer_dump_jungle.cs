@@ -1,7 +1,6 @@
 // ============================================================
 // Dave the Diver — Jungle DLC: Insect Dumper
 // Run this in UnityExplorer's C# Console (F7) while in-game.
-// NOTE: No 'var' — use explicit types for IL2CPP REPL compatibility.
 // ============================================================
 
 System.Text.StringBuilder sb = new System.Text.StringBuilder();
@@ -39,18 +38,18 @@ catch (System.Exception ex)
 }
 
 string result = sb.ToString();
-UnityEngine.Debug.Log(result);
+Debug.Log(result);
 GUIUtility.systemCopyBuffer = result;
 
 try
 {
-    string path = System.IO.Path.Combine(UnityEngine.Application.persistentDataPath, "insect_dump.txt");
+    string path = System.IO.Path.Combine(Application.persistentDataPath, "insect_dump.txt");
     System.IO.File.WriteAllText(path, result);
-    UnityEngine.Debug.Log("Saved to: " + path);
+    Debug.Log("Saved to: " + path);
 }
 catch (System.Exception ex3)
 {
-    UnityEngine.Debug.Log("Could not save file: " + ex3.Message);
+    Debug.Log("Could not save file: " + ex3.Message);
 }
 
-UnityEngine.Debug.Log("=== DONE — check clipboard ===");
+Debug.Log("=== DONE — check clipboard ===");
