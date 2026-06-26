@@ -1,6 +1,7 @@
 // ============================================================
 // Dave the Diver — Jungle DLC: Insect Dumper
 // Run this in UnityExplorer's C# Console (F7) while in-game.
+// All JDLC classes need the JDLC. namespace prefix.
 // ============================================================
 
 System.Text.StringBuilder sb = new System.Text.StringBuilder();
@@ -9,11 +10,11 @@ sb.AppendLine("TID | IsUnlocked | IsBattle | CardThumbnail");
 
 try
 {
-    JungleInsectCodex codex = JungleInsectCodex.Instance;
-    System.Collections.Generic.IEnumerable<JungleInsectCodexData> datas = codex.InsectCodexDatas;
-    foreach (JungleInsectCodexData data in datas)
+    JDLC.JungleInsectCodex codex = JDLC.JungleInsectCodex.Instance;
+    System.Collections.Generic.IEnumerable<JDLC.JungleInsectCodexData> datas = codex.InsectCodexDatas;
+    foreach (JDLC.JungleInsectCodexData data in datas)
     {
-        JungleInsectInfo info = data.Info;
+        JDLC.JungleInsectInfo info = data.Info;
         string name = (info != null && info.CardThumbnail != null) ? info.CardThumbnail : "?";
         bool isBattle = (info != null) ? info.IsBattle : false;
         sb.AppendLine(data.TID.ToString() + " | Unlocked=" + data.IsUnlocked.ToString() + " | Battle=" + isBattle.ToString() + " | Card=" + name);
@@ -25,7 +26,7 @@ catch (System.Exception ex)
     sb.AppendLine("Trying JungleInsectInfo.GetAll() fallback...");
     try
     {
-        foreach (JungleInsectInfo infoFallback in JungleInsectInfo.GetAll())
+        foreach (JDLC.JungleInsectInfo infoFallback in JDLC.JungleInsectInfo.GetAll())
         {
             sb.AppendLine(infoFallback.TID.ToString() + " | Battle=" + infoFallback.IsBattle.ToString() + " | Quality=" + infoFallback.Quality.ToString() + " | Card=" + (infoFallback.CardThumbnail ?? "?"));
         }
