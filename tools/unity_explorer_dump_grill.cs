@@ -1,33 +1,35 @@
 // ============================================================
-// Dave the Diver — Jungle DLC: Bancho Grill Recipe Dumper v11
-// Correct namespaces: DR.Save.SaveSystemGameDataManager, DR.GrillRecipeEntity
+// Dave the Diver — Jungle DLC: Bancho Grill Recipe Dumper v12
+// Cast manager to Il2CppObjectBase before calling GetValue
 // ============================================================
 
 var sb = new System.Text.StringBuilder();
 sb.AppendLine("=== BANCHO GRILL RECIPE DUMP ===");
-sb.AppendLine("TID | Unlocked | Cat | NameTextID | Icon");
 
-// Get SaveSystemGameDataManager via Il2CppSystem type
 var il2cppType = Il2CppSystem.Type.GetType("DR.Save.SaveSystemGameDataManager, Assembly-CSharp");
-sb.AppendLine("Manager type: " + (il2cppType != null ? "FOUND" : "NULL"));
-
 var managers = il2cppType != null ? GameObject.FindObjectsOfType(il2cppType) : null;
-sb.AppendLine("Managers: " + (managers != null ? managers.Length.ToString() : "0"));
+sb.AppendLine("Manager found: " + (managers != null && managers.Length > 0).ToString());
 
 if (managers != null && managers.Length > 0)
 {
-    var manager = managers[0];
+    // The manager is returned as UnityEngine.Object — cast to Il2CppObjectBase for reflection
+    var managerObj = managers[0];
     var managerSysType = System.Type.GetType("DR.Save.SaveSystemGameDataManager, Assembly-CSharp");
-    var gameSaveProp = managerSysType.GetProperty("GameSave");
-    sb.AppendLine("GameSave: " + (gameSaveProp != null ? "found" : "NULL"));
+    
+    // Use method invoke on the pointer directly
+    var gameSaveMethod = managerSysType.GetMethod("get_GameSave",
+        System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
+    sb.AppendLine("get_GameSave method: " + (gameSaveMethod != null ? "found" : "NULL"));
 
-    var saveData = gameSaveProp != null ? gameSaveProp.GetValue(manager) : null;
+    // Invoke via the Il2CppObjectBase pointer approach
+    var saveData = gameSaveMethod != null ? gameSaveMethod.Invoke(managerObj, null) : null;
     sb.AppendLine("SaveData: " + (saveData != null ? saveData.GetType().Name : "NULL"));
 
     if (saveData != null)
     {
-        var jungleProp = saveData.GetType().GetProperty("JDLCContents");
-        var jungle = jungleProp != null ? jungleProp.GetValue(saveData) : null;
+        var jungleMethod = saveData.GetType().GetMethod("get_JDLCContents",
+            System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
+        var jungle = jungleMethod != null ? jungleMethod.Invoke(saveData, null) : null;
         sb.AppendLine("Jungle: " + (jungle != null ? jungle.GetType().Name : "NULL"));
 
         if (jungle != null)
@@ -39,12 +41,14 @@ if (managers != null && managers.Length > 0)
 
             if (sushiBar != null)
             {
-                var dictProp = sushiBar.GetType().GetProperty("GrillRecipeDataDic");
-                var dict = dictProp != null ? dictProp.GetValue(sushiBar) : null;
-                sb.AppendLine("Dict: " + (dict != null ? "found, count=" + dict.GetType().GetProperty("Count").GetValue(dict) : "NULL"));
+                var dictMethod = sushiBar.GetType().GetMethod("get_GrillRecipeDataDic",
+                    System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
+                var dict = dictMethod != null ? dictMethod.Invoke(sushiBar, null) : null;
+                sb.AppendLine("Dict: " + (dict != null ? "count=" + dict.GetType().GetProperty("Count").GetValue(dict) : "NULL"));
 
                 if (dict != null)
                 {
+                    sb.AppendLine("TID | Unlocked | Cat | NameTextID | Icon");
                     var vals = dict.GetType().GetProperty("Values").GetValue(dict);
                     var e = vals.GetType().GetMethod("GetEnumerator").Invoke(vals, null);
                     var mn = e.GetType().GetMethod("MoveNext");
