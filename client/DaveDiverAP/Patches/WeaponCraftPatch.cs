@@ -48,105 +48,90 @@ namespace DaveDiverAP.Patches
         public static string? GetDisplayNameFromCraftID(int craftID) =>
             _idMap.TryGetValue(craftID, out var name) ? name : null;
 
-        // craftID = Lv1 TID of each weapon variant (fired by WeaponCraftTreeEventTrigger)
+        // craftID = weapon TID confirmed via SubEquipmentData dump (2026-06-27)
+        // TID pattern: 3060xxx where the hundreds digit = weapon tree
+        // 3060_0xx = Basic Rifle tree, 3060_1xx = Net Gun tree, 3060_2xx = Triple Axel tree
+        // 3060_3xx = Red Sniper tree, 3060_4xx = Sticky Bomb tree, 3060_5xx = Grenade Launcher tree
+        // 3060_6xx = Ice Gun tree, 3060_7xx = Hush Dart tree, 3060_8xx = Drain Gun tree
+        // 3060_9xx = unknown (901, 903 seen in dump — likely melee/Jungle weapons)
+        // NOTE: craftID fired by WeaponCraftTreeEventTrigger may be the tree root TID, not individual variant TID
+        // Full weapon TID list from SubEquipmentData (48 weapons owned):
         private static readonly System.Collections.Generic.Dictionary<int, string> _idMap = new()
         {
-            // ── Underwater Rifle tree ────────────────────────────────────────────
-            { 3010001, "Basic Underwater Rifle" },       // Normal_UnderwaterRifle_Lv1
-            { 3011001, "Underwater Rifle II" },          // Enhanced_UnderwaterRifle01_Lv1
-            { 3011011, "Underwater Rifle III" },         // Enhanced_UnderwaterRifle02_Lv1
-            { 3011021, "Death Rifle" },                  // Enhanced_UnderwaterRifle03_Lv1
-            { 3011041, "Flame Rifle I" },                // Enhanced_Fire_UnderwaterRifle01_Lv1
-            { 3011051, "Flame Rifle II" },               // Enhanced_Fire_UnderwaterRifle02_Lv1
-            { 3011031, "Explosive Rifle" },              // Enhanced_FireWork_UnderwaterRifle_Lv1
-            { 3011061, "Tranquilizer Rifle" },           // Enhanced_Sleep_UnderwaterRifle01_Lv1
-            { 3011071, "Poison Rifle I" },               // Enhanced_Poison_UnderwaterRifle01_Lv1
-            { 3011081, "Poison Rifle II" },              // Enhanced_Poison_UnderwaterRifle02_Lv1
-            { 3011091, "Hell Poison Rifle" },            // Enhanced_HellPoison_UnderwaterRifle_Lv1
-            { 3011121, "Lightning Rifle I" },            // Enhanced_Paralysis_UnderwaterRifle01_Lv1
-            { 3011131, "Lightning Rifle II" },           // Enhanced_Paralysis_UnderwaterRifle02_Lv1
-            { 3011101, "Shock Rifle I" },                // Enhanced_Chain_UnderwaterRifle01_Lv1
-            { 3011111, "Shock Rifle II" },               // Enhanced_Chain_UnderwaterRifle02_Lv1
-            { 3011161, "Thunderbolt Rifle" },            // Enhanced_ThunderBolt_UnderwaterRifle_Lv1
+            // ── Basic Underwater Rifle tree (3060_0xx) ───────────────────────────
+            { 3060001, "Basic Underwater Rifle" },
+            { 3060002, "Underwater Rifle II" },
+            { 3060003, "Underwater Rifle III" },
+            { 3060004, "Death Rifle" },
+            { 3060005, "Flame Rifle I" },
+            { 3060006, "Flame Rifle II" },
+            { 3060007, "Explosive Rifle" },
+            { 3060008, "Tranquilizer Rifle" },
+            { 3060009, "Poison Rifle I" },
+            { 3060010, "Poison Rifle II" },
+            { 3060012, "Hell Poison Rifle" },
+            // Lightning/Shock/Thunderbolt Rifle TIDs not yet in dump (not crafted)
 
-            // ── Net Gun tree ─────────────────────────────────────────────────────
-            { 3010061, "Small Net Gun" },                // Normal_NetGun_Lv1
-            { 3012201, "Medium Net Gun" },               // Enhanced_MNetGun_Lv1
-            { 3012211, "Large Net Gun" },                // Enhanced_LNetGun_Lv1
-            { 3012221, "Steel Net Gun" },                // Enhanced_Steel_NetGun_Lv1
+            // ── Small Net Gun tree (3060_1xx) ────────────────────────────────────
+            { 3060101, "Small Net Gun" },
+            { 3060102, "Medium Net Gun" },
+            { 3060103, "Large Net Gun" },
+            { 3060104, "Steel Net Gun" },
+            { 3060105, "Enhanced Hush Dart" },  // Note: Hush Dart may share 1xx range
+            { 3060106, "Small Net Gun" },        // duplicate — needs verification
 
-            // ── Hush Dart tree ───────────────────────────────────────────────────
-            { 3010031, "Hush Dart" },                    // Normal_SleepGun_Lv1
-            { 3012001, "Enhanced Hush Dart" },           // Enhanced_SleepGun01_Lv1
+            // ── Triple Axel tree (3060_2xx) ──────────────────────────────────────
+            { 3060201, "Triple Axel" },
+            { 3060202, "Quattro Axel" },
+            { 3060203, "Quattro Axel II" },
+            { 3060204, "Penta Axel" },
+            { 3060205, "Flame Triple Axel" },
+            { 3060206, "Flame Triple Axel II" },
+            { 3060207, "Explosive Triple Axel" },
+            { 3060208, "Tranquilizer Triple Axel" },
+            { 3060209, "Poison Triple Axel" },
+            { 3060210, "Poison Triple Axel II" },
+            // Hell Poison/Lightning/Shock/Thunderbolt Triple Axel TIDs not in dump
 
-            // ── Triple Axel tree ─────────────────────────────────────────────────
-            { 3010011, "Triple Axel" },                  // Normal_TripleAxel_Lv1
-            { 3011201, "Quattro Axel" },                 // Enhanced_QuatroShotGun01_Lv1
-            { 3011211, "Quattro Axel II" },              // Enhanced_QuatroShotGun02_Lv1
-            { 3011221, "Penta Axel" },                   // Enhanced_CincoShotGun_Lv1
-            { 3011241, "Flame Triple Axel" },            // Enhanced_Fire_TripleAxel01_Lv1
-            { 3011251, "Flame Triple Axel II" },         // Enhanced_Fire_TripleAxel02_Lv1
-            { 3011231, "Explosive Triple Axel" },        // Enhanced_Firework_TripleAxel_Lv1
-            { 3011261, "Tranquilizer Triple Axel" },     // Enhanced_Sleep_TripleAxel01_Lv1
-            { 3011271, "Poison Triple Axel" },           // Enhanced_Poison_TripleAxel01_Lv1
-            { 3011281, "Poison Triple Axel II" },        // Enhanced_Poison_TripleAxel02_Lv1
-            { 3011331, "Hell Poison Triple Axel" },      // Enhanced_HellPoison_TripleAxel_Lv1
-            { 3011301, "Lightning Triple Axel" },        // Enhanced_Paralysis_TripleAxel01_Lv1
-            { 3011291, "Shock Triple Axel" },            // Enhanced_Chain_TripleAxel01_Lv1
-            { 3011311, "Shock Triple Axel II" },         // Enhanced_Paralysis_TripleAxel02_Lv1 (note: shares Paralysis02 prefix)
-            { 3011321, "Thunderbolt Triple Axel" },      // Enhanced_ThunderBolt_TripleAxel_Lv1
+            // ── Red Sniper Rifle tree (3060_3xx) ────────────────────────────────
+            { 3060301, "Red Sniper Rifle" },
+            { 3060302, "Red Sniper Rifle II" },
+            { 3060303, "Red Sniper Rifle III" },
+            { 3060304, "Death Sniper Rifle" },
+            { 3060305, "Flame Sniper Rifle I" },
+            { 3060306, "Flame Sniper Rifle II" },
+            // Remaining Sniper variants not in dump
 
-            // ── Red Sniper Rifle tree ────────────────────────────────────────────
-            { 3010021, "Red Sniper Rifle" },             // Normal_RedSniper_Lv1
-            { 3011401, "Red Sniper Rifle II" },          // Enhanced_RedSniper01_Lv1
-            { 3011411, "Red Sniper Rifle III" },         // Enhanced_RedSniper02_Lv1
-            { 3011561, "Death Sniper Rifle" },           // Enhanced_DeathSniper_Lv1
-            { 3011441, "Flame Sniper Rifle I" },         // Enhanced_Fire_Sniper01_Lv1
-            { 3011451, "Flame Sniper Rifle II" },        // Enhanced_Fire_Sniper02_Lv1
-            { 3011431, "Explosive Sniper Rifle" },       // Enhanced_FireWork_Sniper_Lv1
-            { 3011461, "Tranquilizer Mosin-Nagant" },    // Enhanced_Sleep_Sniper01_Lv1
-            { 3011481, "Poison Sniper Rifle I" },        // Enhanced_Poison_Sniper01_Lv1
-            { 3011491, "Poison Sniper Rifle II" },       // Enhanced_Poison_Sniper02_Lv1
-            { 3011471, "Hell Poison Sniper Rifle" },     // Enhanced_HellPoison_Sniper_Lv1
-            { 3011521, "Lightning Sniper Rifle I" },     // Enhanced_Paralysis_Sniper01_Lv1
-            { 3011531, "Lightning Sniper Rifle II" },    // Enhanced_Paralysis_Sniper02_Lv1
-            { 3011501, "Shock Sniper Rifle I" },         // Enhanced_Chain_Sniper01_Lv1
-            { 3011511, "Shock Sniper Rifle II" },        // Enhanced_Chain_Sniper02_Lv1
-            { 3011541, "Thunderbolt Sniper Rifle" },     // Enhanced_ThunderBolt_Sniper_Lv1
+            // ── Sticky Bomb Gun tree (3060_4xx) ─────────────────────────────────
+            { 3060401, "Sticky Bomb Gun" },
+            { 3060402, "Sticky Bomb Gun II" },
+            { 3060403, "Sticky Bomb Gun III" },
+            // Remaining Sticky variants not in dump
 
-            // ── Sticky Bomb Gun tree ─────────────────────────────────────────────
-            { 3010071, "Sticky Bomb Gun" },              // Normal_StickyBombGun_Lv1
-            { 3011801, "Sticky Bomb Gun II" },           // Enhanced_StickyBombGun01_Lv1
-            { 3011811, "Sticky Bomb Gun III" },          // Enhanced_StickyBombGun02_Lv1
-            { 3011841, "Sticky Mine Launcher I" },       // Enhanced_Mine_StickyBombGun01_Lv1
-            { 3011851, "Sticky Mine Launcher II" },      // Enhanced_Mine_StickyBombGun02_Lv1
-            { 3011861, "Sticky Tranquilizing Bomb Gun" },// Enhanced_Sleep_StickyBombGun01_Lv1
-            { 3011871, "Poison Mine Launcher" },         // Enhanced_Poison_StickyBombGun01_Lv1
-            { 3011881, "Poison Mine Launcher II" },      // Enhanced_Poison_StickyBombGun02_Lv1
-            { 3011921, "Lightning Mine Launcher I" },    // Enhanced_Paralysis_StickyBombGun01_Lv1
-            { 3011931, "Lightning Mine Launcher II" },   // Enhanced_Paralysis_StickyBombGun02_Lv1
-            { 3011891, "Shock Mine Launcher I" },        // Enhanced_Chain_StickyBombGun01_Lv1
-            { 3011901, "Shock Mine Launcher II" },       // Enhanced_Chain_StickyBombGun02_Lv1
+            // ── Grenade Launcher tree (3060_5xx) ────────────────────────────────
+            { 3060501, "Grenade Launcher" },
+            { 3060502, "Grenade Launcher II" },
+            // Remaining Grenade variants not in dump
 
-            // ── Grenade Launcher tree ────────────────────────────────────────────
-            { 3010051, "Grenade Launcher" },             // Normal_GrenadeLauncher_Lv1
-            { 3011601, "Grenade Launcher II" },          // Enhanced_GrenadeLauncher01_Lv1
-            { 3011611, "Grenade Launcher III" },         // Enhanced_GrenadeLauncher02_Lv1
-            { 3011641, "Tranquilizer Gas Bomb Launcher" },// Enhanced_Sleep_GrenadeLauncher01_Lv1
-            { 3011651, "Poison Launcher" },              // Enhanced_Poison_GrenadeLauncher01_Lv1
-            { 3011661, "Gravity Launcher" },             // Enhanced_Magnetic_GrenadeLauncher01_Lv1
-            { 3011711, "Blackhole Launcher" },           // Enhanced_BlackHole_GrenadeLauncher_Lv1
-            { 3011671, "Flash Grenade Launcher" },       // Enhanced_Paralysis_GrenadeLauncher01_Lv1
+            // ── Ice Gun tree (3060_6xx) ──────────────────────────────────────────
+            { 3060601, "Ice Gun" },
+            { 3060602, "Enhanced Ice Gun" },
+            { 3060603, "Ultra Ice Gun" },
 
-            // ── Ice Gun tree ─────────────────────────────────────────────────────
-            { 3010081, "Ice Gun" },                      // Normal_IceGun_Lv1
-            { 3012301, "Enhanced Ice Gun" },             // Empowered_IceGun_Lv1
-            { 3012311, "Ultra Ice Gun" },                // Black_IceGun_Lv1
+            // ── Hush Dart tree (3060_7xx) ────────────────────────────────────────
+            { 3060701, "Hush Dart" },
+            { 3060702, "Enhanced Hush Dart" },
+            { 3060703, "Hush Dart III" },  // May not exist — needs verification
 
-            // ── Drain Gun tree (DREDGE DLC) ──────────────────────────────────────
-            { 3010091, "Drain Gun" },                    // Normal_DrainGun_Lv1
-            { 3012321, "Enhanced Drain Gun" },           // Empowered_DrainGun_Lv1
-            { 3012331, "Power Drain Gun" },              // Power_DrainGun_DrainGun_Lv1
+            // ── Drain Gun tree (3060_8xx, DREDGE DLC) ───────────────────────────
+            { 3060801, "Drain Gun" },
+            { 3060803, "Enhanced Drain Gun" },
+            // Power Drain Gun not in dump
+
+            // ── Unknown tree (3060_9xx) ───────────────────────────────────────────
+            // 3060901 and 3060903 seen in dump — likely Jungle DLC weapons or melee
+            { 3060901, "Unknown Weapon 901" },  // TODO: identify
+            { 3060903, "Unknown Weapon 903" },  // TODO: identify
         };
     }
 }
