@@ -67,11 +67,11 @@ namespace DaveDiverAP.Patches
             { 11,  "Defeat: Yawie (Final Boss)" },
             { 12,  "Defeat: Lusca" },
             { 100, "Defeat: Ebirah" },
-            // Jungle DLC bosses (201-204) — names TBD
-            // { 201, "Defeat: Stethacanthus" },
-            // { 202, "Defeat: Xiphactinus" },
-            // { 203, "Defeat: Sulong" },
-            // { 204, "Defeat: Snapping Turtle" },
+            // Jungle DLC bosses — names confirmed from mission dump (2026-06-27)
+            { 201, "Defeat: Stethacanthus" },        // Jungle boss
+            { 202, "Defeat: Xiphactinus" },          // "The Tyrant Xiphactinus" main story mission
+            { 203, "Defeat: Sulong" },               // "Operation: Sulong Hunt" side mission
+            { 204, "Defeat: Snapping Turtle" },      // "A Monster Snapping Turtle?" side mission
         };
 
         // Fallback: substring match on bossSceneSO.name for bosses not in EnumBossFishType

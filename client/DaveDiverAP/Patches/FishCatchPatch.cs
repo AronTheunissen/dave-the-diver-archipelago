@@ -41,12 +41,27 @@ namespace DaveDiverAP.Patches
         {
             if (!ArchipelagoClient.IsConnected) return;
 
-            // The fish name can be retrieved from the GameObject name or a parent AI component.
-            // FishInteractionBody is attached to the fish GameObject — use its name to identify the species.
+            // GameObject name format confirmed via UnityExplorer (2026-06-27):
+            // "SA_2010132_Thresher_Shark01(Clone)" — TID is the number after "SA_"
+            // This is much more reliable than string matching on species names.
             string goName = __instance.gameObject.name;
-            var fishName = FishNameMapper.GetDisplayNameFromGameObject(goName);
+
+            // Try TID-based lookup first (preferred)
+            var fishName = FishNameMapper.GetDisplayNameFromTID(goName);
+
+            // Fall back to name-based lookup for any fish not yet in the TID map
+            if (fishName == null)
+                fishName = FishNameMapper.GetDisplayNameFromGameObject(goName);
+
             if (fishName != null)
+            {
+                Log.LogInfo($"[FishCaught] GO={goName} → Location=\"First Catch: {fishName}\"");
                 LocationTracker.OnFirstFishCatch(fishName);
+            }
+            else
+            {
+                Log.LogInfo($"[FishCaught] GO={goName} → UNMAPPED (add to FishNameMapper)");
+            }
         }
     }
 
@@ -277,6 +292,286 @@ namespace DaveDiverAP.Patches
             { "TranslucentSturgeon",    "Translucent Sturgeon" },
             { "WitheredRay",            "Withered Ray" },
         };
+
+        // TID-based lookup — parses the TID from GameObject name "SA_2010132_Thresher_Shark01(Clone)"
+        // TIDs confirmed via CaughtFishData dump (2026-06-27)
+        private static readonly System.Collections.Generic.Dictionary<int, string> _tidMap = new()
+        {
+            // ── Blue Hole Shallow ─────────────────────────────────────────────
+            { 2010002, "Clownfish" },
+            { 2010003, "Comber" },
+            { 2010004, "Cardinal Fish" },
+            { 2010005, "Sea Goldie" },
+            { 2010006, "Pyramid Butterflyfish" },
+            { 2010007, "Yellow Tang" },
+            { 2010008, "Salema Porgy" },
+            { 2010009, "Orbicular Batfish" },
+            { 2010010, "Blue Tang" },
+            { 2010011, "Long-Snouted Seahorse" },
+            { 2010012, "Rainbow Wrasse" },
+            { 2010013, "Lagoon Triggerfish" },
+            { 2010014, "Small Spotted Dart" },
+            { 2010015, "Yellowback Fusilier" },
+            { 2010016, "Ornate Wrasse" },
+            { 2010017, "Longfin Batfish" },
+            { 2010018, "Mediterranean Parrotfish" },
+            { 2010019, "Redtoothed Triggerfish" },
+            { 2010020, "Black and White Snapper" },
+            { 2010021, "Green Humphead Parrotfish" },
+            { 2010022, "Fried Egg Jellyfish" },
+            { 2010023, "Barrel Jellyfish" },
+            { 2010025, "Red Lionfish" },
+            { 2010027, "Starry Puffer" },
+            { 2010028, "Moray Eel" },
+            { 2010029, "Titan Triggerfish" },
+            { 2010030, "Sheepshead" },
+            { 2010031, "Red-banded Lobster" },
+            { 2010033, "Flame Angelfish" },
+            { 2010034, "Emperor Angelfish" },
+            { 2010036, "Striped Catfish" },
+            { 2010037, "Longspine Porcupinefish" },
+            { 2010038, "Longspine Squirrelfish" },
+            { 2010039, "Clearfin Lionfish" },
+            { 2010040, "Purple Sea Urchin" },
+            { 2010041, "Red-banded Lobster" },
+            { 2010042, "American Lobster" },
+            { 2010043, "Blue Lobster" },
+            { 2010044, "European Lobster" },
+            { 2010045, "Green Sea Urchin" },
+            { 2010058, "Stingray" },
+            { 2010059, "Whiteleg Shrimp" },
+            { 2010060, "Box Jellyfish" },
+            { 2010061, "White Shrimp" },
+            { 2010062, "Shortfin Mako" },
+            { 2010064, "Marlin" },
+            { 2010065, "Thresher Shark" },
+            { 2010066, "Blacktip Reefshark" },
+            { 2010067, "Whitetip Reefshark" },
+            { 2010069, "Copper Shark" },
+            { 2010070, "Zebra Shark" },
+            { 2010071, "Bluefin Tuna" },
+            { 2010072, "Yellowfin Tuna" },
+            { 2010073, "Marbled Electric Ray" },
+            { 2010074, "Sailfish" },
+            { 2010075, "Smooth Hammerhead" },
+            { 2010077, "White Shrimp" },
+            { 2010078, "Sally Lightfoot Crab" },
+            { 2010079, "Black Tiger Shrimp" },
+            { 2010080, "Mantis Shrimp" },
+            { 2010081, "California Spiny Lobster" },
+            { 2010082, "Tropical Rock Lobster" },
+            { 2010083, "Fan Lobster" },
+            { 2010084, "Crystal Lobster" },
+            { 2010085, "Humboldt Squid" },
+            // Seahorses
+            { 2010114, "Big-Belly Seahorse" },
+            { 2010115, "Jayakar's Seahorse" },
+            { 2010116, "Pacific Seahorse" },
+            { 2010117, "Dwarf Seahorse" },
+            { 2010118, "Giraffe Seahorse" },
+            { 2010119, "Hedgehog Seahorse" },
+            // ── Blue Hole Mid ─────────────────────────────────────────────────
+            { 2010101, "Bluehead Tilefish" },
+            { 2010102, "Clown Frogfish" },
+            { 2010103, "Painted Comber" },
+            { 2010105, "Bigeye Scad" },
+            { 2010106, "Striped Red Mullet" },
+            { 2010107, "Mackerel Scad" },
+            { 2010108, "Harlequin Hind" },
+            { 2010109, "Bigeye Trevally" },
+            { 2010110, "Coral Trout" },
+            { 2010111, "Grey Triggerfish" },
+            { 2010112, "Atlantic Bonito" },
+            { 2010113, "White Trevally" },
+            { 2010121, "Great Barracuda" },
+            { 2010123, "Narrow-Barred Spanish Mackerel" },
+            { 2010124, "Cuttlefish" },
+            { 2010125, "Dusky Grouper" },
+            { 2010129, "Atlantic Mackerel" },
+            { 2010130, "Spear Squid" },
+            { 2010131, "Blackfin Barracuda" },
+            { 2010132, "Thresher Shark" },  // confirmed from GO name
+            { 2010133, "Tiger Shark" },
+            { 2010134, "Sailfish" },
+            { 2010135, "Longnose Sawshark" },
+            { 2010136, "Giant Trevally" },
+            { 2010137, "Spear Squid" },
+            { 2010138, "Devil Scorpionfish" },
+            { 2010139, "California Spiny Lobster" },
+            { 2010140, "Fan Lobster" },
+            { 2010141, "Crystal Lobster" },
+            { 2010142, "White Spotted Jellyfish" },
+            // Seahorses mid
+            { 2010120, "Spiny Seahorse" },
+            { 2010122, "Tiger-Tail Seahorse" },
+            { 2010126, "Zebra Seahorse" },
+            // ── Blue Hole Deep ────────────────────────────────────────────────
+            { 2010201, "Chambered Nautilus" },
+            { 2010202, "Fangtooth" },
+            { 2010204, "Clione" },
+            { 2010205, "Sea Toad" },
+            { 2010207, "Pacific Fanfish" },
+            { 2010208, "Cookiecutter Shark" },
+            { 2010211, "Salmon Snailfish" },
+            { 2010212, "Spider Crab" },
+            { 2010214, "Blood-belly Comb Jellyfish" },
+            { 2010215, "Comb Jelly" },
+            { 2010216, "Crowned Seahorse" },
+            { 2010217, "Threetooth Puffer" },
+            { 2010218, "Bluespotted Stargazer" },
+            { 2010219, "Red Bream" },
+            { 2010220, "Rhinochimaeridae" },
+            { 2010221, "Megamouth Shark" },
+            { 2010222, "Frilled Shark" },
+            { 2010223, "Norway Lobster" },
+            { 2010224, "Eastern Rock Lobster" },
+            { 2010225, "Lined Seahorse" },
+            { 2010226, "Spotted Seahorse" },
+            { 2010227, "White Seahorse" },
+            { 2010228, "Atlantic Anglerfish" },
+            { 2010229, "Box Jellyfish" },
+            { 2010230, "Megamouth Shark" },
+            { 2010231, "Spider Crab" },
+            { 2010232, "Frilled Shark" },
+            { 2010233, "Norway Lobster" },
+            { 2010234, "Eastern Rock Lobster" },
+            { 2010236, "Megamouth Shark" },
+            { 2010237, "Frilled Shark" },
+            { 2010238, "Norway Lobster" },
+            { 2010240, "Eastern Rock Lobster" },
+            { 2010241, "Spider Crab" },
+            // ── Glacial Passage ───────────────────────────────────────────────
+            { 2010301, "Peacock Squid" },
+            { 2010302, "Dumbo Octopus" },
+            { 2010303, "Barreleye" },
+            { 2010304, "Vampire Squid" },
+            { 2010305, "Blobfish" },
+            { 2010306, "Pelican Eel" },
+            // ── Glacier Zone ──────────────────────────────────────────────────
+            { 2010401, "Arctic Cod" },
+            { 2010402, "Gelatinous Snailfish" },
+            { 2010403, "Antarctic Octopus" },
+            { 2010404, "Polar Eelpout" },
+            { 2010405, "Ice Fish" },
+            { 2010406, "Arctic Telescope Fish" },
+            { 2010407, "Lumpfish" },
+            { 2010408, "Capelin" },
+            { 2010409, "Snow Crab" },
+            { 2010410, "Haddock" },
+            { 2010411, "Golden King Crab" },
+            { 2010412, "Horsehair Crab" },
+            { 2010413, "Narwhal" },
+            { 2010414, "Starry Skate" },
+            { 2010415, "Snub-nosed Spiny Eel" },
+            { 2010416, "Greenland Shark" },
+            { 2010417, "Porbeagle Shark" },
+            { 2010418, "Alaska Pollock" },
+            // Glacier seahorses (TIDs TBD — these overlap with existing entries, need confirmation)
+            // { 2010xxx, "Leafy Seadragon" },
+            // { 2010xxx, "Weedy Seadragon" },
+            // ── Hydrothermal Vents ────────────────────────────────────────────
+            { 2010501, "Waptia Fieldensis" },
+            { 2010502, "Pikaia" },
+            { 2010503, "Allenypterus" },
+            { 2010504, "Dollocaris Ingens" },
+            { 2010505, "Falcatus" },
+            { 2010506, "Anomalocaris" },
+            { 2010507, "Megalograptus" },
+            { 2010508, "Qingmendous" },
+            { 2010509, "Xenacanthus" },
+            { 2010510, "Tokummia Katalepsis" },
+            { 2010511, "Dunkleosteus" },
+            { 2010512, "Drepanaspis" },
+            // Vents seahorse
+            { 2010550, "Ruby Seadragon" },
+            // ── Boss fish ─────────────────────────────────────────────────────
+            { 2010801, "Great White Shark Klaus" },  // Vortex boss
+            { 2010901, "Mantis Shrimp" },            // Boss
+            // ── Aberrations — Jellyfish Basin ─────────────────────────────────
+            { 2011201, "Aurora Jellyfish" },
+            { 2011202, "Bursting Anglerfish" },
+            { 2011203, "Parhelion Jellyfish" },
+            { 2011204, "Radiant Squid" },
+            { 2011205, "Seizing Snailfish" },
+            { 2011206, "Perished Loosejaw" },
+            { 2011207, "Savage Barracuda" },
+            { 2011208, "Concertina Barracuda" },
+            { 2011209, "Entangled Crab" },
+            { 2011210, "Imperious Lobster" },
+            { 2011211, "Gazing Shark" },
+            // ── Aberrations — Fog Coast ───────────────────────────────────────
+            { 2011213, "Fanged Cod" },
+            { 2011214, "Grotesque Mackerel" },
+            { 2011215, "Many Eyed Mackerel" },
+            { 2011216, "Three-Headed Cod" },
+            { 2011217, "Cerebral Crab" },
+            { 2011218, "Barbed Eel" },
+            { 2011219, "Voltaic Grouper" },
+            { 2011220, "Tusked Grouper" },
+            { 2011221, "Host Eel" },
+            { 2011222, "Malignant Pincer" },
+            { 2011223, "Sallow Sailfish" },
+            { 2011224, "Bloodskin Shark" },
+            // ── Aberrations — Black Cliff ─────────────────────────────────────
+            { 2011225, "Gelatinous Stonefish" },
+            { 2011226, "Enthralled Stonefish" },
+            { 2011227, "Gnashing Perch" },
+            { 2011228, "Scouring Bass" },
+            { 2011229, "Cortex Decorator" },
+            { 2011230, "Shattered Wreckfish" },
+            { 2011231, "Bony Wreckfish" },
+            { 2011232, "Sprouting Eel" },
+            { 2011233, "Splintered Crab" },
+            { 2011234, "Withered Ray" },
+            { 2011212, "Translucent Sturgeon" },
+            // ── Godzilla DLC fish ─────────────────────────────────────────────
+            { 2012006, "Aurora Jellyfish" },
+            { 2012007, "Barbed Eel" },
+            { 2012008, "Bloodskin Shark" },
+            { 2012009, "Bony Wreckfish" },
+            { 2012010, "Bursting Anglerfish" },
+            { 2012011, "Cerebral Crab" },
+            { 2012012, "Concertina Barracuda" },
+            { 2012013, "Cortex Decorator" },
+            { 2012014, "Entangled Crab" },
+            { 2012015, "Enthralled Stonefish" },
+            { 2012017, "Fanged Cod" },
+            { 2012018, "Gazing Shark" },
+            { 2012019, "Gelatinous Stonefish" },
+            { 2012020, "Gnashing Perch" },
+            { 2012021, "Grotesque Mackerel" },
+            { 2012022, "Host Eel" },
+            { 2012023, "Imperious Lobster" },
+            // ── Jungle DLC fish ───────────────────────────────────────────────
+            { 2014002, "Jungle Fish 1" },  // TODO: fill in real names
+            { 2014003, "Jungle Fish 2" },
+            { 2014013, "Jungle Fish 3" },
+            // ── Special / Seahorse farm ───────────────────────────────────────
+            { 2013001, "Long-Snouted Seahorse" },
+            { 2013002, "Big-Belly Seahorse" },
+            { 2013003, "Jayakar's Seahorse" },
+            { 2013004, "Pacific Seahorse" },
+            { 2013005, "Dwarf Seahorse" },
+            { 2013006, "Giraffe Seahorse" },
+            { 2013007, "Hedgehog Seahorse" },
+            { 2013009, "Spiny Seahorse" },
+            { 2013010, "Tiger-Tail Seahorse" },
+            { 2013011, "Zebra Seahorse" },
+            { 2013012, "Crowned Seahorse" },
+            { 2013015, "Leafy Seadragon" },
+        };
+
+        public static string? GetDisplayNameFromTID(string goName)
+        {
+            // Parse TID from "SA_2010132_Thresher_Shark01(Clone)" format
+            var parts = goName.Split('_');
+            if (parts.Length >= 2 && int.TryParse(parts[1], out int tid))
+            {
+                if (_tidMap.TryGetValue(tid, out var name))
+                    return name;
+            }
+            return null;
+        }
 
         public static string? GetDisplayNameFromGameObject(string goName)
         {
