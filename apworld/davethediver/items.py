@@ -449,18 +449,28 @@ cooksta_rank_items: Dict[str, ItemData] = {
 # 12 charms total — each grants a passive bonus effect when equipped.
 # Obtained from story missions or Ecowatcher level-ups.
 charm_items: Dict[str, ItemData] = {
-    "Dolphin Necklace":         ItemData(ITEM_BASE + 500, ItemClassification.useful),  # +30% dash speed
-    "Octopus Bracelet":         ItemData(ITEM_BASE + 501, ItemClassification.useful),  # Short dash ability
-    "Sea People Bracelet":      ItemData(ITEM_BASE + 502, ItemClassification.useful),  # Survive ~10s after oxygen out
-    "Octopus Weapon Charm":     ItemData(ITEM_BASE + 503, ItemClassification.useful),  # +15% gun damage
-    "Sea People Necklace":      ItemData(ITEM_BASE + 504, ItemClassification.useful),  # Travel through tubeworm tunnels
-    "Shark Teeth Necklace":     ItemData(ITEM_BASE + 505, ItemClassification.useful),  # +15% harpoon damage
-    "Eco Poison Resist Bracelet": ItemData(ITEM_BASE + 506, ItemClassification.useful), # Poison resistance
-    "Eco Health Bracelet":      ItemData(ITEM_BASE + 507, ItemClassification.useful),  # -10% damage taken
-    "Eco Gemstone Bracelet":    ItemData(ITEM_BASE + 508, ItemClassification.useful),  # +1 mineral from mining
-    "Eco Waterproof Bag":       ItemData(ITEM_BASE + 509, ItemClassification.useful),  # +30kg weight limit
-    "Leo Keychain":             ItemData(ITEM_BASE + 510, ItemClassification.useful, category="dlc_dredge"),  # DREDGE DLC
-    "Jimbo Coin":               ItemData(ITEM_BASE + 511, ItemClassification.useful),  # Base game — Jimbo's Game Craze! mission
+    # ── Mission-acquired charms (base game) ──────────────────────────────────
+    "Dolphin Necklace":           ItemData(ITEM_BASE + 500, ItemClassification.useful),  # +30% dash speed
+    "Octopus Bracelet":           ItemData(ITEM_BASE + 501, ItemClassification.useful),  # Short dash (Left Ctrl)
+    "Sea People Bracelet":        ItemData(ITEM_BASE + 502, ItemClassification.useful),  # Survive ~10s after oxygen out
+    "Octopus Weapon Charm":       ItemData(ITEM_BASE + 503, ItemClassification.useful),  # +15% gun damage
+    "Sea People Necklace":        ItemData(ITEM_BASE + 504, ItemClassification.useful),  # Travel through tubeworm tunnels
+    "Shark Teeth Necklace":       ItemData(ITEM_BASE + 505, ItemClassification.useful),  # +15% harpoon damage
+    # ── Ecowatcher charms ────────────────────────────────────────────────────
+    "Eco Poison Resist Bracelet": ItemData(ITEM_BASE + 506, ItemClassification.useful),  # Poison resistance (Ecowatcher Lv2)
+    "Eco Health Bracelet":        ItemData(ITEM_BASE + 507, ItemClassification.useful),  # -10% damage taken (Ecowatcher Lv3)
+    "Eco Gemstone Bracelet":      ItemData(ITEM_BASE + 508, ItemClassification.useful),  # +1 mineral from mining (Ecowatcher Lv4)
+    "Eco Waterproof Bag":         ItemData(ITEM_BASE + 509, ItemClassification.useful),  # +30kg weight limit (Ecowatcher Lv5)
+    # ── DLC charms ───────────────────────────────────────────────────────────
+    "Leo Keychain":               ItemData(ITEM_BASE + 510, ItemClassification.useful, category="dlc_dredge"),  # DREDGE DLC — no O2 depletion, 1-hit death
+    "Jimbo Coin":                 ItemData(ITEM_BASE + 511, ItemClassification.useful),  # Jimbo's Game Craze! — melee combo damage
+    # ── Jungle DLC charms (unlocked via max villager friendship) ─────────────
+    "Crocodile Tooth Necklace":   ItemData(ITEM_BASE + 512, ItemClassification.useful, category="dlc_jungle"),  # +30% melee damage (Panutah quest)
+    "Charm of Abundance":         ItemData(ITEM_BASE + 513, ItemClassification.useful, category="dlc_jungle"),  # Grant 2 items from pots/jars (max Panutah friendship)
+    "Anti-Gravity Device":        ItemData(ITEM_BASE + 514, ItemClassification.useful, category="dlc_jungle"),  # 2 items on rescue instead of 1 (max Muna friendship)
+    "Gold Necklace of Sloth":     ItemData(ITEM_BASE + 515, ItemClassification.useful, category="dlc_jungle"),  # Slows nearby creatures (max Harta friendship)
+    "Bracelet of Strength":       ItemData(ITEM_BASE + 516, ItemClassification.useful, category="dlc_jungle"),  # Underwater combo gauge +50% (max Uzme friendship)
+    "Air Resonance Necklace":     ItemData(ITEM_BASE + 517, ItemClassification.useful, category="dlc_jungle"),  # Extra O2 recovery after picking up O2 item (max Bonita friendship)
 }
 
 # === ABILITIES & UPGRADES ===

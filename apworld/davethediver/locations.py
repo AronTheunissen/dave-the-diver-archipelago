@@ -1658,21 +1658,28 @@ weapon_locations: Dict[str, LocationData] = {
 # Each charm's acquisition condition = 1 AP location check.
 # Mission charms are in the relevant region; Ecowatcher charms gate on ecowatcher levels.
 charm_locations: Dict[str, LocationData] = {
-    # Mission-acquired charms (base game)
+    # ── Mission-acquired charms (base game) ──────────────────────────────────
     "Charm: Dolphin Necklace (Complete Defeat Pirates)":                LocationData(BASE_ID + 1480, "Blue Hole - Shallow", ""),
     "Charm: Octopus Bracelet (Complete Investigate the Strange Coral)": LocationData(BASE_ID + 1481, "Blue Hole - Mid", ""),
     "Charm: Sea People Bracelet (Complete Beyond the Rock Pile)":       LocationData(BASE_ID + 1482, "Blue Hole - Deep", ""),
     "Charm: Octopus Weapon Charm (Complete Octopus Returns)":           LocationData(BASE_ID + 1483, "Blue Hole - Mid", ""),
     "Charm: Sea People Necklace (Complete Deliver Key to Tenzhin)":     LocationData(BASE_ID + 1484, "Sea People Village", ""),
     "Charm: Shark Teeth Necklace (Complete Revenge Time!)":             LocationData(BASE_ID + 1485, "Blue Hole - Shallow", ""),
-    # DLC charms
+    # ── DLC charms ───────────────────────────────────────────────────────────
     "Charm: Leo Keychain (Complete EVIL FACTORY Demo)":                 LocationData(BASE_ID + 1486, "Bancho Sushi", "dlc_dredge"),
     "Charm: Jimbo Coin (Complete Jimbo's Game Craze!)":                 LocationData(BASE_ID + 1487, "Bancho Sushi", ""),
-    # Ecowatcher level-up charms
+    # ── Ecowatcher level-up charms ───────────────────────────────────────────
     "Charm: Eco Poison Resist Bracelet (Ecowatcher Level 2)":           LocationData(BASE_ID + 1488, "Blue Hole - Shallow", "ecowatcher"),
     "Charm: Eco Health Bracelet (Ecowatcher Level 3)":                  LocationData(BASE_ID + 1489, "Blue Hole - Shallow", "ecowatcher"),
     "Charm: Eco Gemstone Bracelet (Ecowatcher Level 4)":                LocationData(BASE_ID + 1490, "Blue Hole - Shallow", "ecowatcher"),
     "Charm: Eco Waterproof Bag (Ecowatcher Level 5)":                   LocationData(BASE_ID + 1491, "Blue Hole - Shallow", "ecowatcher"),
+    # ── Jungle DLC charms (max villager friendship rewards) ──────────────────
+    "Charm: Crocodile Tooth Necklace (Complete Operation: Sulong Hunt)": LocationData(BASE_ID + 1492, "Utara Village", "dlc_jungle"),
+    "Charm: Charm of Abundance (Max Friendship: Panutah)":              LocationData(BASE_ID + 1493, "Utara Village", "dlc_jungle"),
+    "Charm: Anti-Gravity Device (Max Friendship: Muna)":                LocationData(BASE_ID + 1494, "Utara Village", "dlc_jungle"),
+    "Charm: Gold Necklace of Sloth (Max Friendship: Harta)":            LocationData(BASE_ID + 1495, "Utara Village", "dlc_jungle"),
+    "Charm: Bracelet of Strength (Max Friendship: Uzme)":               LocationData(BASE_ID + 1496, "Utara Village", "dlc_jungle"),
+    "Charm: Air Resonance Necklace (Max Friendship: Bonita)":           LocationData(BASE_ID + 1497, "Utara Village", "dlc_jungle"),
 }
 
 # === ACHIEVEMENTS / MILESTONES ===

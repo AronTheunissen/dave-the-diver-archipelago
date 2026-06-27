@@ -42,19 +42,32 @@ namespace DaveDiverAP.Patches
     public static class CharmMapper
     {
         // Maps charm TID (integer) to (charm name, source mission) for AP location checking.
-        // TIDs confirmed via UnityExplorer CharmSpecData dump.
+        // TIDs confirmed via UnityExplorer CharmSpecData dump (2026-06-27).
         private static readonly System.Collections.Generic.Dictionary<int, (string charm, string mission)> _map = new()
         {
             // ── Mission-acquired charms (base game) ──────────────────────────────
-            { 3017001, ("Dolphin Necklace",      "Complete Defeat Pirates") },
-            { 3017021, ("Octopus Bracelet",      "Complete Investigate the Strange Coral") },
-            { 3017031, ("Sea People Bracelet",   "Complete Beyond the Rock Pile") },
-            { 3017042, ("Octopus Weapon Charm",  "Complete Octopus Returns") },
-            { 3017011, ("Sea People Necklace",   "Complete Deliver Key to Tenzhin") },
-            { 3017044, ("Shark Teeth Necklace",  "Complete Revenge Time!") },
+            // TID cross-reference: dump name → internal name → confirmed TID
+            { 3017001, ("Dolphin Necklace",      "Complete Defeat Pirates") },           // LongDash
+            { 3017021, ("Octopus Bracelet",      "Complete Investigate the Strange Coral") }, // ShortDash
+            { 3017011, ("Sea People Bracelet",   "Complete Beyond the Rock Pile") },     // ExtraTime
+            { 3017042, ("Octopus Weapon Charm",  "Complete Octopus Returns") },          // WeaponDMG_UP
+            { 3017043, ("Sea People Necklace",   "Complete Deliver Key to Tenzhin") },   // UVField
+            { 3017044, ("Shark Teeth Necklace",  "Complete Revenge Time!") },            // HarpoonDMG_UP
+            // ── Ecowatcher charms ────────────────────────────────────────────────
+            { 3017041, ("Eco Poison Resist Bracelet", "Ecowatcher Level 2") },           // Poison_resist
+            { 3017031, ("Eco Health Bracelet",        "Ecowatcher Level 3") },           // Defense10
+            { 3017045, ("Eco Gemstone Bracelet",      "Ecowatcher Level 4") },           // MiningBonus
+            { 3017046, ("Eco Waterproof Bag",         "Ecowatcher Level 5") },           // LootboxWeightBonus
             // ── DLC charms ───────────────────────────────────────────────────────
-            { 3017101, ("Leo Keychain",          "Complete EVIL FACTORY Demo") },
-            { 3017049, ("Jimbo Coin",            "Complete Jimbo's Game Craze!") },
+            { 3017101, ("Leo Keychain",          "Complete EVIL FACTORY Demo") },        // EF_LeoHead (DREDGE DLC)
+            { 3017049, ("Jimbo Coin",            "Complete Jimbo's Game Craze!") },      // JimboCombo
+            // ── Jungle DLC charms (max villager friendship) ──────────────────────
+            { 43017101, ("Crocodile Tooth Necklace", "Complete Operation: Sulong Hunt") },
+            { 43017102, ("Charm of Abundance",       "Max Friendship: Panutah") },
+            { 43017103, ("Anti-Gravity Device",      "Max Friendship: Muna") },
+            { 43017104, ("Gold Necklace of Sloth",   "Max Friendship: Harta") },
+            { 43017105, ("Bracelet of Strength",     "Max Friendship: Uzme") },
+            { 43017106, ("Air Resonance Necklace",   "Max Friendship: Bonita") },
         };
 
         public static (string? charm, string? mission) GetCharmInfo(int tid)
