@@ -6,12 +6,13 @@ An [Archipelago](https://archipelago.gg/) multiworld randomizer integration for 
 
 | Component | Status |
 |---|---|
-| APWorld (Python) | ✅ Complete — 1,300+ locations, 300+ items, 55 tests passing |
-| C# Client Mod | ✅ Complete — 17 patches, all game API calls implemented |
-| Reverse Engineering | ✅ dump.cs analysed — all class/method names confirmed |
+| APWorld (Python) | ✅ Complete — 1,400+ locations, 320+ items, 54 tests passing |
+| C# Client Mod | ✅ Complete — 18 patches, all TIDs confirmed from live dumps |
+| Reverse Engineering | ✅ All TIDs confirmed via UnityExplorer live game dumps |
 | Player Setup Guide | ✅ See `docs/SETUP_GUIDE.md` |
-| Unit Tests | ✅ 55/55 passing |
-| In the Jungle DLC | ⏳ Released June 18, 2026 — awaiting wiki data for fish/recipes |
+| Build & Test Guide | ✅ See `docs/BUILD_AND_TEST_GUIDE.md` |
+| Unit Tests | ✅ 54/54 passing |
+| In the Jungle DLC | ✅ Complete — all fish/recipes/charms/quests confirmed |
 
 ## What's Randomized
 
@@ -56,7 +57,7 @@ An [Archipelago](https://archipelago.gg/) multiworld randomizer integration for 
 | DREDGE Content Pack (free) | `has_dredge_dlc` | ✅ Complete |
 | Godzilla Content Pack (free, time-limited) | `has_godzilla_dlc` | ✅ Complete |
 | Ichiban's Holiday (paid) | `has_ichiban_dlc` | ✅ Complete |
-| In the Jungle (paid, released June 18 2026) | `has_jungle_dlc` | ⏳ Structure complete, fish/recipes pending |
+| In the Jungle (paid, released June 18 2026) | `has_jungle_dlc` | ✅ Complete — all fish/recipes/charms/quests confirmed |
 
 ## Getting Started
 

@@ -1,7 +1,7 @@
 # Dave the Diver Archipelago - TODO List
 
-> Last updated: June 26, 2026 (evening)
-> Current status: APWorld complete with full logic rules, 1,134+ locations, 320+ items. C# client complete with StoryProgressPatch auto-logging. Jungle DLC substantially implemented. Awaiting quest TID capture and in-game testing.
+> Last updated: June 27, 2026
+> Current status: APWorld complete, 1,400+ locations, 320+ items, 54 tests. C# client complete with 18 patches, ALL TIDs confirmed from live UnityExplorer dumps. Jungle DLC fully implemented. Ready for first in-game test!
 
 ---
 
@@ -91,24 +91,20 @@
 
 ## 🔴 CRITICAL — Blocking Actual Play
 
-### Fill in TID Mapper Dictionaries
-All patches have the correct classes and methods, but the `*NameMapper` dictionaries
-that map game design-sheet TID integers → AP location names are still empty.
+### In-Game Testing
+All TID mappers are now fully populated from live UnityExplorer game dumps (2026-06-27).
+See `docs/BUILD_AND_TEST_GUIDE.md` for step-by-step build and test instructions.
 
-**How to get TIDs:** Install **UnityExplorer** as a BepInEx plugin, run the game,
-and use the inspector to find TID values on live objects. Or search `dump.cs` for
-static const values near the relevant classes.
-
-| Mapper | Entries needed | File |
-|---|---|---|
-| `FishNameMapper._map` | ~200 entries (GameObject name → fish name) | `FishCatchPatch.cs` ✅ Already populated! |
-| `BossNameMapper._map` | 16 entries (scene name substring → boss name) | `BossDefeatedPatch.cs` ✅ Already populated! |
-| `WeaponNameMapper._idMap` | ~79 entries (craft TID → weapon name) | `WeaponCraftPatch.cs` |
-| `RecipeNameMapper._map` | ~54 entries (recipe TID → recipe name) | `RecipeUnlockPatch.cs` |
-| `QuestNameMapper._map` | ~20 entries (mission TID → quest name) | `StoryProgressPatch.cs` | 🟡 Auto-logs TIDs via GetClearMissionDialogData hook — watch BepInEx log during gameplay |
-| `ChallengeNameMapper._map` | ~~9 entries~~ — challenges removed (placeholder content) | ~~`ChallengePatch.cs`~~ |
-| `IngredientNameMapper._map` | ~12 entries (ingredient TID → name) | `IngredientPatch.cs` |
-| `CharmMapper._map` | 8 entries (charm TID → name + source) | `CharmPatch.cs` |
+| Mapper | Status |
+|---|---|
+| `FishNameMapper._map` | ✅ 200+ TIDs confirmed (GO name format + all regions) |
+| `RodFishNameMapper._map` | ✅ All 12 rod fish confirmed (42013501-42013513) |
+| `BossNameMapper._map` | ✅ All bosses including Jungle DLC (EnumBossFishType) |
+| `WeaponNameMapper._idMap` | ✅ 48 weapons confirmed (3060xxx range) |
+| `RecipeNameMapper._map` | ✅ 248 recipes confirmed (8050xxx-8059xxx) |
+| `QuestNameMapper._map` | ✅ 130+ missions confirmed (MissionDictionary dump) |
+| `IngredientNameMapper._map` | ✅ All 12 ingredients + farm crops confirmed |
+| `CharmMapper._map` | ✅ All 18 charms confirmed (3017xxx + 43017xxx) |
 
 ### ~~Implement ItemHandler Game API Calls~~ ✅ DONE
 All `ItemHandler.cs` methods now use real game API calls:

@@ -7,181 +7,174 @@ Use this sheet during your UnityExplorer session to record TID numbers.
 
 ---
 
-## 📋 TID Mapping Checklist
+## 📋 TID Mapping Status (as of 2026-06-27)
 
 | Mapper | File | Status | Notes |
-|---|---|---|---|
+|---|---|---|------|
 | `BossNameMapper` | `BossDefeatedPatch.cs` | ✅ Complete | Uses `EnumBossFishType` enum — no TIDs needed |
-| `FishNameMapper` | `FishCatchPatch.cs` | ✅ Complete | Uses GameObject name substrings — no TIDs needed |
-| `WeaponNameMapper` | `WeaponCraftPatch.cs` | ✅ Complete | All weapon craft TIDs filled in |
-| `RecipeNameMapper` | `RecipeUnlockPatch.cs` | ✅ Complete | 300+ recipe TIDs mapped (8050xxx-8059xxx) |
-| `IngredientNameMapper` | `IngredientPatch.cs` | ✅ Complete | 10 sea plants + Truffle mapped |
-| `CharmMapper` | `CharmPatch.cs` | ✅ Complete | 8 charms mapped (3017xxx TIDs) |
-| `VIPNameMapper` | `RestaurantPatch.cs` | 🟡 Partial | WangPang/Alex/Pastro confirmed — **needs in-game verify** |
-| `QuestNameMapper` | `StoryProgressPatch.cs` | 🟡 Ready to fill | Patch now auto-logs TIDs via `GetClearMissionDialogData` hook — just play and watch BepInEx log |
-| `ChallengeNameMapper` | `ChallengePatch.cs` | 🔴 Empty | All challenge mission TIDs unknown |
-| Rainbow Cap TID | `IngredientPatch.cs` | ✅ Complete | `1026012` — confirmed via UnityExplorer 2026-06-26 |
-| Jungle Insect TIDs | `InsectPatch.cs` (future) | ✅ Complete | Range `40001`–`40038` (36 insects: 19 net-caught + 17 battle beetles) |
-| Jungle Skewer Recipe TIDs | `RecipeUnlockPatch.cs` | ✅ Complete | Range `48150001`–`48150109` (32 skewers) |
-| Jungle Grill Recipe TIDs | `RecipeUnlockPatch.cs` | ✅ Complete | 71 Bancho Grill complex + boss recipes with confirmed TIDs from UnityExplorer |
-| Jungle Gun Upgrade TIDs | `WeaponCraftPatch.cs` (future) | ✅ Complete | 24 locations (4 modes × 6 levels) confirmed |
-| Farm Vegetable TIDs | `IngredientPatch.cs` | ✅ Complete | Bean=1027003, Buckwheat=1027019, Onion=1027011, Cucumber=1027015 |
-
-**Priority order for in-game TID capture:**
-1. 🔴 Quest TIDs — complete a quest, read BepInEx log for `MissionManager.UpdateMission` calls
-2. 🔴 Challenge TIDs — complete a challenge, same approach
-3. 🟡 VIP TID verify — beat Wang Pang, read log for `[VIP] CanProcessVIPShowdownResult: MissionClearTID=XXXX`
-4. 🔴 Rainbow Cap — purchase from mushroom vendor, read log for `AddIngredientsSaveData id=XXXX`
+| `FishNameMapper` | `FishCatchPatch.cs` | ✅ Complete | 200+ TIDs from `CaughtFishData` dump + GO name format |
+| `RodFishNameMapper` | `JungleFishingPatch.cs` | ✅ Complete | All 12 rod fish TIDs confirmed (42013501-42013513) |
+| `WeaponNameMapper` | `WeaponCraftPatch.cs` | ✅ Complete | 48 weapon TIDs from `SubEquipmentData` dump (3060xxx range) |
+| `RecipeNameMapper` | `RecipeUnlockPatch.cs` | ✅ Complete | 248 recipe TIDs from `unlockRecipeData` dump (8050xxx-8059xxx) |
+| `IngredientNameMapper` | `IngredientPatch.cs` | ✅ Complete | All 12 sea plants + Truffle + Rainbow Cap confirmed |
+| `CharmMapper` | `CharmPatch.cs` | ✅ Complete | All 18 charms (base + Jungle DLC) confirmed from `CharmSpecData` dump |
+| `QuestNameMapper` | `StoryProgressPatch.cs` | ✅ Complete | 130+ mission TIDs from `MissionDictionary` dump |
+| `VIPNameMapper` | `RestaurantPatch.cs` | ✅ Complete | WangPang=9100017, Alex=9100018, Pastro=9100019 |
+| `ChallengeNameMapper` | `ChallengePatch.cs` | 🟡 Low priority | Challenges removed as placeholder content |
 
 ---
 
-## ✅ Already Confirmed TIDs (from dump.cs / previous sessions)
+## ✅ All Confirmed TIDs (2026-06-27 session)
 
-### Boss Types (`EnumBossFishType`)
-These are confirmed from dump.cs — no UnityExplorer needed:
+### Fish TIDs (`CaughtFishData` dump)
+Format: TID → Species, from `SA_TIDNUMBER_SpeciesName` GameObject names
+- **Blue Hole Shallow:** `2010002`-`2010085` range
+- **Blue Hole Mid:** `2010101`-`2010142` range
+- **Blue Hole Deep:** `2010201`-`2010241` range
+- **Glacial Passage:** `2010301`-`2010306`
+- **Glacier Zone:** `2010401`-`2010418`
+- **Hydrothermal Vents:** `2010501`-`2010512`
+- **Aberrations (Jellyfish Basin):** `2011201`-`2011211`
+- **Aberrations (Fog Coast):** `2011213`-`2011224`
+- **Aberrations (Black Cliff):** `2011225`-`2011234`
+- **Godzilla DLC:** `2012006`-`2012023`
+- **Jungle Lake (upper):** `2010601`-`2010612` (base game fish in jungle)
+- **Jungle Lake (DLC exclusive):** `42010102`-`42011234` range
+- **Jungle Lakebed (ancient):** `42011101`-`42011120` range
+- **Jungle Rod Fish:** `42013501`-`42013513` (all 12 confirmed)
+
+### Weapon TIDs (`SubEquipmentData` dump)
+Format: `3060xxx` where hundreds digit = weapon tree
 ```
-GiantSquid=1, HermitCrab=2, WolfFish=3, Clione=4, JW2=5,
-Gardon=6, MantisShrimp=7, GoblinShark=8, Helicoprion=9,
-GreatWhiteShark=10, Anomalocaris=11, Lusca=12, Ebirah=100
-Jungle DLC: Stethacanthus=201, Xiphactinus=202, Sulong=203, SnappingTurtle=204
+Basic Rifle: 3060001-3060012
+Net Gun: 3060101-3060106
+Triple Axel: 3060201-3060210
+Red Sniper Rifle: 3060301-3060306
+Sticky Bomb Gun: 3060401-3060403
+Grenade Launcher: 3060501-3060502
+Ice Gun: 3060601-3060603
+Hush Dart: 3060701-3060703
+Drain Gun: 3060801-3060803
+Unknown: 3060901, 3060903 (TODO: identify)
 ```
 
-### VIP Cooking TIDs (`VIPCookingScenarioDataList.VIP_TID`)
+### Recipe TIDs (`unlockRecipeData` dump)
+Format: `8050xxx` = sushi, `8051xxx` = menu dishes, `8052xxx` = grill, `8058xxx` = seasonal
+- 248 total recipes confirmed
+
+### Charm TIDs (`CharmSpecData` dump)
 ```
-WangPang=9100017, Alex=9100018, Pastro=9100019
+Dolphin Necklace=3017001, Sea People Bracelet=3017011,
+Octopus Bracelet=3017021, Eco Health Bracelet=3017031,
+Eco Poison Resist=3017041, Octopus Weapon Charm=3017042,
+Sea People Necklace=3017043, Shark Teeth Necklace=3017044,
+Eco Gemstone Bracelet=3017045, Eco Waterproof Bag=3017046,
+Jimbo Coin=3017049, Leo Keychain=3017101,
+Crocodile Tooth Necklace=43017101, Charm of Abundance=43017102,
+Anti-Gravity Device=43017103, Gold Necklace of Sloth=43017104,
+Bracelet of Strength=43017105, Air Resonance Necklace=43017106
 ```
-Note: Vincent, Michael Bang, Sammy have no cooking challenge — tracked via MissionManager.
+Note: `3017047` (InteractionTimeReduce) = confirmed cut content, ignored.
 
-### Weapon Craft TIDs (from previous UnityExplorer sessions)
-Already filled in `WeaponCraftPatch.cs` — see `WeaponNameMapper._idMap`.
-
-### Recipe TIDs (from previous UnityExplorer sessions)
-Already filled in `RecipeUnlockPatch.cs` — see `RecipeNameMapper._map`.
-Format: `8050xxx` = raw fish sushi, `8051xxx` = cooked dishes, `8052xxx` = tuna bar.
-
-### Ingredient TIDs (from previous UnityExplorer sessions)
-Already filled in `IngredientPatch.cs` and `ItemHandler.cs`:
+### Ingredient TIDs (`IngredientsStorage` dump)
 ```
 Sea Grape=1027101, Agar=1027102, Kajime=1027103, Kelp=1027104,
 Seaweed=1027106, Black Coral=1027107, Southern Bull Kelp=1027108,
-Buckbean=1027109, Bladderwrack=1027110, Hyalonema=1027111
-Truffle=1026011
+Buckbean=1027109, Bladderwrack=1027110, Hyalonema=1027111,
+Truffle=1026011, Rainbow Cap=1026012
+Farm: Rice=1027002, Carrot=1027001, Wheat=1027004, Bean=1027003,
+Buckwheat=1027019, Garlic=1027018, Habanero=1027013,
+Onion=1027011, Cucumber=1027015, Eggplant=1027016,
+Egg=1027014, Grade A Egg=1027017, Cherry Tomato=1027008
 ```
 
-### Charm TIDs (from previous UnityExplorer sessions)
-Already filled in `CharmPatch.cs`:
+### Mission TIDs (`MissionDictionary` dump)
+- 513 total missions cleared (all confirmed)
+- Base game: `100xxxxx` range
+- Jungle DLC: `410xxxxx` range
+- See `StoryProgressPatch.cs` `QuestNameMapper` for full mapping
+- Internal types filtered: `JungleRankReward`, `JungleRelationEvent` (state machines, not player-facing)
+
+### Boss Types (`EnumBossFishType`)
 ```
-Dolphin Necklace=3017001, Sea People Necklace=3017011,
-Octopus Bracelet=3017021, Sea People Bracelet=3017031,
-Octopus Weapon Charm=3017042, Shark Teeth Necklace=3017044,
-Jimbo Coin=3017049, Leo Keychain=3017101
+GiantSquid=1, HermitCrab=2, WolfFish=3, Clione=4, JW2=5,
+Gardon=6, MantisShrimp=7, GoblinShark=8, Helicoprion=9,
+GreatWhiteShark=10, Anomalocaris=11, Lusca=12, Ebirah=100,
+Stethacanthus=201, Xiphactinus=202, Sulong=203, SnappingTurtle=204
+```
+
+### VIP Cooking TIDs
+```
+WangPang=9100017, Alex=9100018, Pastro=9100019
 ```
 
 ---
 
-## 🔴 Still Needed
+## 🔴 Still Unknown
 
-### 1. Quest / Story Mission TIDs
-**Where to find:** While playing a quest, run this in C# console:
+| Item | Notes |
+|---|---|
+| Weapon TIDs 3060901, 3060903 | Seen in dump but unknown — possibly Jungle DLC weapons |
+| Some weapon upgrade branches | Lightning/Shock/Thunderbolt variants not yet crafted |
+| Fish farm area progression TIDs | Fish farm area unlocks (A-H) may need TID verification |
+
+---
+
+## 📋 Useful C# Console Scripts
+
+### Dump fish in current scene
 ```csharp
-// Dump all active missions from MissionManager
-var mgr = MissionManager.Instance;
-var field = typeof(MissionManager).GetField("m_MissionList",
-    System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-if (field != null) {
-    var list = field.GetValue(mgr) as System.Collections.IEnumerable;
-    foreach (var m in list) {
-        var tid = m.GetType().GetField("m_ID")?.GetValue(m);
-        var name = m.GetType().GetField("m_MissionName")?.GetValue(m);
-        MelonLogger.Msg($"Mission TID={tid} Name={name}");
-    }
+var list = GameObject.FindObjectsOfTypeAll(Il2CppType.Of<FishInteractionBody>());
+UnityExplorer.ExplorerCore.Log("Fish in scene: " + list.Length);
+for (int i = 0; i < list.Length; i++)
+{
+    var f = list[i].Cast<FishInteractionBody>();
+    UnityExplorer.ExplorerCore.Log("FISH: " + f.gameObject.name);
 }
 ```
-**Alternative:** Complete a quest and check BepInEx log for:
-`[VIP] CanProcessVIPShowdownResult: MissionClearTID=XXXX`
 
-| Quest Name | TID |
-|---|---|
-| Complete Duff's First Request | ? |
-| Help Duff Investigate Blue Hole | ? |
-| Complete Dr. Bacon's First Request | ? |
-| Obtain Sea People Bracelet from Dr. Bacon | ? |
-| Obtain Bug Net from Dr. Bacon | ? |
-| Complete Cobra's First Request | ? |
-| Complete Cobra's VIP Challenge | ? |
-| Complete Bancho's Training | ? |
-| Complete A Noisy Customer (Unlock Fish Farm) | ? |
-| Gain Trust of Sea People | ? |
-| Complete Niamo's Request | ? |
-| Complete Linchen's Request | ? |
-| Complete Ramo's Request | ? |
-| Obtain Sea People Mirror (Teleport) | ? |
-
-### 2. Challenge Mission TIDs
-**Where to find:** Same MissionManager dump while at the challenge board.
-
-| Challenge Name | TID |
-|---|---|
-| (Need to list in-game challenge names) | ? |
-
-### 3. Ecowatcher Mission TIDs
-**Where to find:** Open Ecowatcher app, trigger a mission, check MissionManager.
-
-| Mission Name | TID |
-|---|---|
-| (Need to list in-game mission names) | ? |
-
-### 4. Rainbow Cap TID
-**Where to find:** Purchase from the mushroom vendor, check `AddIngredientsSaveData`:
+### Get current rod fish TID (while fishing)
 ```csharp
-// Patch hook will log: OnIngredientCollected_Postfix called with id=XXXX
-// Or search in ObjectSearch for IngredientsData with name containing "Rainbow"
+var fm = JDLC.Fishing.FishingGameManager.Instance;
+var fishInfo = fm.FishingContext.FishInfo;
+UnityExplorer.ExplorerCore.Log("TID: " + fishInfo.TID + " | Caught: " + fishInfo.IsCaught);
 ```
 
-| Ingredient | TID |
-|---|---|
-| Rainbow Cap | ? |
-
----
-
-## 📋 Quick C# Console Scripts
-
-### Dump All Missions (run at any time)
+### Dump all cleared missions
 ```csharp
-// Paste in UnityExplorer C# Console
-var saveData = SaveSystem.Instance?.CurrentSaveData;
-// MissionManager approach — works if MissionManager is loaded
+var mm = MissionManager.Instance;
+var dict = mm.MissionDictionary;
+var keys = dict.Keys.GetEnumerator();
+while (keys.MoveNext())
+{
+    int tid = keys.Current;
+    var m = dict[tid];
+    UnityExplorer.ExplorerCore.Log("MISSION | TID: " + tid + " | Type: " + m.Type + " | Title: " + m.Title);
+}
 ```
 
-### Find Ingredient TID by Name
+### Dump all ingredients
 ```csharp
-// While holding the ingredient or after picking it up:
-// Check BepInEx log for: [Ingredient] AddIngredientsSaveData id=XXXX
-// The IngredientPatch hook logs this automatically
-```
-
-### Dump Ecowatcher Missions
-```csharp
-// Open the Ecowatcher app in-game, then:
-// Trigger a mission completion and watch BepInEx log for MissionManager.UpdateMission calls
-// The patch logs: type=X target=XXXX count=X
+var storage = IngredientsStorage.Instance;
+var list = storage.GetIngredients(IngredientsType.All);
+foreach (var i in list)
+    UnityExplorer.ExplorerCore.Log("INGREDIENT | ID: " + i.ingredientsID + " | Name: " + i.Entity.Name);
 ```
 
 ---
 
-## 📝 Notes / Session Log
+## 📝 Session Log
 
-| Date | What was found | TIDs |
+| Date | What was found | Key TIDs |
 |---|---|---|
 | 2026-06-19 | VIP cooking TIDs from dump.cs | WangPang=9100017, Alex=9100018, Pastro=9100019 |
 | 2026-06-19 | Boss types from EnumBossFishType enum | See above |
-| 2026-06-19 | Fish farm areas from FishFarmAreaType enum | A=1, B=2, C=3, D=4, E=5, F=6, G=7, H=8 |
-| 2026-06-19 | Seahorse race divisions | C=Easy, B=Medium, A=Hard, S=Expert |
-| 2026-06-26 | Rainbow Cap ingredient TID via UnityExplorer | `1026012` |
-| 2026-06-26 | Fixed farm vegetable IDs (Bean/Buckwheat/Onion/Cucumber were wrong) | Bean=1027003, Buckwheat=1027019, Onion=1027011, Cucumber=1027015 |
-| 2026-06-26 | Full ingredient dump (235 entries) obtained via UnityExplorer | All sea plants, farm veg, seasonings, fish confirmed |
-| 2026-06-26 | Jungle Insect TIDs confirmed (36 total) | 40001-40038 (19 net-caught + 17 battle beetles) |
-| 2026-06-26 | Jungle Skewer Recipe TIDs confirmed (32 total) | 48150001-48150109 |
-| 2026-06-26 | Jungle Grill complex & boss recipe TIDs confirmed (71 total) | All verified via UnityExplorer |
-| 2026-06-26 | Jungle Gun upgrade locations confirmed (24 total) | 4 modes × 6 levels fully mapped |
-| 2026-06-26 | StoryProgressPatch redesigned with auto-logging | GetClearMissionDialogData hook logs quest TIDs to BepInEx log |
+| 2026-06-26 | Rainbow Cap + farm vegetable TIDs | Rainbow Cap=1026012, Bean=1027003, etc. |
+| 2026-06-26 | Full ingredient dump (235 entries) | All confirmed |
+| 2026-06-26 | Jungle Insect/Skewer/Grill Recipe TIDs | 40001-40038, 48150001-48150109 |
+| 2026-06-27 | All charm TIDs from CharmSpecData dump | 18 charms confirmed, cut content identified |
+| 2026-06-27 | All 513 mission TIDs from MissionDictionary | Full QuestNameMapper filled |
+| 2026-06-27 | All fish TIDs from CaughtFishData dump | 200+ base game + 50+ Jungle fish |
+| 2026-06-27 | All weapon TIDs from SubEquipmentData | 48 weapons (3060xxx range) |
+| 2026-06-27 | All 12 rod fish TIDs via FishInfo.TID | 42013501-42013513 |
+| 2026-06-27 | Jungle lakebed ancient fish (17 species) | 42011101-42011120 range |
