@@ -605,6 +605,9 @@ namespace DaveDiverAP.Patches
             { 42011116, "Burgessomedusa" },
             { 42011119, "Gyrodus" },
             { 42011120, "Sacabambaspis" },
+            // ── Jungle rod-caught fish (42013xxx range, confirmed 2026-06-27) ────
+            { 42013501, "Moonlight Gourami" },   // confirmed via FishInfo.TID
+            // TODO: catch more rod fish to fill in remaining 42013xxx TIDs
             // ── Special / Seahorse farm ───────────────────────────────────────
             { 2013001, "Long-Snouted Seahorse" },
             { 2013002, "Big-Belly Seahorse" },
