@@ -46,10 +46,16 @@ namespace DaveDiverAP.Patches
             if (missionData == null) return;
 
             int tid = missionData.TID;
+            string type = missionData.Type.ToString();
+            string title = missionData.Title ?? "";
             string nameTextId = missionData.NameTextID ?? "unknown";
 
-            // Always log cleared missions — invaluable for building the TID map
-            Log.LogInfo($"[MissionCleared] TID={tid} NameTextID={nameTextId}");
+            // Skip internal state machine missions (no title = not player-facing)
+            // JungleRankReward and JungleRelationEvent are internal-only
+            if (type == "JungleRankReward" || type == "JungleRelationEvent") return;
+
+            // Always log cleared missions with full info — invaluable for debugging
+            Log.LogInfo($"[MissionCleared] TID={tid} Type={type} Title=\"{title}\" NameTextID={nameTextId}");
 
             if (!ArchipelagoClient.IsConnected) return;
 
@@ -91,11 +97,13 @@ namespace DaveDiverAP.Patches
             { 10010028, "Story: Obtain Sea People Mirror (Teleport)" },  // Ch5 — Huge Sea People Mirror
 
             // ── VIP quests ───────────────────────────────────────────────────
+            // NOTE: Some TIDs serve double duty (same mission = both a quest and sub-mission check)
+            // In those cases we map to the Quest name (more specific) and handle sub-mission via title match
             { 10010003, "Quest: Complete Duff's First Request" },        // Side — Weaponsmith Duff
             { 10010004, "Quest: Help Duff Investigate Blue Hole" },      // Main — Tracking the Sea People
             { 10012004, "Quest: Complete Dr. Bacon's First Request" },   // Side — Red Ecological Data
             { 10010010, "Quest: Obtain Sea People Bracelet from Dr. Bacon" }, // Main — Beyond the Rock Pile
-            { 10010007, "Quest: Obtain Bug Net from Dr. Bacon" },        // Side — Otto's Gift?
+            { 10010007, "Quest: Obtain Bug Net from Dr. Bacon" },        // Side — Otto's Gift? (also Otto's Moray Eel)
             { 10016001, "Quest: Complete Cobra's First Request" },       // Side — Hunt Spider Crab 1
             { 10016002, "Quest: Complete Cobra's VIP Challenge" },       // Side — Hunt Spider Crab 2
             { 10010001, "Quest: Complete Bancho's Training" },           // Main — Prepare Sushi Ingredients
@@ -105,17 +113,13 @@ namespace DaveDiverAP.Patches
             { 10013017, "Quest: Serve Vincent Yamaoka - Visit 3" },      // Side — Gourmet Vincent's Challenge
             { 10013009, "Quest: Complete Good Ol' Vegetable Sushi!" },   // Side — Good Ol' Vegetable Sushi!
             { 10013007, "Quest: Complete Michael Bang's Inspiration" },  // Side — Michael Bang's Inspiration
-            { 10010007, "Quest: Complete Otto's Moray Eel Dish" },       // Side — Otto's Gift?
             { 10013032, "Quest: Complete Jango's Secret Recipe" },       // Side — Make Jango Warm!
             { 10013033, "Quest: Serve Mxmtoon" },                        // Side — A Penny for Sammy's Thoughts
             { 10010018, "Quest: Gain Trust of Sea People" },             // Main — The Sea People Village's Trust
-            { 10010016, "Quest: Complete Niamo's Request" },             // Main — Treat Ramo (Niamo area)
+            { 10010016, "Quest: Complete Niamo's Request" },             // Main — Treat Ramo (shared TID with Ramo's Request)
             { 10012015, "Quest: Complete Linchen's Request" },           // Side — Grow Sea People Plants
-            { 10010016, "Quest: Complete Ramo's Request" },              // Main — Treat Ramo
 
             // ── Sub-missions (base game) ──────────────────────────────────────
-            { 10012004, "Sub-Mission: Red Ecological Data" },            // Side — Red Ecological Data
-            { 10010003, "Sub-Mission: Weaponsmith Duff" },               // Side — Weaponsmith Duff
             { 10015001, "Sub-Mission: A Dolphin's Request" },            // Side — A Dolphin's Request
             { 10012903, "Sub-Mission: Not Enough Workers" },             // Side — Not Enough Workers
             { 10012003, "Sub-Mission: A Scolding from Yoshie" },        // Side — A Scolding from Yoshie
