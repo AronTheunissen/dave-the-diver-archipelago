@@ -67,14 +67,23 @@ namespace DaveDiverAP.Patches
         private static readonly System.Collections.Generic.Dictionary<int, string> _map = new()
         {
             // ── Jungle rod fish (42013xxx range) ─────────────────────────────
-            { 42013501, "Moonlight Gourami" },  // confirmed 2026-06-27
-            // TODO: catch remaining rod fish species to fill in TIDs
-            // Expected species (from Jungle DLC fish lists):
-            // { 42013xxx, "Siamese Fighting Fish" },
-            // { 42013xxx, "Banded Archer Fish" },
-            // { 42013xxx, "Giant Gourami" },
-            // { 42013xxx, "Spotted Snakehead" },
-            // Add more as you catch them — check BepInEx log for [RodFishCaught] TID=xxxxx UNMAPPED
+            { 42013501, "Moonlight Gourami" },   // confirmed 2026-06-27
+            { 42013502, "Three Spot Gourami" },  // confirmed 2026-06-27
+            { 42013503, "Malayan Leaf Fish" },    // confirmed 2026-06-27
+            { 42013504, "Snakeskin Gourami" },   // confirmed 2026-06-27
+            { 42013505, "Giant Gourami" },       // confirmed 2026-06-27
+            { 42013506, "Emperor Snakehead" },   // confirmed 2026-06-27
+            { 42013507, "Striped Snakehead" },   // confirmed 2026-06-27
+            // 42013508 — not yet caught
+            { 42013509, "Peacock Bass" },        // confirmed 2026-06-27
+            { 42013510, "Tambaqui" },            // confirmed 2026-06-27
+            { 42013511, "Malayan Mahseer" },     // confirmed 2026-06-27
+            { 42013512, "Redtail Catfish" },     // confirmed 2026-06-27
+            { 42013513, "Tapah" },               // confirmed 2026-06-27
+            // All 12 rod fish confirmed (2026-06-27): 42013508 is unused/skipped
+            // Complete list: Moonlight Gourami, Three Spot Gourami, Malayan Leaf Fish,
+            // Snakeskin Gourami, Giant Gourami, Emperor Snakehead, Striped Snakehead,
+            // Peacock Bass, Tambaqui, Malayan Mahseer, Redtail Catfish, Tapah
         };
 
         public static string? GetDisplayName(int tid) =>
