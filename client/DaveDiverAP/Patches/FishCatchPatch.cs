@@ -583,9 +583,28 @@ namespace DaveDiverAP.Patches
             { 42010801, "Fire Eel" },
             { 42010901, "Goliath Tigerfish" },
             { 42011001, "Clown Featherback" },
-            { 42011103, "Clown Loach" },
-            { 42011106, "Largemouth Bass" },
-            { 42011107, "Mud Carp" },
+            // NOTE: TIDs 42011103/106/107 appear in BOTH lake (Clown Loach/Largemouth Bass/Mud Carp)
+            // AND lakebed (Ophthalmosaurus/Stylonurus/Ammonite). The game reuses TID slots per zone.
+            // Mapped to the lakebed (ancient) fish here since they share the same TID.
+            // The GO name substring will distinguish them when the name-based fallback runs.
+            { 42011103, "Ophthalmosaurus" },   // Also: Clown Loach in lake zone
+            { 42011106, "Stylonurus" },         // Also: Largemouth Bass in lake zone
+            { 42011107, "Ammonite" },           // Also: Mud Carp in lake zone
+            // ── Jungle lakebed ancient fish (4201111x range, confirmed 2026-06-27) ──
+            { 42011101, "Eagle Shark" },
+            { 42011104, "Parameteroraspis" },
+            { 42011105, "Paradoxides" },
+            { 42011108, "Tullimonstrum" },
+            { 42011109, "Promissum" },
+            { 42011110, "Hensodon" },
+            { 42011111, "Red Feather Starfish" },
+            { 42011112, "Eomesodon" },
+            { 42011113, "Exellia" },
+            { 42011114, "Foreyia" },
+            { 42011115, "Orthoceras" },
+            { 42011116, "Burgessomedusa" },
+            { 42011119, "Gyrodus" },
+            { 42011120, "Sacabambaspis" },
             // ── Special / Seahorse farm ───────────────────────────────────────
             { 2013001, "Long-Snouted Seahorse" },
             { 2013002, "Big-Belly Seahorse" },
