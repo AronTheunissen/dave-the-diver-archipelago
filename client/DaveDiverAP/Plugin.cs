@@ -28,26 +28,34 @@ namespace DaveDiverAP
             // Load BepInEx config file
             ModConfig.Initialize(Config);
 
-            // Apply Harmony patches
+            // Apply Harmony patches — each wrapped in try/catch so one failure doesn't crash the mod
             _harmony = new Harmony(MyPluginInfo.PLUGIN_GUID);
-            _harmony.PatchAll(typeof(FishCatchPatch));
-            _harmony.PatchAll(typeof(RecipeUnlockPatch));
-            _harmony.PatchAll(typeof(BossDefeatedPatch));
-            _harmony.PatchAll(typeof(StoryProgressPatch));
-            _harmony.PatchAll(typeof(WeaponCraftPatch));
-            _harmony.PatchAll(typeof(PlayerDeathPatch));
-            _harmony.PatchAll(typeof(GameStatePatch));
-            _harmony.PatchAll(typeof(CookstaPatch));
-            _harmony.PatchAll(typeof(PhotographyPatch));
-            _harmony.PatchAll(typeof(ChallengePatch));
-            _harmony.PatchAll(typeof(EcowatcherPatch));
-            _harmony.PatchAll(typeof(FarmPatch));
-            _harmony.PatchAll(typeof(MinigamePatch));
-            _harmony.PatchAll(typeof(RestaurantPatch));
-            _harmony.PatchAll(typeof(CollectiblePatch));
-            _harmony.PatchAll(typeof(IngredientPatch));
-            _harmony.PatchAll(typeof(CharmPatch));
-            _harmony.PatchAll(typeof(SaveLoadPatch));
+            var patchTypes = new System.Type[]
+            {
+                typeof(FishCatchPatch),
+                typeof(RecipeUnlockPatch),
+                typeof(BossDefeatedPatch),
+                typeof(StoryProgressPatch),
+                typeof(WeaponCraftPatch),
+                typeof(PlayerDeathPatch),
+                typeof(GameStatePatch),
+                typeof(CookstaPatch),
+                typeof(PhotographyPatch),
+                typeof(ChallengePatch),
+                typeof(EcowatcherPatch),
+                typeof(FarmPatch),
+                typeof(MinigamePatch),
+                typeof(RestaurantPatch),
+                typeof(CollectiblePatch),
+                typeof(IngredientPatch),
+                typeof(CharmPatch),
+                typeof(SaveLoadPatch),
+            };
+            foreach (var patchType in patchTypes)
+            {
+                try { _harmony.PatchAll(patchType); }
+                catch (Exception ex) { Log.LogWarning($"[Harmony] Failed to patch {patchType.Name}: {ex.Message}"); }
+            }
 
             Log.LogInfo("Harmony patches applied.");
 
