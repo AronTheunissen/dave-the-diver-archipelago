@@ -22,21 +22,27 @@ namespace DaveDiverAP.Patches
         // ✅ CONFIRMED via dump.cs: SaveData has AddIngredientsSaveData(IngredientsData data)
         //    This fires whenever an ingredient is added to the save (first pick-up or purchase).
         //    IngredientsData has the ingredient's TID and data.
-        [HarmonyPatch(typeof(global::SaveData), "AddIngredientsSaveData")]
-        [HarmonyPostfix]
-        public static void OnIngredientCollected_Postfix(IngredientsData data)
-        {
-            if (!ArchipelagoClient.IsConnected) return;
-            if (data == null) return;
-
-            // Use the ingredient ID to look up the display name
-            var ingredientName = IngredientNameMapper.GetDisplayName(data.ingredientsID);
-            if (ingredientName == null) return;
-            if (_foundIngredients.Contains(ingredientName)) return;
-
-            _foundIngredients.Add(ingredientName);
-            LocationTracker.OnIngredientFirstFound(ingredientName);
-        }
+        //
+        // ⚠️ DISABLED: This hook fires during save loading (game replays all saved ingredients),
+        //    which caused a silent crash on "Continue" from the main menu.
+        //    Re-enable once we confirm IngredientsData.ingredientsID field name and that the hook
+        //    does NOT fire during save load (or add a guard to skip load-time replays).
+        //
+        // [HarmonyPatch(typeof(global::SaveData), "AddIngredientsSaveData")]
+        // [HarmonyPostfix]
+        // public static void OnIngredientCollected_Postfix(IngredientsData data)
+        // {
+        //     if (!ArchipelagoClient.IsConnected) return;
+        //     if (data == null) return;
+        //
+        //     // Use the ingredient ID to look up the display name
+        //     var ingredientName = IngredientNameMapper.GetDisplayName(data.ingredientsID);
+        //     if (ingredientName == null) return;
+        //     if (_foundIngredients.Contains(ingredientName)) return;
+        //
+        //     _foundIngredients.Add(ingredientName);
+        //     LocationTracker.OnIngredientFirstFound(ingredientName);
+        // }
     }
 
     public static class IngredientNameMapper
