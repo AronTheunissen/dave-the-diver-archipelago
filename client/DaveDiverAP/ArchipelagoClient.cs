@@ -70,12 +70,12 @@ namespace DaveDiverAP
 
                 var result = await Session.ConnectAsync();
 
-                if (result.Successful)
+                if (result is LoginSuccessful success)
                 {
-                    Log.LogInfo($"Connected to Archipelago! Game: {result.SlotInfo?.Game}");
+                    Log.LogInfo($"Connected to Archipelago! Game: {Session.ConnectionInfo.Game}");
 
                     // Parse slot data from server
-                    SlotData = new SlotData(result.SlotData ?? new System.Collections.Generic.Dictionary<string, object>());
+                    SlotData = new SlotData(success.SlotData ?? new System.Collections.Generic.Dictionary<string, object>());
 
                     // Initialize Death Link if enabled
                     DeathLinkHandler.Initialize(Session!);
@@ -96,21 +96,27 @@ namespace DaveDiverAP
                     ReplayMissedItems();
 
                     // Show connection notification
-                    NotificationManager.ShowNotification(
-                        "🔗 Connected!",
+                    UI.NotificationManager.ShowNotification(
+                        "Connected!",
                         $"Archipelago: {SlotName} @ {url}:{port}",
-                        NotificationManager.NotificationType.Connection
+                        UI.NotificationManager.NotificationType.Connection
                     );
 
                     OnConnected?.Invoke();
                     OnConnectionStatusChanged?.Invoke($"Connected as {SlotName}");
                     return true;
                 }
-                else
+                else if (result is LoginFailure failure)
                 {
-                    var errors = string.Join(", ", result.Errors ?? System.Array.Empty<string>());
+                    var errors = string.Join(", ", failure.Errors ?? System.Array.Empty<string>());
                     Log.LogError($"Connection failed: {errors}");
                     OnConnectionStatusChanged?.Invoke($"Failed: {errors}");
+                    return false;
+                }
+                else
+                {
+                    Log.LogError("Connection failed: unknown result type");
+                    OnConnectionStatusChanged?.Invoke("Failed: unknown error");
                     return false;
                 }
             }

@@ -120,7 +120,7 @@ namespace DaveDiverAP.UI
             ImGui.Spacing();
 
             // Scrollable hint list
-            ImGui.BeginChild("HintList", new System.Numerics.Vector2(0, 200), ImGuiChildFlags.Border);
+            ImGui.BeginChild("HintList", new System.Numerics.Vector2(0, 200));
 
             foreach (var hint in hints)
             {
@@ -131,34 +131,46 @@ namespace DaveDiverAP.UI
                 if (_showUnfoundOnly && found) continue;
 
                 // Determine if this is our item or someone else's
-                bool isMyItem = hint.ReceivingPlayer.Name == ArchipelagoClient.SlotName;
+                // In Archipelago v6, Hint properties use int IDs for player/game
+                // We access names via the session's Players helper
+                var session = ArchipelagoClient.Session;
+                string itemName = session != null
+                    ? (session.Items.GetItemName(hint.ItemId) ?? $"Item {hint.ItemId}")
+                    : $"Item {hint.ItemId}";
+                string locationName = session != null
+                    ? (session.Locations.GetLocationNameFromId(hint.LocationId) ?? $"Location {hint.LocationId}")
+                    : $"Location {hint.LocationId}";
+                string receivingPlayerName = session?.Players.GetPlayerName(hint.ReceivingPlayer) ?? $"Player {hint.ReceivingPlayer}";
+                string findingPlayerGame = session?.Players.GetPlayerInfo(hint.FindingPlayer)?.Game ?? "Unknown";
+
+                bool isMyItem = receivingPlayerName == ArchipelagoClient.SlotName;
 
                 // Status icon
-                var statusIcon = found ? "✓" : "○";
+                var statusIcon = found ? "V" : "O";
                 var statusColor = found ? ColorFound : ColorUnfound;
                 ImGui.TextColored(statusColor, statusIcon);
                 ImGui.SameLine();
 
                 // Item name (colored by owner)
                 var itemColor = isMyItem ? ColorMine : ColorOther;
-                ImGui.TextColored(itemColor, hint.ItemName ?? "Unknown Item");
+                ImGui.TextColored(itemColor, itemName);
                 ImGui.SameLine();
 
-                ImGui.TextDisabled("→");
+                ImGui.TextDisabled("->");
                 ImGui.SameLine();
 
                 // Location info
-                var locationText = $"{hint.LocationName} ({hint.FindingPlayer.Game})";
+                var locationText = $"{locationName} ({findingPlayerGame})";
                 ImGui.Text(locationText);
 
                 // Tooltip with full details
                 if (ImGui.IsItemHovered())
                 {
                     ImGui.BeginTooltip();
-                    ImGui.Text($"Item:     {hint.ItemName}");
-                    ImGui.Text($"For:      {hint.ReceivingPlayer.Name}");
-                    ImGui.Text($"At:       {hint.LocationName}");
-                    ImGui.Text($"In game:  {hint.FindingPlayer.Game}");
+                    ImGui.Text($"Item:     {itemName}");
+                    ImGui.Text($"For:      {receivingPlayerName}");
+                    ImGui.Text($"At:       {locationName}");
+                    ImGui.Text($"In game:  {findingPlayerGame}");
                     ImGui.Text($"Found:    {(found ? "Yes" : "No")}");
                     ImGui.EndTooltip();
                 }

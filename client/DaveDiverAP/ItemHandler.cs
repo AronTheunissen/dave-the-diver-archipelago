@@ -367,8 +367,8 @@ namespace DaveDiverAP
             // PhoneAppUpgradeManager tracks iDiver upgrades. We apply the TID
             // for each level cumulatively — the manager is idempotent (safe to call
             // with already-applied TIDs; it checks IsAlreadyUpgraded internally).
-            for (int i = 0; i < level && i < OxygenTankUpgradeTIDs.Length; i++)
-                PhoneAppUpgradeManager.Instance?.UpgradeByTID(OxygenTankUpgradeTIDs[i]);
+            // TODO: PhoneAppUpgradeManager API not confirmed — log only until verified
+            Log.LogWarning($"[ItemHandler] PhoneAppUpgradeManager not available — oxygen tank level {level} not applied");
         }
 
         private static void UpgradeHarpoon()
@@ -381,8 +381,7 @@ namespace DaveDiverAP
 
         private static void ApplyHarpoonLevel(int level)
         {
-            for (int i = 0; i < level && i < HarpoonUpgradeTIDs.Length; i++)
-                PhoneAppUpgradeManager.Instance?.UpgradeByTID(HarpoonUpgradeTIDs[i]);
+            Log.LogWarning($"[ItemHandler] PhoneAppUpgradeManager not available — harpoon level {level} not applied");
         }
 
         private static void UpgradeDivingSuit()
@@ -395,8 +394,7 @@ namespace DaveDiverAP
 
         private static void ApplyDivingSuitLevel(int level)
         {
-            for (int i = 0; i < level && i < DivingSuitUpgradeTIDs.Length; i++)
-                PhoneAppUpgradeManager.Instance?.UpgradeByTID(DivingSuitUpgradeTIDs[i]);
+            Log.LogWarning($"[ItemHandler] PhoneAppUpgradeManager not available — diving suit level {level} not applied");
         }
 
         private static void UpgradeCargoBox()
@@ -409,8 +407,7 @@ namespace DaveDiverAP
 
         private static void ApplyCargoBoxLevel(int level)
         {
-            for (int i = 0; i < level && i < CargoBoxUpgradeTIDs.Length; i++)
-                PhoneAppUpgradeManager.Instance?.UpgradeByTID(CargoBoxUpgradeTIDs[i]);
+            Log.LogWarning($"[ItemHandler] PhoneAppUpgradeManager not available — cargo box level {level} not applied");
         }
 
         // ── Key items via MissionManager ──────────────────────────────────────
@@ -467,10 +464,7 @@ namespace DaveDiverAP
                 MissionManager.Instance?.UpdateMission(
                     (MissionClearType)1,  // Complete
                     missionTID,
-                    1,
-                    false,
-                    null,
-                    false
+                    1
                 );
                 Log.LogInfo($"[ItemHandler] CompleteMission TID={missionTID}");
             }
@@ -555,11 +549,9 @@ namespace DaveDiverAP
             // We use the SNSInfoManager singleton which owns the save reference.
             var snsManager = SNSInfoManager.Instance;
             if (snsManager == null) return;
-            var snsSave = snsManager.infoSave;
-            if (snsSave == null) return;
-            // Only advance rank — never lower it (cumulative progressive item)
-            if (snsSave.get_grade() < rank)
-                snsSave.set_grade(rank);
+            // TODO: SNSInfoManager save accessor not confirmed — log until verified
+            Log.LogWarning($"[ItemHandler] SNSInfoManager.infoSave not accessible — Cooksta rank {rank} not applied");
+            return;
         }
 
         private static string CookstaRankName(int rank) => rank switch
@@ -616,7 +608,8 @@ namespace DaveDiverAP
             }
             // AutoEquipCharmItem grants the charm and auto-equips it if a slot is free.
             // This is the same call the game uses when the player earns a charm normally.
-            LobbyCharmSwapPanel.instance?.AutoEquipCharmItem(tid);
+            // TODO: LobbyCharmSwapPanel.Instance not confirmed — log until verified
+            Log.LogWarning($"[ItemHandler] LobbyCharmSwapPanel not available — charm {charmName} (TID={tid}) not auto-equipped");
         }
 
         // ── Weapons ───────────────────────────────────────────────────────────
@@ -690,7 +683,8 @@ namespace DaveDiverAP
             }
             // AddUnlockRecipeSaveData marks the recipe as unlocked in the game's save.
             // DateTime.Now is used as the unlock time (same as normal gameplay).
-            global::SaveData.GetInstance()?.AddUnlockRecipeSaveData(tid, DateTime.Now);
+            // TODO: SaveData singleton accessor not confirmed — log until verified
+            Log.LogWarning($"[ItemHandler] Cannot apply recipe unlock for {recipeName} — SaveData accessor not confirmed");
         }
 
         // ── Ingredients ───────────────────────────────────────────────────────
@@ -725,20 +719,9 @@ namespace DaveDiverAP
                        : itemName.Contains("Medium") ? 2000
                        : 500;
 
-            var playerSave = global::SaveData.GetInstance()?.PlayerInfoSave;
-            if (playerSave == null) return;
-
-            if (type == "gold")
-            {
-                // set_Gold uses ObscuredInt encryption internally — safe to call directly
-                playerSave.set_Gold(playerSave.get_Gold() + amount);
-                Log.LogInfo($"[ItemHandler] Gave {amount} Gold");
-            }
-            else if (type == "bei")
-            {
-                playerSave.set_bei(playerSave.get_bei() + amount);
-                Log.LogInfo($"[ItemHandler] Gave {amount} Bei");
-            }
+            // TODO: SaveData singleton accessor not confirmed
+            Log.LogWarning($"[ItemHandler] Cannot give {type} currency — SaveData accessor not confirmed");
+            return;
         }
 
         // ── Helpers ───────────────────────────────────────────────────────────

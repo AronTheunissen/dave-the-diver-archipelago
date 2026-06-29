@@ -274,7 +274,7 @@ namespace DaveDiverAP.UI
             }
             ImGui.Spacing();
 
-            ImGui.BeginChild("ItemsContent", new System.Numerics.Vector2(0, 160), ImGuiChildFlags.None);
+            ImGui.BeginChild("ItemsContent", new System.Numerics.Vector2(0, 160));
 
             switch (_itemsTab)
             {
@@ -417,7 +417,7 @@ namespace DaveDiverAP.UI
                 ("Melee",              new[]{ "Dive Knife","Upgraded Dive Knife" }),
             };
 
-            ImGui.BeginChild("WeaponsScroll", new System.Numerics.Vector2(0, 130), ImGuiChildFlags.None);
+            ImGui.BeginChild("WeaponsScroll", new System.Numerics.Vector2(0, 130));
             foreach (var (treeName, variants) in trees)
             {
                 int got = 0;
@@ -437,7 +437,7 @@ namespace DaveDiverAP.UI
             ImGui.Separator();
             ImGui.Spacing();
 
-            ImGui.BeginChild("CategoryList", new System.Numerics.Vector2(0, 220), ImGuiChildFlags.None);
+            ImGui.BeginChild("CategoryList", new System.Numerics.Vector2(0, 220));
             foreach (var (label, key, maxTotal) in Categories)
             {
                 // Use server's actual total for this session (may be less than max

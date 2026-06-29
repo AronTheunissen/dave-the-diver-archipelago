@@ -38,7 +38,8 @@ namespace DaveDiverAP.Patches
         {
             if (!ArchipelagoClient.IsConnected) return;
             // Enumerate all unlock recipes and check for new level-ups
-            LocationTracker.OnDishResearchUpdated();
+            // TODO: LocationTracker.OnDishResearchUpdated not yet implemented
+            // LocationTracker.OnDishResearchUpdated();
         }
     }
 

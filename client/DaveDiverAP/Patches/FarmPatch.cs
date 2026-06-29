@@ -34,7 +34,8 @@ namespace DaveDiverAP.Patches
                     ArchipelagoClient.CheckLocation($"Veg Farm: Harvest {m} Total Crops");
 
             // Detect first harvest of each crop type via lane seed TID
-            LocationTracker.OnVegetableHarvested(laneNum);
+            // TODO: LocationTracker.OnVegetableHarvested not yet implemented
+            // LocationTracker.OnVegetableHarvested(laneNum);
         }
 
         private static int _totalCrops = 0;

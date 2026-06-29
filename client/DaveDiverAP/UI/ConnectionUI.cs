@@ -71,7 +71,8 @@ namespace DaveDiverAP.UI
         public void Update()
         {
             // Toggle UI with F9
-            if (UnityEngine.Input.GetKeyDown(KeyCode.F9))
+            if (UnityEngine.InputSystem.Keyboard.current != null &&
+                UnityEngine.InputSystem.Keyboard.current.f9Key.wasPressedThisFrame)
                 _isVisible = !_isVisible;
         }
 
@@ -248,7 +249,7 @@ namespace DaveDiverAP.UI
         private void DrawItemLog()
         {
             ImGui.Text("Recent Items Received:");
-            ImGui.BeginChild("ItemLog", new System.Numerics.Vector2(0, 120), ImGuiChildFlags.Border);
+            ImGui.BeginChild("ItemLog", new System.Numerics.Vector2(0, 120));
 
             if (_itemLog.Count == 0)
             {
