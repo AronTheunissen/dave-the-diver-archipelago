@@ -304,7 +304,7 @@ namespace DaveDiverAP.UI
             _statusIsError = status.StartsWith("Failed") || status.StartsWith("Error");
         }
 
-        private void OnItemReceived(Archipelago.MultiClient.Net.Helpers.ItemInfo item)
+        private void OnItemReceived(Archipelago.MultiClient.Net.Models.ItemInfo item)
         {
             var entry = $"[{DateTime.Now:HH:mm:ss}] {item.ItemName}";
             _itemLog.Enqueue(entry);

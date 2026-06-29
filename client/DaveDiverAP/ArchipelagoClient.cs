@@ -30,7 +30,7 @@ namespace DaveDiverAP
         public static string Password   { get; set; } = "";
 
         // ── Events ──────────────────────────────────────────────────────────
-        public static event Action<ItemInfo>? OnItemReceived;
+        public static event Action<Archipelago.MultiClient.Net.Models.ItemInfo>? OnItemReceived;
         public static event Action<string>?      OnConnectionStatusChanged;
         public static event Action?              OnConnected;
         public static event Action?              OnDisconnected;

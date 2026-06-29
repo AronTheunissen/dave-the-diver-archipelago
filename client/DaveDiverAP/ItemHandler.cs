@@ -215,7 +215,7 @@ namespace DaveDiverAP
         /// Route a received item to the appropriate handler based on its name.
         /// Called from the main thread (via ItemQueue) so game APIs are safe to call.
         /// </summary>
-        public static void ApplyItem(Archipelago.MultiClient.Net.Helpers.ItemInfo item)
+        public static void ApplyItem(Archipelago.MultiClient.Net.Models.ItemInfo item)
         {
             var name = item.ItemName;
             Log.LogInfo($"[ItemHandler] Applying item: {name}");
