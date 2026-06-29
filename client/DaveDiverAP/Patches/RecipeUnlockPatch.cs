@@ -17,7 +17,7 @@ namespace DaveDiverAP.Patches
         // ✅ CONFIRMED via dump.cs: SaveData has AddUnlockRecipeSaveData(int id, DateTime unlockTime)
         // Hooking AddUnlockRecipeSaveData fires exactly when a recipe is unlocked and persisted.
         // The int id is the recipe's design sheet TID.
-        [HarmonyPatch(typeof(SaveData), "AddUnlockRecipeSaveData")]
+        [HarmonyPatch(typeof(global::SaveData), "AddUnlockRecipeSaveData")]
         [HarmonyPostfix]
         public static void UnlockRecipe_Postfix(int id)
         {
@@ -32,7 +32,7 @@ namespace DaveDiverAP.Patches
         // ✅ CONFIRMED via dump.cs: SaveData has UpdateUnlockRecipeSave() and
         //    UnlockRecipeSave has ObscuredInt m_UnlockRecipeID and level data.
         // Hook UpdateUnlockRecipeSave to catch research level-ups.
-        [HarmonyPatch(typeof(SaveData), "UpdateUnlockRecipeSave")]
+        [HarmonyPatch(typeof(global::SaveData), "UpdateUnlockRecipeSave")]
         [HarmonyPostfix]
         public static void UpgradeDish_Postfix()
         {

@@ -22,7 +22,7 @@ namespace DaveDiverAP.Patches
         // ✅ CONFIRMED via dump.cs: SaveData has AddIngredientsSaveData(IngredientsData data)
         //    This fires whenever an ingredient is added to the save (first pick-up or purchase).
         //    IngredientsData has the ingredient's TID and data.
-        [HarmonyPatch(typeof(SaveData), "AddIngredientsSaveData")]
+        [HarmonyPatch(typeof(global::SaveData), "AddIngredientsSaveData")]
         [HarmonyPostfix]
         public static void OnIngredientCollected_Postfix(IngredientsData data)
         {
