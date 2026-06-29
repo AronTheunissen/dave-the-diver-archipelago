@@ -63,14 +63,13 @@ namespace DaveDiverAP
             ArchipelagoClient.Initialize();
 
             // Create persistent UI GameObject (survives scene changes)
-            // All MonoBehaviours go on this single object
             _uiObject = new GameObject("ArchipelagoUI");
             UnityEngine.Object.DontDestroyOnLoad(_uiObject);
-            _uiObject.AddComponent<ConnectionUI>();
-            _uiObject.AddComponent<NotificationManager>();
-            _uiObject.AddComponent<ItemQueue>();
+            _uiObject.AddComponent(Il2CppInterop.Runtime.Il2CppType.Of<ConnectionUI>());
+            _uiObject.AddComponent(Il2CppInterop.Runtime.Il2CppType.Of<NotificationManager>());
+            _uiObject.AddComponent(Il2CppInterop.Runtime.Il2CppType.Of<ItemQueue>());
 
-            Log.LogInfo("Connection UI created. Press F9 to open.");
+            Log.LogInfo("Connection UI created.");
 
             // Auto-connect if configured
             if (ModConfig.AutoConnectOnLaunch.Value)
