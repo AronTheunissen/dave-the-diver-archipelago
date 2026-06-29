@@ -4,7 +4,8 @@
     <TargetFramework>net6.0</TargetFramework>
     <AssemblyName>DaveDiverAP</AssemblyName>
     <RootNamespace>DaveDiverAP</RootNamespace>
-    <Nullable>enable</Nullable>
+    <Nullable>disable</Nullable>
+    <NoWarn>$(NoWarn);8632</NoWarn>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <LangVersion>latest</LangVersion>
     <!-- Copy output DLL to BepInEx plugins folder if GamePath is configured -->
