@@ -16,11 +16,10 @@
   <!-- Import game path if configured -->
   <Import Project="..\GamePath.props" Condition="Exists('..\GamePath.props')" />
 
-  <PropertyGroup Condition="'$(GamePath)' != ''">
-    <PostBuildEvent>
-      copy "$(TargetPath)" "$(GamePath)\BepInEx\plugins\DaveDiverAP.dll"
-    </PostBuildEvent>
-  </PropertyGroup>
+  <Target Name="CopyToGame" AfterTargets="Build" Condition="'$(GamePath)' != ''">
+    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(GamePath)\BepInEx\plugins\" />
+    <Message Text="Copied DaveDiverAP.dll to $(GamePath)\BepInEx\plugins\" Importance="high" />
+  </Target>
 
   <!-- Archipelago client via NuGet — no manual DLL needed -->
   <ItemGroup>
