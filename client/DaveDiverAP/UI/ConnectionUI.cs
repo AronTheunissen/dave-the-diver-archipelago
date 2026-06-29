@@ -70,9 +70,8 @@ namespace DaveDiverAP.UI
 
         public void Update()
         {
-            // Toggle UI with F9
-            if (Input.GetKeyDown(KeyCode.F9))
-                _isVisible = !_isVisible;
+            // TODO: Toggle UI with F9 — Input.GetKeyDown not available without InputLegacyModule
+            // Add UnityEngine.InputLegacyModule.dll to client/lib/interop/ to enable this
         }
 
         public void OnGUI()

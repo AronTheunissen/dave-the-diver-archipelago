@@ -68,15 +68,19 @@ namespace DaveDiverAP
                 Session.Socket.ErrorReceived += OnErrorReceived;
                 Session.Socket.SocketClosed += OnSocketClosed;
 
-                var loginResult = await Session.ConnectAsync();
+                // ConnectAsync() — handle connection via socket state
+                // The library fires SocketClosed/ErrorReceived on failure
+                // On success, Session.Socket.Connected becomes true
+                await Session.ConnectAsync();
 
-                // Archipelago.MultiClient.Net returns LoginSuccessful or LoginFailure
-                if (loginResult is LoginSuccessful loginSuccess)
+                if (Session.Socket.Connected)
                 {
                     Log.LogInfo($"Connected to Archipelago!");
 
-                    // Parse slot data from server
-                    SlotData = new SlotData(loginSuccess.SlotData ?? new System.Collections.Generic.Dictionary<string, object>());
+                    // Parse slot data — available via session after connect
+                    var slotDataRaw = Session.DataStorage?.GetSlotData() 
+                        ?? new System.Collections.Generic.Dictionary<string, object>();
+                    SlotData = new SlotData(slotDataRaw);
 
                     // Initialize Death Link if enabled
                     DeathLinkHandler.Initialize(Session!);
@@ -107,17 +111,10 @@ namespace DaveDiverAP
                     OnConnectionStatusChanged?.Invoke($"Connected as {SlotName}");
                     return true;
                 }
-                else if (loginResult is LoginFailure loginFailure)
-                {
-                    var errors = string.Join(", ", loginFailure.Errors ?? System.Array.Empty<string>());
-                    Log.LogError($"Connection failed: {errors}");
-                    OnConnectionStatusChanged?.Invoke($"Failed: {errors}");
-                    return false;
-                }
                 else
                 {
-                    Log.LogError("Connection failed: unknown result");
-                    OnConnectionStatusChanged?.Invoke("Failed: unknown error");
+                    Log.LogError("Connection failed: socket not connected");
+                    OnConnectionStatusChanged?.Invoke("Failed: could not connect");
                     return false;
                 }
             }
