@@ -35,7 +35,7 @@ namespace DaveDiverAP.Patches
             if (scene == null) return;
 
             // Primary: use EnumBossFishType enum (confirmed exact values)
-            var locationName = BossNameMapper.GetLocationName(scene.bossType);
+            var locationName = BossNameMapper.GetLocationName((int)scene.bossType);
 
             // Fallback: use bossSceneSO.name substring match for bosses not in enum
             if (locationName == null && scene.bossSceneSO != null)

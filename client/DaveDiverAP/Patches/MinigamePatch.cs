@@ -12,42 +12,45 @@ namespace DaveDiverAP.Patches
     [HarmonyPatch]
     public static class MinigamePatch
     {
-        // ✅ CONFIRMED via dump.cs: SeahorseRaceSessionPlay is real (sealed class, implements ISessionPlay)
+        // TODO: SeahorseRaceSessionPlay confirmed via dump.cs but NOT found in current interop DLL.
+        // Regenerate interop by relaunching the game with BepInEx, then copy a fresh Assembly-CSharp.dll.
+        //
+        // SeahorseRaceSessionPlay is real (sealed class, implements ISessionPlay)
         //    public void OnGoal(int lane) — fires when ANY racer reaches the finish line
         //    private IEnumerator OnGoalPlayer() — coroutine called internally (NOT hookable by Harmony)
         //    We hook OnGoal(int lane) and check if lane == playerLane (4, per SeahorseRaceTrackData.playerLane const)
         //
         //    Difficulty chain (all confirmed via dump.cs):
-        //    SeahorseRaceSessionPlay._session (offset 0x70) → SeahorseRaceSession
-        //    SeahorseRaceSession.trackData → SeahorseRaceTrackData
-        //    SeahorseRaceTrackData.trackKey → SeahorseRaceTrackKey
-        //    SeahorseRaceTrackKey._division → SeahorseRaceTrackKey.Division enum:
+        //    SeahorseRaceSessionPlay._session (offset 0x70) -> SeahorseRaceSession
+        //    SeahorseRaceSession.trackData -> SeahorseRaceTrackData
+        //    SeahorseRaceTrackData.trackKey -> SeahorseRaceTrackKey
+        //    SeahorseRaceTrackKey._division -> SeahorseRaceTrackKey.Division enum:
         //        C = 0 (Easy), B = 1 (Medium), A = 2 (Hard), S = 3 (Expert)
-        [HarmonyPatch(typeof(SeahorseRaceSessionPlay), "OnGoal")]
-        [HarmonyPostfix]
-        public static void OnSeahorseRaceWon_Postfix(SeahorseRaceSessionPlay __instance, int lane)
-        {
-            if (!ArchipelagoClient.IsConnected) return;
-            if (lane != 4) return;  // playerLane = 4 (const in SeahorseRaceTrackData)
-
-            // Walk the chain: _session → trackData → trackKey → division
-            var session = Traverse.Create(__instance).Field("_session").GetValue<SeahorseRaceSession>();
-            var trackData = session?.trackData;
-            var trackKey = trackData?.trackKey;
-            var division = Traverse.Create(trackKey).Field("_division").GetValue<SeahorseRaceTrackKey.Division>();
-
-            var locationName = division switch
-            {
-                SeahorseRaceTrackKey.Division.C => "Beat Seahorse Racing - Easy",
-                SeahorseRaceTrackKey.Division.B => "Beat Seahorse Racing - Medium",
-                SeahorseRaceTrackKey.Division.A => "Beat Seahorse Racing - Hard",
-                SeahorseRaceTrackKey.Division.S => "Beat Seahorse Racing - Expert",
-                _                               => null
-            };
-
-            if (locationName != null)
-                ArchipelagoClient.CheckLocation(locationName);
-        }
+        //
+        // [HarmonyPatch(typeof(SeahorseRaceSessionPlay), "OnGoal")]
+        // [HarmonyPostfix]
+        // public static void OnSeahorseRaceWon_Postfix(SeahorseRaceSessionPlay __instance, int lane)
+        // {
+        //     if (!ArchipelagoClient.IsConnected) return;
+        //     if (lane != 4) return;  // playerLane = 4 (const in SeahorseRaceTrackData)
+        //
+        //     var session = Traverse.Create(__instance).Field("_session").GetValue<SeahorseRaceSession>();
+        //     var trackData = session?.trackData;
+        //     var trackKey = trackData?.trackKey;
+        //     var division = Traverse.Create(trackKey).Field("_division").GetValue<SeahorseRaceTrackKey.Division>();
+        //
+        //     var locationName = division switch
+        //     {
+        //         SeahorseRaceTrackKey.Division.C => "Beat Seahorse Racing - Easy",
+        //         SeahorseRaceTrackKey.Division.B => "Beat Seahorse Racing - Medium",
+        //         SeahorseRaceTrackKey.Division.A => "Beat Seahorse Racing - Hard",
+        //         SeahorseRaceTrackKey.Division.S => "Beat Seahorse Racing - Expert",
+        //         _                               => null
+        //     };
+        //
+        //     if (locationName != null)
+        //         ArchipelagoClient.CheckLocation(locationName);
+        // }
 
         // TODO: Card mini-games use Balatro-style classes (BalatroGameCardDebuff, etc.)
         // CardGameManager does NOT exist in Assembly-CSharp — find the correct class via Il2CppDumper.

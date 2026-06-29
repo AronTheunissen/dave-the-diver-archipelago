@@ -1,5 +1,4 @@
 using HarmonyLib;
-using UISystemToolbox;
 using BepInEx.Logging;
 
 namespace DaveDiverAP.Patches
@@ -17,17 +16,16 @@ namespace DaveDiverAP.Patches
     {
         private static ManualLogSource Log => Plugin.Log;
 
-        // ✅ CONFIRMED via dump.cs: SaveSystem.LoadSaveData() is the central load entry point.
-        // It fires on "Continue" and after selecting a save slot on the title screen.
-        [HarmonyPatch(typeof(SaveSystem), "LoadSaveData")]
-        [HarmonyPostfix]
-        public static void OnSaveDataLoaded_Postfix()
-        {
-            Log.LogInfo("[SaveLoadPatch] Save data loaded — scheduling item reapply on next boat entry.");
-
-            // Reset the reapply flag so ItemHandler.ReapplyAllItems() fires
-            // on the next InBoat state transition (see GameStatePatch).
-            GameStatePatch.OnSaveLoaded();
-        }
+        // TODO: SaveSystem not found in current interop DLL.
+        // Confirmed via dump.cs: SaveSystem.LoadSaveData() is the central load entry point.
+        // Regenerate interop by relaunching game with BepInEx, then copy fresh SaveSystem.dll.
+        //
+        // [HarmonyPatch(typeof(SaveSystem), "LoadSaveData")]
+        // [HarmonyPostfix]
+        // public static void OnSaveDataLoaded_Postfix()
+        // {
+        //     Log.LogInfo("[SaveLoadPatch] Save data loaded — scheduling item reapply on next boat entry.");
+        //     GameStatePatch.OnSaveLoaded();
+        // }
     }
 }

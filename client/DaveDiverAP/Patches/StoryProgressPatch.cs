@@ -24,17 +24,18 @@ namespace DaveDiverAP.Patches
             BepInEx.Logging.Logger.CreateLogSource("DaveDiverAP.Missions");
 
         // ── Chapter completion ────────────────────────────────────────────────
-        // ✅ CONFIRMED via dump.cs: ChapterManager is the real class (Singleton<ChapterManager>)
-        //    Fields: currentChapterInfo, reservedChapterInfo, _chapters (List<ChapterInfo>)
-        //    ChapterInfo has chapter number data.
-        [HarmonyPatch(typeof(ChapterManager), "set_currentChapterInfo")]
-        [HarmonyPostfix]
-        public static void OnChapterChanged_Postfix(ChapterInfo value)
-        {
-            if (!ArchipelagoClient.IsConnected) return;
-            if (value == null) return;
-            LocationTracker.OnChapterComplete(value.chapterNumber);
-        }
+        // TODO: ChapterManager and ChapterInfo not found in current interop DLL.
+        // Confirmed via dump.cs: ChapterManager is a Singleton with currentChapterInfo (ChapterInfo).
+        // Regenerate interop by relaunching game with BepInEx.
+        //
+        // [HarmonyPatch(typeof(ChapterManager), "set_currentChapterInfo")]
+        // [HarmonyPostfix]
+        // public static void OnChapterChanged_Postfix(ChapterInfo value)
+        // {
+        //     if (!ArchipelagoClient.IsConnected) return;
+        //     if (value == null) return;
+        //     LocationTracker.OnChapterComplete(value.chapterNumber);
+        // }
 
         // ── Mission/Quest completion ──────────────────────────────────────────
         // ✅ CONFIRMED via dump.cs: MissionManager.GetClearMissionDialogData(MissionData, bool)

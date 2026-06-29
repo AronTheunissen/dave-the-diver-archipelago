@@ -36,23 +36,22 @@ namespace DaveDiverAP.Patches
         //    returns true when a VIP mission has been completed and result is pending.
         //    The private coroutine ProcessVIPShowdownResult() handles the actual reward flow.
         //    We hook CanProcessVIPShowdownResult as a postfix — when it returns true, a VIP was served.
-        [HarmonyPatch(typeof(SushiBarManager), "CanProcessVIPShowdownResult")]
-        [HarmonyPostfix]
-        public static void OnVIPMissionComplete_Postfix(bool __result, MissionData missionData, VIPCustomer customer)
-        {
-            if (!ArchipelagoClient.IsConnected) return;
-            if (!__result) return;  // no VIP result ready
-
-            // Log both TIDs for in-game verification (MissionClearTID vs VIP_TID may differ)
-            int missionTID = missionData?.MissionClearTID ?? 0;
-            Plugin.Log.LogInfo($"[VIP] CanProcessVIPShowdownResult: MissionClearTID={missionTID}, customer={customer?.AssetKey}");
-
-            var locationName = VIPNameMapper.GetLocationName(missionTID);
-            if (locationName != null)
-                ArchipelagoClient.CheckLocation(locationName);
-            else
-                Plugin.Log.LogWarning($"[VIP] Unknown VIP mission TID: {missionTID} — add to VIPNameMapper");
-        }
+        // TODO: VIPCustomer not found in current interop DLL.
+        // Confirmed via dump.cs: SushiBarManager.CanProcessVIPShowdownResult(out MissionData, out MissionConditionData, out VIPCustomer)
+        // Regenerate interop by relaunching game with BepInEx.
+        //
+        // [HarmonyPatch(typeof(SushiBarManager), "CanProcessVIPShowdownResult")]
+        // [HarmonyPostfix]
+        // public static void OnVIPMissionComplete_Postfix(bool __result, MissionData missionData, VIPCustomer customer)
+        // {
+        //     if (!ArchipelagoClient.IsConnected) return;
+        //     if (!__result) return;
+        //     int missionTID = missionData?.MissionClearTID ?? 0;
+        //     Plugin.Log.LogInfo($"[VIP] MissionClearTID={missionTID}");
+        //     var locationName = VIPNameMapper.GetLocationName(missionTID);
+        //     if (locationName != null) ArchipelagoClient.CheckLocation(locationName);
+        //     else Plugin.Log.LogWarning($"[VIP] Unknown VIP mission TID: {missionTID}");
+        // }
     }
 
     public static class VIPNameMapper
