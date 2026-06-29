@@ -84,9 +84,6 @@ namespace DaveDiverAP.Patches
             { "Torben",          "Defeat: Torben" },
         };
 
-        public static string? GetLocationName(EnumBossFishType bossType) =>
-            _enumMap.TryGetValue((int)bossType, out var name) ? name : null;
-
         public static string? GetDisplayNameFromScene(string sceneName)
         {
             foreach (var kvp in _nameMap)
