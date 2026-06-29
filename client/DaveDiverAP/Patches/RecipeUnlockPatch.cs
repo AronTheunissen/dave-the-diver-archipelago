@@ -17,30 +17,37 @@ namespace DaveDiverAP.Patches
         // ✅ CONFIRMED via dump.cs: SaveData has AddUnlockRecipeSaveData(int id, DateTime unlockTime)
         // Hooking AddUnlockRecipeSaveData fires exactly when a recipe is unlocked and persisted.
         // The int id is the recipe's design sheet TID.
-        [HarmonyPatch(typeof(global::SaveData), "AddUnlockRecipeSaveData")]
-        [HarmonyPostfix]
-        public static void UnlockRecipe_Postfix(int id)
-        {
-            if (!ArchipelagoClient.IsConnected) return;
-
-            var recipeName = RecipeNameMapper.GetDisplayName(id);
-            if (recipeName != null)
-                LocationTracker.OnRecipeUnlocked(recipeName);
-        }
+        //
+        // ⚠️ DISABLED: Fires during save loading (game replays all unlocked recipes on load),
+        //    causing a silent crash on "Continue" from the main menu.
+        //    Need a different hook point that only fires on NEW unlocks, not load replays.
+        //    Consider hooking the UI popup that shows when a recipe is newly unlocked instead.
+        //
+        // [HarmonyPatch(typeof(global::SaveData), "AddUnlockRecipeSaveData")]
+        // [HarmonyPostfix]
+        // public static void UnlockRecipe_Postfix(int id)
+        // {
+        //     if (!ArchipelagoClient.IsConnected) return;
+        //     var recipeName = RecipeNameMapper.GetDisplayName(id);
+        //     if (recipeName != null)
+        //         LocationTracker.OnRecipeUnlocked(recipeName);
+        // }
 
         // ── Dish upgrade (research complete using Artisan's Flame) ───────────
         // ✅ CONFIRMED via dump.cs: SaveData has UpdateUnlockRecipeSave() and
         //    UnlockRecipeSave has ObscuredInt m_UnlockRecipeID and level data.
         // Hook UpdateUnlockRecipeSave to catch research level-ups.
-        [HarmonyPatch(typeof(global::SaveData), "UpdateUnlockRecipeSave")]
-        [HarmonyPostfix]
-        public static void UpgradeDish_Postfix()
-        {
-            if (!ArchipelagoClient.IsConnected) return;
-            // Enumerate all unlock recipes and check for new level-ups
-            // TODO: LocationTracker.OnDishResearchUpdated not yet implemented
-            // LocationTracker.OnDishResearchUpdated();
-        }
+        //
+        // ⚠️ DISABLED: Same save-load replay issue as AddUnlockRecipeSaveData above.
+        //
+        // [HarmonyPatch(typeof(global::SaveData), "UpdateUnlockRecipeSave")]
+        // [HarmonyPostfix]
+        // public static void UpgradeDish_Postfix()
+        // {
+        //     if (!ArchipelagoClient.IsConnected) return;
+        //     // TODO: LocationTracker.OnDishResearchUpdated not yet implemented
+        //     // LocationTracker.OnDishResearchUpdated();
+        // }
     }
 
     public static class RecipeNameMapper
