@@ -14,16 +14,16 @@ namespace DaveDiverAP.Patches
         //    is the unified mission update hub. Challenges use a specific MissionClearType.
         //    We hook MissionManager.UpdateMission and filter for challenge-type missions
         //    by checking if the target TID matches our challenge map.
-        [HarmonyPatch(typeof(MissionManager), "UpdateMission", new[] { typeof(MissionClearType), typeof(int), typeof(int) })]
-        [HarmonyPostfix]
-        public static void OnChallengeComplete_Postfix(MissionClearType type, int target, int count)
-        {
-            if (!ArchipelagoClient.IsConnected) return;
-
-            var locationName = ChallengeNameMapper.GetLocationName(target);
-            if (locationName != null)
-                ArchipelagoClient.CheckLocation(locationName);
-        }
+        // TODO: UpdateMission signature doesn't match (MissionClearType, int, int) in this game version.
+        // Use UnityExplorer to find the correct UpdateMission overload signature.
+        // [HarmonyPatch(typeof(MissionManager), "UpdateMission", new[] { typeof(MissionClearType), typeof(int), typeof(int) })]
+        // [HarmonyPostfix]
+        // public static void OnChallengeComplete_Postfix(MissionClearType type, int target, int count)
+        // {
+        //     if (!ArchipelagoClient.IsConnected) return;
+        //     var locationName = ChallengeNameMapper.GetLocationName(target);
+        //     if (locationName != null) ArchipelagoClient.CheckLocation(locationName);
+        // }
     }
 
     public static class ChallengeNameMapper
