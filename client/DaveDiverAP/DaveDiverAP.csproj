@@ -58,15 +58,27 @@
   <!-- Copy from: <GamePath>/BepInEx/interop/ into client/lib/interop/ -->
   <ItemGroup>
     <Reference Include="Assembly-CSharp">
-      <HintPath>..\lib\interop\Assembly-CSharp.dll</HintPath>
+      <HintPath>..\\lib\\interop\\Assembly-CSharp.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="Assembly-CSharp-firstpass">
+      <HintPath>..\\lib\\interop\\Assembly-CSharp-firstpass.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="SaveSystem">
+      <HintPath>..\\lib\\interop\\SaveSystem.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="EzCoding">
+      <HintPath>..\\lib\\interop\\EzCoding.dll</HintPath>
       <Private>false</Private>
     </Reference>
     <Reference Include="UnityEngine">
-      <HintPath>..\lib\interop\UnityEngine.dll</HintPath>
+      <HintPath>..\\lib\\interop\\UnityEngine.dll</HintPath>
       <Private>false</Private>
     </Reference>
     <Reference Include="UnityEngine.CoreModule">
-      <HintPath>..\lib\interop\UnityEngine.CoreModule.dll</HintPath>
+      <HintPath>..\\lib\\interop\\UnityEngine.CoreModule.dll</HintPath>
       <Private>false</Private>
     </Reference>
   </ItemGroup>
