@@ -20,26 +20,12 @@ namespace DaveDiverAP.Patches
     /// NOTE: Kronosaurus and Phantom Jellyfish are missing from EnumBossFishType!
     /// They may use bossSceneSO.name fallback instead.
     /// </summary>
-    [HarmonyPatch(typeof(CommonBossDead), "DoJob")]
+    [HarmonyPatch]
     public static class BossDefeatedPatch
     {
         // Hook CommonBossDead.DoJob() — fires for ALL bosses via the BossSceneSO job system
         // Read BossScene.Current.bossType (EnumBossFishType) to identify which boss died
-        [HarmonyPrefix]
-        public static bool OnBossDefeated_Prefix()
-        {
-            // Guard: if BossScene.Current is null the original DoJob will throw a
-            // NullReferenceException (it dereferences the scene internally).
-            // Returning false skips the original method and prevents the crash loop.
-            var scene = BossScene.Current;
-            if (scene == null)
-            {
-                Plugin.Log.LogWarning("[Boss] CommonBossDead.DoJob called with no active BossScene — skipping.");
-                return false; // skip original
-            }
-            return true; // allow original to run
-        }
-
+        [HarmonyPatch(typeof(CommonBossDead), "DoJob")]
         [HarmonyPostfix]
         public static void OnBossDefeated_Postfix()
         {
