@@ -3,11 +3,15 @@ $interop = "C:\Program Files (x86)\Steam\steamapps\common\Dave the Diver\BepInEx
 $terms = @("FarmSave", "FishFarm", "Seahorse", "CardGame", "VIPCustomer", "VipCustomer", "Chapter", "SaveSystem", "ObscuredBool", "Obscured")
 
 foreach ($term in $terms) {
-    $results = Select-String -Path "$interop\Assembly-CSharp.dll" -Pattern $term -Encoding Byte -List
-    if ($results) { Write-Host "FOUND '$term' in Assembly-CSharp.dll" }
+    $bytes = [System.IO.File]::ReadAllBytes("$interop\Assembly-CSharp.dll")
+    $text = [System.Text.Encoding]::ASCII.GetString($bytes)
+    if ($text -match $term) { Write-Host "FOUND '$term' in Assembly-CSharp.dll" }
 }
 
+Write-Host ""
+Write-Host "Searching all DLLs for ObscuredBool..."
 foreach ($dll in Get-ChildItem "$interop\*.dll") {
-    $results = Select-String -Path $dll.FullName -Pattern "ObscuredBool" -Encoding Byte -List
-    if ($results) { Write-Host "FOUND 'ObscuredBool' in $($dll.Name)" }
+    $bytes = [System.IO.File]::ReadAllBytes($dll.FullName)
+    $text = [System.Text.Encoding]::ASCII.GetString($bytes)
+    if ($text -match "ObscuredBool") { Write-Host "FOUND 'ObscuredBool' in $($dll.Name)" }
 }
