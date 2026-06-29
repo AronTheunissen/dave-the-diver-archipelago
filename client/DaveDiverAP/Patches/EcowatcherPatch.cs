@@ -36,7 +36,8 @@ namespace DaveDiverAP.Patches
         {
             if (!ArchipelagoClient.IsConnected) return;
             // Level-up detected — notify tracker (it tracks current level internally)
-            LocationTracker.OnEcowatcherLevelUp(LocationTracker.GetEcowatcherLevel());
+            // TODO: GetEcowatcherLevel not yet implemented in LocationTracker
+            // LocationTracker.OnEcowatcherLevelUp(LocationTracker.GetEcowatcherLevel());
         }
     }
 }

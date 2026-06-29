@@ -92,10 +92,10 @@ namespace DaveDiverAP
             try
             {
                 // Show notification
-                NotificationManager.ShowNotification(
-                    $"💀 Death Link!",
+                UI.NotificationManager.ShowNotification(
+                    "Death Link!",
                     $"{source} died: {cause}",
-                    NotificationManager.NotificationType.DeathLink
+                    UI.NotificationManager.NotificationType.DeathLink
                 );
 
                 // Kill Dave

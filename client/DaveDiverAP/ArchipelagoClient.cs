@@ -30,7 +30,7 @@ namespace DaveDiverAP
         public static string Password   { get; set; } = "";
 
         // ── Events ──────────────────────────────────────────────────────────
-        public static event Action<NetworkItem>? OnItemReceived;
+        public static event Action<ItemInfo>? OnItemReceived;
         public static event Action<string>?      OnConnectionStatusChanged;
         public static event Action?              OnConnected;
         public static event Action?              OnDisconnected;
@@ -75,7 +75,7 @@ namespace DaveDiverAP
                     Log.LogInfo($"Connected to Archipelago! Game: {result.SlotInfo?.Game}");
 
                     // Parse slot data from server
-                    SlotData = new SlotData(result.SlotData);
+                    SlotData = new SlotData(result.SlotData ?? new System.Collections.Generic.Dictionary<string, object>());
 
                     // Initialize Death Link if enabled
                     DeathLinkHandler.Initialize(Session!);
@@ -108,7 +108,7 @@ namespace DaveDiverAP
                 }
                 else
                 {
-                    var errors = string.Join(", ", result.ErrorMessage);
+                    var errors = string.Join(", ", result.Errors ?? System.Array.Empty<string>());
                     Log.LogError($"Connection failed: {errors}");
                     OnConnectionStatusChanged?.Invoke($"Failed: {errors}");
                     return false;
@@ -189,19 +189,19 @@ namespace DaveDiverAP
 
         // ── Item receiving ───────────────────────────────────────────────────
 
-        private static void OnItemReceivedHandler(ReceivedItemsHelper helper)
+        private static void OnItemReceivedHandler(IReceivedItemsHelper helper)
         {
             while (helper.Any())
             {
                 var item = helper.DequeueItem();
 
-                if (item.ItemIndex <= _lastItemIndex)
+                if (helper.Index <= _lastItemIndex)
                 {
                     // Already processed this item in a previous session
                     continue;
                 }
 
-                _lastItemIndex = item.ItemIndex;
+                _lastItemIndex = helper.Index;
                 Log.LogInfo($"Item received: {item.ItemName} (ID: {item.ItemId}) from {item.Player}");
                 OnItemReceived?.Invoke(item);
 

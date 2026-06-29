@@ -71,16 +71,14 @@ namespace DaveDiverAP.UI
         public void Update()
         {
             // Toggle UI with F9
-            if (Input.GetKeyDown(KeyCode.F9))
+            if (UnityEngine.Input.GetKeyDown(KeyCode.F9))
                 _isVisible = !_isVisible;
         }
 
         public void OnGUI()
         {
             if (!_isVisible) return;
-
-            // Use ImGui for rendering
-            ImGuiUn.Layout("ArchipelagoConnection", DrawUI);
+            DrawUI();
         }
 
         // Active tab index
@@ -250,7 +248,7 @@ namespace DaveDiverAP.UI
         private void DrawItemLog()
         {
             ImGui.Text("Recent Items Received:");
-            ImGui.BeginChild("ItemLog", new System.Numerics.Vector2(0, 120), true);
+            ImGui.BeginChild("ItemLog", new System.Numerics.Vector2(0, 120), ImGuiChildFlags.Border);
 
             if (_itemLog.Count == 0)
             {
@@ -306,7 +304,7 @@ namespace DaveDiverAP.UI
             _statusIsError = status.StartsWith("Failed") || status.StartsWith("Error");
         }
 
-        private void OnItemReceived(Archipelago.MultiClient.Net.Models.NetworkItem item)
+        private void OnItemReceived(Archipelago.MultiClient.Net.Helpers.ItemInfo item)
         {
             var entry = $"[{DateTime.Now:HH:mm:ss}] {item.ItemName}";
             _itemLog.Enqueue(entry);

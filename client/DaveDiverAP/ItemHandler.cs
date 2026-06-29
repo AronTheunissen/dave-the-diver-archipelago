@@ -215,13 +215,13 @@ namespace DaveDiverAP
         /// Route a received item to the appropriate handler based on its name.
         /// Called from the main thread (via ItemQueue) so game APIs are safe to call.
         /// </summary>
-        public static void ApplyItem(NetworkItem item)
+        public static void ApplyItem(Archipelago.MultiClient.Net.Helpers.ItemInfo item)
         {
             var name = item.ItemName;
             Log.LogInfo($"[ItemHandler] Applying item: {name}");
 
             // Save item index so we don't replay it next session
-            SaveData.SetLastItemIndex((int)item.ItemIndex);
+            SaveData.SetLastItemIndex((int)item.ItemId);
 
             // ── Progressive equipment ────────────────────────────────────────
             if (name == "Progressive Oxygen Tank")    { UpgradeOxygenTank();    return; }
@@ -368,7 +368,7 @@ namespace DaveDiverAP
             // for each level cumulatively — the manager is idempotent (safe to call
             // with already-applied TIDs; it checks IsAlreadyUpgraded internally).
             for (int i = 0; i < level && i < OxygenTankUpgradeTIDs.Length; i++)
-                PhoneAppUpgradeManager.Instance?.ApplyUpgrade(OxygenTankUpgradeTIDs[i]);
+                PhoneAppUpgradeManager.Instance?.UpgradeByTID(OxygenTankUpgradeTIDs[i]);
         }
 
         private static void UpgradeHarpoon()
@@ -382,7 +382,7 @@ namespace DaveDiverAP
         private static void ApplyHarpoonLevel(int level)
         {
             for (int i = 0; i < level && i < HarpoonUpgradeTIDs.Length; i++)
-                PhoneAppUpgradeManager.Instance?.ApplyUpgrade(HarpoonUpgradeTIDs[i]);
+                PhoneAppUpgradeManager.Instance?.UpgradeByTID(HarpoonUpgradeTIDs[i]);
         }
 
         private static void UpgradeDivingSuit()
@@ -396,7 +396,7 @@ namespace DaveDiverAP
         private static void ApplyDivingSuitLevel(int level)
         {
             for (int i = 0; i < level && i < DivingSuitUpgradeTIDs.Length; i++)
-                PhoneAppUpgradeManager.Instance?.ApplyUpgrade(DivingSuitUpgradeTIDs[i]);
+                PhoneAppUpgradeManager.Instance?.UpgradeByTID(DivingSuitUpgradeTIDs[i]);
         }
 
         private static void UpgradeCargoBox()
@@ -410,7 +410,7 @@ namespace DaveDiverAP
         private static void ApplyCargoBoxLevel(int level)
         {
             for (int i = 0; i < level && i < CargoBoxUpgradeTIDs.Length; i++)
-                PhoneAppUpgradeManager.Instance?.ApplyUpgrade(CargoBoxUpgradeTIDs[i]);
+                PhoneAppUpgradeManager.Instance?.UpgradeByTID(CargoBoxUpgradeTIDs[i]);
         }
 
         // ── Key items via MissionManager ──────────────────────────────────────
@@ -447,7 +447,9 @@ namespace DaveDiverAP
             // Sea People's Trust gates Chapter 4 + Fish Farm unlock via a relationship flag.
             // The game checks SeaPeopleRelationshipManager.get_TrustLevel() >= threshold.
             // We set it to max (100) so all trust-gated content is available.
-            SeaPeopleRelationshipManager.Instance?.SetTrustLevel(100);
+            // TODO: SeaPeopleRelationshipManager not found in current interop — comment out until verified
+            // SeaPeopleRelationshipManager.Instance?.SetTrustLevel(100);
+            Log.LogWarning("[ItemHandler] SeaPeopleRelationshipManager not available — trust level not set");
         }
 
         /// <summary>
@@ -553,7 +555,7 @@ namespace DaveDiverAP
             // We use the SNSInfoManager singleton which owns the save reference.
             var snsManager = SNSInfoManager.Instance;
             if (snsManager == null) return;
-            var snsSave = snsManager.InfoSave;
+            var snsSave = snsManager.infoSave;
             if (snsSave == null) return;
             // Only advance rank — never lower it (cumulative progressive item)
             if (snsSave.get_grade() < rank)
@@ -591,7 +593,8 @@ namespace DaveDiverAP
             // ChapterManager.SetChapterComplete(int) is a convenience method
             // confirmed in dump.cs that marks chapter N complete without triggering
             // the in-progress cutscene.
-            ChapterManager.Instance?.SetChapterComplete(chapter);
+            // TODO: ChapterManager not found in current interop — disabled until verified
+            Log.LogWarning($"[ItemHandler] ChapterManager not available — chapter {chapter} not marked complete");
         }
 
         // ── Charms ────────────────────────────────────────────────────────────
@@ -613,7 +616,7 @@ namespace DaveDiverAP
             }
             // AutoEquipCharmItem grants the charm and auto-equips it if a slot is free.
             // This is the same call the game uses when the player earns a charm normally.
-            LobbyCharmSwapPanel.Instance?.AutoEquipCharmItem(tid);
+            LobbyCharmSwapPanel.instance?.AutoEquipCharmItem(tid);
         }
 
         // ── Weapons ───────────────────────────────────────────────────────────
@@ -662,17 +665,9 @@ namespace DaveDiverAP
                 return;
             }
 
-            var gameSave = global::SaveData.Instance;
-            if (gameSave == null) return;
-
-            // Check current research level in game save to avoid duplicating
-            if (gameSave.unlockRecipeData.TryGetValue(tid, out var recipeSave))
-            {
-                int currentGameLevel = recipeSave.get_researchLevel();
-                int levelsToApply = level - currentGameLevel;
-                for (int i = 0; i < levelsToApply; i++)
-                    gameSave.UpdateUnlockRecipeSave();
-            }
+            // TODO: SaveData.Instance accessor not confirmed in current interop
+            // Will apply dish research when SaveData singleton access is verified
+            Log.LogWarning($"[ItemHandler] Cannot apply dish research for {dishName} — SaveData.Instance not confirmed");
         }
 
         // ── Recipes ───────────────────────────────────────────────────────────
@@ -695,7 +690,7 @@ namespace DaveDiverAP
             }
             // AddUnlockRecipeSaveData marks the recipe as unlocked in the game's save.
             // DateTime.Now is used as the unlock time (same as normal gameplay).
-            global::SaveData.Instance?.AddUnlockRecipeSaveData(tid, DateTime.Now);
+            global::SaveData.GetInstance()?.AddUnlockRecipeSaveData(tid, DateTime.Now);
         }
 
         // ── Ingredients ───────────────────────────────────────────────────────
@@ -730,7 +725,7 @@ namespace DaveDiverAP
                        : itemName.Contains("Medium") ? 2000
                        : 500;
 
-            var playerSave = global::SaveData.Instance?.PlayerInfoSave;
+            var playerSave = global::SaveData.GetInstance()?.PlayerInfoSave;
             if (playerSave == null) return;
 
             if (type == "gold")

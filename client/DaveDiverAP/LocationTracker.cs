@@ -50,7 +50,7 @@ namespace DaveDiverAP
 
             // Check if this completes the goal
             if (chapterNumber == 7 && ArchipelagoClient.SlotData?.Goal == 0)
-                CheckYawieDefeated();
+                GoalTracker.OnYawieDefeated();
         }
 
         public static void OnSeaPeopleVillageDiscovered()

@@ -57,7 +57,7 @@ namespace DaveDiverAP
             // Create persistent UI GameObject (survives scene changes)
             // All MonoBehaviours go on this single object
             _uiObject = new GameObject("ArchipelagoUI");
-            Object.DontDestroyOnLoad(_uiObject);
+            UnityEngine.Object.DontDestroyOnLoad(_uiObject);
             _uiObject.AddComponent<ConnectionUI>();
             _uiObject.AddComponent<NotificationManager>();
             _uiObject.AddComponent<ItemQueue>();
@@ -84,7 +84,7 @@ namespace DaveDiverAP
             ArchipelagoClient.Disconnect();
             DeathLinkHandler.Dispose();
             if (_uiObject != null)
-                Object.Destroy(_uiObject);
+                UnityEngine.Object.Destroy(_uiObject);
             return base.Unload();
         }
     }

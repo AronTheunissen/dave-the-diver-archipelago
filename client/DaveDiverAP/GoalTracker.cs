@@ -144,10 +144,10 @@ namespace DaveDiverAP
                 Log.LogInfo($"GoalTracker: Goal {goal} completed! Sending completion to server.");
 
                 // Show celebration notification
-                NotificationManager.ShowNotification(
-                    "🏆 Goal Complete!",
+                UI.NotificationManager.ShowNotification(
+                    "Goal Complete!",
                     GetGoalName(goal),
-                    NotificationManager.NotificationType.Goal,
+                    UI.NotificationManager.NotificationType.Goal,
                     duration: 10f
                 );
 

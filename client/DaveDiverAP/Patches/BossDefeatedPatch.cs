@@ -38,13 +38,14 @@ namespace DaveDiverAP.Patches
             var locationName = BossNameMapper.GetLocationName((int)scene.bossType);
 
             // Fallback: use bossSceneSO.name substring match for bosses not in enum
-            if (locationName == null && scene.bossSceneSO != null)
-                locationName = BossNameMapper.GetDisplayNameFromScene(scene.bossSceneSO.name);
+            // TODO: bossSceneSO requires Sirenix.Serialization.dll — disabled until added to lib
+            // if (locationName == null && scene.bossSceneSO != null)
+            //     locationName = BossNameMapper.GetDisplayNameFromScene(scene.bossSceneSO.name);
 
             if (locationName != null)
                 LocationTracker.OnBossDefeated(locationName);
             else
-                Plugin.Log.LogWarning($"[Boss] Unknown boss type: {scene.bossType} / SO: {scene.bossSceneSO?.name}");
+                Plugin.Log.LogWarning($"[Boss] Unknown boss type: {scene.bossType}");
         }
     }
 

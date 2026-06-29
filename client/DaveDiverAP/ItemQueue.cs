@@ -1,5 +1,6 @@
 using System.Collections.Concurrent;
 using Archipelago.MultiClient.Net.Models;
+using Archipelago.MultiClient.Net.Helpers;
 using BepInEx.Logging;
 using UnityEngine;
 
@@ -20,7 +21,7 @@ namespace DaveDiverAP
     {
         public static ItemQueue? Instance { get; private set; }
 
-        private static readonly ConcurrentQueue<NetworkItem> _queue = new();
+        private static readonly ConcurrentQueue<ItemInfo> _queue = new();
         private static ManualLogSource Log => Plugin.Log;
 
         // Only process items when Dave is standing on the boat.
@@ -51,7 +52,7 @@ namespace DaveDiverAP
         /// Enqueue an item for processing on the main thread.
         /// Safe to call from any thread.
         /// </summary>
-        public static void Enqueue(NetworkItem item)
+        public static void Enqueue(ItemInfo item)
         {
             _queue.Enqueue(item);
         }
@@ -67,11 +68,11 @@ namespace DaveDiverAP
                 ItemHandler.ApplyItem(item);
 
                 // Show notification
-                var sender = item.Player.Name ?? "Archipelago";
-                NotificationManager.ShowNotification(
+                var sender = item.Player?.Name ?? "Archipelago";
+                UI.NotificationManager.ShowNotification(
                     $"🎁 {item.ItemName}",
                     $"Sent by {sender}",
-                    NotificationManager.NotificationType.ItemReceived
+                    UI.NotificationManager.NotificationType.ItemReceived
                 );
             }
         }

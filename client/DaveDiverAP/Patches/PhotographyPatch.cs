@@ -23,7 +23,8 @@ namespace DaveDiverAP.Patches
         {
             if (!ArchipelagoClient.IsConnected) return;
             _totalPhotos++;
-            LocationTracker.OnPhotoTaken(_totalPhotos, 0 /* photozoneTID — read from context if needed */);
+            // TODO: LocationTracker.OnPhotoTaken not yet implemented
+            // LocationTracker.OnPhotoTaken(_totalPhotos, 0);
         }
 
         private static int _totalPhotos = 0;

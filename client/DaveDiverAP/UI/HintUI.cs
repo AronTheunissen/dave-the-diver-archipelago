@@ -120,7 +120,7 @@ namespace DaveDiverAP.UI
             ImGui.Spacing();
 
             // Scrollable hint list
-            ImGui.BeginChild("HintList", new System.Numerics.Vector2(0, 200), true);
+            ImGui.BeginChild("HintList", new System.Numerics.Vector2(0, 200), ImGuiChildFlags.Border);
 
             foreach (var hint in hints)
             {
@@ -182,7 +182,7 @@ namespace DaveDiverAP.UI
                 {
                     _searchText = ""; // Clear after successful request
                     NotificationManager.ShowNotification(
-                        "💡 Hint Requested",
+                        "Hint Requested",
                         "Check the hint list for results.",
                         NotificationManager.NotificationType.Info
                     );

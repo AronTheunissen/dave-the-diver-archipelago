@@ -79,7 +79,8 @@ namespace DaveDiverAP.UI
         public void OnGUI()
         {
             if (_active.Count == 0) return;
-            ImGuiUn.Layout("Notifications", DrawNotifications);
+            // TODO: ImGuiUn.Layout not available in this ImGui.NET version — use direct ImGui calls
+            DrawNotifications();
         }
 
         private void DrawNotifications()

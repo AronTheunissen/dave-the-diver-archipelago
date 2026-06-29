@@ -55,12 +55,12 @@ namespace DaveDiverAP.Patches
 
             if (fishName != null)
             {
-                Log.LogInfo($"[FishCaught] GO={goName} → Location=\"First Catch: {fishName}\"");
+                Plugin.Log.LogInfo($"[FishCaught] GO={goName} → Location=\"First Catch: {fishName}\"");
                 LocationTracker.OnFirstFishCatch(fishName);
             }
             else
             {
-                Log.LogInfo($"[FishCaught] GO={goName} → UNMAPPED (add to FishNameMapper)");
+                Plugin.Log.LogInfo($"[FishCaught] GO={goName} → UNMAPPED (add to FishNameMapper)");
             }
         }
     }

@@ -63,7 +63,8 @@ namespace DaveDiverAP.Patches
         {
             if (!ArchipelagoClient.IsConnected) return;
             // Re-evaluate researched recipe count from save data
-            LocationTracker.OnResearchedRecipesChanged(LocationTracker.GetResearchedRecipeCount());
+            // TODO: GetResearchedRecipeCount not yet implemented in LocationTracker
+            // LocationTracker.OnResearchedRecipesChanged(LocationTracker.GetResearchedRecipeCount());
         }
     }
 }

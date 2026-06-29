@@ -58,10 +58,10 @@ namespace DaveDiverAP
             if (HintPoints <= 0)
             {
                 Log.LogWarning("Not enough hint points!");
-                NotificationManager.ShowNotification(
+                UI.NotificationManager.ShowNotification(
                     "💡 No Hint Points",
                     "Complete more checks to earn hint points.",
-                    NotificationManager.NotificationType.Info
+                    UI.NotificationManager.NotificationType.Info
                 );
                 return false;
             }
@@ -69,14 +69,6 @@ namespace DaveDiverAP
             try
             {
                 Log.LogInfo($"Requesting hint for item: {itemName}");
-
-                // Look up item ID
-                var itemId = ArchipelagoClient.Session.Items.GetItemIdFromName(itemName);
-                if (itemId == -1)
-                {
-                    Log.LogWarning($"Unknown item: {itemName}");
-                    return false;
-                }
 
                 // Send hint request packet
                 var packet = new SayPacket { Text = $"!hint {itemName}" };
@@ -102,10 +94,10 @@ namespace DaveDiverAP
 
             if (HintPoints <= 0)
             {
-                NotificationManager.ShowNotification(
+                UI.NotificationManager.ShowNotification(
                     "💡 No Hint Points",
                     "Complete more checks to earn hint points.",
-                    NotificationManager.NotificationType.Info
+                    UI.NotificationManager.NotificationType.Info
                 );
                 return false;
             }
@@ -140,7 +132,7 @@ namespace DaveDiverAP
 
         // ── Callbacks ─────────────────────────────────────────────────────────
 
-        private static void OnHintsReceived(Hint[] hints)
+        private static void OnHintsReceived(Archipelago.MultiClient.Net.Models.Hint[] hints)
         {
             ReceivedHints.Clear();
             ReceivedHints.AddRange(hints);
