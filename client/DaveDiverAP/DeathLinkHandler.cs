@@ -1,4 +1,5 @@
 using System;
+using Archipelago.MultiClient.Net;
 using Archipelago.MultiClient.Net.BounceFeatures.DeathLink;
 using BepInEx.Logging;
 

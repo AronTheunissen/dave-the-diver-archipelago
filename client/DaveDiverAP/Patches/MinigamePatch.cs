@@ -49,13 +49,15 @@ namespace DaveDiverAP.Patches
                 ArchipelagoClient.CheckLocation(locationName);
         }
 
-        // Fires when all card mini-games are completed
-        [HarmonyPatch(typeof(CardGameManager), "OnAllGamesComplete")]  // PLACEHOLDER
-        [HarmonyPostfix]
-        public static void OnAllCardGamesComplete_Postfix()
-        {
-            if (!ArchipelagoClient.IsConnected) return;
-            ArchipelagoClient.CheckLocation("Complete All Card Mini-games");
-        }
+        // TODO: Card mini-games use Balatro-style classes (BalatroGameCardDebuff, etc.)
+        // CardGameManager does NOT exist in Assembly-CSharp — find the correct class via Il2CppDumper.
+        // Search for: "BalatroGame", "OnAllGamesComplete", "CardComplete", "BangshaCard"
+        // [HarmonyPatch(typeof(CardGameManager), "OnAllGamesComplete")]  // PLACEHOLDER — class not found
+        // [HarmonyPostfix]
+        // public static void OnAllCardGamesComplete_Postfix()
+        // {
+        //     if (!ArchipelagoClient.IsConnected) return;
+        //     ArchipelagoClient.CheckLocation("Complete All Card Mini-games");
+        // }
     }
 }
