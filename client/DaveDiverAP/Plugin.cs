@@ -28,6 +28,19 @@ namespace DaveDiverAP
             // Load BepInEx config file
             ModConfig.Initialize(Config);
 
+            // Register managed MonoBehaviour types with IL2CPP runtime
+            try
+            {
+                Il2CppInterop.Runtime.Injection.ClassInjector.RegisterTypeInIl2Cpp<ConnectionUI>();
+                Il2CppInterop.Runtime.Injection.ClassInjector.RegisterTypeInIl2Cpp<NotificationManager>();
+                Il2CppInterop.Runtime.Injection.ClassInjector.RegisterTypeInIl2Cpp<ItemQueue>();
+                Log.LogInfo("IL2CPP types registered.");
+            }
+            catch (Exception ex)
+            {
+                Log.LogWarning($"Failed to register IL2CPP types: {ex.Message}");
+            }
+
             // Apply Harmony patches — each wrapped in try/catch so one failure doesn't crash the mod
             _harmony = new Harmony(MyPluginInfo.PLUGIN_GUID);
             var patchTypes = new System.Type[]
@@ -65,9 +78,9 @@ namespace DaveDiverAP
             // Create persistent UI GameObject (survives scene changes)
             _uiObject = new GameObject("ArchipelagoUI");
             UnityEngine.Object.DontDestroyOnLoad(_uiObject);
-            _uiObject.AddComponent(Il2CppInterop.Runtime.Il2CppType.Of<ConnectionUI>());
-            _uiObject.AddComponent(Il2CppInterop.Runtime.Il2CppType.Of<NotificationManager>());
-            _uiObject.AddComponent(Il2CppInterop.Runtime.Il2CppType.Of<ItemQueue>());
+            _uiObject.AddComponent<ConnectionUI>();
+            _uiObject.AddComponent<NotificationManager>();
+            _uiObject.AddComponent<ItemQueue>();
 
             Log.LogInfo("Connection UI created.");
 
