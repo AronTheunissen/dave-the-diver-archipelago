@@ -8,15 +8,11 @@
     <NoWarn>$(NoWarn);8632</NoWarn>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <LangVersion>latest</LangVersion>
-    <!-- Copy output DLL to BepInEx plugins folder if GamePath is configured -->
-    <GamePath Condition="Exists('$(MSBuildThisFileDirectory)../GamePath.props')">
-    </GamePath>
+    <!-- Set GamePath here to auto-copy DLL after build. Leave empty to disable. -->
+    <GamePath>C:\Program Files (x86)\Steam\steamapps\common\Dave the Diver</GamePath>
   </PropertyGroup>
 
-  <!-- Import game path if configured -->
-  <Import Project="..\GamePath.props" Condition="Exists('..\GamePath.props')" />
-
-  <Target Name="CopyToGame" AfterTargets="Build" Condition="'$(GamePath)' != ''">
+  <Target Name="CopyToGame" AfterTargets="Build" Condition="'$(GamePath)' != '' AND Exists('$(GamePath)\BepInEx\plugins')">
     <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(GamePath)\BepInEx\plugins\" />
     <Message Text="Copied DaveDiverAP.dll to $(GamePath)\BepInEx\plugins\" Importance="high" />
   </Target>
