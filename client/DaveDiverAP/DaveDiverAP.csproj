@@ -32,19 +32,23 @@
   <!-- BepInEx references — copy from your BepInEx installation into client/lib/ -->
   <ItemGroup>
     <Reference Include="BepInEx">
-      <HintPath>..\lib\BepInEx.dll</HintPath>
+      <HintPath>..\\lib\\BepInEx.dll</HintPath>
       <Private>false</Private>
     </Reference>
     <Reference Include="BepInEx.Unity.IL2CPP">
-      <HintPath>..\lib\BepInEx.Unity.IL2CPP.dll</HintPath>
+      <HintPath>..\\lib\\BepInEx.Unity.IL2CPP.dll</HintPath>
       <Private>false</Private>
     </Reference>
     <Reference Include="HarmonyX">
-      <HintPath>..\lib\HarmonyX.dll</HintPath>
+      <HintPath>..\\lib\\HarmonyX.dll</HintPath>
       <Private>false</Private>
     </Reference>
     <Reference Include="Il2Cppcorlib">
-      <HintPath>..\lib\Il2Cppcorlib.dll</HintPath>
+      <HintPath>..\\lib\\Il2Cppcorlib.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="Il2CppInterop.Runtime">
+      <HintPath>..\\lib\\Il2CppInterop.Runtime.dll</HintPath>
       <Private>false</Private>
     </Reference>
   </ItemGroup>
