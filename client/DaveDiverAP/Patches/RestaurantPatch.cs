@@ -1,4 +1,5 @@
 using HarmonyLib;
+// VIPCustomer is a game type in the global namespace (Assembly-CSharp)
 
 namespace DaveDiverAP.Patches
 {

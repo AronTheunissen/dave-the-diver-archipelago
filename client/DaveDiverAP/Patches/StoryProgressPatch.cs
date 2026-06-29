@@ -1,4 +1,5 @@
 using HarmonyLib;
+// ChapterInfo, ChapterManager are game types in the global namespace (Assembly-CSharp)
 using BepInEx.Logging;
 
 namespace DaveDiverAP.Patches
