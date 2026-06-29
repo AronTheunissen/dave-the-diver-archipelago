@@ -71,7 +71,7 @@ namespace DaveDiverAP.UI
         public void Update()
         {
             // Toggle UI with F9
-            if (UnityEngine.Input.GetKeyDown(KeyCode.F9))
+            if (Input.GetKeyDown(KeyCode.F9))
                 _isVisible = !_isVisible;
         }
 

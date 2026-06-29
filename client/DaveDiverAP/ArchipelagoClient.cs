@@ -68,14 +68,15 @@ namespace DaveDiverAP
                 Session.Socket.ErrorReceived += OnErrorReceived;
                 Session.Socket.SocketClosed += OnSocketClosed;
 
-                var result = await Session.ConnectAsync();
+                var loginResult = await Session.ConnectAsync();
 
-                if (result.Successful)
+                // Archipelago.MultiClient.Net returns LoginSuccessful or LoginFailure
+                if (loginResult is LoginSuccessful loginSuccess)
                 {
                     Log.LogInfo($"Connected to Archipelago!");
 
                     // Parse slot data from server
-                    SlotData = new SlotData(result.SlotData ?? new System.Collections.Generic.Dictionary<string, object>());
+                    SlotData = new SlotData(loginSuccess.SlotData ?? new System.Collections.Generic.Dictionary<string, object>());
 
                     // Initialize Death Link if enabled
                     DeathLinkHandler.Initialize(Session!);
@@ -106,11 +107,17 @@ namespace DaveDiverAP
                     OnConnectionStatusChanged?.Invoke($"Connected as {SlotName}");
                     return true;
                 }
-                else
+                else if (loginResult is LoginFailure loginFailure)
                 {
-                    var errors = string.Join(", ", result.Errors ?? System.Array.Empty<string>());
+                    var errors = string.Join(", ", loginFailure.Errors ?? System.Array.Empty<string>());
                     Log.LogError($"Connection failed: {errors}");
                     OnConnectionStatusChanged?.Invoke($"Failed: {errors}");
+                    return false;
+                }
+                else
+                {
+                    Log.LogError("Connection failed: unknown result");
+                    OnConnectionStatusChanged?.Invoke("Failed: unknown error");
                     return false;
                 }
             }
