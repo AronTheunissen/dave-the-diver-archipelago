@@ -23,11 +23,21 @@ $matches = [regex]::Matches($text, '[A-Za-z][A-Za-z0-9]*Obscured[A-Za-z0-9]*')
 $matches | ForEach-Object { $_.Value } | Sort-Object -Unique | ForEach-Object { Write-Host $_ }
 
 Write-Host ""
-Write-Host "=== All type names containing 'Chapter' (short list) ==="
-$matches = [regex]::Matches($text, '\b(ChapterInfo|ChapterManager|ChapterData|ChapterSave)\b')
+Write-Host "=== All type names containing 'ChapterInfo' ==="
+$matches = [regex]::Matches($text, '[A-Za-z][A-Za-z0-9]*ChapterInfo[A-Za-z0-9]*')
 $matches | ForEach-Object { $_.Value } | Sort-Object -Unique | ForEach-Object { Write-Host $_ }
 
 Write-Host ""
-Write-Host "=== All type names containing 'VIPCustomer' ==="
-$matches = [regex]::Matches($text, '[A-Za-z][A-Za-z0-9]*VIP[A-Za-z0-9]*')
-$matches | ForEach-Object { $_.Value } | Sort-Object -Unique | ForEach-Object { Write-Host $_ }
+Write-Host "=== set_currentChapterInfo parameter type — search nearby strings ==="
+$idx = $text.IndexOf("set_currentChapterInfo")
+if ($idx -ge 0) { Write-Host $text.Substring([Math]::Max(0,$idx-100), 300) }
+
+Write-Host ""
+Write-Host "=== Standalone VIPCustomer class name ==="
+$matches = [regex]::Matches($text, '\bVIPCustomer\b')
+$matches | ForEach-Object { Write-Host "Found at offset $($_.Index): $($text.Substring([Math]::Max(0,$_.Index-50), 120))" } | Select-Object -First 5
+
+Write-Host ""
+Write-Host "=== ObscuredBool namespace ==="
+$idx = $text.IndexOf("ObscuredBool")
+if ($idx -ge 0) { Write-Host $text.Substring([Math]::Max(0,$idx-200), 400) }
