@@ -24,25 +24,37 @@ namespace DaveDiverAP.Patches
         // ✅ CONFIRMED via dump.cs: Charm inventory uses AutoEquipCharmItem(int tid)
         //    and AddCharm property in save data (JsonProperty "AddCharm", int).
         //    The charm TID identifies which charm was acquired.
-        //    We hook the inventory method that adds the charm item (AutoEquipCharmItem
-        //    is called when a charm reward is granted and auto-equipped).
-        //    CharmSpecData has the ability data; identified by TID from design sheet.
-        // ⚠️ DISABLED: AutoEquipCharmItem fires during load (charms are auto-equipped when
-        //    save data is restored). This caused a silent crash on "Continue" from main menu.
+        //    We hook AutoEquipCharmItem — but guard with ItemQueue.IsGameReady so that
+        //    the load-time auto-equip (restore from save) is ignored.
         //
-        // ✅ BETTER HOOK: Hook MissionManager.UpdateMission() and filter for charm reward missions
-        //    by checking if the mission TID matches known charm-granting missions.
-        //    MissionManager only fires during active gameplay, not during save load.
-        //
-        // [HarmonyPatch(typeof(LobbyCharmSwapPanel), "AutoEquipCharmItem")]
-        // [HarmonyPostfix]
-        // public static void OnCharmAcquired_Postfix(int tid)
-        // {
-        //     if (!ArchipelagoClient.IsConnected) return;
-        //     var (charmName, sourceMission) = CharmMapper.GetCharmInfo(tid);
-        //     if (charmName != null && sourceMission != null)
-        //         ArchipelagoClient.CheckLocation($"Charm: {charmName} ({sourceMission})");
-        // }
+        // 🛡️ LOAD GUARD: IsGameReady is false during save deserialization, so the crash
+        //    that previously occurred on "Continue" is prevented.
+        [HarmonyPatch(typeof(LobbyCharmSwapPanel), "AutoEquipCharmItem")]
+        [HarmonyPostfix]
+        public static void OnCharmAcquired_Postfix(int tid)
+        {
+            try
+            {
+                // Guard: skip load-time auto-equip (IsGameReady is false during save loading)
+                if (!ItemQueue.IsGameReady) return;
+                if (!ArchipelagoClient.IsConnected) return;
+
+                var (charmName, sourceMission) = CharmMapper.GetCharmInfo(tid);
+                if (charmName != null && sourceMission != null)
+                {
+                    Plugin.Log.LogInfo($"[Charm] Acquired: {charmName} via {sourceMission} (TID={tid})");
+                    ArchipelagoClient.CheckLocation($"Charm: {charmName} ({sourceMission})");
+                }
+                else
+                {
+                    Plugin.Log.LogInfo($"[Charm] Unknown charm TID={tid} (add to CharmMapper if needed)");
+                }
+            }
+            catch (System.Exception ex)
+            {
+                Plugin.Log.LogError($"[CharmPatch] OnCharmAcquired_Postfix threw: {ex}");
+            }
+        }
     }
 
     public static class CharmMapper

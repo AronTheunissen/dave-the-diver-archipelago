@@ -19,33 +19,36 @@ namespace DaveDiverAP.Patches
         // Tracks which ingredients have been collected for the first time
         private static readonly System.Collections.Generic.HashSet<string> _foundIngredients = new();
 
-        // ✅ CONFIRMED via dump.cs: SaveData has AddIngredientsSaveData(IngredientsData data)
-        //    This fires whenever an ingredient is added to the save (first pick-up or purchase).
-        //    IngredientsData has the ingredient's TID and data.
+        // ✅ CONFIRMED via dump.cs: IngredientsStorage.AddIngredients(int ingredientsID, int count, Place place)
+        //    IngredientsStorage is a SingletonNoMono — fires only during actual gameplay ingredient
+        //    additions (pickup, purchase), NOT during save load replay. Safe hook point.
         //
-        // ⚠️ DISABLED: This hook fires during save loading (game replays all saved ingredients),
-        //    which caused a silent crash on "Continue" from the main menu.
-        //
-        // ✅ BETTER HOOK: IngredientsStorage.AddIngredients(int ingredientsID, int count, Place place)
-        //    IngredientsStorage is a SingletonNoMono that fires only on actual ingredient additions
-        //    during gameplay, NOT during save load replay.
-        //    [HarmonyPatch(typeof(IngredientsStorage), "AddIngredients")]
-        //
-        // [HarmonyPatch(typeof(global::SaveData), "AddIngredientsSaveData")]
-        // [HarmonyPostfix]
-        // public static void OnIngredientCollected_Postfix(IngredientsData data)
-        // {
-        //     if (!ArchipelagoClient.IsConnected) return;
-        //     if (data == null) return;
-        //
-        //     // Use the ingredient ID to look up the display name
-        //     var ingredientName = IngredientNameMapper.GetDisplayName(data.ingredientsID);
-        //     if (ingredientName == null) return;
-        //     if (_foundIngredients.Contains(ingredientName)) return;
-        //
-        //     _foundIngredients.Add(ingredientName);
-        //     LocationTracker.OnIngredientFirstFound(ingredientName);
-        // }
+        // NOTE: The old SaveData.AddIngredientsSaveData hook was disabled because it fired during
+        //    save loading. This IngredientsStorage hook does NOT have that problem.
+        [HarmonyPatch(typeof(IngredientsStorage), "AddIngredients")]
+        [HarmonyPostfix]
+        public static void OnIngredientAdded_Postfix(int ingredientsID, int count, SushiBar.Place place)
+        {
+            try
+            {
+                if (!ArchipelagoClient.IsConnected) return;
+                if (count <= 0) return;
+
+                var ingredientName = IngredientNameMapper.GetDisplayName(ingredientsID);
+                if (ingredientName == null) return;
+
+                // Only fire once per ingredient type — dedup in memory
+                if (_foundIngredients.Contains(ingredientName)) return;
+                _foundIngredients.Add(ingredientName);
+
+                Plugin.Log.LogInfo($"[Ingredient] First time collected: {ingredientName} (TID={ingredientsID})");
+                LocationTracker.OnIngredientFirstFound(ingredientName);
+            }
+            catch (System.Exception ex)
+            {
+                Plugin.Log.LogError($"[IngredientPatch] OnIngredientAdded_Postfix threw: {ex}");
+            }
+        }
     }
 
     public static class IngredientNameMapper

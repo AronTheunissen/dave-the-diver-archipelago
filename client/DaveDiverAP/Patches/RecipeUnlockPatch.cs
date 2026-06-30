@@ -18,35 +18,49 @@ namespace DaveDiverAP.Patches
         // Hooking AddUnlockRecipeSaveData fires exactly when a recipe is unlocked and persisted.
         // The int id is the recipe's design sheet TID.
         //
-        // ⚠️ DISABLED: Fires during save loading (game replays all unlocked recipes on load),
-        //    causing a silent crash on "Continue" from the main menu.
-        //
-        // ✅ BETTER HOOK: Hook MissionManager.UpdateMission() and filter for recipe-unlock missions.
-        //    MissionManager is the central hub for ALL mission updates and only fires during gameplay.
-        //    Alternatively hook the recipe unlock UI popup class (search dump for "RecipeUnlockPopup",
-        //    "NewRecipePopup", or the popup shown when a new recipe appears in the menu).
-        //
-        // [HarmonyPatch(typeof(global::SaveData), "AddUnlockRecipeSaveData")]
-        // [HarmonyPostfix]
-        // public static void UnlockRecipe_Postfix(int id)
-        // {
-        //     if (!ArchipelagoClient.IsConnected) return;
-        //     var recipeName = RecipeNameMapper.GetDisplayName(id);
-        //     if (recipeName != null)
-        //         LocationTracker.OnRecipeUnlocked(recipeName);
-        // }
+        // 🛡️ LOAD GUARD: We use ItemQueue.IsGameReady to skip calls that happen during save
+        //    loading/deserialization. IsGameReady is only true once LobbyPlayer enters a valid
+        //    game state (InBoat, Diving, etc.), so save-load replay calls are safely ignored.
+        [HarmonyPatch(typeof(global::SaveData), "AddUnlockRecipeSaveData")]
+        [HarmonyPostfix]
+        public static void UnlockRecipe_Postfix(int id)
+        {
+            try
+            {
+                // Guard: skip calls during save loading (IsGameReady is false until InBoat/Diving)
+                if (!ItemQueue.IsGameReady) return;
+                if (!ArchipelagoClient.IsConnected) return;
+
+                var recipeName = RecipeNameMapper.GetDisplayName(id);
+                if (recipeName != null)
+                {
+                    Plugin.Log.LogInfo($"[Recipe] Unlocked: {recipeName} (TID={id})");
+                    LocationTracker.OnRecipeUnlocked(recipeName);
+                }
+                else
+                {
+                    Plugin.Log.LogInfo($"[Recipe] Unknown recipe TID={id} (add to RecipeNameMapper if needed)");
+                }
+            }
+            catch (System.Exception ex)
+            {
+                Plugin.Log.LogError($"[RecipeUnlockPatch] UnlockRecipe_Postfix threw: {ex}");
+            }
+        }
 
         // ── Dish upgrade (research complete using Artisan's Flame) ───────────
         // ✅ CONFIRMED via dump.cs: SaveData has UpdateUnlockRecipeSave() and
         //    UnlockRecipeSave has ObscuredInt m_UnlockRecipeID and level data.
         // Hook UpdateUnlockRecipeSave to catch research level-ups.
         //
-        // ⚠️ DISABLED: Same save-load replay issue as AddUnlockRecipeSaveData above.
+        // 🛡️ Same IsGameReady guard applied — safe to re-enable.
+        // TODO: LocationTracker.OnDishResearchUpdated not yet implemented.
         //
         // [HarmonyPatch(typeof(global::SaveData), "UpdateUnlockRecipeSave")]
         // [HarmonyPostfix]
         // public static void UpgradeDish_Postfix()
         // {
+        //     if (!ItemQueue.IsGameReady) return;
         //     if (!ArchipelagoClient.IsConnected) return;
         //     // TODO: LocationTracker.OnDishResearchUpdated not yet implemented
         //     // LocationTracker.OnDishResearchUpdated();

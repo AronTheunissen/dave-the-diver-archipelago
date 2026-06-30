@@ -32,31 +32,45 @@ namespace DaveDiverAP.Patches
         //    set_followerCount(ObscuredInt value) is the property setter
         //    SNSInfoSave is the save data class; SNSInfoManager is the manager singleton
         //
-        // ⚠️ DISABLED: SNSInfoSave setters fire during save loading as the game deserializes
-        //    save data, causing a silent crash on "Continue" from the main menu.
-        //    Hook the SNSInfoManager (the runtime manager) instead of the save data class.
-        //
-        // [HarmonyPatch(typeof(SNSInfoSave), "set_followerCount")]
-        // [HarmonyPostfix]
-        // public static void FollowerCount_Postfix(SNSInfoSave __instance)
-        // {
-        //     if (!ArchipelagoClient.IsConnected) return;
-        //     LocationTracker.OnCookstaFollowersChanged((int)__instance.followerCount);
-        // }
+        // 🛡️ LOAD GUARD: IsGameReady is false during save deserialization, preventing the
+        //    silent crash that occurred when these setters fired during "Continue" loading.
+        [HarmonyPatch(typeof(SNSInfoSave), "set_followerCount")]
+        [HarmonyPostfix]
+        public static void FollowerCount_Postfix(SNSInfoSave __instance)
+        {
+            try
+            {
+                if (!ItemQueue.IsGameReady) return;
+                if (!ArchipelagoClient.IsConnected) return;
+                LocationTracker.OnCookstaFollowersChanged((int)__instance.followerCount);
+            }
+            catch (System.Exception ex)
+            {
+                Plugin.Log.LogError($"[CookstaPatch] FollowerCount_Postfix threw: {ex}");
+            }
+        }
 
         // ── Best Taste score changed ──────────────────────────────────────────
         // ✅ CONFIRMED via dump.cs: SNSInfoSave has ObscuredInt m_LikeCount (at 0x24)
         //    This tracks cumulative "best taste" / like score across all posts.
         //
-        // ⚠️ DISABLED: Same save-load replay issue as set_followerCount above.
-        //
-        // [HarmonyPatch(typeof(SNSInfoSave), "set_grade")]
-        // [HarmonyPostfix]
-        // public static void Grade_Postfix(SNSInfoSave __instance)
-        // {
-        //     if (!ArchipelagoClient.IsConnected) return;
-        //     LocationTracker.OnBestTasteChanged((int)__instance.followerCount);
-        // }
+        // 🛡️ LOAD GUARD: Same IsGameReady guard as set_followerCount above.
+        [HarmonyPatch(typeof(SNSInfoSave), "set_grade")]
+        [HarmonyPostfix]
+        public static void Grade_Postfix(SNSInfoSave __instance)
+        {
+            try
+            {
+                if (!ItemQueue.IsGameReady) return;
+                if (!ArchipelagoClient.IsConnected) return;
+                // Use grade (not followerCount) since we're patching the grade setter
+                LocationTracker.OnBestTasteChanged((int)__instance.grade);
+            }
+            catch (System.Exception ex)
+            {
+                Plugin.Log.LogError($"[CookstaPatch] Grade_Postfix threw: {ex}");
+            }
+        }
 
         // ── Researched recipe count changed ───────────────────────────────────
         // ✅ CONFIRMED via dump.cs: AchievementEventType.ResearchRecipeCnt = 2

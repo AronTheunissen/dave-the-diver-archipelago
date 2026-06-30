@@ -26,10 +26,19 @@ namespace DaveDiverAP
         // Only process items when Dave is standing on the boat.
         // NOT while diving, in the restaurant, on farms, or in loading screens.
         // GameStatePatch sets this flag via SetGameReady().
+        // Patches that hook SaveData methods can use IsGameReady as a load guard.
         private static bool _isGameReady = false;
 
         // Track how many items are waiting so the UI can show a badge
         public static int PendingCount => _queue.Count;
+
+        /// <summary>
+        /// True when Dave is in an active game state (on the boat, diving, etc.).
+        /// False during loading screens and save deserialization.
+        /// Use this as a guard in patches that hook SaveData methods to prevent
+        /// firing during save loading.
+        /// </summary>
+        public static bool IsGameReady => _isGameReady;
 
         public void Awake()
         {
