@@ -29,8 +29,10 @@ namespace DaveDiverAP.Patches
         //    CharmSpecData has the ability data; identified by TID from design sheet.
         // ⚠️ DISABLED: AutoEquipCharmItem fires during load (charms are auto-equipped when
         //    save data is restored). This caused a silent crash on "Continue" from main menu.
-        //    Alternative: hook the mission completion reward flow (MissionManager.CompleteMainMission
-        //    or the reward popup) which only fires for NEW completions.
+        //
+        // ✅ BETTER HOOK: Hook MissionManager.UpdateMission() and filter for charm reward missions
+        //    by checking if the mission TID matches known charm-granting missions.
+        //    MissionManager only fires during active gameplay, not during save load.
         //
         // [HarmonyPatch(typeof(LobbyCharmSwapPanel), "AutoEquipCharmItem")]
         // [HarmonyPostfix]

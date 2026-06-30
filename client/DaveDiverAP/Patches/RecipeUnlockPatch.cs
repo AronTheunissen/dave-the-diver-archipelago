@@ -20,8 +20,11 @@ namespace DaveDiverAP.Patches
         //
         // ⚠️ DISABLED: Fires during save loading (game replays all unlocked recipes on load),
         //    causing a silent crash on "Continue" from the main menu.
-        //    Need a different hook point that only fires on NEW unlocks, not load replays.
-        //    Consider hooking the UI popup that shows when a recipe is newly unlocked instead.
+        //
+        // ✅ BETTER HOOK: Hook MissionManager.UpdateMission() and filter for recipe-unlock missions.
+        //    MissionManager is the central hub for ALL mission updates and only fires during gameplay.
+        //    Alternatively hook the recipe unlock UI popup class (search dump for "RecipeUnlockPopup",
+        //    "NewRecipePopup", or the popup shown when a new recipe appears in the menu).
         //
         // [HarmonyPatch(typeof(global::SaveData), "AddUnlockRecipeSaveData")]
         // [HarmonyPostfix]

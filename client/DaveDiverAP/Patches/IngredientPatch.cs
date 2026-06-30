@@ -25,8 +25,11 @@ namespace DaveDiverAP.Patches
         //
         // ⚠️ DISABLED: This hook fires during save loading (game replays all saved ingredients),
         //    which caused a silent crash on "Continue" from the main menu.
-        //    Re-enable once we confirm IngredientsData.ingredientsID field name and that the hook
-        //    does NOT fire during save load (or add a guard to skip load-time replays).
+        //
+        // ✅ BETTER HOOK: IngredientsStorage.AddIngredients(int ingredientsID, int count, Place place)
+        //    IngredientsStorage is a SingletonNoMono that fires only on actual ingredient additions
+        //    during gameplay, NOT during save load replay.
+        //    [HarmonyPatch(typeof(IngredientsStorage), "AddIngredients")]
         //
         // [HarmonyPatch(typeof(global::SaveData), "AddIngredientsSaveData")]
         // [HarmonyPostfix]
