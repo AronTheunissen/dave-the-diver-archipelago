@@ -16,15 +16,15 @@ namespace DaveDiverAP.Patches
     [HarmonyPatch]
     public static class IngredientPatch
     {
-        // Tracks which ingredients have been collected for the first time
-        private static readonly System.Collections.Generic.HashSet<string> _foundIngredients = new();
-
         // ✅ CONFIRMED via dump.cs: IngredientsStorage.AddIngredients(int ingredientsID, int count, Place place)
         //    IngredientsStorage is a SingletonNoMono — fires only during actual gameplay ingredient
         //    additions (pickup, purchase), NOT during save load replay. Safe hook point.
         //
         // NOTE: The old SaveData.AddIngredientsSaveData hook was disabled because it fired during
         //    save loading. This IngredientsStorage hook does NOT have that problem.
+        //
+        // Dedup uses SaveData.IsIngredientFound/MarkIngredientFound — persists across game restarts
+        // so a previously checked ingredient won't fire again in a new session.
         [HarmonyPatch(typeof(IngredientsStorage), "AddIngredients")]
         [HarmonyPostfix]
         public static void OnIngredientAdded_Postfix(int ingredientsID, int count, SushiBar.Place place)
@@ -37,9 +37,9 @@ namespace DaveDiverAP.Patches
                 var ingredientName = IngredientNameMapper.GetDisplayName(ingredientsID);
                 if (ingredientName == null) return;
 
-                // Only fire once per ingredient type — dedup in memory
-                if (_foundIngredients.Contains(ingredientName)) return;
-                _foundIngredients.Add(ingredientName);
+                // Persistent dedup — survives game restarts (stored in archipelago_save.json)
+                if (SaveData.IsIngredientFound(ingredientName)) return;
+                SaveData.MarkIngredientFound(ingredientName);
 
                 Plugin.Log.LogInfo($"[Ingredient] First time collected: {ingredientName} (TID={ingredientsID})");
                 LocationTracker.OnIngredientFirstFound(ingredientName);

@@ -1427,11 +1427,9 @@ photography_locations: Dict[str, LocationData] = {
 }
 
 # === CHALLENGES ===
-# In-game challenges and special objectives
-# Challenge locations removed — these were placeholder invented content,
-# not verified real in-game locations. Removing to prevent softlocks.
-# Will be re-added if/when real challenge content is confirmed.
-challenge_locations: Dict[str, LocationData] = {}
+# Challenge locations intentionally omitted — challenge content was placeholder/invented
+# and not verified as real in-game locations. ChallengePatch.cs also deleted.
+# Do not re-add without confirming real game challenge TIDs via dump.cs.
 
 # === VEGETABLE FARM ===
 # Vegetable garden farming milestones (unlocked via "Unlock Vegetable Farm")
@@ -1707,7 +1705,6 @@ location_table: Dict[str, LocationData] = {
     **cooksta_locations,
     **ecowatcher_locations,
     **photography_locations,
-    **challenge_locations,
     **farming_locations,
     **chicken_farm_locations,
     **fish_farm_locations,
@@ -1740,19 +1737,15 @@ location_name_to_id: Dict[str, int] = {
     name: data.code for name, data in location_table.items() if data.code is not None
 }
 
-# TODO: This needs significant expansion with actual game analysis
-# Current count: ~150 locations defined, target: 300-500+ locations
-# With all systems (fish, dishes, Cooksta, farming, etc.) we can easily hit 750+ locations
-# 
-# Breakdown by category:
-# - Fish first catch: 100+ potential
-# - Dish upgrades: 400+ potential (if all dishes included)
-# - Recipe unlocks: 100+ potential
-# - Cooksta: 15 defined
-# - Ecowatcher: 12 defined
-# - Photography: 12 defined
-# - Challenges: 10 defined
-# - Farming: 15 defined
-# - Fish Farm: 16 defined
-# - Story/Bosses/Quests: 20+ potential
-# - Minigames/Collectibles: 30+ potential
+# Breakdown by category (approximate):
+# - Fish first catch: 100+ (common + rare + boss + jungle)
+# - Dish upgrades: 400+ (if all dishes included)
+# - Recipe unlocks: 36 defined
+# - Cooksta: 31 defined
+# - Ecowatcher: 106 defined
+# - Photography: 33 defined
+# - Farming/ChickenFarm/FishFarm: 74 defined
+# - Story/Bosses/Quests: 200+ defined
+# - Staff hire/train: 150+ defined
+# - Jungle DLC: 500+ defined
+# - Minigames/Collectibles/Weapons/Charms: 200+ defined

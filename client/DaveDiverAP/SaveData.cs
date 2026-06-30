@@ -159,6 +159,9 @@ namespace DaveDiverAP
 
             // Acquired charms (charm name set)
             public HashSet<string> AcquiredCharms { get; set; } = new();
+
+            // Found ingredients (ingredient name set) — persists first-find dedup across restarts
+            public HashSet<string> FoundIngredients { get; set; } = new();
         }
 
         // ── Accessors for progressive/flag state ────────────────────────────
@@ -220,10 +223,14 @@ namespace DaveDiverAP
         public static bool IsCharmAcquired(string charm) => _state.AcquiredCharms.Contains(charm);
         public static void MarkCharmAcquired(string charm) { _state.AcquiredCharms.Add(charm); Save(); }
 
+        public static bool IsIngredientFound(string ingredient) => _state.FoundIngredients.Contains(ingredient);
+        public static void MarkIngredientFound(string ingredient) { _state.FoundIngredients.Add(ingredient); Save(); }
+
         // Enumerable accessors for ReapplyAllItems
         public static IEnumerable<string> GetUnlockedWeapons()  => _state.UnlockedWeapons;
         public static IEnumerable<string> GetAcquiredCharms()   => _state.AcquiredCharms;
         public static IEnumerable<string> GetUnlockedRecipes()  => _state.UnlockedRecipes;
+        public static IEnumerable<string> GetFoundIngredients() => _state.FoundIngredients;
         public static IEnumerable<(string dish, int level)> GetDishResearchLevels()
         {
             foreach (var kv in _state.DishResearchLevels)
