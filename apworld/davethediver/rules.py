@@ -160,11 +160,10 @@ def set_rules(world):
         "First Catch: Longspine Squirrelfish",
         "First Catch: Red-banded Lobster",
         "First Catch: Moray Eel",
-        # Mid night fish
+        # Mid night fish (excluding Humboldt Squid — it gets its own rule below)
         "First Catch: Blackfin Barracuda",
         "First Catch: Fan Lobster",
         "First Catch: Giant Squid",
-        "First Catch: Humboldt Squid",
         "First Catch: Spear Squid",
     ]
     for fish_loc in night_only_fish:
@@ -172,8 +171,9 @@ def set_rules(world):
             lambda state: state.has("Night Dive Unlock", player)
         )
 
-    # Humboldt Squid is Mid depth + Night Dive (not Glacier Zone as previously thought)
-    # The Mid region gate already handles depth; we just add Night Dive on top
+    # Humboldt Squid: Mid depth + Night Dive. Excluded from the loop above to avoid
+    # the loop's rule being immediately overridden by this stricter rule.
+    # (Both use _set_location_rule which replaces, so order matters — do this ONCE here)
     _set_location_rule(multiworld, player,
         "First Catch: Humboldt Squid",
         lambda state: (
@@ -212,14 +212,9 @@ def set_rules(world):
 
     # === VORTEX BOSS RULES ===
     # Boss aberrations within each vortex — gated by region access (handled above).
-    # Lusca is in Sea People Village — needs village access + Vortex Entry
-    _set_location_rule(multiworld, player,
-        "Defeat: Lusca",
-        lambda state: (
-            can_access_sea_people_village(state, player) and
-            state.has("Vortex Entry", player, 1)
-        )
-    )
+    # Lusca's FULL rule is set later (line ~318) where Marinca Trophy + Sea People Gloves
+    # are also required. We skip setting a partial rule here to avoid it being overridden.
+    # See the Lusca rule block below for the complete combined rule.
 
     # === BOSS FIGHT SPECIFIC RULES ===
 
@@ -313,14 +308,18 @@ def set_rules(world):
         lambda state: state.has("Cobra's Lost Crowbar", player)
     )
 
-    # Lusca: secret post-game optional boss
-    # Requires: Marinca Completion Trophy + Stormy Night unlocked + Sea People Village
-    # Sea People Village access is already gated by region rules ✅
+    # Lusca: secret post-game optional boss in Sea People Village vortex
+    # Requires: Marinca Completion Trophy + Sea People Gloves (Stormy Night trigger)
+    #           + Vortex Entry (to enter the vortex where Lusca spawns)
+    # Sea People Village region access is already gated by region rules ✅
+    # NOTE: The partial rule that was previously set in the Vortex Boss Rules section
+    # was removed to avoid being silently overridden here. This is the single source of truth.
     _set_location_rule(multiworld, player,
         "Defeat: Lusca",
         lambda state: (
             state.has("Marinca Completion Trophy", player) and
-            state.has("Sea People Gloves", player)  # Stormy Night unlock trigger
+            state.has("Sea People Gloves", player) and  # Stormy Night unlock trigger
+            state.has("Vortex Entry", player, 1)  # Required to enter the vortex
         )
     )
 
