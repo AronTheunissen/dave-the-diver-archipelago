@@ -39,28 +39,35 @@ namespace DaveDiverAP.Patches
         [HarmonyPostfix]
         public static void SuccessInteract_Postfix(FishInteractionBody __instance)
         {
-            if (!ArchipelagoClient.IsConnected) return;
-
-            // GameObject name format confirmed via UnityExplorer (2026-06-27):
-            // "SA_2010132_Thresher_Shark01(Clone)" — TID is the number after "SA_"
-            // This is much more reliable than string matching on species names.
-            string goName = __instance.gameObject.name;
-
-            // Try TID-based lookup first (preferred)
-            var fishName = FishNameMapper.GetDisplayNameFromTID(goName);
-
-            // Fall back to name-based lookup for any fish not yet in the TID map
-            if (fishName == null)
-                fishName = FishNameMapper.GetDisplayNameFromGameObject(goName);
-
-            if (fishName != null)
+            try
             {
-                Plugin.Log.LogInfo($"[FishCaught] GO={goName} → Location=\"First Catch: {fishName}\"");
-                LocationTracker.OnFirstFishCatch(fishName);
+                if (!ArchipelagoClient.IsConnected) return;
+
+                // GameObject name format confirmed via UnityExplorer (2026-06-27):
+                // "SA_2010132_Thresher_Shark01(Clone)" — TID is the number after "SA_"
+                // This is much more reliable than string matching on species names.
+                string goName = __instance.gameObject.name;
+
+                // Try TID-based lookup first (preferred)
+                var fishName = FishNameMapper.GetDisplayNameFromTID(goName);
+
+                // Fall back to name-based lookup for any fish not yet in the TID map
+                if (fishName == null)
+                    fishName = FishNameMapper.GetDisplayNameFromGameObject(goName);
+
+                if (fishName != null)
+                {
+                    Plugin.Log.LogInfo($"[FishCaught] GO={goName} → Location=\"First Catch: {fishName}\"");
+                    LocationTracker.OnFirstFishCatch(fishName);
+                }
+                else
+                {
+                    Plugin.Log.LogInfo($"[FishCaught] GO={goName} → UNMAPPED (add to FishNameMapper)");
+                }
             }
-            else
+            catch (System.Exception ex)
             {
-                Plugin.Log.LogInfo($"[FishCaught] GO={goName} → UNMAPPED (add to FishNameMapper)");
+                Plugin.Log.LogError($"[FishCatchPatch] SuccessInteract_Postfix threw: {ex}");
             }
         }
     }

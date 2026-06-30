@@ -27,16 +27,20 @@ namespace DaveDiverAP.Patches
         //    We hook the inventory method that adds the charm item (AutoEquipCharmItem
         //    is called when a charm reward is granted and auto-equipped).
         //    CharmSpecData has the ability data; identified by TID from design sheet.
-        [HarmonyPatch(typeof(LobbyCharmSwapPanel), "AutoEquipCharmItem")]
-        [HarmonyPostfix]
-        public static void OnCharmAcquired_Postfix(int tid)
-        {
-            if (!ArchipelagoClient.IsConnected) return;
-
-            var (charmName, sourceMission) = CharmMapper.GetCharmInfo(tid);
-            if (charmName != null && sourceMission != null)
-                ArchipelagoClient.CheckLocation($"Charm: {charmName} ({sourceMission})");
-        }
+        // ⚠️ DISABLED: AutoEquipCharmItem fires during load (charms are auto-equipped when
+        //    save data is restored). This caused a silent crash on "Continue" from main menu.
+        //    Alternative: hook the mission completion reward flow (MissionManager.CompleteMainMission
+        //    or the reward popup) which only fires for NEW completions.
+        //
+        // [HarmonyPatch(typeof(LobbyCharmSwapPanel), "AutoEquipCharmItem")]
+        // [HarmonyPostfix]
+        // public static void OnCharmAcquired_Postfix(int tid)
+        // {
+        //     if (!ArchipelagoClient.IsConnected) return;
+        //     var (charmName, sourceMission) = CharmMapper.GetCharmInfo(tid);
+        //     if (charmName != null && sourceMission != null)
+        //         ArchipelagoClient.CheckLocation($"Charm: {charmName} ({sourceMission})");
+        // }
     }
 
     public static class CharmMapper

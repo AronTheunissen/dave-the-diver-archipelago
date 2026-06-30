@@ -29,23 +29,30 @@ namespace DaveDiverAP.Patches
         [HarmonyPostfix]
         public static void OnBossDefeated_Postfix()
         {
-            if (!ArchipelagoClient.IsConnected) return;
+            try
+            {
+                if (!ArchipelagoClient.IsConnected) return;
 
-            var scene = BossScene.Current;
-            if (scene == null) return;
+                var scene = BossScene.Current;
+                if (scene == null) return;
 
-            // Primary: use EnumBossFishType enum (confirmed exact values)
-            var locationName = BossNameMapper.GetLocationName((int)scene.bossType);
+                // Primary: use EnumBossFishType enum (confirmed exact values)
+                var locationName = BossNameMapper.GetLocationName((int)scene.bossType);
 
-            // Fallback: use bossSceneSO.name substring match for bosses not in enum
-            // TODO: bossSceneSO requires Sirenix.Serialization.dll — disabled until added to lib
-            // if (locationName == null && scene.bossSceneSO != null)
-            //     locationName = BossNameMapper.GetDisplayNameFromScene(scene.bossSceneSO.name);
+                // Fallback: use bossSceneSO.name substring match for bosses not in enum
+                // TODO: bossSceneSO requires Sirenix.Serialization.dll — disabled until added to lib
+                // if (locationName == null && scene.bossSceneSO != null)
+                //     locationName = BossNameMapper.GetDisplayNameFromScene(scene.bossSceneSO.name);
 
-            if (locationName != null)
-                LocationTracker.OnBossDefeated(locationName);
-            else
-                Plugin.Log.LogWarning($"[Boss] Unknown boss type: {scene.bossType}");
+                if (locationName != null)
+                    LocationTracker.OnBossDefeated(locationName);
+                else
+                    Plugin.Log.LogWarning($"[Boss] Unknown boss type: {scene.bossType}");
+            }
+            catch (System.Exception ex)
+            {
+                Plugin.Log.LogError($"[BossDefeatedPatch] OnBossDefeated_Postfix threw: {ex}");
+            }
         }
     }
 

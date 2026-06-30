@@ -45,26 +45,33 @@ namespace DaveDiverAP.Patches
         [HarmonyPostfix]
         public static void OnMissionCleared_Postfix(MissionData missionData)
         {
-            if (missionData == null) return;
+            try
+            {
+                if (missionData == null) return;
 
-            int tid = missionData.TID;
-            string type = missionData.Type.ToString();
-            string title = missionData.Title ?? "";
-            string nameTextId = missionData.NameTextID ?? "unknown";
+                int tid = missionData.TID;
+                string type = missionData.Type.ToString();
+                string title = missionData.Title ?? "";
+                string nameTextId = missionData.NameTextID ?? "unknown";
 
-            // Skip internal state machine missions (no title = not player-facing)
-            // JungleRankReward and JungleRelationEvent are internal-only
-            if (type == "JungleRankReward" || type == "JungleRelationEvent") return;
+                // Skip internal state machine missions (no title = not player-facing)
+                // JungleRankReward and JungleRelationEvent are internal-only
+                if (type == "JungleRankReward" || type == "JungleRelationEvent") return;
 
-            // Always log cleared missions with full info — invaluable for debugging
-            Log.LogInfo($"[MissionCleared] TID={tid} Type={type} Title=\"{title}\" NameTextID={nameTextId}");
+                // Always log cleared missions with full info — invaluable for debugging
+                Log.LogInfo($"[MissionCleared] TID={tid} Type={type} Title=\"{title}\" NameTextID={nameTextId}");
 
-            if (!ArchipelagoClient.IsConnected) return;
+                if (!ArchipelagoClient.IsConnected) return;
 
-            // Route to AP location check if this TID is mapped
-            var locationName = QuestNameMapper.GetLocationName(tid);
-            if (locationName != null)
-                LocationTracker.OnQuestCompleted(locationName);
+                // Route to AP location check if this TID is mapped
+                var locationName = QuestNameMapper.GetLocationName(tid);
+                if (locationName != null)
+                    LocationTracker.OnQuestCompleted(locationName);
+            }
+            catch (System.Exception ex)
+            {
+                Log.LogError($"[StoryProgressPatch] OnMissionCleared_Postfix threw: {ex}");
+            }
         }
     }
 

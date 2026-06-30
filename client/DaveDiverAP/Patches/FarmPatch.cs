@@ -25,17 +25,24 @@ namespace DaveDiverAP.Patches
         [HarmonyPostfix]
         public static void OnFarmHarvest_Postfix(MVFarmFieldController __instance, int laneNum)
         {
-            if (!ArchipelagoClient.IsConnected) return;
-            _totalCrops++;
+            try
+            {
+                if (!ArchipelagoClient.IsConnected) return;
+                _totalCrops++;
 
-            // Check crop milestones
-            foreach (var m in new[] { 50, 100, 250 })
-                if (_totalCrops == m)
-                    ArchipelagoClient.CheckLocation($"Veg Farm: Harvest {m} Total Crops");
+                // Check crop milestones
+                foreach (var m in new[] { 50, 100, 250 })
+                    if (_totalCrops == m)
+                        ArchipelagoClient.CheckLocation($"Veg Farm: Harvest {m} Total Crops");
 
-            // Detect first harvest of each crop type via lane seed TID
-            // TODO: LocationTracker.OnVegetableHarvested not yet implemented
-            // LocationTracker.OnVegetableHarvested(laneNum);
+                // Detect first harvest of each crop type via lane seed TID
+                // TODO: LocationTracker.OnVegetableHarvested not yet implemented
+                // LocationTracker.OnVegetableHarvested(laneNum);
+            }
+            catch (System.Exception ex)
+            {
+                Plugin.Log.LogError($"[FarmPatch] OnFarmHarvest_Postfix threw: {ex}");
+            }
         }
 
         private static int _totalCrops = 0;

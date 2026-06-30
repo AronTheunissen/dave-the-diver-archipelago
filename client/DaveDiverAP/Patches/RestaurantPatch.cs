@@ -26,9 +26,16 @@ namespace DaveDiverAP.Patches
         [HarmonyPostfix]
         public static void OnCustomerServed_Postfix()
         {
-            if (!ArchipelagoClient.IsConnected) return;
-            _totalCustomers++;
-            LocationTracker.OnCustomersServed(_totalCustomers);
+            try
+            {
+                if (!ArchipelagoClient.IsConnected) return;
+                _totalCustomers++;
+                LocationTracker.OnCustomersServed(_totalCustomers);
+            }
+            catch (System.Exception ex)
+            {
+                Plugin.Log.LogError($"[RestaurantPatch] OnCustomerServed_Postfix threw: {ex}");
+            }
         }
 
         // Fires when a VIP showdown result is ready to be processed.

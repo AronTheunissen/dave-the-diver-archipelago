@@ -40,10 +40,17 @@ namespace DaveDiverAP.Patches
         [HarmonyPostfix]
         public static void PlayerDie_Postfix()
         {
-            if (!ArchipelagoClient.IsConnected) return;
-            if (!ArchipelagoClient.SlotData?.DeathLink ?? true) return;
+            try
+            {
+                if (!ArchipelagoClient.IsConnected) return;
+                if (!ArchipelagoClient.SlotData?.DeathLink ?? true) return;
 
-            DeathLinkHandler.OnPlayerDied();
+                DeathLinkHandler.OnPlayerDied();
+            }
+            catch (System.Exception ex)
+            {
+                Plugin.Log.LogError($"[PlayerDeathPatch] PlayerDie_Postfix threw: {ex}");
+            }
         }
     }
 }

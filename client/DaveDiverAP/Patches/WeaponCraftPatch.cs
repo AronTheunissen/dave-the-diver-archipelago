@@ -20,12 +20,19 @@ namespace DaveDiverAP.Patches
         [HarmonyPostfix]
         public static void OnWeaponCrafted_Postfix(int craftID, int row, int col)
         {
-            if (!ArchipelagoClient.IsConnected) return;
+            try
+            {
+                if (!ArchipelagoClient.IsConnected) return;
 
-            // craftID maps to the weapon's design sheet TID
-            var weaponName = WeaponNameMapper.GetDisplayNameFromCraftID(craftID);
-            if (weaponName != null)
-                LocationTracker.OnWeaponCrafted(weaponName);
+                // craftID maps to the weapon's design sheet TID
+                var weaponName = WeaponNameMapper.GetDisplayNameFromCraftID(craftID);
+                if (weaponName != null)
+                    LocationTracker.OnWeaponCrafted(weaponName);
+            }
+            catch (System.Exception ex)
+            {
+                Plugin.Log.LogError($"[WeaponCraftPatch] OnWeaponCrafted_Postfix threw: {ex}");
+            }
         }
     }
 

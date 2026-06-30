@@ -55,30 +55,37 @@ namespace DaveDiverAP.Patches
         [HarmonyPostfix]
         public static void OnLobbyStateChanged_Postfix(LobbyPlayer.LobbyPlayerState state)
         {
-            switch (state)
+            try
             {
-                case LobbyPlayer.LobbyPlayerState.InBoat:
-                    Log.LogInfo("Game state: IN BOAT — item processing enabled.");
-                    ItemQueue.SetGameReady(true);
-                    // Reapply all received items on the first boat entry after a save load,
-                    // so progressive upgrades, key items, etc. persist across sessions.
-                    if (!_itemsReapplied)
-                    {
-                        _itemsReapplied = true;
-                        Log.LogInfo("Game state: First boat entry — reapplying all items.");
-                        ItemHandler.ReapplyAllItems();
-                    }
-                    break;
+                switch (state)
+                {
+                    case LobbyPlayer.LobbyPlayerState.InBoat:
+                        Log.LogInfo("Game state: IN BOAT — item processing enabled.");
+                        ItemQueue.SetGameReady(true);
+                        // Reapply all received items on the first boat entry after a save load,
+                        // so progressive upgrades, key items, etc. persist across sessions.
+                        if (!_itemsReapplied)
+                        {
+                            _itemsReapplied = true;
+                            Log.LogInfo("Game state: First boat entry — reapplying all items.");
+                            ItemHandler.ReapplyAllItems();
+                        }
+                        break;
 
-                case LobbyPlayer.LobbyPlayerState.Diving:
-                    Log.LogInfo("Game state: DIVING — item processing disabled.");
-                    ItemQueue.SetGameReady(false);
-                    break;
+                    case LobbyPlayer.LobbyPlayerState.Diving:
+                        Log.LogInfo("Game state: DIVING — item processing disabled.");
+                        ItemQueue.SetGameReady(false);
+                        break;
 
-                // All other states (restaurant, farms, cutscenes, loading) disable delivery
-                default:
-                    ItemQueue.SetGameReady(false);
-                    break;
+                    // All other states (restaurant, farms, cutscenes, loading) disable delivery
+                    default:
+                        ItemQueue.SetGameReady(false);
+                        break;
+                }
+            }
+            catch (System.Exception ex)
+            {
+                Log.LogError($"[GameStatePatch] OnLobbyStateChanged_Postfix threw: {ex}");
             }
         }
 
@@ -90,8 +97,15 @@ namespace DaveDiverAP.Patches
         [HarmonyPostfix]
         public static void OnRestaurantStart_Postfix()
         {
-            Log.LogInfo("Game state: RESTAURANT — item processing disabled.");
-            ItemQueue.SetGameReady(false);
+            try
+            {
+                Log.LogInfo("Game state: RESTAURANT — item processing disabled.");
+                ItemQueue.SetGameReady(false);
+            }
+            catch (System.Exception ex)
+            {
+                Log.LogError($"[GameStatePatch] OnRestaurantStart_Postfix threw: {ex}");
+            }
         }
     }
 }

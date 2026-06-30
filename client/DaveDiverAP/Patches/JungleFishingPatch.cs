@@ -25,34 +25,41 @@ namespace DaveDiverAP.Patches
         [HarmonyPostfix]
         public static void OnFishingResultShown_Postfix()
         {
-            if (!ArchipelagoClient.IsConnected) return;
-
-            // Get the caught fish TID from FishingGameManager
-            var fm = JDLC.Fishing.FishingGameManager.Instance;
-            if (fm == null) return;
-
-            var ctx = fm.FishingContext;
-            if (ctx == null) return;
-
-            var fishInfo = ctx.FishInfo;
-            if (fishInfo == null) return;
-
-            // Only process if the fish was actually caught (not escaped)
-            if (!fishInfo.IsCaught) return;
-
-            int tid = fishInfo.TID;
-
-            // Look up the fish name from TID
-            var fishName = RodFishNameMapper.GetDisplayName(tid);
-
-            if (fishName != null)
+            try
             {
-                Plugin.Log.LogInfo($"[RodFishCaught] TID={tid} → Location=\"First Catch: {fishName}\"");
-                LocationTracker.OnFirstFishCatch(fishName);
+                if (!ArchipelagoClient.IsConnected) return;
+
+                // Get the caught fish TID from FishingGameManager
+                var fm = JDLC.Fishing.FishingGameManager.Instance;
+                if (fm == null) return;
+
+                var ctx = fm.FishingContext;
+                if (ctx == null) return;
+
+                var fishInfo = ctx.FishInfo;
+                if (fishInfo == null) return;
+
+                // Only process if the fish was actually caught (not escaped)
+                if (!fishInfo.IsCaught) return;
+
+                int tid = fishInfo.TID;
+
+                // Look up the fish name from TID
+                var fishName = RodFishNameMapper.GetDisplayName(tid);
+
+                if (fishName != null)
+                {
+                    Plugin.Log.LogInfo($"[RodFishCaught] TID={tid} → Location=\"First Catch: {fishName}\"");
+                    LocationTracker.OnFirstFishCatch(fishName);
+                }
+                else
+                {
+                    Plugin.Log.LogInfo($"[RodFishCaught] TID={tid} → UNMAPPED (add to RodFishNameMapper)");
+                }
             }
-            else
+            catch (System.Exception ex)
             {
-                Plugin.Log.LogInfo($"[RodFishCaught] TID={tid} → UNMAPPED (add to RodFishNameMapper)");
+                Plugin.Log.LogError($"[JungleFishingPatch] OnFishingResultShown_Postfix threw: {ex}");
             }
         }
     }

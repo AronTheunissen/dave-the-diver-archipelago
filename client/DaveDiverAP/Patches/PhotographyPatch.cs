@@ -21,10 +21,17 @@ namespace DaveDiverAP.Patches
         [HarmonyPostfix]
         public static void OnPhotoCompleted_Postfix(LobbyPostRoutine __instance)
         {
-            if (!ArchipelagoClient.IsConnected) return;
-            _totalPhotos++;
-            // TODO: LocationTracker.OnPhotoTaken not yet implemented
-            // LocationTracker.OnPhotoTaken(_totalPhotos, 0);
+            try
+            {
+                if (!ArchipelagoClient.IsConnected) return;
+                _totalPhotos++;
+                // TODO: LocationTracker.OnPhotoTaken not yet implemented
+                // LocationTracker.OnPhotoTaken(_totalPhotos, 0);
+            }
+            catch (System.Exception ex)
+            {
+                Plugin.Log.LogError($"[PhotographyPatch] OnPhotoCompleted_Postfix threw: {ex}");
+            }
         }
 
         private static int _totalPhotos = 0;

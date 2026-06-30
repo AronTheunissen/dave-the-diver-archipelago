@@ -24,10 +24,17 @@ namespace DaveDiverAP.Patches
         [HarmonyPostfix]
         public static void TreasureChest_Postfix()
         {
-            if (!ArchipelagoClient.IsConnected) return;
-            _chestCount++;
-            if (_chestCount <= 2)
-                ArchipelagoClient.CheckLocation($"Find Treasure Chest {_chestCount}");
+            try
+            {
+                if (!ArchipelagoClient.IsConnected) return;
+                _chestCount++;
+                if (_chestCount <= 2)
+                    ArchipelagoClient.CheckLocation($"Find Treasure Chest {_chestCount}");
+            }
+            catch (System.Exception ex)
+            {
+                Plugin.Log.LogError($"[CollectiblePatch] TreasureChest_Postfix threw: {ex}");
+            }
         }
 
         // ── Teleport point activations ────────────────────────────────────────
@@ -38,23 +45,30 @@ namespace DaveDiverAP.Patches
         [HarmonyPostfix]
         public static void TeleportPoint_Postfix(object __instance)
         {
-            if (!ArchipelagoClient.IsConnected) return;
-
-            // TODO: Read the teleport point location from __instance
-            // Map the point's identifier to the AP location name
-            // Example: var pointId = ((TeleportPoint)__instance).pointId;
-            string? pointId = null; // TODO: get from __instance
-
-            var locationName = pointId switch
+            try
             {
-                "TELEPORT_GLACIER"       => "Glacier: Activate Glacier Teleport Point",
-                "TELEPORT_VILLAGE"       => "Sea People Village: Activate Village Teleport Point",
-                "TELEPORT_DEEP"          => "Deep Blue Hole: Activate Deep Teleport Point",
-                _                        => null
-            };
+                if (!ArchipelagoClient.IsConnected) return;
 
-            if (locationName != null)
-                ArchipelagoClient.CheckLocation(locationName);
+                // TODO: Read the teleport point location from __instance
+                // Map the point's identifier to the AP location name
+                // Example: var pointId = ((TeleportPoint)__instance).pointId;
+                string? pointId = null; // TODO: get from __instance
+
+                var locationName = pointId switch
+                {
+                    "TELEPORT_GLACIER"       => "Glacier: Activate Glacier Teleport Point",
+                    "TELEPORT_VILLAGE"       => "Sea People Village: Activate Village Teleport Point",
+                    "TELEPORT_DEEP"          => "Deep Blue Hole: Activate Deep Teleport Point",
+                    _                        => null
+                };
+
+                if (locationName != null)
+                    ArchipelagoClient.CheckLocation(locationName);
+            }
+            catch (System.Exception ex)
+            {
+                Plugin.Log.LogError($"[CollectiblePatch] TeleportPoint_Postfix threw: {ex}");
+            }
         }
 
         // ── Godzilla DLC: Kaiju figurines ────────────────────────────────────
