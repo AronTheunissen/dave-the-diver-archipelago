@@ -287,3 +287,57 @@ These names appeared in old docs but are **NOT in the game**:
 | `FishFarm` (class) | `FishFarmManager` / `FishFarmDynamicEnvironmentController` |
 | `ChickenFarm` (class) | `SaveData.FarmSave.SetDailyHarvestItems` |
 | `SNSPost` / `SNSLikes` | `SNSInfoSave.set_followerCount` |
+
+---
+
+## 🛡️ Load Guard Pattern
+
+When hooking gameplay methods that may also fire during save/load, use `ItemQueue.IsGameReady` to guard against re-applying items during load replay.
+
+### Why This Is Needed
+
+Methods like `IngredientsStorage.AddIngredients()` fire in two contexts:
+1. **During gameplay** (player action) — when we want to detect completion
+2. **During save load** (deserialization replay) — when we DON'T want to re-trigger
+
+Without a guard, items get incorrectly applied twice, or crashes occur from invalid game state during load.
+
+### Pattern: ItemQueue.IsGameReady Guard
+
+```csharp
+[HarmonyPatch(typeof(IngredientsStorage), "AddIngredients")]
+[HarmonyPostfix]
+public static void OnIngredientsAdded(int ingredientId, int count, Place place)
+{
+    try
+    {
+        // Skip during save/load — ItemQueue tracks when game is fully ready
+        if (!ItemQueue.Instance.IsGameReady)
+            return;
+        
+        // Now safe to mark location as checked
+        if (LocationTracker.TryGetLocationId(ingredientId, place, out var locId))
+        {
+            Plugin.Log.LogDebug($"[Ingredient] {ingredientId} at {place} → {locId}");
+            ConnectionManager.Instance?.SendLocationCheck(locId);
+        }
+    }
+    catch (Exception ex)
+    {
+        Plugin.Log.LogError($"[Ingredient] Exception: {ex.Message}");
+    }
+}
+```
+
+### How IsGameReady Works
+
+`ItemQueue.IsGameReady` is set to `true` after:
+- Game fully loads (scene is active)
+- Player can interact with the game
+- All save/load replay is complete
+
+The flag is used to distinguish:
+- ✅ **Real player actions** (IsGameReady = true)
+- ❌ **Deserialization replay** (IsGameReady = false during load)
+
+This pattern replaces dangerous hooks on `SaveData.*` methods, which fire during replay and cause crashes.

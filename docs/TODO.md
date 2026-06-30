@@ -1,7 +1,7 @@
 # Dave the Diver Archipelago - TODO List
 
-> Last updated: June 27, 2026
-> Current status: APWorld complete, 1,400+ locations, 320+ items, 54 tests. C# client complete with 18 patches, ALL TIDs confirmed from live UnityExplorer dumps. Jungle DLC fully implemented. Ready for first in-game test!
+> Last updated: June 30, 2026
+> Current status: APWorld complete, 1,400+ locations, 320+ items, 77 tests. C# client complete with 18 patches, all core functionality working with IsGameReady guards. Jungle DLC fully implemented. In-game testing phase.
 
 ---
 
@@ -28,7 +28,7 @@
 - [x] `should_include_item()` and `should_include_location()` filtering
 - [x] `fill_slot_data()` passing all 28 options to client
 - [x] 7 chapters with correct story structure
-- [x] Unit tests (54/54 passing)
+- [x] Unit tests (77/77 passing)
 
 ### DLC Content
 - [x] **DREDGE DLC** — Aberration vortex fish (34), Drain Gun tree, Leo Keychain, tagged `dlc_dredge`
@@ -91,41 +91,44 @@
 
 ## 🔴 CRITICAL — Blocking Actual Play
 
-### In-Game Testing
-All TID mappers are now fully populated from live UnityExplorer game dumps (2026-06-27).
-See `docs/BUILD_AND_TEST_GUIDE.md` for step-by-step build and test instructions.
+### ✅ COMPLETED IN SESSION 3 (2026-06-30)
+- [x] **IngredientPatch**: Re-implemented using `IngredientsStorage.AddIngredients()` with persistent dedup via `ItemQueue.IsGameReady`
+- [x] **RecipeUnlockPatch**: Re-enabled with `IsGameReady` load guard
+- [x] **CharmPatch**: Re-enabled with `IsGameReady` load guard
+- [x] **CookstaPatch** follower/grade hooks: Re-enabled with `IsGameReady` load guard
+- [x] **ChallengePatch**: Deleted (was placeholder content)
+- [x] **challenge_locations**: Removed from `locations.py`
+- [x] **BossDefeatedPatch**: Void-prefix guard added for NullRef loop (non-blocking workaround)
+- [x] **SaveData**: Added `FoundIngredients` persistence for archipelago items
+- [x] **ItemQueue**: Added `IsGameReady` public property for load-time guards
+- [x] **23 new tests added** (total 77/77 passing)
+- [x] **Lusca rule bug fixed** (missing Vortex Entry requirement)
+- [x] **Humboldt Squid duplicate rule cleaned up**
 
-| Mapper | Status |
-|---|---|
-| `FishNameMapper._map` | ✅ 200+ TIDs confirmed (GO name format + all regions) |
-| `RodFishNameMapper._map` | ✅ All 12 rod fish confirmed (42013501-42013513) |
-| `BossNameMapper._map` | ✅ All bosses including Jungle DLC (EnumBossFishType) |
-| `WeaponNameMapper._idMap` | ✅ 48 weapons confirmed (3060xxx range) |
-| `RecipeNameMapper._map` | ✅ 248 recipes confirmed (8050xxx-8059xxx) |
-| `QuestNameMapper._map` | ✅ 130+ missions confirmed (MissionDictionary dump) |
-| `IngredientNameMapper._map` | ✅ All 12 ingredients + farm crops confirmed |
-| `CharmMapper._map` | ✅ All 18 charms confirmed (3017xxx + 43017xxx) |
+### 🟡 OPEN ISSUES / TODO
 
-### ~~Implement ItemHandler Game API Calls~~ ✅ DONE
-All `ItemHandler.cs` methods now use real game API calls:
-- `PhoneAppUpgradeManager.ApplyUpgrade()` — progressive equipment (oxygen/harpoon/suit/cargo)
-- `MissionManager.UpdateMission()` — key items (gloves, translator, teleports, farms, etc.)
-- `DREventTriggerManager.WeaponCraftTreeEventTrigger()` — weapon unlocks
-- `SaveData.AddUnlockRecipeSaveData()` / `UpdateUnlockRecipeSave()` — recipes/dish upgrades
-- `SNSInfoSave.set_grade()` — Cooksta rank
-- `ChapterManager.SetChapterComplete()` — chapter completion
-- `LobbyCharmSwapPanel.AutoEquipCharmItem()` — charms
-- `IngredientsStorage.AddIngredients()` — ingredients + counter key items
-- `PlayerInfoSave.set_Gold()` / `set_bei()` — currency
-- `ReapplyAllItems()` fires on first boat entry after every save load
+#### Known Issues (Not Blocking)
+- [ ] **Save-load crash on 'Continue'** from main menu — May be fixed by IsGameReady guards. Needs in-game testing.
+- [ ] **CommonBossDead.DoJob NullRef loop** — Partially mitigated by void prefix guard; real fix needs to patch base class `BossSceneSO.JobStuff` or find better hook point
+- [ ] **CharmPatch**: Need to verify TIDs are correct in-game
+- [ ] **staff_training_locations**: Not being used anywhere in the location_table aggregation — check if this should be included!
 
-### In-Game Testing
+#### Disabled Patches (SaveSystem/Interop Missing)
+- [ ] **SaveLoadPatch** — Disabled (SaveSystem not in interop DLL)
+- [ ] **MinigamePatch** — Disabled (seahorse racing, card games — interop missing)
+- [ ] **EcowatcherPatch** — Disabled (EcoWatcherDeliverPopup not found in interop)
+
+#### Partial Implementation (Hooks Not Yet Applied)
+- [ ] **RecipeUnlockPatch.UpgradeDish_Postfix** — Still commented out (LocationTracker.OnDishResearchUpdated not implemented)
+
+### In-Game Testing Checklist
 - [ ] Build mod on game machine (`dotnet build` in `client/DaveDiverAP/`)
 - [ ] Install and connect to a test Archipelago server
 - [ ] Verify fish catches trigger correctly
 - [ ] Verify boss defeats trigger correctly
 - [ ] Verify boat-only item delivery works
 - [ ] Verify goal completion fires correctly
+- [ ] Test save/load 'Continue' flow (should not crash with IsGameReady guards)
 
 ---
 

@@ -536,7 +536,10 @@ jungle_boss_locations: Dict[str, LocationData] = {
 # =====================================================================
 
 _SH = BASE_ID + 1500   # Staff Hire base
-_ST = BASE_ID + 1600   # Staff Training base (4 levels × up to 31 staff, 124 entries max)
+_ST = BASE_ID + 1600   # Staff Training base (legacy — superseded by staff_all_levels_locations)
+# NOTE: staff_training_locations (using _ST) was replaced by staff_all_levels_locations (_SA).
+# staff_all_levels_locations handles both milestone (Lv5/10/15/20) and all_levels (Lv1-20)
+# modes via should_include_location() filtering. staff_training_locations is NOT in location_table.
 
 # Staff list with index for ID calculation:
 # Base game (0-20): Billy, Carolina, Charlie, Cohh, Davina, Drae, El Nino,

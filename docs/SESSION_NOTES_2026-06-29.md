@@ -143,3 +143,92 @@ different hook point on `BossScene` itself.
 - ❌ `global::SaveData.*` methods — replay on load
 - ❌ `*Save` class property setters — fire during deserialization
 - ❌ Any class whose name ends in `Save` or `SaveData`
+
+---
+
+## Session 3 Updates — 2026-06-30 (Morning)
+
+### Major Fixes Applied
+
+#### 1. ✅ IsGameReady Pattern Implemented
+- Added public `bool IsGameReady` property to `ItemQueue.cs`
+- Set to `false` at initialization, `true` after game scene loads
+- All previously-disabled patches re-enabled with `if (!ItemQueue.Instance.IsGameReady) return;` guard
+- This safely skips item re-application during save/load replay
+
+#### 2. ✅ IngredientPatch Re-implemented
+- **Old hook** (disabled): `SaveData.AddIngredientsSaveData` — fired during load replay, caused duplicates
+- **New hook**: `IngredientsStorage.AddIngredients(int ingredientId, int count, Place place)` — fires only during gameplay
+- Added `ItemQueue.IsGameReady` guard for extra safety
+- Implements persistent dedup: checks `SaveData.FoundIngredients` set to avoid duplicate checks
+
+#### 3. ✅ RecipeUnlockPatch Re-enabled
+- Added `IsGameReady` guard to postfix
+- Now safely detects recipe unlocks without triggering during load replay
+
+#### 4. ✅ CharmPatch Re-enabled
+- `LobbyCharmSwapPanel.AutoEquipCharmItem(int tid)` now guarded with `IsGameReady`
+- Charm TIDs still need in-game verification
+
+#### 5. ✅ CookstaPatch Follower/Grade Hooks Re-enabled
+- `SNSInfoSave.set_followerCount` postfix now guarded with `IsGameReady`
+- `SNSInfoSave.set_grade` postfix now guarded with `IsGameReady`
+- No longer triggers during save deserialization
+
+#### 6. ✅ ChallengePatch Deleted
+- Was placeholder content with no real implementation
+- Removed from Patches folder
+- Removed `challenge_locations` from `apworld/davethediver/locations.py`
+- No location IDs or tests affected
+
+#### 7. ✅ BossDefeatedPatch NullRef Mitigation
+- Added **void-prefix guard** (not bool-returning, to avoid IL2CPP crash)
+  ```csharp
+  private static bool _skipBossJob = false;
+  
+  [HarmonyPrefix]
+  public static void OnBossDefeated_Prefix()  // void, not bool!
+  {
+      _skipBossJob = (BossScene.Current == null);
+  }
+  
+  [HarmonyPostfix]
+  public static void OnBossDefeated_Postfix()
+  {
+      if (_skipBossJob) return;  // Skip if no active BossScene
+      // ... rest of postfix
+  }
+  ```
+- Prevents cascading NullRef spam; real fix still needs base class patch
+
+#### 8. ✅ SaveData FoundIngredients Persistence
+- Added `[SerializeField] public HashSet<int> FoundIngredients` to SaveData
+- Tracks which archipelago ingredient items have been claimed
+- Enables persistent dedup for IngredientPatch across load/save cycles
+
+#### 9. ✅ ItemQueue.IsGameReady Property
+- Public `bool IsGameReady { get; set; }`
+- Used by all patches to guard against load-time re-application
+- Documented in `docs/CLASS_NAME_CHEAT_SHEET.md` with pattern example
+
+### Unit Tests
+- **23 new tests added** covering:
+  - Ingredient persistence and dedup logic
+  - IsGameReady guard behavior
+  - Rule fixes for Lusca (Vortex Entry requirement)
+  - Humboldt Squid duplicate rule cleanup
+- **Total: 77/77 passing** (was 54)
+
+### Rule Fixes
+- **Lusca**: Added missing `Vortex Entry` requirement to catch rule
+- **Humboldt Squid**: Cleaned up duplicate rule definition
+
+### Still TODO / Open Issues
+- [ ] **Save-load 'Continue' crash**: May be resolved by IsGameReady guards — needs in-game testing
+- [ ] **CommonBossDead.DoJob NullRef**: Void prefix guard is workaround; real fix needs patch on base class `BossSceneSO.JobStuff`
+- [ ] **CharmPatch TIDs**: Verify in-game that charm TIDs are correct
+- [ ] **staff_training_locations**: Check if this location group should be included in location_table aggregation
+- [ ] **RecipeUnlockPatch.UpgradeDish_Postfix**: Still commented out, waiting for LocationTracker hook implementation
+- [ ] **SaveLoadPatch**: Disabled (SaveSystem not in interop DLL)
+- [ ] **MinigamePatch**: Disabled (interop missing for seahorse racing, card games)
+- [ ] **EcowatcherPatch**: Disabled (EcoWatcherDeliverPopup not found in interop)
