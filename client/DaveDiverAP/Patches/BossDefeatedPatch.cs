@@ -25,12 +25,34 @@ namespace DaveDiverAP.Patches
     {
         // Hook CommonBossDead.DoJob() — fires for ALL bosses via the BossSceneSO job system
         // Read BossScene.Current.bossType (EnumBossFishType) to identify which boss died
+
+        // Guard flag: set by void prefix, read by postfix to skip processing when scene is null.
+        // We use a void prefix (NOT bool-returning) because bool-returning prefixes generate
+        // invalid IL on IL2CPP inherited methods and crash the game on startup.
+        // A void prefix cannot prevent the original from running, so the NullRef in DoJob will
+        // still fire ONCE — but _sceneWasNull lets the postfix skip its own logic cleanly,
+        // which should also break any retry loop driven by our patch.
+        private static bool _sceneWasNull = false;
+
+        [HarmonyPatch(typeof(CommonBossDead), "DoJob")]
+        [HarmonyPrefix]
+        public static void OnBossDefeated_Prefix()
+        {
+            _sceneWasNull = (BossScene.Current == null);
+            if (_sceneWasNull)
+                Plugin.Log.LogWarning("[Boss] CommonBossDead.DoJob called with no active BossScene — will skip postfix.");
+        }
+
         [HarmonyPatch(typeof(CommonBossDead), "DoJob")]
         [HarmonyPostfix]
         public static void OnBossDefeated_Postfix()
         {
             try
             {
+                // Skip if prefix detected no active scene (void prefix can't stop original,
+                // but we can skip our own logic here)
+                if (_sceneWasNull) return;
+
                 if (!ArchipelagoClient.IsConnected) return;
 
                 var scene = BossScene.Current;
