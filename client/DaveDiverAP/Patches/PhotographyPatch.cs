@@ -16,23 +16,19 @@ namespace DaveDiverAP.Patches
         //    LobbyPostRoutine has PhotoRewardSequence coroutine — fires after photo is scored
         //    InteractionGimmick_PhotoZone fires when player activates a photo zone
 
-        // Fires when a photo zone is successfully completed (reward sequence runs)
-        [HarmonyPatch(typeof(LobbyPostRoutine), "PhotoRewardSequence")]
-        [HarmonyPostfix]
-        public static void OnPhotoCompleted_Postfix(LobbyPostRoutine __instance)
-        {
-            try
-            {
-                if (!ArchipelagoClient.IsConnected) return;
-                _totalPhotos++;
-                // TODO: LocationTracker.OnPhotoTaken not yet implemented
-                // LocationTracker.OnPhotoTaken(_totalPhotos, 0);
-            }
-            catch (System.Exception ex)
-            {
-                Plugin.Log.LogError($"[PhotographyPatch] OnPhotoCompleted_Postfix threw: {ex}");
-            }
-        }
+        // ⚠️ COROUTINE HOOK DISABLED:
+        // PhotoRewardSequence is an IEnumerator coroutine — Harmony cannot directly patch coroutines
+        // in IL2CPP because they compile into state machine classes. Patching them causes a startup crash.
+        //
+        // TODO: Find a non-coroutine method that fires after a photo is scored. Candidates:
+        //   - LobbyPostRoutine: look for a non-coroutine method called by PhotoRewardSequence's MoveNext()
+        //   - PhotoZone: look for an OnPhotoSuccess() or similar callback
+        //   - InteractionGimmick_PhotoZone.SuccessInteraction() — fires when photo zone is activated
+        //     (may fire before scoring, but guaranteed non-coroutine)
+        //
+        // [HarmonyPatch(typeof(LobbyPostRoutine), "PhotoRewardSequence")]
+        // [HarmonyPostfix]
+        // public static void OnPhotoCompleted_Postfix(LobbyPostRoutine __instance) { ... }
 
         private static int _totalPhotos = 0;
     }

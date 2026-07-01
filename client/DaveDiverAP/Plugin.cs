@@ -54,7 +54,6 @@ namespace DaveDiverAP
                 typeof(GameStatePatch),
                 typeof(CookstaPatch),
                 typeof(PhotographyPatch),
-                typeof(ChallengePatch),
                 typeof(EcowatcherPatch),
                 typeof(FarmPatch),
                 typeof(MinigamePatch),
@@ -62,6 +61,7 @@ namespace DaveDiverAP
                 typeof(CollectiblePatch),
                 typeof(IngredientPatch),
                 typeof(CharmPatch),
+                typeof(JungleFishingPatch),
                 typeof(SaveLoadPatch),
             };
             foreach (var patchType in patchTypes)
