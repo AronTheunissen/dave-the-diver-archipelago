@@ -35,13 +35,6 @@ namespace DaveDiverAP.UI
         // ── Tabs ──────────────────────────────────────────────────────────────
         private int _activeTab = 0;
 
-        // ── GUIStyle cache ────────────────────────────────────────────────────
-        private GUIStyle _headerStyle;
-        private GUIStyle _errorStyle;
-        private GUIStyle _successStyle;
-        private GUIStyle _dimStyle;
-        private bool     _stylesInitialized = false;
-
         private static ManualLogSource Log => Plugin.Log;
 
         public void Awake()
@@ -73,54 +66,22 @@ namespace DaveDiverAP.UI
         public void OnGUI()
         {
             if (!_isVisible) return;
-
-            // Initialize styles once (must be done inside OnGUI)
-            if (!_stylesInitialized)
-                InitStyles();
-
             _windowRect = GUILayout.Window(
-                id:       42424242,
+                id:         42424242,
                 screenRect: _windowRect,
-                func:     DrawWindow,
-                text:     "Archipelago — Dave the Diver",
-                options:  GUILayout.Width(420));
-        }
-
-        private void InitStyles()
-        {
-            _headerStyle = new GUIStyle(GUI.skin.label)
-            {
-                fontStyle = FontStyle.Bold,
-                normal    = { textColor = new Color(0.2f, 0.6f, 1f) }
-            };
-            _errorStyle = new GUIStyle(GUI.skin.label)
-            {
-                normal = { textColor = new Color(1f, 0.3f, 0.3f) },
-                wordWrap = true
-            };
-            _successStyle = new GUIStyle(GUI.skin.label)
-            {
-                normal = { textColor = new Color(0.2f, 0.9f, 0.2f) }
-            };
-            _dimStyle = new GUIStyle(GUI.skin.label)
-            {
-                normal = { textColor = new Color(0.6f, 0.6f, 0.6f) },
-                fontSize = GUI.skin.label.fontSize - 1
-            };
-            _stylesInitialized = true;
+                func:       DrawWindow,
+                text:       "Archipelago — Dave the Diver",
+                options:    GUILayout.Width(420));
         }
 
         private void DrawWindow(int id)
         {
-            GUILayout.Label("Archipelago Multiworld Connection", _headerStyle);
+            GUILayout.Label("=== Archipelago Multiworld Connection ===");
 
             // ── Status bar ────────────────────────────────────────────────────
             bool connected = ArchipelagoClient.IsConnected;
-            GUIStyle statusStyle = _isConnecting ? _dimStyle
-                                 : connected      ? _successStyle
-                                 :                  _errorStyle;
-            string statusIcon = _isConnecting ? "⏳" : connected ? "✓" : "✗";
-            GUILayout.Label($"{statusIcon} {_statusMessage}", statusStyle);
+            string statusIcon = _isConnecting ? "[...]" : connected ? "[OK]" : "[X]";
+            GUILayout.Label($"{statusIcon} {_statusMessage}");
 
             GUILayout.Space(4);
 
@@ -144,7 +105,7 @@ namespace DaveDiverAP.UI
 
             // ── Footer ────────────────────────────────────────────────────────
             GUILayout.Space(4);
-            GUILayout.Label("Press F9 to toggle this window", _dimStyle);
+            GUILayout.Label("Press F9 to toggle this window");
 
             // Make window draggable
             GUI.DragWindow(new Rect(0, 0, 10000, 20));
@@ -199,7 +160,7 @@ namespace DaveDiverAP.UI
             GUI.enabled = true;
 
             if (_statusIsError && !string.IsNullOrEmpty(_statusMessage))
-                GUILayout.Label(_statusMessage, _errorStyle);
+                GUILayout.Label($"[Error] {_statusMessage}");
         }
 
         private void DrawConnectedPanel()
