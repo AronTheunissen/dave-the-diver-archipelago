@@ -197,18 +197,20 @@ def set_rules(world):
     # === VORTEX REGION RULES (DREDGE DLC) ===
     # The red fog appears on random nights once Sammy's Chicken Farm is unlocked.
     # Each vortex (whirlpool seen from the Dredge boat) also requires a Vortex Entry.
-    for vortex_entrance in [
-        "Enter Jellyfish Basin Vortex",
-        "Enter Fog Coast Vortex",
-        "Enter Black Cliff Vortex",
-    ]:
-        set_rule(
-            multiworld.get_entrance(vortex_entrance, player),
-            lambda state: (
-                state.has("Vortex Entry", player, 1) and
-                state.has("Unlock Chicken Farm", player)  # Unlocks red fog nights
+    # These entrances only exist when has_dredge_dlc is enabled (regions.py is conditional).
+    if world.options.has_dredge_dlc.value:
+        for vortex_entrance in [
+            "Enter Jellyfish Basin Vortex",
+            "Enter Fog Coast Vortex",
+            "Enter Black Cliff Vortex",
+        ]:
+            set_rule(
+                multiworld.get_entrance(vortex_entrance, player),
+                lambda state: (
+                    state.has("Vortex Entry", player, 1) and
+                    state.has("Unlock Chicken Farm", player)  # Unlocks red fog nights
+                )
             )
-        )
 
     # === VORTEX BOSS RULES ===
     # Boss aberrations within each vortex — gated by region access (handled above).
