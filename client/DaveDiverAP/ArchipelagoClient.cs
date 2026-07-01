@@ -173,7 +173,7 @@ namespace DaveDiverAP
             var locationId = Session!.Locations.GetLocationIdFromName("Dave the Diver", locationName);
             if (locationId == -1)
             {
-                Log.LogWarning($"Unknown location name: {locationName}");
+                Log.LogDebug($"[AP] Skipping non-AP location: {locationName}");
                 return;
             }
 
