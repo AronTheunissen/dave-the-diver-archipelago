@@ -9,7 +9,10 @@ name: YourName
 game: Dave the Diver
 
 # Accessibility options (for all Archipelago games)
-accessibility: items
+# locations = all locations must be reachable (recommended)
+# items = all items must be obtainable (very strict, may fail to generate)
+# minimal = only goal must be reachable (fastest generation)
+accessibility: locations
 
 # ====================
 # DAVE THE DIVER OPTIONS
