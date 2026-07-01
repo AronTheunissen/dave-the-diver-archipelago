@@ -66,6 +66,13 @@ namespace DaveDiverAP.UI
         public void OnGUI()
         {
             if (!_isVisible) return;
+
+            // Draw opaque dark background behind the window
+            var oldColor = GUI.color;
+            GUI.color = new Color(0f, 0f, 0f, 0.95f);
+            GUI.DrawTexture(_windowRect, Texture2D.whiteTexture);
+            GUI.color = oldColor;
+
             _windowRect = GUI.Window(42424242, _windowRect, (GUI.WindowFunction)DrawWindowContents, "Archipelago — Dave the Diver");
         }
 

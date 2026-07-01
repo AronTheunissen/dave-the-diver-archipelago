@@ -68,8 +68,9 @@ namespace DaveDiverAP
                 Session.Socket.ErrorReceived += OnErrorReceived;
                 Session.Socket.SocketClosed += OnSocketClosed;
 
-                // LoginAsync handles both connect + authenticate in one call,
-                // and returns slot data directly from the Connected packet.
+                // Must ConnectAsync first, then LoginAsync to authenticate
+                await Session.ConnectAsync();
+
                 var loginResult = await Session.LoginAsync(
                     game:     "Dave the Diver",
                     name:     slotName,
