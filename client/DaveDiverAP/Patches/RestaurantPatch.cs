@@ -20,23 +20,20 @@ namespace DaveDiverAP.Patches
         // ✅ CONFIRMED via dump.cs: SushiBarManager is a Singleton<SushiBarManager>
         //    Also confirmed: SushiBarAnalyticsReportSequenceCookStar fires after each service
         //    and tracks m_GainFollowerResult and m_GainFollowerCount (UITextCounter).
-        //    The DoSequence coroutine in SushiBarAnalyticsReportSequenceCookStar is the
-        //    post-service analytics sequence — hook it to detect successful service nights.
-        [HarmonyPatch(typeof(SushiBarAnalyticsReportSequenceCookStar), "DoSequence")]
-        [HarmonyPostfix]
-        public static void OnCustomerServed_Postfix()
-        {
-            try
-            {
-                if (!ArchipelagoClient.IsConnected) return;
-                _totalCustomers++;
-                LocationTracker.OnCustomersServed(_totalCustomers);
-            }
-            catch (System.Exception ex)
-            {
-                Plugin.Log.LogError($"[RestaurantPatch] OnCustomerServed_Postfix threw: {ex}");
-            }
-        }
+        //
+        // ⚠️ COROUTINE HOOK DISABLED:
+        // DoSequence is an IEnumerator coroutine — Harmony cannot directly patch coroutines
+        // in IL2CPP (they compile to state machine classes). This was causing a startup crash.
+        //
+        // TODO: Find a non-coroutine method that fires after a restaurant service night. Candidates:
+        //   - SushiBarManager.OnEventSushiBarClosed() or similar end-of-service callback
+        //   - SushiBarAnalyticsReportSequenceCookStar: look for a non-coroutine Init/Show/Complete method
+        //   - SNSInfoSave.set_followerCount already fires when Cooksta followers change (CookstaPatch)
+        //     which covers the same event indirectly
+        //
+        // [HarmonyPatch(typeof(SushiBarAnalyticsReportSequenceCookStar), "DoSequence")]
+        // [HarmonyPostfix]
+        // public static void OnCustomerServed_Postfix() { ... }
 
         // Fires when a VIP showdown result is ready to be processed.
         // ✅ CONFIRMED via dump.cs: SushiBarManager.CanProcessVIPShowdownResult(out MissionData, out MissionConditionData, out VIPCustomer)

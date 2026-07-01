@@ -12,7 +12,6 @@ namespace DaveDiverAP.Patches
     /// Note: Uses the same CheckAvailableInteraction/SuccessInteract pattern
     /// as fish catches (confirmed by existing mods).
     /// </summary>
-    [HarmonyPatch]
     public static class CollectiblePatch
     {
         // ── Treasure chests ───────────────────────────────────────────────────

@@ -20,7 +20,6 @@ namespace DaveDiverAP.Patches
     /// NOTE: Kronosaurus and Phantom Jellyfish are missing from EnumBossFishType!
     /// They may use bossSceneSO.name fallback instead.
     /// </summary>
-    [HarmonyPatch]
     public static class BossDefeatedPatch
     {
         // Hook CommonBossDead.DoJob() — fires for ALL bosses via the BossSceneSO job system
