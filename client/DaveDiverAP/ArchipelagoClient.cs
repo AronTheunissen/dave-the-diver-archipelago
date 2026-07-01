@@ -68,18 +68,19 @@ namespace DaveDiverAP
                 Session.Socket.ErrorReceived += OnErrorReceived;
                 Session.Socket.SocketClosed += OnSocketClosed;
 
-                // ConnectAsync() — handle connection via socket state
-                // The library fires SocketClosed/ErrorReceived on failure
-                // On success, Session.Socket.Connected becomes true
-                await Session.ConnectAsync();
+                // LoginAsync handles both connect + authenticate in one call,
+                // and returns slot data directly from the Connected packet.
+                var loginResult = await Session.LoginAsync(
+                    game:     "Dave the Diver",
+                    name:     slotName,
+                    itemsHandlingFlags: ItemsHandlingFlags.AllItems,
+                    password: password.Length > 0 ? password : null);
 
-                if (Session.Socket.Connected)
+                if (loginResult.Successful)
                 {
                     Log.LogInfo($"Connected to Archipelago!");
 
-                    // Parse slot data — available via session after connect
-                    var slotDataRaw = Session.DataStorage?.GetSlotData() 
-                        ?? new System.Collections.Generic.Dictionary<string, object>();
+                    var slotDataRaw = ((LoginSuccessful)loginResult).SlotData;
                     SlotData = new SlotData(slotDataRaw);
 
                     // Initialize Death Link if enabled
@@ -113,8 +114,9 @@ namespace DaveDiverAP
                 }
                 else
                 {
-                    Log.LogError("Connection failed: socket not connected");
-                    OnConnectionStatusChanged?.Invoke("Failed: could not connect");
+                    var errors = string.Join(", ", ((LoginFailure)loginResult).Errors);
+                    Log.LogError($"Connection failed: {errors}");
+                    OnConnectionStatusChanged?.Invoke($"Failed: {errors}");
                     return false;
                 }
             }
