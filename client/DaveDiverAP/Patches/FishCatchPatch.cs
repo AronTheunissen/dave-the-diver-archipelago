@@ -35,17 +35,33 @@ namespace DaveDiverAP.Patches
         // Fish first catches are tracked as missions in Dave the Diver.
         // This hook fires when ANY mission clears — we log the TID so we can
         // build the fish TID → AP location mapping.
-        [HarmonyPatch(typeof(MissionManager), "UpdateMission")]
+        // UpdateMission has multiple overloads — removed to avoid ambiguous match error.
+        // Fish catches are tracked via SaveData.SetFishGet instead (see below).
+
+        // ── Hook SaveData.SetFishGet — fires when a new fish species is recorded ──
+        // SaveData.SetFishGet(int fishId, bool value) is called when a fish is caught
+        // for the first time. fishId is the game's internal fish TID.
+        [HarmonyPatch(typeof(global::SaveData), "SetFishGet")]
         [HarmonyPostfix]
-        public static void OnMissionCleared_FishDebug_Postfix()
+        public static void SetFishGet_Postfix(int fishId, bool value)
         {
             try
             {
-                Plugin.Log.LogInfo($"[MissionUpdate] fired!");
+                if (!value) return; // Only care about setting to true (first catch)
+                Plugin.Log.LogInfo($"[FishGet] fishId={fishId}");
+                if (!ArchipelagoClient.IsConnected) return;
+                if (!ItemQueue.IsGameLoaded) return;
+
+                var locationName = FishNameMapper.GetLocationFromFishId(fishId);
+                if (locationName != null)
+                {
+                    Plugin.Log.LogInfo($"[FishCaught] fishId={fishId} → \"{locationName}\"");
+                    ArchipelagoClient.CheckLocation(locationName);
+                }
             }
             catch (System.Exception ex)
             {
-                Plugin.Log.LogError($"[FishCatchPatch] OnMissionCleared_FishDebug_Postfix threw: {ex}");
+                Plugin.Log.LogError($"[FishCatchPatch] SetFishGet_Postfix threw: {ex}");
             }
         }
 
@@ -686,5 +702,18 @@ namespace DaveDiverAP.Patches
 
         public static string? GetLocationFromMissionTID(int missionTID) =>
             _missionTidMap.TryGetValue(missionTID, out var name) ? name : null;
+
+        // Fish ID → AP location name.
+        // fishId is the game's internal fish data TID (from DR_GameData_Fish.json).
+        // These are logged via [FishGet] fishId=XXXXX when a fish is caught.
+        // Populate from log output while playing.
+        private static readonly System.Collections.Generic.Dictionary<int, string> _fishIdMap = new()
+        {
+            // TODO: populate from [FishGet] log output while playing
+            // Example: { 14011001, "First Catch: Clownfish" }
+        };
+
+        public static string? GetLocationFromFishId(int fishId) =>
+            _fishIdMap.TryGetValue(fishId, out var name) ? name : null;
     }
 }
