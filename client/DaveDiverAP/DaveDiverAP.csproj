@@ -15,21 +15,14 @@
   <Target Name="CopyToGame" AfterTargets="Build" Condition="'$(GamePath)' != '' AND Exists('$(GamePath)\\BepInEx\\plugins')">
     <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(GamePath)\\BepInEx\\plugins\\" />
     <Message Text="Copied DaveDiverAP.dll to $(GamePath)\\BepInEx\\plugins\\" Importance="high" />
-    <!-- Copy cimgui.dll (native ImGui binary) — required by ImGui.NET at runtime -->
-    <Copy SourceFiles="$(TargetDir)cimgui.dll" DestinationFolder="$(GamePath)\\BepInEx\\plugins\\"
-          Condition="Exists('$(TargetDir)cimgui.dll')" />
-    <Message Text="Copied cimgui.dll to $(GamePath)\\BepInEx\\plugins\\" Importance="high"
-             Condition="Exists('$(TargetDir)cimgui.dll')" />
-    <Warning Text="cimgui.dll not found in build output — ImGui UI will not work!" 
-             Condition="!Exists('$(TargetDir)cimgui.dll')" />
+    <!-- No native DLL copy needed — using Unity built-in IMGUI -->
   </Target>
 
   <!-- Archipelago client via NuGet — no manual DLL needed -->
   <ItemGroup>
     <PackageReference Include="Archipelago.MultiClient.Net" Version="6.*" />
     <PackageReference Include="Newtonsoft.Json" Version="13.*" />
-    <!-- ImGui for in-game UI — widely used in BepInEx mods -->
-    <PackageReference Include="ImGui.NET" Version="1.*" />
+    <!-- ImGui removed — using Unity built-in IMGUI instead (no native DLLs required) -->
   </ItemGroup>
 
   <!-- BepInEx references — copy from your BepInEx installation into client/lib/ -->

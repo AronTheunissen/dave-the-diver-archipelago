@@ -1,27 +1,21 @@
 using System;
 using System.Threading.Tasks;
 using BepInEx.Logging;
-using ImGuiNET;
 using UnityEngine;
 
 namespace DaveDiverAP.UI
 {
     /// <summary>
     /// In-game Archipelago connection window.
-    /// Toggle with F9 key. Uses ImGui for rendering.
-    ///
-    /// Shows:
-    /// - Connection form (server, port, slot name, password)
-    /// - Connection status indicator
-    /// - Item receive log (last 10 items)
-    /// - Location check counter
-    /// - Disconnect button
+    /// Uses Unity's built-in IMGUI (no native DLLs required).
+    /// Toggle with F9 (TODO: requires InputLegacyModule).
     /// </summary>
     public class ConnectionUI : MonoBehaviour
     {
         // ── UI state ─────────────────────────────────────────────────────────
-        private bool _isVisible = true; // Always visible until F9 toggle is implemented
+        private bool _isVisible    = true;
         private bool _isConnecting = false;
+        private Rect _windowRect   = new Rect(20, 20, 420, 0);
 
         // ── Form fields ───────────────────────────────────────────────────────
         private string _server   = "localhost";
@@ -36,24 +30,27 @@ namespace DaveDiverAP.UI
         // ── Item log (last 10 received items) ─────────────────────────────────
         private readonly System.Collections.Generic.Queue<string> _itemLog = new();
         private const int MaxLogEntries = 10;
+        private Vector2 _logScrollPos = Vector2.zero;
 
-        // ── Colors ────────────────────────────────────────────────────────────
-        private static readonly System.Numerics.Vector4 ColorConnected    = new(0.2f, 0.8f, 0.2f, 1f);
-        private static readonly System.Numerics.Vector4 ColorDisconnected = new(0.8f, 0.2f, 0.2f, 1f);
-        private static readonly System.Numerics.Vector4 ColorConnecting   = new(0.9f, 0.7f, 0.1f, 1f);
-        private static readonly System.Numerics.Vector4 ColorHeader       = new(0.2f, 0.6f, 0.9f, 1f);
+        // ── Tabs ──────────────────────────────────────────────────────────────
+        private int _activeTab = 0;
+
+        // ── GUIStyle cache ────────────────────────────────────────────────────
+        private GUIStyle _headerStyle;
+        private GUIStyle _errorStyle;
+        private GUIStyle _successStyle;
+        private GUIStyle _dimStyle;
+        private bool     _stylesInitialized = false;
 
         private static ManualLogSource Log => Plugin.Log;
 
         public void Awake()
         {
-            // Load last connection info from save data
             var (url, port, slotName, _) = SaveData.LoadConnectionInfo();
             _server   = url;
             _port     = port.ToString();
             _slotName = slotName;
 
-            // Wire up AP client events
             ArchipelagoClient.OnConnectionStatusChanged += OnStatusChanged;
             ArchipelagoClient.OnItemReceived            += OnItemReceived;
             ArchipelagoClient.OnConnected               += OnConnectedHandler;
@@ -70,200 +67,171 @@ namespace DaveDiverAP.UI
 
         public void Update()
         {
-            // TODO: Toggle UI with F9 — Input.GetKeyDown not available without InputLegacyModule
-            // Add UnityEngine.InputLegacyModule.dll to client/lib/interop/ to enable this
+            // TODO: Toggle UI with F9 — needs InputLegacyModule.dll
         }
 
         public void OnGUI()
         {
             if (!_isVisible) return;
-            DrawUI();
+
+            // Initialize styles once (must be done inside OnGUI)
+            if (!_stylesInitialized)
+                InitStyles();
+
+            _windowRect = GUILayout.Window(
+                id:       42424242,
+                screenRect: _windowRect,
+                func:     DrawWindow,
+                text:     "Archipelago — Dave the Diver",
+                options:  GUILayout.Width(420));
         }
 
-        // Active tab index
-        private int _activeTab = 0;
-
-        private void DrawUI()
+        private void InitStyles()
         {
-            // ── Window setup ──────────────────────────────────────────────────
-            ImGui.SetNextWindowSize(new System.Numerics.Vector2(440, 0), ImGuiCond.FirstUseEver);
-            ImGui.SetNextWindowPos(new System.Numerics.Vector2(20, 20), ImGuiCond.FirstUseEver);
-
-            if (!ImGui.Begin("Archipelago - Dave the Diver",
-                ImGuiWindowFlags.NoCollapse | ImGuiWindowFlags.AlwaysAutoResize))
+            _headerStyle = new GUIStyle(GUI.skin.label)
             {
-                ImGui.End();
-                return;
-            }
+                fontStyle = FontStyle.Bold,
+                normal    = { textColor = new Color(0.2f, 0.6f, 1f) }
+            };
+            _errorStyle = new GUIStyle(GUI.skin.label)
+            {
+                normal = { textColor = new Color(1f, 0.3f, 0.3f) },
+                wordWrap = true
+            };
+            _successStyle = new GUIStyle(GUI.skin.label)
+            {
+                normal = { textColor = new Color(0.2f, 0.9f, 0.2f) }
+            };
+            _dimStyle = new GUIStyle(GUI.skin.label)
+            {
+                normal = { textColor = new Color(0.6f, 0.6f, 0.6f) },
+                fontSize = GUI.skin.label.fontSize - 1
+            };
+            _stylesInitialized = true;
+        }
 
-            // ── Header ─────────────────────────────────────────────────────────
-            ImGui.TextColored(ColorHeader, "Archipelago Multiworld Connection");
-            ImGui.Separator();
-            ImGui.Spacing();
+        private void DrawWindow(int id)
+        {
+            GUILayout.Label("Archipelago Multiworld Connection", _headerStyle);
 
-            // ── Connection status indicator ────────────────────────────────────
-            DrawStatusIndicator();
-            ImGui.Spacing();
-            ImGui.Separator();
+            // ── Status bar ────────────────────────────────────────────────────
+            bool connected = ArchipelagoClient.IsConnected;
+            GUIStyle statusStyle = _isConnecting ? _dimStyle
+                                 : connected      ? _successStyle
+                                 :                  _errorStyle;
+            string statusIcon = _isConnecting ? "⏳" : connected ? "✓" : "✗";
+            GUILayout.Label($"{statusIcon} {_statusMessage}", statusStyle);
+
+            GUILayout.Space(4);
 
             // ── Tab bar ───────────────────────────────────────────────────────
-            if (ImGui.BeginTabBar("APTabs"))
-            {
-                // Connection tab
-                if (ImGui.BeginTabItem("Connection"))
-                {
-                    ImGui.Spacing();
-                    if (ArchipelagoClient.IsConnected)
-                        DrawConnectedPanel();
-                    else
-                        DrawConnectionForm();
+            string[] tabs = connected
+                ? new[] { "Connection", $"Hints ({HintManager.ReceivedHints.Count})", "Progress" }
+                : new[] { "Connection" };
 
-                    ImGui.Spacing();
-                    ImGui.Separator();
-                    DrawItemLog();
-                    ImGui.EndTabItem();
-                }
+            _activeTab = Mathf.Clamp(_activeTab, 0, tabs.Length - 1);
+            _activeTab = GUILayout.Toolbar(_activeTab, tabs);
 
-                // Hints tab (only when connected)
-                if (ArchipelagoClient.IsConnected)
-                {
-                    // Show badge on tab if we have hints
-                    int hintCount = HintManager.ReceivedHints.Count;
-                    var hintLabel = hintCount > 0 ? $"Hints ({hintCount})" : "Hints";
+            GUILayout.Space(4);
 
-                    if (ImGui.BeginTabItem(hintLabel))
-                    {
-                        HintUI.Draw();
-                        ImGui.EndTabItem();
-                    }
-
-                    // Progress tab
-                    if (ImGui.BeginTabItem("Progress"))
-                    {
-                        ProgressUI.Draw();
-                        ImGui.EndTabItem();
-                    }
-                }
-
-                ImGui.EndTabBar();
-            }
+            // ── Tab content ───────────────────────────────────────────────────
+            if (_activeTab == 0)
+                DrawConnectionTab(connected);
+            else if (_activeTab == 1 && connected)
+                HintUI.Draw();
+            else if (_activeTab == 2 && connected)
+                ProgressUI.Draw();
 
             // ── Footer ────────────────────────────────────────────────────────
-            ImGui.Spacing();
-            ImGui.TextDisabled("Press F9 to toggle this window");
+            GUILayout.Space(4);
+            GUILayout.Label("Press F9 to toggle this window", _dimStyle);
 
-            ImGui.End();
+            // Make window draggable
+            GUI.DragWindow(new Rect(0, 0, 10000, 20));
         }
 
-        private void DrawStatusIndicator()
+        private void DrawConnectionTab(bool connected)
         {
-            bool connected = ArchipelagoClient.IsConnected;
-            var color = _isConnecting ? ColorConnecting
-                      : connected     ? ColorConnected
-                      :                 ColorDisconnected;
+            if (connected)
+                DrawConnectedPanel();
+            else
+                DrawConnectionForm();
 
-            var icon   = _isConnecting ? "⏳" : connected ? "✓" : "✗";
-            var label  = _isConnecting ? "Connecting..." : _statusMessage;
-
-            ImGui.TextColored(color, $"{icon} {label}");
+            GUILayout.Space(4);
+            DrawItemLog();
         }
 
         private void DrawConnectionForm()
         {
-            ImGui.Text("Connect to Archipelago Server");
-            ImGui.Spacing();
+            GUILayout.Label("Connect to Archipelago Server");
+            GUILayout.Space(4);
 
-            // Server address
-            ImGui.Text("Server:");
-            ImGui.SameLine(80);
-            ImGui.SetNextItemWidth(200);
-            ImGui.InputText("##server", ref _server, 256);
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("Server:", GUILayout.Width(75));
+            _server = GUILayout.TextField(_server, 256, GUILayout.Width(220));
+            GUILayout.EndHorizontal();
 
-            // Port
-            ImGui.Text("Port:");
-            ImGui.SameLine(80);
-            ImGui.SetNextItemWidth(80);
-            ImGui.InputText("##port", ref _port, 6);
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("Port:", GUILayout.Width(75));
+            _port = GUILayout.TextField(_port, 6, GUILayout.Width(80));
+            GUILayout.EndHorizontal();
 
-            // Slot name
-            ImGui.Text("Slot Name:");
-            ImGui.SameLine(80);
-            ImGui.SetNextItemWidth(200);
-            ImGui.InputText("##slot", ref _slotName, 64);
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("Slot Name:", GUILayout.Width(75));
+            _slotName = GUILayout.TextField(_slotName, 64, GUILayout.Width(220));
+            GUILayout.EndHorizontal();
 
-            // Password (masked)
-            ImGui.Text("Password:");
-            ImGui.SameLine(80);
-            ImGui.SetNextItemWidth(200);
-            ImGui.InputText("##password", ref _password, 64, ImGuiInputTextFlags.Password);
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("Password:", GUILayout.Width(75));
+            _password = GUILayout.PasswordField(_password, '*', 64, GUILayout.Width(220));
+            GUILayout.EndHorizontal();
 
-            ImGui.Spacing();
+            GUILayout.Space(6);
 
-            // Connect button
-            bool canConnect = !_isConnecting && !string.IsNullOrWhiteSpace(_server)
+            bool canConnect = !_isConnecting
+                              && !string.IsNullOrWhiteSpace(_server)
                               && !string.IsNullOrWhiteSpace(_slotName)
                               && int.TryParse(_port, out _);
 
-            if (!canConnect) ImGui.BeginDisabled();
-
-            if (ImGui.Button("Connect", new System.Numerics.Vector2(120, 0)))
+            GUI.enabled = canConnect;
+            if (GUILayout.Button(_isConnecting ? "Connecting..." : "Connect", GUILayout.Width(120)))
                 ConnectAsync();
+            GUI.enabled = true;
 
-            if (!canConnect) ImGui.EndDisabled();
-
-            // Show error message if any
             if (_statusIsError && !string.IsNullOrEmpty(_statusMessage))
-            {
-                ImGui.SameLine();
-                ImGui.TextColored(ColorDisconnected, _statusMessage);
-            }
+                GUILayout.Label(_statusMessage, _errorStyle);
         }
 
         private void DrawConnectedPanel()
         {
-            // Slot info
-            ImGui.Text($"Game:   Dave the Diver");
-            ImGui.Text($"Slot:   {_slotName}");
-            ImGui.Text($"Server: {_server}:{_port}");
-            ImGui.Spacing();
+            GUILayout.Label($"Game:   Dave the Diver");
+            GUILayout.Label($"Slot:   {_slotName}");
+            GUILayout.Label($"Server: {_server}:{_port}");
 
-            // Pending items indicator
             int pending = ItemQueue.PendingCount;
             if (pending > 0)
             {
-                ImGui.TextColored(new System.Numerics.Vector4(1f, 0.85f, 0.1f, 1f),
-                    $"⏳ {pending} item{(pending == 1 ? "" : "s")} waiting");
-                ImGui.TextDisabled("  (items are delivered on the boat)");
-                ImGui.Spacing();
+                GUILayout.Space(4);
+                GUILayout.Label($"⏳ {pending} item{(pending == 1 ? "" : "s")} waiting (delivered on the boat)");
             }
 
-            // Disconnect button
-            if (ImGui.Button("Disconnect", new System.Numerics.Vector2(120, 0)))
-            {
+            GUILayout.Space(6);
+            if (GUILayout.Button("Disconnect", GUILayout.Width(120)))
                 ArchipelagoClient.Disconnect();
-            }
         }
 
         private void DrawItemLog()
         {
-            ImGui.Text("Recent Items Received:");
-            ImGui.BeginChild("ItemLog", new System.Numerics.Vector2(0, 120));
+            GUILayout.Label("Recent Items Received:");
+            _logScrollPos = GUILayout.BeginScrollView(_logScrollPos, GUILayout.Height(120));
 
             if (_itemLog.Count == 0)
-            {
-                ImGui.TextDisabled("(no items received yet)");
-            }
+                GUILayout.Label("(no items received yet)", _dimStyle);
             else
-            {
                 foreach (var entry in _itemLog)
-                    ImGui.TextUnformatted(entry);
-            }
+                    GUILayout.Label(entry);
 
-            // Auto-scroll to bottom
-            if (ImGui.GetScrollY() >= ImGui.GetScrollMaxY())
-                ImGui.SetScrollHereY(1.0f);
-
-            ImGui.EndChild();
+            GUILayout.EndScrollView();
         }
 
         // ── Connection logic ──────────────────────────────────────────────────
@@ -277,11 +245,10 @@ namespace DaveDiverAP.UI
                 return;
             }
 
-            _isConnecting = true;
+            _isConnecting  = true;
             _statusIsError = false;
             _statusMessage = "Connecting...";
 
-            // Save connection info for next session
             SaveData.SaveConnectionInfo(_server, port, _slotName, _password);
 
             bool success = await ArchipelagoClient.ConnectAsync(_server, port, _slotName, _password);
@@ -289,10 +256,7 @@ namespace DaveDiverAP.UI
             _isConnecting = false;
 
             if (!success)
-            {
                 _statusIsError = true;
-                // Status message is set by ArchipelagoClient via OnStatusChanged event
-            }
         }
 
         // ── Event handlers ────────────────────────────────────────────────────
@@ -305,10 +269,7 @@ namespace DaveDiverAP.UI
 
         private void OnItemReceived(Archipelago.MultiClient.Net.Models.ItemInfo item)
         {
-            var entry = $"[{DateTime.Now:HH:mm:ss}] {item.ItemName}";
-            _itemLog.Enqueue(entry);
-            while (_itemLog.Count > MaxLogEntries)
-                _itemLog.Dequeue();
+            AddLogEntry($"[{DateTime.Now:HH:mm:ss}] {item.ItemName}");
         }
 
         private void OnConnectedHandler()

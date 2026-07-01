@@ -3,98 +3,72 @@ using System.Collections.Generic;
 using System.Linq;
 using Archipelago.MultiClient.Net.Models;
 using BepInEx.Logging;
-using ImGuiNET;
 using UnityEngine;
 
 namespace DaveDiverAP.UI
 {
     /// <summary>
     /// Hint system UI panel — shown as a tab inside the connection window.
-    ///
-    /// Features:
-    /// - Search box to find items or locations to hint
-    /// - Show all received hints with item name, location, game, and found status
-    /// - Request new hints (costs hint points)
-    /// - Toggle between "hint for item" and "hint for location" modes
-    /// - Filter hints by found/unfound
+    /// Uses Unity built-in IMGUI (no native DLLs required).
     /// </summary>
     public static class HintUI
     {
         private enum HintMode { Item, Location }
 
-        private static string _searchText   = "";
-        private static HintMode _hintMode   = HintMode.Item;
-        private static bool _showFoundOnly  = false;
-        private static bool _showUnfoundOnly = false;
-        private static bool _isRequesting   = false;
+        private static string   _searchText    = "";
+        private static HintMode _hintMode      = HintMode.Item;
+        private static bool     _showFoundOnly = false;
+        private static bool     _showUnfoundOnly = false;
+        private static bool     _isRequesting  = false;
+        private static Vector2  _scrollPos     = Vector2.zero;
 
-        private static readonly System.Numerics.Vector4 ColorFound   = new(0.4f, 0.8f, 0.4f, 1f);
-        private static readonly System.Numerics.Vector4 ColorUnfound = new(0.9f, 0.6f, 0.2f, 1f);
-        private static readonly System.Numerics.Vector4 ColorMine    = new(0.4f, 0.7f, 1.0f, 1f);
-        private static readonly System.Numerics.Vector4 ColorOther   = new(0.8f, 0.8f, 0.8f, 1f);
         private static ManualLogSource Log => Plugin.Log;
 
         public static void Draw()
         {
-            ImGui.Spacing();
+            GUILayout.Space(4);
 
-            // ── Hint point display ────────────────────────────────────────────
-            ImGui.TextColored(new System.Numerics.Vector4(1f, 0.9f, 0.3f, 1f),
-                $"💡 Hint Points: {HintManager.HintPoints}");
-            ImGui.SameLine();
-            ImGui.TextDisabled("(earn by completing checks)");
-            ImGui.Separator();
-            ImGui.Spacing();
+            // ── Hint points ───────────────────────────────────────────────────
+            GUILayout.Label($"Hint Points: {HintManager.HintPoints}  (earn by completing checks)");
 
-            // ── Request new hint ──────────────────────────────────────────────
-            ImGui.Text("Request a hint:");
-            ImGui.Spacing();
+            GUILayout.Space(4);
+            GUILayout.Label("Request a hint:");
 
             // Mode toggle
-            bool itemMode = _hintMode == HintMode.Item;
-            if (ImGui.RadioButton("Item hint", itemMode))
+            GUILayout.BeginHorizontal();
+            if (GUILayout.Toggle(_hintMode == HintMode.Item, "Item hint", GUI.skin.button, GUILayout.Width(100)))
                 _hintMode = HintMode.Item;
-            ImGui.SameLine();
-            if (ImGui.RadioButton("Location hint", !itemMode))
+            if (GUILayout.Toggle(_hintMode == HintMode.Location, "Location hint", GUI.skin.button, GUILayout.Width(120)))
                 _hintMode = HintMode.Location;
+            GUILayout.EndHorizontal();
 
-            ImGui.Spacing();
+            GUILayout.Space(4);
 
-            // Search box
-            var placeholder = _hintMode == HintMode.Item
-                ? "Item name (e.g. Progressive Oxygen Tank)"
-                : "Location name (e.g. First Catch: Bluefin Tuna)";
-            ImGui.SetNextItemWidth(280);
-            ImGui.InputTextWithHint("##hintsearch", placeholder, ref _searchText, 256);
-
-            ImGui.SameLine();
+            // Search box + button
+            GUILayout.BeginHorizontal();
+            string placeholder = _hintMode == HintMode.Item
+                ? "Item name..."
+                : "Location name...";
+            _searchText = GUILayout.TextField(_searchText.Length == 0 ? placeholder : _searchText, 256, GUILayout.Width(260));
+            if (_searchText == placeholder) _searchText = "";
 
             bool canHint = !_isRequesting
                 && ArchipelagoClient.IsConnected
                 && !string.IsNullOrWhiteSpace(_searchText)
                 && HintManager.HintPoints > 0;
 
-            if (!canHint) ImGui.BeginDisabled();
-
-            if (ImGui.Button(_isRequesting ? "Requesting..." : "Hint!", new System.Numerics.Vector2(80, 0)))
+            GUI.enabled = canHint;
+            if (GUILayout.Button(_isRequesting ? "..." : "Hint!", GUILayout.Width(60)))
                 RequestHintAsync();
-
-            if (!canHint) ImGui.EndDisabled();
+            GUI.enabled = true;
+            GUILayout.EndHorizontal();
 
             if (!ArchipelagoClient.IsConnected)
-            {
-                ImGui.TextColored(new System.Numerics.Vector4(0.8f, 0.3f, 0.3f, 1f),
-                    "Not connected to Archipelago.");
-            }
+                GUILayout.Label("Not connected to Archipelago.");
             else if (HintManager.HintPoints <= 0)
-            {
-                ImGui.TextColored(new System.Numerics.Vector4(0.8f, 0.6f, 0.2f, 1f),
-                    "No hint points available.");
-            }
+                GUILayout.Label("No hint points available.");
 
-            ImGui.Spacing();
-            ImGui.Separator();
-            ImGui.Spacing();
+            GUILayout.Space(4);
 
             // ── Hint list ─────────────────────────────────────────────────────
             DrawHintList();
@@ -106,77 +80,38 @@ namespace DaveDiverAP.UI
 
             if (hints.Count == 0)
             {
-                ImGui.TextDisabled("No hints yet. Request one above!");
+                GUILayout.Label("No hints yet. Request one above!");
                 return;
             }
 
             // Filter controls
-            ImGui.Text($"Hints ({hints.Count} total):");
-            ImGui.SameLine(200);
-            ImGui.Checkbox("Found only", ref _showFoundOnly);
-            ImGui.SameLine();
-            ImGui.Checkbox("Unfound only", ref _showUnfoundOnly);
+            GUILayout.BeginHorizontal();
+            GUILayout.Label($"Hints ({hints.Count}):", GUILayout.Width(80));
+            _showFoundOnly   = GUILayout.Toggle(_showFoundOnly,   "Found only",   GUILayout.Width(90));
+            _showUnfoundOnly = GUILayout.Toggle(_showUnfoundOnly, "Unfound only", GUILayout.Width(90));
+            GUILayout.EndHorizontal();
 
-            ImGui.Spacing();
+            GUILayout.Space(4);
 
-            // Scrollable hint list
-            ImGui.BeginChild("HintList", new System.Numerics.Vector2(0, 200));
+            _scrollPos = GUILayout.BeginScrollView(_scrollPos, GUILayout.Height(200));
 
             foreach (var hint in hints)
             {
                 bool found = hint.Found;
+                if (_showFoundOnly   && !found) continue;
+                if (_showUnfoundOnly &&  found) continue;
 
-                // Apply filters
-                if (_showFoundOnly && !found) continue;
-                if (_showUnfoundOnly && found) continue;
-
-                // Determine if this is our item or someone else's
-                // In Archipelago v6, Hint properties use int IDs for player/game
-                // We access names via the session's Players helper
                 var session = ArchipelagoClient.Session;
-                string itemName = session != null
-                    ? (session.Items.GetItemName(hint.ItemId) ?? $"Item {hint.ItemId}")
-                    : $"Item {hint.ItemId}";
-                string locationName = session != null
-                    ? (session.Locations.GetLocationNameFromId(hint.LocationId) ?? $"Location {hint.LocationId}")
-                    : $"Location {hint.LocationId}";
-                string receivingPlayerName = session?.Players.GetPlayerName(hint.ReceivingPlayer) ?? $"Player {hint.ReceivingPlayer}";
-                string findingPlayerGame = session?.Players.GetPlayerInfo(hint.FindingPlayer)?.Game ?? "Unknown";
+                string itemName = session?.Items.GetItemName(hint.ItemId) ?? $"Item {hint.ItemId}";
+                string locationName = session?.Locations.GetLocationNameFromId(hint.LocationId) ?? $"Location {hint.LocationId}";
+                string receivingPlayer = session?.Players.GetPlayerName(hint.ReceivingPlayer) ?? $"Player {hint.ReceivingPlayer}";
+                string findingGame = session?.Players.GetPlayerInfo(hint.FindingPlayer)?.Game ?? "Unknown";
 
-                bool isMyItem = receivingPlayerName == ArchipelagoClient.SlotName;
-
-                // Status icon
-                var statusIcon = found ? "V" : "O";
-                var statusColor = found ? ColorFound : ColorUnfound;
-                ImGui.TextColored(statusColor, statusIcon);
-                ImGui.SameLine();
-
-                // Item name (colored by owner)
-                var itemColor = isMyItem ? ColorMine : ColorOther;
-                ImGui.TextColored(itemColor, itemName);
-                ImGui.SameLine();
-
-                ImGui.TextDisabled("->");
-                ImGui.SameLine();
-
-                // Location info
-                var locationText = $"{locationName} ({findingPlayerGame})";
-                ImGui.Text(locationText);
-
-                // Tooltip with full details
-                if (ImGui.IsItemHovered())
-                {
-                    ImGui.BeginTooltip();
-                    ImGui.Text($"Item:     {itemName}");
-                    ImGui.Text($"For:      {receivingPlayerName}");
-                    ImGui.Text($"At:       {locationName}");
-                    ImGui.Text($"In game:  {findingPlayerGame}");
-                    ImGui.Text($"Found:    {(found ? "Yes" : "No")}");
-                    ImGui.EndTooltip();
-                }
+                string status = found ? "[✓]" : "[○]";
+                GUILayout.Label($"{status} {itemName}  →  {locationName} ({findingGame})  for: {receivingPlayer}");
             }
 
-            ImGui.EndChild();
+            GUILayout.EndScrollView();
         }
 
         private static async void RequestHintAsync()
@@ -192,12 +127,9 @@ namespace DaveDiverAP.UI
 
                 if (success)
                 {
-                    _searchText = ""; // Clear after successful request
-                    NotificationManager.ShowNotification(
-                        "Hint Requested",
-                        "Check the hint list for results.",
-                        NotificationManager.NotificationType.Info
-                    );
+                    _searchText = "";
+                    NotificationManager.ShowNotification("Hint Requested", "Check the hint list for results.",
+                        NotificationManager.NotificationType.Info);
                 }
             }
             finally

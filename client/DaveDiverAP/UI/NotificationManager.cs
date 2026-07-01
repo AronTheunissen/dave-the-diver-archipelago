@@ -1,31 +1,18 @@
 using System;
 using System.Collections.Generic;
 using BepInEx.Logging;
-using ImGuiNET;
 using UnityEngine;
 
 namespace DaveDiverAP.UI
 {
     /// <summary>
-    /// Displays non-intrusive toast-style notifications in the top-right corner.
-    /// Used for:
-    /// - Item received (from Archipelago multiworld)
-    /// - Death Link received
-    /// - Connection status changes
-    /// - Goal completion
-    ///
-    /// Notifications auto-dismiss after a configurable duration.
+    /// Displays toast-style notifications in the top-right corner.
+    /// Uses Unity built-in IMGUI (no native DLLs required).
+    /// Auto-dismisses after a configurable duration.
     /// </summary>
     public class NotificationManager : MonoBehaviour
     {
-        public enum NotificationType
-        {
-            ItemReceived,
-            DeathLink,
-            Connection,
-            Goal,
-            Info,
-        }
+        public enum NotificationType { ItemReceived, DeathLink, Connection, Goal, Info }
 
         private class Notification
         {
@@ -36,40 +23,29 @@ namespace DaveDiverAP.UI
             public float Alpha { get; set; } = 1f;
         }
 
-        // ── Singleton ─────────────────────────────────────────────────────────
         public static NotificationManager? Instance { get; private set; }
 
-        private readonly Queue<Notification> _pending  = new();
-        private readonly List<Notification>  _active   = new();
+        private readonly Queue<Notification> _pending = new();
+        private readonly List<Notification>  _active  = new();
         private const int   MaxActive       = 5;
-        private const float DefaultDuration = 5f;   // seconds
-        private const float FadeDuration    = 0.5f; // seconds for fade-out
+        private const float DefaultDuration = 5f;
+        private const float FadeDuration    = 0.5f;
 
         private static ManualLogSource Log => Plugin.Log;
 
-        public void Awake()
-        {
-            Instance = this;
-        }
-
-        public void OnDestroy()
-        {
-            Instance = null;
-        }
+        public void Awake()  { Instance = this; }
+        public void OnDestroy() { Instance = null; }
 
         public void Update()
         {
             float now = Time.time;
-
-            // Promote pending to active
             while (_pending.Count > 0 && _active.Count < MaxActive)
                 _active.Add(_pending.Dequeue());
 
-            // Fade out and remove expired notifications
             _active.RemoveAll(n =>
             {
                 float remaining = n.ExpiresAt - now;
-                if (remaining <= 0)     return true;  // fully expired
+                if (remaining <= 0) return true;
                 if (remaining < FadeDuration)
                     n.Alpha = remaining / FadeDuration;
                 return false;
@@ -79,57 +55,38 @@ namespace DaveDiverAP.UI
         public void OnGUI()
         {
             if (_active.Count == 0) return;
-            // TODO: ImGuiUn.Layout not available in this ImGui.NET version — use direct ImGui calls
-            DrawNotifications();
-        }
 
-        private void DrawNotifications()
-        {
-            float screenWidth  = Screen.width;
-            float windowWidth  = 320f;
-            float padding      = 10f;
-            float windowHeight = 0f; // auto
-
+            float padding     = 10f;
+            float windowWidth = 300f;
+            float x = Screen.width - windowWidth - padding;
             float y = padding;
+
             foreach (var n in _active)
             {
-                ImGui.SetNextWindowPos(
-                    new System.Numerics.Vector2(screenWidth - windowWidth - padding, y),
-                    ImGuiCond.Always);
-                ImGui.SetNextWindowSize(
-                    new System.Numerics.Vector2(windowWidth, windowHeight),
-                    ImGuiCond.Always);
+                // Use a semi-transparent colored box
+                Color bg = GetBackgroundColor(n.Type);
+                bg.a = n.Alpha * 0.9f;
 
-                var bgColor = GetBackgroundColor(n.Type, n.Alpha);
-                ImGui.PushStyleColor(ImGuiCol.WindowBg, bgColor);
-                ImGui.PushStyleColor(ImGuiCol.Border,   new System.Numerics.Vector4(1,1,1, n.Alpha * 0.3f));
+                // Calculate content height
+                string content = string.IsNullOrEmpty(n.Message)
+                    ? $"{GetIcon(n.Type)} {n.Title}"
+                    : $"{GetIcon(n.Type)} {n.Title}\n{n.Message}";
 
-                ImGui.Begin($"##notif_{n.GetHashCode()}",
-                    ImGuiWindowFlags.NoDecoration |
-                    ImGuiWindowFlags.NoInputs |
-                    ImGuiWindowFlags.NoNav |
-                    ImGuiWindowFlags.NoMove |
-                    ImGuiWindowFlags.AlwaysAutoResize |
-                    ImGuiWindowFlags.NoSavedSettings);
+                // Draw background box
+                var oldColor = GUI.backgroundColor;
+                GUI.backgroundColor = bg;
+                GUI.Box(new Rect(x, y, windowWidth, string.IsNullOrEmpty(n.Message) ? 36 : 56), "");
+                GUI.backgroundColor = oldColor;
 
-                // Icon + title
-                var icon = GetIcon(n.Type);
-                ImGui.TextColored(new System.Numerics.Vector4(1, 1, 1, n.Alpha), $"{icon} {n.Title}");
+                // Draw text
+                var oldContent = GUI.color;
+                GUI.color = new Color(1, 1, 1, n.Alpha);
+                GUI.Label(new Rect(x + 8, y + 8, windowWidth - 16, 48), content);
+                GUI.color = oldContent;
 
-                if (!string.IsNullOrEmpty(n.Message))
-                {
-                    ImGui.TextWrapped(n.Message);
-                }
-
-                // Update y for next notification
-                y += ImGui.GetWindowHeight() + padding;
-
-                ImGui.End();
-                ImGui.PopStyleColor(2);
+                y += (string.IsNullOrEmpty(n.Message) ? 36 : 56) + padding;
             }
         }
-
-        // ── Public API ────────────────────────────────────────────────────────
 
         public static void ShowNotification(string title, string message,
             NotificationType type = NotificationType.Info,
@@ -140,7 +97,6 @@ namespace DaveDiverAP.UI
                 Log.LogWarning($"NotificationManager not initialized. Notification: {title} - {message}");
                 return;
             }
-
             Instance._pending.Enqueue(new Notification
             {
                 Title     = title,
@@ -151,24 +107,22 @@ namespace DaveDiverAP.UI
             });
         }
 
-        // ── Helpers ───────────────────────────────────────────────────────────
-
         private static string GetIcon(NotificationType type) => type switch
         {
-            NotificationType.ItemReceived => "🎁",
-            NotificationType.DeathLink    => "💀",
-            NotificationType.Connection   => "🔗",
-            NotificationType.Goal         => "🏆",
-            _                             => "ℹ️",
+            NotificationType.ItemReceived => "[Item]",
+            NotificationType.DeathLink    => "[Death]",
+            NotificationType.Connection   => "[AP]",
+            NotificationType.Goal         => "[Goal]",
+            _                             => "[Info]",
         };
 
-        private static System.Numerics.Vector4 GetBackgroundColor(NotificationType type, float alpha) => type switch
+        private static Color GetBackgroundColor(NotificationType type) => type switch
         {
-            NotificationType.ItemReceived => new(0.1f, 0.3f, 0.5f, alpha * 0.9f),
-            NotificationType.DeathLink    => new(0.5f, 0.1f, 0.1f, alpha * 0.9f),
-            NotificationType.Connection   => new(0.1f, 0.4f, 0.1f, alpha * 0.9f),
-            NotificationType.Goal         => new(0.5f, 0.4f, 0.0f, alpha * 0.9f),
-            _                             => new(0.2f, 0.2f, 0.2f, alpha * 0.9f),
+            NotificationType.ItemReceived => new Color(0.1f, 0.3f, 0.5f),
+            NotificationType.DeathLink    => new Color(0.5f, 0.1f, 0.1f),
+            NotificationType.Connection   => new Color(0.1f, 0.4f, 0.1f),
+            NotificationType.Goal         => new Color(0.5f, 0.4f, 0.0f),
+            _                             => new Color(0.2f, 0.2f, 0.2f),
         };
     }
 }
