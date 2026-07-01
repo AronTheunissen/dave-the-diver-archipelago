@@ -187,7 +187,7 @@ namespace DaveDiverAP.UI
             _logScrollPos = GUILayout.BeginScrollView(_logScrollPos, GUILayout.Height(120));
 
             if (_itemLog.Count == 0)
-                GUILayout.Label("(no items received yet)", _dimStyle);
+                GUILayout.Label("(no items received yet)");
             else
                 foreach (var entry in _itemLog)
                     GUILayout.Label(entry);
