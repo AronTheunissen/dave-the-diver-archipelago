@@ -23,6 +23,11 @@ namespace DaveDiverAP
         // in the base game. Completing them via MissionManager makes the game
         // behave as if the player earned them normally (flags, cutscenes, etc.)
         // Source: dump.cs MissionData constants + MissionClearType enum.
+        // Marinca (FishCard) unlock — always applied at game start for AP.
+        // TID is from the 'Fishcard_Contents_Unlock_Sato' scenario mission.
+        // TODO: verify this TID via [MissionCleared] debug log — set to 0 until confirmed.
+        private const int TID_MARINCA_UNLOCK      = 0;        // UNCONFIRMED — needs verification
+
         private const int TID_SEA_PEOPLE_GLOVES   = 1010040;  // "Find Sea People Gloves"
         private const int TID_TRANSLATOR           = 1010050;  // "Get Sea People Translator"
         private const int TID_KEY_TO_TENZHIN       = 1010060;  // "Obtain Key to Tenzhin"
@@ -298,6 +303,12 @@ namespace DaveDiverAP
         public static void ReapplyAllItems()
         {
             Log.LogInfo("[ItemHandler] Reapplying all received items to game state...");
+
+            // Always unlock Marinca (FishCard) for AP — needed from game start
+            // so players can see which fish they've caught.
+            // TID_MARINCA_UNLOCK is 0 until confirmed — skip if unconfirmed.
+            if (TID_MARINCA_UNLOCK > 0)
+                CompleteMission(TID_MARINCA_UNLOCK);
 
             // Progressive equipment
             ApplyOxygenTankLevel(SaveData.GetOxygenTankLevel());

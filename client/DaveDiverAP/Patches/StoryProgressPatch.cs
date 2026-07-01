@@ -43,7 +43,7 @@ namespace DaveDiverAP.Patches
         //    This is better than hooking UpdateMission because it only fires on CLEAR (not progress).
         [HarmonyPatch(typeof(MissionManager), "GetClearMissionDialogData", new System.Type[] { typeof(MissionData), typeof(bool) })]
         [HarmonyPostfix]
-        public static void OnMissionCleared_Postfix(MissionData missionData, bool arg1)
+        public static void OnMissionCleared_Postfix(MissionData missionData, bool isAddNextData)
         {
             try
             {
