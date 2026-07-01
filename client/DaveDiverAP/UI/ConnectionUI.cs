@@ -30,7 +30,6 @@ namespace DaveDiverAP.UI
         // ── Item log (last 10 received items) ─────────────────────────────────
         private readonly System.Collections.Generic.Queue<string> _itemLog = new();
         private const int MaxLogEntries = 10;
-        private Vector2 _logScrollPos = Vector2.zero;
 
         // ── Tabs ──────────────────────────────────────────────────────────────
         private int _activeTab = 0;
@@ -185,15 +184,12 @@ namespace DaveDiverAP.UI
         private void DrawItemLog()
         {
             GUILayout.Label("Recent Items Received:");
-            _logScrollPos = GUILayout.BeginScrollView(_logScrollPos, GUILayout.Height(120));
 
             if (_itemLog.Count == 0)
                 GUILayout.Label("(no items received yet)");
             else
                 foreach (var entry in _itemLog)
                     GUILayout.Label(entry);
-
-            GUILayout.EndScrollView();
         }
 
         // ── Connection logic ──────────────────────────────────────────────────
