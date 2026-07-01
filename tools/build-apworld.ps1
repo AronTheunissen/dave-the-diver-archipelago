@@ -25,12 +25,13 @@ if (Test-Path $outputFile) {
     Write-Host "Removed old davethediver.apworld"
 }
 
-# Package: zip the contents of the davethediver folder (not the folder itself)
-# Archipelago expects the apworld zip to contain the world files at the root level
-# Compress-Archive only supports .zip, so we zip first then rename to .apworld
+# Package: zip the davethediver folder itself (not its contents).
+# Archipelago expects the apworld zip to contain a davethediver/ subfolder,
+# e.g. davethediver/__init__.py, davethediver/archipelago.json, etc.
+# Compress-Archive only supports .zip extension, so we zip then rename.
 $tempZip = "$outputFile.zip"
 if (Test-Path $tempZip) { Remove-Item $tempZip -Force }
-Compress-Archive -Path "$sourceDir\*" -DestinationPath $tempZip
+Compress-Archive -Path $sourceDir -DestinationPath $tempZip
 Move-Item $tempZip $outputFile
 
 Write-Host ""
