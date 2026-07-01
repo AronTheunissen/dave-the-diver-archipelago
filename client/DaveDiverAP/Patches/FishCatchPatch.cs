@@ -35,21 +35,19 @@ namespace DaveDiverAP.Patches
         // Fish first catches are tracked as missions in Dave the Diver.
         // This hook fires when ANY mission clears — we log the TID so we can
         // build the fish TID → AP location mapping.
-        [HarmonyPatch(typeof(MissionManager), "GetClearMissionDialogData")]
+        [HarmonyPatch(typeof(MissionManager), "UpdateMission")]
         [HarmonyPostfix]
-        public static void OnMissionCleared_FishDebug_Postfix(MissionData missionData)
+        public static void OnMissionCleared_FishDebug_Postfix(MissionClearType type, int target, int count)
         {
             try
             {
-                if (missionData == null) return;
-                int tid = missionData.TID;
-                Plugin.Log.LogInfo($"[MissionCleared] TID={tid}");
+                Plugin.Log.LogInfo($"[MissionUpdate] type={type} target={target} count={count}");
 
-                // Check if this is a fish first-catch mission
-                var locationName = FishNameMapper.GetLocationFromMissionTID(tid);
+                // Check if this is a fish first-catch mission (target = mission TID)
+                var locationName = FishNameMapper.GetLocationFromMissionTID(target);
                 if (locationName != null && ArchipelagoClient.IsConnected)
                 {
-                    Plugin.Log.LogInfo($"[FishCaught via Mission] TID={tid} → Location=\"{locationName}\"");
+                    Plugin.Log.LogInfo($"[FishCaught via Mission] target={target} → Location=\"{locationName}\"");
                     ArchipelagoClient.CheckLocation(locationName);
                 }
             }
