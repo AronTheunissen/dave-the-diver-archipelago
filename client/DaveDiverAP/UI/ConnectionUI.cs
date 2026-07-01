@@ -69,9 +69,9 @@ namespace DaveDiverAP.UI
             _windowRect = GUILayout.Window(
                 id:         42424242,
                 screenRect: _windowRect,
-                func:       DrawWindow,
+                func:       new GUI.WindowFunction(DrawWindow),
                 text:       "Archipelago — Dave the Diver",
-                options:    GUILayout.Width(420));
+                options:    new GUILayoutOption[] { GUILayout.Width(420) });
         }
 
         private void DrawWindow(int id)
