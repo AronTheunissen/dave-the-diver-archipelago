@@ -7,7 +7,7 @@ This module implements Archipelago support for Dave the Diver.
 from typing import Dict, Any, List
 from BaseClasses import Region, Tutorial
 from worlds.AutoWorld import World, WebWorld
-from .items import DaveDiverItem, item_table, item_name_to_id
+from .items import DaveDiverItem, item_table, item_name_to_id, filler_items
 from .locations import location_name_to_id
 from .regions import create_regions
 from .rules import set_rules
@@ -77,8 +77,17 @@ class DaveDiverWorld(World):
         for item_name in starting_items:
             if item_name in [item.name for item in item_pool]:
                 item_pool.remove(next(item for item in item_pool if item.name == item_name))
-        
+
         self.multiworld.itempool += item_pool
+
+    def create_filler(self) -> "DaveDiverItem":
+        """Create a random filler item. Called by Archipelago to pad the item pool."""
+        filler_names = [name for name, data in filler_items.items()
+                        if self.should_include_item(name)]
+        if not filler_names:
+            # Fallback: Gold (Small) is always safe
+            filler_names = ["Gold (Small)"]
+        return self.create_item(self.random.choice(filler_names))
         
     def should_include_location(self, location_name: str, location_data) -> bool:
         """Check if a location should be included based on player options.
