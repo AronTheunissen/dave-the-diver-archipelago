@@ -6,10 +6,22 @@ namespace DaveDiverAP.Patches
     /// Patches the game's boss defeat system to detect boss kills.
     ///
     /// ✅ CONFIRMED via dump.cs:
-    /// - CommonBossDead.DoJob() fires for ALL bosses via BossSceneSO job system
-    /// - BossScene.Current is the static reference to the active boss scene
+    /// - BossScene : DRMonoBehaviour — base class for all boss encounters
     /// - BossScene.bossType is EnumBossFishType enum (confirmed values below)
-    /// - FinishBossScene() only exists on EbirahBattleScene (NOT base BossScene)
+    /// - BossScene.Current is the static ref to the active boss scene
+    ///
+    /// ⚠️ WHY WE DON'T HOOK CommonBossDead.DoJob:
+    /// Any Harmony patch on CommonBossDead.DoJob installs an IL2CPP trampoline.
+    /// During scene teardown and save/load, the game calls DoJob with a dangling/freed
+    /// object pointer. The trampoline then crashes with AccessViolationException trying
+    /// to call il2cpp_object_get_class() on the invalid pointer — before our code runs.
+    /// This kills the process. Prefix or postfix makes no difference.
+    ///
+    /// ✅ SAFE ALTERNATIVE: Hook BossScene.OnDestroy
+    /// BossScene is a MonoBehaviour — Unity calls OnDestroy() cleanly when the scene
+    /// object is destroyed. At that point, __instance is a valid managed object and
+    /// __instance.bossType gives us exactly what we need. This only fires for real
+    /// boss scene teardowns, not spurious job system calls.
     ///
     /// EnumBossFishType confirmed values:
     ///   GiantSquid=1, HermitCrab=2, WolfFish=3, Clione=4, JW2=5, Gardon=6,
@@ -22,43 +34,35 @@ namespace DaveDiverAP.Patches
     /// </summary>
     public static class BossDefeatedPatch
     {
-        // Hook CommonBossDead.DoJob() — fires for ALL bosses via the BossSceneSO job system
-        // Read BossScene.Current.bossType (EnumBossFishType) to identify which boss died
+        // Hook BossScene.OnDestroy — fires when a boss scene MonoBehaviour is destroyed.
+        // __instance.bossType gives us the boss identity from the valid managed object.
+        // This is safe because Unity calls OnDestroy() with a valid this pointer,
+        // unlike CommonBossDead.DoJob which can be called with garbage pointers.
         //
-        // ⚠️ IMPORTANT: Do NOT add a [HarmonyPrefix] to this patch.
-        // When DoJob is called with a dangling/freed IL2CPP object pointer (which happens
-        // during scene teardown and save/load), the trampoline crashes with AccessViolationException
-        // trying to marshal the `this` pointer — even a completely empty prefix causes this.
-        // The postfix is safe because by the time it runs, BossScene.Current is already null
-        // and we return early before touching any IL2CPP objects.
+        // Caveat: OnDestroy fires on ALL scene teardowns, not just victories.
+        // We use ItemQueue.IsGameReady as a coarse guard (not during loading),
+        // but we may also fire if the player dies and the boss scene is cleaned up.
+        // LocationTracker.OnBossDefeated should be idempotent (already-sent check).
 
-        [HarmonyPatch(typeof(CommonBossDead), "DoJob")]
+        [HarmonyPatch(typeof(BossScene), "OnDestroy")]
         [HarmonyPostfix]
-        public static void OnBossDefeated_Postfix()
+        public static void OnBossSceneDestroyed_Postfix(BossScene __instance)
         {
             try
             {
+                if (!ItemQueue.IsGameReady) return;
                 if (!ArchipelagoClient.IsConnected) return;
 
-                var scene = BossScene.Current;
-                if (scene == null) return;
-
-                // Primary: use EnumBossFishType enum (confirmed exact values)
-                var locationName = BossNameMapper.GetLocationName((int)scene.bossType);
-
-                // Fallback: use bossSceneSO.name substring match for bosses not in enum
-                // TODO: bossSceneSO requires Sirenix.Serialization.dll — disabled until added to lib
-                // if (locationName == null && scene.bossSceneSO != null)
-                //     locationName = BossNameMapper.GetDisplayNameFromScene(scene.bossSceneSO.name);
+                var locationName = BossNameMapper.GetLocationName((int)__instance.bossType);
 
                 if (locationName != null)
                     LocationTracker.OnBossDefeated(locationName);
                 else
-                    Plugin.Log.LogWarning($"[Boss] Unknown boss type: {scene.bossType}");
+                    Plugin.Log.LogWarning($"[Boss] Unknown boss type: {__instance.bossType}");
             }
             catch (System.Exception ex)
             {
-                Plugin.Log.LogError($"[BossDefeatedPatch] OnBossDefeated_Postfix threw: {ex}");
+                Plugin.Log.LogError($"[BossDefeatedPatch] OnBossSceneDestroyed_Postfix threw: {ex}");
             }
         }
     }
