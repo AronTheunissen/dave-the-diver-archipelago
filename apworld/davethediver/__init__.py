@@ -82,10 +82,8 @@ class DaveDiverWorld(World):
 
     def create_filler(self) -> "DaveDiverItem":
         """Create a random filler item. Called by Archipelago to pad the item pool."""
-        filler_names = [name for name, data in filler_items.items()
-                        if self.should_include_item(name)]
+        filler_names = [name for name in filler_items if self.should_include_item(name)]
         if not filler_names:
-            # Fallback: Gold (Small) is always safe
             filler_names = ["Gold (Small)"]
         return self.create_item(self.random.choice(filler_names))
         
@@ -308,8 +306,14 @@ class DaveDiverWorld(World):
         return DaveDiverItem(name, item_data.classification, item_data.code, self.player)
         
     def generate_basic(self):
-        """Called after create_regions and before set_rules"""
-        pass
+        """Pad the item pool with filler to match location count."""
+        filler_names = [name for name in filler_items if self.should_include_item(name)]
+        if not filler_names:
+            filler_names = ["Gold (Small)"]
+        unfilled = self.multiworld.get_unfilled_locations(self.player)
+        item_count = len([i for i in self.multiworld.itempool if i.player == self.player])
+        for _ in range(len(unfilled) - item_count):
+            self.multiworld.itempool.append(self.create_item(self.random.choice(filler_names)))
         
     def fill_slot_data(self) -> Dict[str, Any]:
         """Fill slot data to be sent to the client mod (SlotData.cs).
