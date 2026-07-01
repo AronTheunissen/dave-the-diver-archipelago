@@ -469,11 +469,16 @@ namespace DaveDiverAP
             try
             {
                 // MissionClearType.Complete = 1 (from dump.cs enum)
-                // count=1, isSkipEnqueueDialogData=false so normal flow runs,
-                // extraChecker=null (no extra predicate), doNotUpdateCanvas=false
-                // TODO: UpdateMission has multiple overloads — need to specify exact signature
-                // MissionManager.Instance?.UpdateMission((MissionClearType)1, missionTID, 1);
-                Log.LogWarning($"[ItemHandler] CompleteMission TID={missionTID} skipped — ambiguous overload");
+                // UpdateMission has many overloads — call with full explicit signature to avoid ambiguity:
+                // UpdateMission(MissionClearType type, int target, int count, bool isSkipEnqueueDialogData,
+                //               Predicate<MissionData> extraChecker, bool doNotUpdateCanvas)
+                var instance = MissionManager.Instance;
+                if (instance == null)
+                {
+                    Log.LogWarning($"[ItemHandler] CompleteMission TID={missionTID} — MissionManager.Instance is null");
+                    return;
+                }
+                instance.UpdateMission((MissionClearType)1, missionTID, 1, false, null, false);
                 Log.LogInfo($"[ItemHandler] CompleteMission TID={missionTID}");
             }
             catch (Exception ex)
