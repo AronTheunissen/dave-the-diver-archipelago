@@ -41,6 +41,7 @@ namespace DaveDiverAP.Patches
         {
             try
             {
+                Plugin.Log.LogInfo($"[FishCatchPatch] SuccessInteract fired! GO={__instance?.gameObject?.name ?? "null"} Connected={ArchipelagoClient.IsConnected}");
                 if (!ArchipelagoClient.IsConnected) return;
 
                 // GameObject name format confirmed via UnityExplorer (2026-06-27):
