@@ -12,7 +12,7 @@ $ErrorActionPreference = "Stop"
 $repoRoot    = Split-Path $PSScriptRoot -Parent
 $sourceDir   = Join-Path $repoRoot "apworld\davethediver"
 $outputFile  = Join-Path $repoRoot "davethediver.apworld"
-$installDir  = "C:\ProgramData\Archipelago\lib\worlds"
+$installDir  = "C:\ProgramData\Archipelago\custom_worlds"
 
 if (-not (Test-Path $sourceDir)) {
     Write-Error "Source directory not found: $sourceDir"
