@@ -43,8 +43,7 @@ namespace DaveDiverAP.Patches
             {
                 if (missionData == null) return;
                 int tid = missionData.TID;
-                string name = missionData.missionName ?? "";
-                Plugin.Log.LogInfo($"[MissionCleared] TID={tid} Name=\"{name}\"");
+                Plugin.Log.LogInfo($"[MissionCleared] TID={tid}");
 
                 // Check if this is a fish first-catch mission
                 var locationName = FishNameMapper.GetLocationFromMissionTID(tid);
