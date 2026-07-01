@@ -27,7 +27,11 @@ if (Test-Path $outputFile) {
 
 # Package: zip the contents of the davethediver folder (not the folder itself)
 # Archipelago expects the apworld zip to contain the world files at the root level
-Compress-Archive -Path "$sourceDir\*" -DestinationPath $outputFile
+# Compress-Archive only supports .zip, so we zip first then rename to .apworld
+$tempZip = "$outputFile.zip"
+if (Test-Path $tempZip) { Remove-Item $tempZip -Force }
+Compress-Archive -Path "$sourceDir\*" -DestinationPath $tempZip
+Move-Item $tempZip $outputFile
 
 Write-Host ""
 Write-Host "✅ Built: $outputFile" -ForegroundColor Green
