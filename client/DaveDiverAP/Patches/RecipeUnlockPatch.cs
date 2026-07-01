@@ -27,8 +27,6 @@ namespace DaveDiverAP.Patches
         {
             try
             {
-                // Guard: skip calls during save loading (IsGameReady is false until InBoat/Diving)
-                if (!ItemQueue.IsGameReady) return;
                 if (!ArchipelagoClient.IsConnected) return;
 
                 var recipeName = RecipeNameMapper.GetDisplayName(id);

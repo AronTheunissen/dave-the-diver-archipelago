@@ -50,7 +50,7 @@ namespace DaveDiverAP.Patches
         {
             try
             {
-                if (!ItemQueue.IsGameReady) return;
+                if (!ItemQueue.IsGameLoaded) return;
                 if (!ArchipelagoClient.IsConnected) return;
 
                 var locationName = BossNameMapper.GetLocationName((int)__instance.bossType);

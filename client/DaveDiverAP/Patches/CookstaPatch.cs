@@ -40,7 +40,7 @@ namespace DaveDiverAP.Patches
         {
             try
             {
-                if (!ItemQueue.IsGameReady) return;
+                if (!ItemQueue.IsGameLoaded) return;
                 if (!ArchipelagoClient.IsConnected) return;
                 LocationTracker.OnCookstaFollowersChanged((int)__instance.followerCount);
             }
@@ -61,7 +61,7 @@ namespace DaveDiverAP.Patches
         {
             try
             {
-                if (!ItemQueue.IsGameReady) return;
+                if (!ItemQueue.IsGameLoaded) return;
                 if (!ArchipelagoClient.IsConnected) return;
                 // Use grade (not followerCount) since we're patching the grade setter
                 LocationTracker.OnBestTasteChanged((int)__instance.grade);

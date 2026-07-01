@@ -23,22 +23,31 @@ namespace DaveDiverAP
         private static readonly ConcurrentQueue<ItemInfo> _queue = new();
         private static ManualLogSource Log => Plugin.Log;
 
-        // Only process items when Dave is standing on the boat.
-        // NOT while diving, in the restaurant, on farms, or in loading screens.
+        // Only process items when Dave is in a valid game state.
         // GameStatePatch sets this flag via SetGameReady().
-        // Patches that hook SaveData methods can use IsGameReady as a load guard.
         private static bool _isGameReady = false;
+
+        // True once ANY valid game state has been reached (never resets to false).
+        // Use this as a load guard in patches that hook SaveData methods:
+        //   - IsGameReady: gates item delivery (toggles with game state)
+        //   - IsGameLoaded: gates location checks (true from first valid state onward)
+        private static bool _isGameLoaded = false;
 
         // Track how many items are waiting so the UI can show a badge
         public static int PendingCount => _queue.Count;
 
         /// <summary>
-        /// True when Dave is in an active game state (on the boat, diving, etc.).
-        /// False during loading screens and save deserialization.
-        /// Use this as a guard in patches that hook SaveData methods to prevent
-        /// firing during save loading.
+        /// True when Dave is in an active game state where items can be delivered.
+        /// Toggles on/off as game state changes.
         /// </summary>
         public static bool IsGameReady => _isGameReady;
+
+        /// <summary>
+        /// True once the game has loaded at least once (never resets to false).
+        /// Use as a load guard in location check patches to prevent false triggers
+        /// during save deserialization.
+        /// </summary>
+        public static bool IsGameLoaded => _isGameLoaded;
 
         public void Awake()
         {
@@ -93,7 +102,10 @@ namespace DaveDiverAP
         {
             _isGameReady = ready;
             if (ready)
+            {
+                _isGameLoaded = true;
                 Log.LogInfo("Game ready — processing queued items.");
+            }
         }
     }
 }
