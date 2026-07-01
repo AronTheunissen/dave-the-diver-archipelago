@@ -31,6 +31,36 @@ namespace DaveDiverAP.Patches
     [HarmonyPatch]
     public static class FishCatchPatch
     {
+        // ── Fallback: hook MissionManager.GetClearMissionDialogData ──────────
+        // Fish first catches are tracked as missions in Dave the Diver.
+        // This hook fires when ANY mission clears — we log the TID so we can
+        // build the fish TID → AP location mapping.
+        [HarmonyPatch(typeof(MissionManager), "GetClearMissionDialogData")]
+        [HarmonyPostfix]
+        public static void OnMissionCleared_FishDebug_Postfix(MissionData missionData)
+        {
+            try
+            {
+                if (missionData == null) return;
+                int tid = missionData.TID;
+                string name = missionData.missionName ?? "";
+                Plugin.Log.LogInfo($"[MissionCleared] TID={tid} Name=\"{name}\"");
+
+                // Check if this is a fish first-catch mission
+                var locationName = FishNameMapper.GetLocationFromMissionTID(tid);
+                if (locationName != null && ArchipelagoClient.IsConnected)
+                {
+                    Plugin.Log.LogInfo($"[FishCaught via Mission] TID={tid} → Location=\"{locationName}\"");
+                    ArchipelagoClient.CheckLocation(locationName);
+                }
+            }
+            catch (System.Exception ex)
+            {
+                Plugin.Log.LogError($"[FishCatchPatch] OnMissionCleared_FishDebug_Postfix threw: {ex}");
+            }
+        }
+
+        // ── Primary: hook FishInteractionBody.SuccessInteract ────────────────
         // ✅ CONFIRMED via dump.cs: FishInteractionBody is the real class
         // ✅ CONFIRMED via dump.cs: SuccessInteract(BaseCharacter player) is the real method name (not SuccessInteraction)
         // Fields confirmed in dump.cs: SuccessPickupFish (UnityEvent), SuccessCarving (UnityEvent)
@@ -654,5 +684,18 @@ namespace DaveDiverAP.Patches
 
         // Keep old method for any callers
         public static string? GetDisplayName(string fishId) => GetDisplayNameFromGameObject(fishId);
+
+        // Mission TID → AP location name for fish first-catch missions.
+        // TIDs are logged via [MissionCleared] debug output — populate as we discover them.
+        // Format: game fires GetClearMissionDialogData with a MissionData whose TID
+        // corresponds to the "First Catch: X" mission for each fish species.
+        private static readonly System.Collections.Generic.Dictionary<int, string> _missionTidMap = new()
+        {
+            // TODO: populate from [MissionCleared] log output while playing
+            // Example: { 12345678, "First Catch: Clownfish" }
+        };
+
+        public static string? GetLocationFromMissionTID(int missionTID) =>
+            _missionTidMap.TryGetValue(missionTID, out var name) ? name : null;
     }
 }
