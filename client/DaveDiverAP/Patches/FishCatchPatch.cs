@@ -38,41 +38,16 @@ namespace DaveDiverAP.Patches
         // UpdateMission has multiple overloads — removed to avoid ambiguous match error.
         // Fish catches are tracked via SaveData.SetFishGet instead (see below).
 
-        // ── Hook SaveData.SetFishGet — fires when a new fish species is recorded ──
-        // SaveData.SetFishGet(int fishId, bool value) is called when a fish is caught
-        // for the first time. fishId is the game's internal fish TID.
-        [HarmonyPatch(typeof(global::SaveData), "SetFishGet")]
-        [HarmonyPostfix]
-        public static void SetFishGet_Postfix(int fishId, bool value)
-        {
-            try
-            {
-                if (!value) return; // Only care about setting to true (first catch)
-                Plugin.Log.LogInfo($"[FishGet] fishId={fishId}");
-                if (!ArchipelagoClient.IsConnected) return;
-                if (!ItemQueue.IsGameLoaded) return;
-
-                var locationName = FishNameMapper.GetLocationFromFishId(fishId);
-                if (locationName != null)
-                {
-                    Plugin.Log.LogInfo($"[FishCaught] fishId={fishId} → \"{locationName}\"");
-                    ArchipelagoClient.CheckLocation(locationName);
-                }
-            }
-            catch (System.Exception ex)
-            {
-                Plugin.Log.LogError($"[FishCatchPatch] SetFishGet_Postfix threw: {ex}");
-            }
-        }
+        // Note: SaveData.SetFishGet was attempted but fails because our mod's SaveData class
+        // shadows the game's SaveData class. Using FishInteractionBody.SuccessInteract instead.
 
         // ── Primary: hook FishInteractionBody.SuccessInteract ────────────────
         // ✅ CONFIRMED via dump.cs: FishInteractionBody is the real class
-        // ✅ CONFIRMED via dump.cs: SuccessInteract(BaseCharacter player) is the real method name (not SuccessInteraction)
-        // Fields confirmed in dump.cs: SuccessPickupFish (UnityEvent), SuccessCarving (UnityEvent)
-        // Fish identity must be read from the parent fish AI object via __instance
-        [HarmonyPatch(typeof(FishInteractionBody), "SuccessInteract")]
+        // ✅ CONFIRMED via dump.cs: SuccessInteract(BaseCharacter player) is the real method name
+        // Declaring BaseCharacter parameter explicitly to ensure correct overload resolution in IL2CPP
+        [HarmonyPatch(typeof(FishInteractionBody), "SuccessInteract", new System.Type[] { typeof(BaseCharacter) })]
         [HarmonyPostfix]
-        public static void SuccessInteract_Postfix(FishInteractionBody __instance)
+        public static void SuccessInteract_Postfix(FishInteractionBody __instance, BaseCharacter player)
         {
             try
             {
