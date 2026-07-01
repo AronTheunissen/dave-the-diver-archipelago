@@ -37,31 +37,21 @@ namespace DaveDiverAP.Patches
         // build the fish TID → AP location mapping.
         // UpdateMission has multiple overloads — removed to avoid ambiguous match error.
 
-        // ── Secondary: hook PickupInstanceItem.PickupComplete or similar ─────
-        // Small fish (caught with harpoon/net) go through a pickup path, not SuccessInteract.
-        // The prefab is called "PickupInstanceItem" — try hooking its pickup method.
-        // Also try InGameCarryItem which manages the cargo box.
-        [HarmonyPatch(typeof(PickupInstanceItem), "Pickup")]
-        [HarmonyPostfix]
-        public static void PickupInstanceItem_Postfix(PickupInstanceItem __instance)
-        {
-            try
-            {
-                Plugin.Log.LogInfo($"[PickupInstanceItem] Pickup fired! GO={__instance?.gameObject?.name ?? "null"}");
-            }
-            catch (System.Exception ex)
-            {
-                Plugin.Log.LogError($"[FishCatchPatch] PickupInstanceItem_Postfix threw: {ex}");
-            }
-        }
+        // ── Secondary: hook for small fish (harpoon/net) ─────────────────────
+        // TODO: PickupInstanceItem.Pickup doesn't exist. Need to find correct method.
+        // Options to investigate:
+        //   - PickupInstanceItem.PickupItem()
+        //   - PickupInstanceItem.OnTriggerEnter()  
+        //   - InGameCarryItem.AddItem()
+        //   - FishInteractionBody.SuccessPickupFish (UnityEvent — subscribe differently)
 
         // ── Primary: hook FishInteractionBody.SuccessInteract ────────────────
         // ✅ CONFIRMED: fires for LARGE fish (kill + carve path) only.
         //    Small fish caught with harpoon/net use a different pickup path.
         // ✅ CONFIRMED via dump.cs: SuccessInteract(BaseCharacter player) is the real method name
-        [HarmonyPatch(typeof(FishInteractionBody), "SuccessInteract", new System.Type[] { typeof(BaseCharacter) })]
+        [HarmonyPatch(typeof(FishInteractionBody), "SuccessInteract")]
         [HarmonyPostfix]
-        public static void SuccessInteract_Postfix(FishInteractionBody __instance, BaseCharacter player)
+        public static void SuccessInteract_Postfix(FishInteractionBody __instance)
         {
             try
             {
