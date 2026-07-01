@@ -478,7 +478,11 @@ namespace DaveDiverAP
                     Log.LogWarning($"[ItemHandler] CompleteMission TID={missionTID} — MissionManager.Instance is null");
                     return;
                 }
-                instance.UpdateMission((MissionClearType)1, missionTID, 1, false, null, false);
+                // Signature: UpdateMission(MissionClearType, int, int, Action<MissionConditionData,int>, Predicate<MissionData>, bool)
+                instance.UpdateMission((MissionClearType)1, missionTID, 1,
+                    (Il2CppSystem.Action<MissionConditionData, int>)null,
+                    (Il2CppSystem.Predicate<MissionData>)null,
+                    false);
                 Log.LogInfo($"[ItemHandler] CompleteMission TID={missionTID}");
             }
             catch (Exception ex)
