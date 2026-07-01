@@ -364,11 +364,12 @@ namespace DaveDiverAP
 
         private static void ApplyOxygenTankLevel(int level)
         {
-            // PhoneAppUpgradeManager tracks iDiver upgrades. We apply the TID
-            // for each level cumulatively — the manager is idempotent (safe to call
-            // with already-applied TIDs; it checks IsAlreadyUpgraded internally).
-            // TODO: PhoneAppUpgradeManager API not confirmed — log only until verified
-            Log.LogWarning($"[ItemHandler] PhoneAppUpgradeManager not available — oxygen tank level {level} not applied");
+            // Complete upgrade missions cumulatively up to the target level.
+            // CompleteMission is idempotent — safe to call for already-completed TIDs.
+            for (int i = 0; i < level && i < OxygenTankUpgradeTIDs.Length; i++)
+                CompleteMission(OxygenTankUpgradeTIDs[i]);
+            if (level > 0)
+                Log.LogInfo($"[ItemHandler] Oxygen Tank applied to level {level}");
         }
 
         private static void UpgradeHarpoon()
@@ -381,7 +382,10 @@ namespace DaveDiverAP
 
         private static void ApplyHarpoonLevel(int level)
         {
-            Log.LogWarning($"[ItemHandler] PhoneAppUpgradeManager not available — harpoon level {level} not applied");
+            for (int i = 0; i < level && i < HarpoonUpgradeTIDs.Length; i++)
+                CompleteMission(HarpoonUpgradeTIDs[i]);
+            if (level > 0)
+                Log.LogInfo($"[ItemHandler] Harpoon applied to level {level}");
         }
 
         private static void UpgradeDivingSuit()
@@ -394,7 +398,10 @@ namespace DaveDiverAP
 
         private static void ApplyDivingSuitLevel(int level)
         {
-            Log.LogWarning($"[ItemHandler] PhoneAppUpgradeManager not available — diving suit level {level} not applied");
+            for (int i = 0; i < level && i < DivingSuitUpgradeTIDs.Length; i++)
+                CompleteMission(DivingSuitUpgradeTIDs[i]);
+            if (level > 0)
+                Log.LogInfo($"[ItemHandler] Diving Suit applied to level {level}");
         }
 
         private static void UpgradeCargoBox()
@@ -407,7 +414,10 @@ namespace DaveDiverAP
 
         private static void ApplyCargoBoxLevel(int level)
         {
-            Log.LogWarning($"[ItemHandler] PhoneAppUpgradeManager not available — cargo box level {level} not applied");
+            for (int i = 0; i < level && i < CargoBoxUpgradeTIDs.Length; i++)
+                CompleteMission(CargoBoxUpgradeTIDs[i]);
+            if (level > 0)
+                Log.LogInfo($"[ItemHandler] Cargo Box applied to level {level}");
         }
 
         // ── Key items via MissionManager ──────────────────────────────────────
