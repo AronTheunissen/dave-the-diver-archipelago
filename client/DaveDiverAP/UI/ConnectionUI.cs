@@ -15,7 +15,7 @@ namespace DaveDiverAP.UI
         // ── UI state ─────────────────────────────────────────────────────────
         private bool _isVisible    = true;
         private bool _isConnecting = false;
-        private Rect _windowRect   = new Rect(20, 20, 420, 0);
+        private Rect _windowRect   = new Rect(20, 20, 440, 500);
 
         // ── Form fields ───────────────────────────────────────────────────────
         private string _server   = "localhost";
@@ -66,16 +66,11 @@ namespace DaveDiverAP.UI
         public void OnGUI()
         {
             if (!_isVisible) return;
-            GUI.BeginGroup(new Rect(20, 20, 440, 600));
-            DrawWindowContents();
-            GUI.EndGroup();
+            _windowRect = GUI.Window(42424242, _windowRect, (GUI.WindowFunction)DrawWindowContents, "Archipelago — Dave the Diver");
         }
 
-        private void DrawWindowContents()
+        private void DrawWindowContents(int id)
         {
-            // Draw a box background
-            GUI.Box(new Rect(0, 0, 440, 600), "Archipelago — Dave the Diver");
-            GUILayout.Space(20); // Space for title bar
             GUILayout.Label("=== Archipelago Multiworld Connection ===");
 
             // ── Status bar ────────────────────────────────────────────────────
@@ -107,6 +102,7 @@ namespace DaveDiverAP.UI
             GUILayout.Space(4);
             GUILayout.Label("Press F9 to toggle this window");
 
+            GUI.DragWindow(new Rect(0, 0, 10000, 20));
         }
 
         private void DrawConnectionTab(bool connected)
