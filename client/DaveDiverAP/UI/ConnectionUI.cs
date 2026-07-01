@@ -66,16 +66,16 @@ namespace DaveDiverAP.UI
         public void OnGUI()
         {
             if (!_isVisible) return;
-            _windowRect = GUILayout.Window(
-                id:         42424242,
-                screenRect: _windowRect,
-                func:       new GUI.WindowFunction(DrawWindow),
-                text:       "Archipelago — Dave the Diver",
-                options:    new GUILayoutOption[] { GUILayout.Width(420) });
+            GUI.BeginGroup(new Rect(20, 20, 440, 600));
+            DrawWindowContents();
+            GUI.EndGroup();
         }
 
-        private void DrawWindow(int id)
+        private void DrawWindowContents()
         {
+            // Draw a box background
+            GUI.Box(new Rect(0, 0, 440, 600), "Archipelago — Dave the Diver");
+            GUILayout.Space(20); // Space for title bar
             GUILayout.Label("=== Archipelago Multiworld Connection ===");
 
             // ── Status bar ────────────────────────────────────────────────────
@@ -107,8 +107,6 @@ namespace DaveDiverAP.UI
             GUILayout.Space(4);
             GUILayout.Label("Press F9 to toggle this window");
 
-            // Make window draggable
-            GUI.DragWindow(new Rect(0, 0, 10000, 20));
         }
 
         private void DrawConnectionTab(bool connected)
