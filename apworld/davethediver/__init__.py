@@ -71,12 +71,13 @@ class DaveDiverWorld(World):
             for _ in range(item_data.count):
                 item_pool.append(self.create_item(item_name))
         
-        # Remove items that are in starting inventory
-        # Based on options
-        starting_items = self.get_starting_items()
-        for item_name in starting_items:
-            if item_name in [item.name for item in item_pool]:
-                item_pool.remove(next(item for item in item_pool if item.name == item_name))
+        # Starting items are added to the player's start inventory via push_precollected.
+        # We do NOT remove them from the item pool — this ensures the full count of
+        # progression items (e.g. Progressive Diving Suit x8) stays in the pool so
+        # the player can always reach the maximum level regardless of starting level.
+        # The client handles extra progressive copies gracefully (they become no-ops).
+        for item_name in self.get_starting_items():
+            self.multiworld.push_precollected(self.create_item(item_name))
 
         self.multiworld.itempool += item_pool
 

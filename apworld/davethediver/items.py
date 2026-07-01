@@ -46,7 +46,7 @@ progressive_equipment: Dict[str, ItemData] = {
     "Progressive Oxygen Tank": ItemData(ITEM_BASE + 300, ItemClassification.progression, count=6),
     # 4 copies: rules only require 1 (mid) or 2 (deep)
     "Progressive Harpoon": ItemData(ITEM_BASE + 301, ItemClassification.progression, count=4),
-    # 8 copies — one per suit level (including cold-resistant tiers):
+    # 8 copies needed to reach max level (levels 1-8, including cold-resistant tiers):
     #   Level 1: max 40m  (from start, but progressive copies unlock deeper)
     #   Level 2: max 80m
     #   Level 3: max 150m
