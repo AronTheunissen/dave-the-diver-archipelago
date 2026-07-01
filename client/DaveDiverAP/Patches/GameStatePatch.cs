@@ -73,11 +73,28 @@ namespace DaveDiverAP.Patches
                         break;
 
                     case LobbyPlayer.LobbyPlayerState.Diving:
-                        Log.LogInfo("Game state: DIVING — item processing disabled.");
-                        ItemQueue.SetGameReady(false);
+                        Log.LogInfo("Game state: DIVING — item processing enabled (checks can fire while diving).");
+                        ItemQueue.SetGameReady(true);
+                        if (!_itemsReapplied)
+                        {
+                            _itemsReapplied = true;
+                            Log.LogInfo("Game state: First dive — reapplying all items.");
+                            ItemHandler.ReapplyAllItems();
+                        }
                         break;
 
-                    // All other states (restaurant, farms, cutscenes, loading) disable delivery
+                    case LobbyPlayer.LobbyPlayerState.MorningStart:
+                    case LobbyPlayer.LobbyPlayerState.AfternoonStart:
+                        Log.LogInfo($"Game state: {state} — item processing enabled.");
+                        ItemQueue.SetGameReady(true);
+                        if (!_itemsReapplied)
+                        {
+                            _itemsReapplied = true;
+                            ItemHandler.ReapplyAllItems();
+                        }
+                        break;
+
+                    // Restaurant, farms, cutscenes, loading — disable item delivery
                     default:
                         ItemQueue.SetGameReady(false);
                         break;
