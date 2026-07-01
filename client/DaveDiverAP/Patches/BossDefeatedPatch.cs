@@ -38,8 +38,6 @@ namespace DaveDiverAP.Patches
         public static void OnBossDefeated_Prefix()
         {
             _sceneWasNull = (BossScene.Current == null);
-            if (_sceneWasNull)
-                Plugin.Log.LogWarning("[Boss] CommonBossDead.DoJob called with no active BossScene — will skip postfix.");
         }
 
         [HarmonyPatch(typeof(CommonBossDead), "DoJob")]  // same method — Harmony deduplicates by method target, this is fine
