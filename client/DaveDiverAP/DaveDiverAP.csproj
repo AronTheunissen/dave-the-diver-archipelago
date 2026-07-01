@@ -12,9 +12,16 @@
     <GamePath>C:\Program Files (x86)\Steam\steamapps\common\Dave the Diver</GamePath>
   </PropertyGroup>
 
-  <Target Name="CopyToGame" AfterTargets="Build" Condition="'$(GamePath)' != '' AND Exists('$(GamePath)\BepInEx\plugins')">
-    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(GamePath)\BepInEx\plugins\" />
-    <Message Text="Copied DaveDiverAP.dll to $(GamePath)\BepInEx\plugins\" Importance="high" />
+  <Target Name="CopyToGame" AfterTargets="Build" Condition="'$(GamePath)' != '' AND Exists('$(GamePath)\\BepInEx\\plugins')">
+    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(GamePath)\\BepInEx\\plugins\\" />
+    <Message Text="Copied DaveDiverAP.dll to $(GamePath)\\BepInEx\\plugins\\" Importance="high" />
+    <!-- Copy cimgui.dll (native ImGui binary) — required by ImGui.NET at runtime -->
+    <Copy SourceFiles="$(TargetDir)cimgui.dll" DestinationFolder="$(GamePath)\\BepInEx\\plugins\\"
+          Condition="Exists('$(TargetDir)cimgui.dll')" />
+    <Message Text="Copied cimgui.dll to $(GamePath)\\BepInEx\\plugins\\" Importance="high"
+             Condition="Exists('$(TargetDir)cimgui.dll')" />
+    <Warning Text="cimgui.dll not found in build output — ImGui UI will not work!" 
+             Condition="!Exists('$(TargetDir)cimgui.dll')" />
   </Target>
 
   <!-- Archipelago client via NuGet — no manual DLL needed -->
