@@ -20,7 +20,7 @@ namespace DaveDiverAP.UI
     public class ConnectionUI : MonoBehaviour
     {
         // ── UI state ─────────────────────────────────────────────────────────
-        private bool _isVisible = false;
+        private bool _isVisible = true; // Always visible until F9 toggle is implemented
         private bool _isConnecting = false;
 
         // ── Form fields ───────────────────────────────────────────────────────
