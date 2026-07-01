@@ -814,51 +814,52 @@ def set_rules(world):
     # All jungle content requires the dlc_jungle option — locations are filtered
     # out by should_include_location() when disabled, so rules only need to cover
     # access ordering within the DLC itself.
-
-    # Utara Village — DLC entry point, always accessible once DLC is enabled
-    set_rule(
-        multiworld.get_entrance("Travel to Utara Village", player),
-        lambda state: True  # No extra gate — DLC option toggle handles it
-    )
-
-    # Bancho Grill — unlocked during Chapter 1
-    set_rule(
-        multiworld.get_entrance("Open Bancho Grill", player),
-        lambda state: state.has("Jungle Chapter 1 Complete", player)
-    )
-
-    # Utara Lake - Lower — requires Purification Filter tier 1
-    set_rule(
-        multiworld.get_entrance("Dive to Lower Lake", player),
-        lambda state: state.has("Progressive Purification Filter", player, 1)
-    )
-
-    # Lakebed Sea — requires Chapter 4 + Advanced Filter (tier 3)
-    set_rule(
-        multiworld.get_entrance("Enter Lakebed Sea", player),
-        lambda state: (
-            state.has("Jungle Chapter 4 Complete", player) and
-            state.has("Progressive Purification Filter", player, 3)
+    # These entrances only exist when has_jungle_dlc is enabled (regions.py is conditional).
+    if world.options.has_jungle_dlc.value:
+        # Utara Village — DLC entry point, always accessible once DLC is enabled
+        set_rule(
+            multiworld.get_entrance("Travel to Utara Village", player),
+            lambda state: True  # No extra gate — DLC option toggle handles it
         )
-    )
 
-    # Setah Forest — requires Chapter 3
-    set_rule(
-        multiworld.get_entrance("Enter Setah Forest", player),
-        lambda state: state.has("Jungle Chapter 3 Complete", player)
-    )
+        # Bancho Grill — unlocked during Chapter 1
+        set_rule(
+            multiworld.get_entrance("Open Bancho Grill", player),
+            lambda state: state.has("Jungle Chapter 1 Complete", player)
+        )
 
-    # Murau Temple — inside Setah Forest (Chapter 3+)
-    set_rule(
-        multiworld.get_entrance("Enter Murau Temple", player),
-        lambda state: state.has("Jungle Chapter 3 Complete", player)
-    )
+        # Utara Lake - Lower — requires Purification Filter tier 1
+        set_rule(
+            multiworld.get_entrance("Dive to Lower Lake", player),
+            lambda state: state.has("Progressive Purification Filter", player, 1)
+        )
 
-    # Surga Falls — gated behind sub-mission (Cinta quest)
-    set_rule(
-        multiworld.get_entrance("Reach Surga Falls", player),
-        lambda state: state.has("Jungle Chapter 2 Complete", player)
-    )
+        # Lakebed Sea — requires Chapter 4 + Advanced Filter (tier 3)
+        set_rule(
+            multiworld.get_entrance("Enter Lakebed Sea", player),
+            lambda state: (
+                state.has("Jungle Chapter 4 Complete", player) and
+                state.has("Progressive Purification Filter", player, 3)
+            )
+        )
+
+        # Setah Forest — requires Chapter 3
+        set_rule(
+            multiworld.get_entrance("Enter Setah Forest", player),
+            lambda state: state.has("Jungle Chapter 3 Complete", player)
+        )
+
+        # Murau Temple — inside Setah Forest (Chapter 3+)
+        set_rule(
+            multiworld.get_entrance("Enter Murau Temple", player),
+            lambda state: state.has("Jungle Chapter 3 Complete", player)
+        )
+
+        # Surga Falls — gated behind sub-mission (Cinta quest)
+        set_rule(
+            multiworld.get_entrance("Reach Surga Falls", player),
+            lambda state: state.has("Jungle Chapter 2 Complete", player)
+        )
 
     # Machete-gated area (Pirarucu zone in lower lake)
     _set_location_rule(multiworld, player,
