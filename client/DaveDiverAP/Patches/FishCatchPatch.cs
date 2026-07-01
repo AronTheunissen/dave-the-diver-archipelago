@@ -37,19 +37,11 @@ namespace DaveDiverAP.Patches
         // build the fish TID → AP location mapping.
         [HarmonyPatch(typeof(MissionManager), "UpdateMission")]
         [HarmonyPostfix]
-        public static void OnMissionCleared_FishDebug_Postfix(MissionClearType type, int target, int count)
+        public static void OnMissionCleared_FishDebug_Postfix()
         {
             try
             {
-                Plugin.Log.LogInfo($"[MissionUpdate] type={type} target={target} count={count}");
-
-                // Check if this is a fish first-catch mission (target = mission TID)
-                var locationName = FishNameMapper.GetLocationFromMissionTID(target);
-                if (locationName != null && ArchipelagoClient.IsConnected)
-                {
-                    Plugin.Log.LogInfo($"[FishCaught via Mission] target={target} → Location=\"{locationName}\"");
-                    ArchipelagoClient.CheckLocation(locationName);
-                }
+                Plugin.Log.LogInfo($"[MissionUpdate] fired!");
             }
             catch (System.Exception ex)
             {
