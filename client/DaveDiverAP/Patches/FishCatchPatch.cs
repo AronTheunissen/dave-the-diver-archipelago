@@ -904,10 +904,30 @@ namespace DaveDiverAP.Patches
             { 2010510, "First Catch: Xenacanthus" },
             { 2010511, "First Catch: Dollocaris Ingens" },
             { 2010512, "First Catch: Tokummia Katalepsis" },
-            { 2010216, "First Catch: Leafy Seadragon" },       // Coelacanth — check AP name
+            // NOTE: TID 2010216 = Coelacanth — this is a PHOTO target, not catchable fish. Do NOT map here.
+            // Seahorse race TIDs — these ARE the catchable seahorse species in the ocean.
+            // The 2012xxx TIDs are used both for racing AND ocean catches.
+            // Mapping is tentative — verify via [FishCaught] log when catching seahorses.
+            // 14 seahorse species + 3 seadragons = 17 total (2012001-2012023, some may be decorative)
+            { 2012001, "First Catch: Big-Belly Seahorse" },
+            { 2012002, "First Catch: Jayakar's Seahorse" },
+            { 2012003, "First Catch: Long-Snouted Seahorse" },
+            { 2012004, "First Catch: Pacific Seahorse" },
+            { 2012005, "First Catch: Dwarf Seahorse" },
+            { 2012006, "First Catch: Giraffe Seahorse" },
+            { 2012007, "First Catch: Hedgehog Seahorse" },
+            { 2012008, "First Catch: Spiny Seahorse" },
+            { 2012009, "First Catch: Tiger-Tail Seahorse" },
+            { 2012010, "First Catch: Zebra Seahorse" },
+            { 2012011, "First Catch: Crowned Seahorse" },
+            { 2012012, "First Catch: Lined Seahorse" },
+            { 2012013, "First Catch: Spotted Seahorse" },
+            { 2012014, "First Catch: White Seahorse" },
+            { 2012015, "First Catch: Leafy Seadragon" },
+            { 2012016, "First Catch: Weedy Seadragon" },
+            { 2012017, "First Catch: Ruby Seadragon" },
             // Jungle DLC fish (42010xxx range)
             { 42011102, "First Catch: Stethacanthus" },
-            { 42011103, "First Catch: Xenacanthus" },          // Ophthalmosaurus — check
         };
 
         public static string? GetLocationFromFishId(int fishId) =>
