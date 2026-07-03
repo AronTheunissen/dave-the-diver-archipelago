@@ -642,10 +642,18 @@ namespace DaveDiverAP
                 Log.LogWarning($"[ItemHandler] Unknown charm TID for: {charmName}");
                 return;
             }
-            // AutoEquipCharmItem grants the charm and auto-equips it if a slot is free.
-            // This is the same call the game uses when the player earns a charm normally.
-            // TODO: LobbyCharmSwapPanel.Instance not confirmed — log until verified
-            Log.LogWarning($"[ItemHandler] LobbyCharmSwapPanel not available — charm {charmName} (TID={tid}) not auto-equipped");
+            try
+            {
+                // Complete the mission that grants the charm — same as earning it normally.
+                // CharmPatch.AutoEquipCharmItem failed to patch (method not found), so we
+                // use CompleteMission which marks the charm mission as done in SaveData.
+                CompleteMission(tid);
+                Log.LogInfo($"[ItemHandler] Charm mission completed: {charmName} (TID={tid})");
+            }
+            catch (Exception ex)
+            {
+                Log.LogError($"[ItemHandler] ApplyCharmUnlock failed for {charmName}: {ex.Message}");
+            }
         }
 
         // ── Weapons ───────────────────────────────────────────────────────────
@@ -683,20 +691,24 @@ namespace DaveDiverAP
 
         private static void ApplyDishResearchLevel(string dishName, int level)
         {
-            // Find the recipe TID for this dish, then call UpdateUnlockRecipeSave
-            // which increments the research level stored in SaveData.unlockRecipeData.
-            // We call it (level) times total, but check current level to avoid over-applying.
             if (!RecipeTIDs.TryGetValue(dishName, out var tid))
             {
-                // Dish TID not yet mapped — store the level in our save for when it is.
-                Log.LogWarning($"[ItemHandler] Dish TID not yet mapped for: '{dishName}' (level={level}). " +
-                               $"Will apply when TID is added to RecipeTIDs dictionary.");
+                Log.LogWarning($"[ItemHandler] Dish TID not yet mapped for: '{dishName}' (level={level}).");
                 return;
             }
-
-            // TODO: SaveData.Instance accessor not confirmed in current interop
-            // Will apply dish research when SaveData singleton access is verified
-            Log.LogWarning($"[ItemHandler] Cannot apply dish research for {dishName} — SaveData.Instance not confirmed");
+            try
+            {
+                var sd = global::SaveData.Instance;
+                if (sd == null) { Log.LogWarning($"[ItemHandler] SaveData.Instance null — cannot apply dish {dishName}"); return; }
+                // UpdateUnlockRecipeSave sets the research level for a dish.
+                // Call once per level to bring the dish to the target level.
+                sd.UpdateUnlockRecipeSave(tid, level);
+                Log.LogInfo($"[ItemHandler] Dish research applied: {dishName} → level {level} (TID={tid})");
+            }
+            catch (Exception ex)
+            {
+                Log.LogError($"[ItemHandler] ApplyDishResearchLevel failed for {dishName}: {ex.Message}");
+            }
         }
 
         // ── Recipes ───────────────────────────────────────────────────────────
@@ -713,14 +725,21 @@ namespace DaveDiverAP
         {
             if (!RecipeTIDs.TryGetValue(recipeName, out var tid))
             {
-                Log.LogWarning($"[ItemHandler] Recipe TID not yet mapped for: '{recipeName}'. " +
-                               $"Will apply when TID is added to RecipeTIDs dictionary.");
+                Log.LogWarning($"[ItemHandler] Recipe TID not yet mapped for: '{recipeName}'.");
                 return;
             }
-            // AddUnlockRecipeSaveData marks the recipe as unlocked in the game's save.
-            // DateTime.Now is used as the unlock time (same as normal gameplay).
-            // TODO: SaveData singleton accessor not confirmed — log until verified
-            Log.LogWarning($"[ItemHandler] Cannot apply recipe unlock for {recipeName} — SaveData accessor not confirmed");
+            try
+            {
+                // AddUnlockRecipeSaveData marks the recipe as unlocked in the game's save.
+                var sd = global::SaveData.Instance;
+                if (sd == null) { Log.LogWarning($"[ItemHandler] SaveData.Instance null — cannot unlock recipe {recipeName}"); return; }
+                sd.AddUnlockRecipeSaveData(tid);
+                Log.LogInfo($"[ItemHandler] Recipe unlocked in-game: {recipeName} (TID={tid})");
+            }
+            catch (Exception ex)
+            {
+                Log.LogError($"[ItemHandler] ApplyRecipeUnlock failed for {recipeName}: {ex.Message}");
+            }
         }
 
         // ── Ingredients ───────────────────────────────────────────────────────

@@ -47,22 +47,34 @@ namespace DaveDiverAP.Patches
         }
 
         // ── Dish upgrade (research complete using Artisan's Flame) ───────────
-        // ✅ CONFIRMED via dump.cs: SaveData has UpdateUnlockRecipeSave() and
-        //    UnlockRecipeSave has ObscuredInt m_UnlockRecipeID and level data.
-        // Hook UpdateUnlockRecipeSave to catch research level-ups.
-        //
-        // 🛡️ Same IsGameReady guard applied — safe to re-enable.
-        // TODO: LocationTracker.OnDishResearchUpdated not yet implemented.
-        //
-        // [HarmonyPatch(typeof(global::SaveData), "UpdateUnlockRecipeSave")]
-        // [HarmonyPostfix]
-        // public static void UpgradeDish_Postfix()
-        // {
-        //     if (!ItemQueue.IsGameReady) return;
-        //     if (!ArchipelagoClient.IsConnected) return;
-        //     // TODO: LocationTracker.OnDishResearchUpdated not yet implemented
-        //     // LocationTracker.OnDishResearchUpdated();
-        // }
+        // Fires when a dish is researched/upgraded at Bancho Sushi.
+        // Parameters confirmed via dump.cs: UpdateUnlockRecipeSave(int id, int level)
+        // id = recipe TID, level = new research level
+        [HarmonyPatch(typeof(global::SaveData), "UpdateUnlockRecipeSave")]
+        [HarmonyPostfix]
+        public static void UpgradeDish_Postfix(int id, int level)
+        {
+            try
+            {
+                if (!ItemQueue.IsGameLoaded) return;
+                if (!ArchipelagoClient.IsConnected) return;
+
+                var dishName = RecipeNameMapper.GetDisplayName(id);
+                if (dishName != null)
+                {
+                    Plugin.Log.LogInfo($"[DishUpgrade] {dishName} → Level {level} (TID={id})");
+                    LocationTracker.OnDishUpgraded(dishName, level);
+                }
+                else
+                {
+                    Plugin.Log.LogInfo($"[DishUpgrade] Unknown recipe TID={id} level={level}");
+                }
+            }
+            catch (System.Exception ex)
+            {
+                Plugin.Log.LogError($"[RecipeUnlockPatch] UpgradeDish_Postfix threw: {ex}");
+            }
+        }
     }
 
     public static class RecipeNameMapper
