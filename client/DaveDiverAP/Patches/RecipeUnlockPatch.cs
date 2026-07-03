@@ -47,15 +47,63 @@ namespace DaveDiverAP.Patches
         }
 
         // ── Dish upgrade (research complete using Artisan's Flame) ───────────
-        // UpdateUnlockRecipeSave() takes NO parameters in this game version.
-        // We read the data from __instance after the call completes.
-        // __instance is the game's SaveData — we iterate unlockRecipeData to find what changed.
-        // Since we can't easily detect which recipe changed, log all research levels instead.
-        // TODO: Find correct parameters or use a different hook to detect dish upgrades.
-        // For now, disabled to prevent the whole patch class from failing.
-        // [HarmonyPatch(typeof(global::SaveData), "UpdateUnlockRecipeSave")]
-        // [HarmonyPostfix]
-        // public static void UpgradeDish_Postfix(global::SaveData __instance) { }
+        // ✅ CONFIRMED via Unity Explorer: AddCookingStudySaveData(CookingStudyData data)
+        // fires when a dish research is completed. CookingStudyData has id and level fields.
+        [HarmonyPatch(typeof(global::SaveData), "AddCookingStudySaveData")]
+        [HarmonyPostfix]
+        public static void AddCookingStudySaveData_Postfix(CookingStudyData data)
+        {
+            try
+            {
+                if (!ItemQueue.IsGameLoaded) return;
+                if (!ArchipelagoClient.IsConnected) return;
+                if (data == null) return;
+
+                int tid = data.id;
+                int level = data.level;
+                Plugin.Log.LogInfo($"[DishUpgrade] AddCookingStudySaveData TID={tid} Level={level}");
+
+                var dishName = RecipeNameMapper.GetDisplayName(tid);
+                if (dishName != null)
+                {
+                    Plugin.Log.LogInfo($"[DishUpgrade] {dishName} → Level {level}");
+                    LocationTracker.OnDishUpgraded(dishName, level);
+                }
+                else
+                {
+                    Plugin.Log.LogInfo($"[DishUpgrade] Unknown dish TID={tid} level={level}");
+                }
+            }
+            catch (System.Exception ex)
+            {
+                Plugin.Log.LogError($"[RecipeUnlockPatch] AddCookingStudySaveData_Postfix threw: {ex}");
+            }
+        }
+
+        // Also hook UpdateCookingStudySaveData for when research is updated (not just added)
+        [HarmonyPatch(typeof(global::SaveData), "UpdateCookingStudySaveData")]
+        [HarmonyPostfix]
+        public static void UpdateCookingStudySaveData_Postfix(CookingStudyData data)
+        {
+            try
+            {
+                if (!ItemQueue.IsGameLoaded) return;
+                if (!ArchipelagoClient.IsConnected) return;
+                if (data == null) return;
+
+                int tid = data.id;
+                int level = data.level;
+                Plugin.Log.LogInfo($"[DishUpgrade] UpdateCookingStudySaveData TID={tid} Level={level}");
+
+                var dishName = RecipeNameMapper.GetDisplayName(tid);
+                if (dishName != null)
+                    LocationTracker.OnDishUpgraded(dishName, level);
+            }
+            catch (System.Exception ex)
+            {
+                Plugin.Log.LogError($"[RecipeUnlockPatch] UpdateCookingStudySaveData_Postfix threw: {ex}");
+            }
+        }
     }
 
     public static class RecipeNameMapper
