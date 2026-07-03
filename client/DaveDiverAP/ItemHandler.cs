@@ -23,6 +23,10 @@ namespace DaveDiverAP
         // in the base game. Completing them via MissionManager makes the game
         // behave as if the player earned them normally (flags, cutscenes, etc.)
         // Source: dump.cs MissionData constants + MissionClearType enum.
+        // Prologue skip — complete the tutorial/prologue mission so AP games start at Chapter 1.
+        // TID 10010002 = Sushi Bar setup (prologue end). Idempotent — safe to call every load.
+        private const int TID_PROLOGUE_COMPLETE   = 10010002; // "Story: Complete Prologue"
+
         // Marinca (FishCard) unlock — always applied at game start for AP.
         // TID is from the 'Fishcard_Contents_Unlock_Sato' scenario mission.
         // TODO: verify this TID via [MissionCleared] debug log — set to 0 until confirmed.
@@ -303,6 +307,10 @@ namespace DaveDiverAP
         public static void ReapplyAllItems()
         {
             Log.LogInfo("[ItemHandler] Reapplying all received items to game state...");
+
+            // Always skip prologue for AP — complete tutorial so game starts at Chapter 1.
+            // Idempotent: calling CompleteMission on an already-completed mission is safe.
+            CompleteMission(TID_PROLOGUE_COMPLETE);
 
             // Always unlock Marinca (FishCard) for AP — needed from game start
             // so players can see which fish they've caught.
