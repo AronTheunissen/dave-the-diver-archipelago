@@ -47,34 +47,15 @@ namespace DaveDiverAP.Patches
         }
 
         // ── Dish upgrade (research complete using Artisan's Flame) ───────────
-        // Fires when a dish is researched/upgraded at Bancho Sushi.
-        // Parameters confirmed via dump.cs: UpdateUnlockRecipeSave(int id, int level)
-        // id = recipe TID, level = new research level
-        [HarmonyPatch(typeof(global::SaveData), "UpdateUnlockRecipeSave")]
-        [HarmonyPostfix]
-        public static void UpgradeDish_Postfix(int id, int level)
-        {
-            try
-            {
-                if (!ItemQueue.IsGameLoaded) return;
-                if (!ArchipelagoClient.IsConnected) return;
-
-                var dishName = RecipeNameMapper.GetDisplayName(id);
-                if (dishName != null)
-                {
-                    Plugin.Log.LogInfo($"[DishUpgrade] {dishName} → Level {level} (TID={id})");
-                    LocationTracker.OnDishUpgraded(dishName, level);
-                }
-                else
-                {
-                    Plugin.Log.LogInfo($"[DishUpgrade] Unknown recipe TID={id} level={level}");
-                }
-            }
-            catch (System.Exception ex)
-            {
-                Plugin.Log.LogError($"[RecipeUnlockPatch] UpgradeDish_Postfix threw: {ex}");
-            }
-        }
+        // UpdateUnlockRecipeSave() takes NO parameters in this game version.
+        // We read the data from __instance after the call completes.
+        // __instance is the game's SaveData — we iterate unlockRecipeData to find what changed.
+        // Since we can't easily detect which recipe changed, log all research levels instead.
+        // TODO: Find correct parameters or use a different hook to detect dish upgrades.
+        // For now, disabled to prevent the whole patch class from failing.
+        // [HarmonyPatch(typeof(global::SaveData), "UpdateUnlockRecipeSave")]
+        // [HarmonyPostfix]
+        // public static void UpgradeDish_Postfix(global::SaveData __instance) { }
     }
 
     public static class RecipeNameMapper

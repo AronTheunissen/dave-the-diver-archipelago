@@ -37,23 +37,9 @@ namespace DaveDiverAP.Patches
         // build the fish TID → AP location mapping.
         // UpdateMission has multiple overloads — removed to avoid ambiguous match error.
 
-        // ── Secondary: hook InGameManager.AddFishToCargoBox for small fish ───
-        // Small fish caught with harpoon/net get added to the cargo box.
-        // InGameManager.AddFishToCargoBox(FishData data, int count) is the likely hook.
-        // Trying multiple candidate methods to find the right one.
-        [HarmonyPatch(typeof(InGameManager), "AddFishToCargoBox")]
-        [HarmonyPostfix]
-        public static void AddFishToCargoBox_Postfix(object __0)
-        {
-            try
-            {
-                Plugin.Log.LogInfo($"[SmallFish] AddFishToCargoBox fired! arg={__0}");
-            }
-            catch (System.Exception ex)
-            {
-                Plugin.Log.LogError($"[FishCatchPatch] AddFishToCargoBox_Postfix threw: {ex}");
-            }
-        }
+        // ── Secondary: hook for small fish (harpoon/net pickup) ─────────────
+        // TODO: Need to find correct method via Unity Explorer.
+        // Run tools/unity_explorer_find_hooks.cs in-game to discover available methods.
 
         // ── Primary: hook FishInteractionBody.SuccessInteract ────────────────
         // ✅ CONFIRMED: fires for LARGE fish (kill + carve path) only.
