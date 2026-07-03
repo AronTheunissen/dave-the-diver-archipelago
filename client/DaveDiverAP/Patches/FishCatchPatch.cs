@@ -74,7 +74,7 @@ namespace DaveDiverAP.Patches
         {
             try
             {
-                Plugin.Log.LogInfo($"[FishCaught] AddCaughtFish id={id} grade={grade} isForce={isForce}");
+                Plugin.Log.LogInfo($"[FishCaught] AddCaughtFish FIRED id={id} grade={grade} isForce={isForce} connected={ArchipelagoClient.IsConnected} loaded={ItemQueue.IsGameLoaded}");
                 if (!ArchipelagoClient.IsConnected) return;
                 if (!ItemQueue.IsGameLoaded) return;
                 if (isForce) return; // isForce=true = replaying from save, not a real new catch
