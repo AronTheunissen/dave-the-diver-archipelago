@@ -508,16 +508,12 @@ namespace DaveDiverAP
         {
             try
             {
-                // Use ContentsUnlockManager to unlock the content — same as normal gameplay.
-                // ContentsUnlockManager.Instance.UnlockContents(ContentsList) handles the SaveData call.
-                var cum = ContentsUnlockManager.Instance;
-                if (cum == null)
-                {
-                    Log.LogWarning($"[ItemHandler] ContentsUnlockManager.Instance null — cannot unlock contents {contentsId}");
-                    return;
-                }
-                cum.UnlockContents((ContentsList)contentsId);
-                Log.LogInfo($"[ItemHandler] Contents unlocked: ID={contentsId}");
+                // Use CompleteMission with the ContentsUnlock TID (14030000 + offset)
+                // This is the mission that triggers the contents unlock in SaveData.
+                // ContentsList ID 10031 (FishCard) = TID 14030031, etc.
+                int contentsTID = 14020000 + contentsId;
+                CompleteMission(contentsTID);
+                Log.LogInfo($"[ItemHandler] Contents unlock attempted: ID={contentsId} via TID={contentsTID}");
             }
             catch (Exception ex)
             {
