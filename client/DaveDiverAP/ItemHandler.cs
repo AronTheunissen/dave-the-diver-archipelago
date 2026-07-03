@@ -32,10 +32,25 @@ namespace DaveDiverAP
             10010003, // "Weaponsmith Duff" — unlocks weapon crafting
         };
 
-        // Marinca (FishCard) unlock — ContentsList ID confirmed via Unity Explorer:
-        // ContentsUnlockDataDic TID=14030031 ContentsID=10031 NameTextID=ContentsName_FishCard
-        private const int CONTENTS_ID_MARINCA     = 10031;    // FishCard/Marinca unlock
-        private const int CONTENTS_ID_IDIVER      = 10014;    // iDiver app unlock
+        // ContentsList IDs confirmed via Unity Explorer (DataManager.ContentsUnlockDataDic)
+        // These are always unlocked for AP — basic game systems needed from day 1.
+        private static readonly int[] CONTENTS_ALWAYS_UNLOCK = {
+            10031, // FishCard/Marinca — fish encyclopedia
+            10014, // iDiver app — equipment upgrades
+            10004, // Weapon crafting — Duff's workshop
+            10005, // Sushi Bar: Recipe tab
+            10006, // Sushi Bar: Research (dish upgrade) tab
+            10007, // Sushi Bar: Staff management
+            10008, // Sushi Bar: Ingredients management
+            10009, // Sushi Bar: Storage
+            10027, // Sushi Dash minigame
+            10048, // Green Tea minigame
+            10040, // Cooksta/SNS app
+            10028, // Ecowatcher app
+            10029, // Charm equipment system
+            10012, // QTE drinks (green tea/beer) in restaurant
+            10017, // Wasabi minigame
+        };
 
         private const int TID_SEA_PEOPLE_GLOVES   = 1010040;  // "Find Sea People Gloves"
         private const int TID_TRANSLATOR           = 1010050;  // "Get Sea People Translator"
@@ -318,11 +333,11 @@ namespace DaveDiverAP
             foreach (var tid in TID_PROLOGUE_MISSIONS)
                 CompleteMission(tid);
 
-            // Always unlock Marinca (FishCard) and iDiver for AP — needed from game start.
-            // Uses ContentsList IDs confirmed via Unity Explorer.
-            // AddContentsUnlockSaveData is idempotent — safe to call every load.
-            UnlockContents(CONTENTS_ID_MARINCA);
-            UnlockContents(CONTENTS_ID_IDIVER);
+            // Always unlock basic game systems for AP — needed from day 1.
+            // All ContentsList IDs confirmed via Unity Explorer.
+            // UnlockContents is idempotent — safe to call every load.
+            foreach (var contentsId in CONTENTS_ALWAYS_UNLOCK)
+                UnlockContents(contentsId);
 
             // Progressive equipment
             ApplyOxygenTankLevel(SaveData.GetOxygenTankLevel());
