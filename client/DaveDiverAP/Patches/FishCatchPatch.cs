@@ -67,8 +67,8 @@ namespace DaveDiverAP.Patches
         // ✅ CONFIRMED via Unity Explorer: AddCaughtFish(Int32 id, Int32 grade, Boolean isForce)
         // id = fish data TID, grade = quality, isForce = override (true when replaying from save)
         // This fires for harpoon, net, AND carve — covers all catch methods.
-        // Note: using no explicit type list — let Harmony find the right overload
-        [HarmonyPatch(typeof(global::SaveData), "AddCaughtFish")]
+        // Explicitly target the (int, int, bool) overload to avoid ambiguity with (FishInfoData, int, bool)
+        [HarmonyPatch(typeof(global::SaveData), "AddCaughtFish", new System.Type[] { typeof(int), typeof(int), typeof(bool) })]
         [HarmonyPostfix]
         public static void AddCaughtFish_Postfix(int id, int grade, bool isForce)
         {
