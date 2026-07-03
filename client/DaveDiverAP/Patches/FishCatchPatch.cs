@@ -740,14 +740,174 @@ namespace DaveDiverAP.Patches
         public static string? GetLocationFromMissionTID(int missionTID) =>
             _missionTidMap.TryGetValue(missionTID, out var name) ? name : null;
 
-        // Fish ID → AP location name.
-        // fishId is the game's internal fish data TID (from DR_GameData_Fish.json).
-        // These are logged via [FishGet] fishId=XXXXX when a fish is caught.
-        // Populate from log output while playing.
+        // Fish TID → AP location name.
+        // TIDs confirmed via Unity Explorer: DataManager.Instance.FishInfoDataDic
+        // Duplicate TIDs (night variants etc.) map to same location — idempotent via CheckLocation.
         private static readonly System.Collections.Generic.Dictionary<int, string> _fishIdMap = new()
         {
-            // TODO: populate from [FishGet] log output while playing
-            // Example: { 14011001, "First Catch: Clownfish" }
+            { 2010002, "First Catch: Clownfish" },
+            { 2010003, "First Catch: Comber" },
+            { 2010004, "First Catch: Cardinal Fish" },        // Ruby_CardinalFish
+            { 2010005, "First Catch: Sea Goldie" },           // SquareSpot_Anthias
+            { 2010006, "First Catch: Pyramid Butterflyfish" },
+            { 2010007, "First Catch: Yellow Tang" },
+            { 2010008, "First Catch: Black and White Snapper" }, // Blackspot_Seabream → actually different?
+            { 2010009, "First Catch: Longfin Batfish" },      // Juvenile_Circular_BatFish
+            { 2010010, "First Catch: Blue Tang" },            // Bluetang
+            { 2010011, "First Catch: Spiny Seahorse" },       // Seahorse (generic)
+            { 2010012, "First Catch: Rainbow Wrasse" },       // Mediterranean_Rainbow_Wrasse
+            { 2010013, "First Catch: Lagoon Triggerfish" },   // Reef_Triggerfish
+            { 2010014, "First Catch: Small Spotted Dart" },   // Smallspotted_dart
+            { 2010015, "First Catch: Yellowback Fusilier" },
+            { 2010016, "First Catch: Ornate Wrasse" },
+            { 2010017, "First Catch: Longfin Batfish" },      // duplicate Longfin_BatFish
+            { 2010018, "First Catch: Mediterranean Parrotfish" },
+            { 2010019, "First Catch: Redtoothed Triggerfish" },
+            { 2010020, "First Catch: Black and White Snapper" },
+            { 2010021, "First Catch: Green Humphead Parrotfish" },
+            { 2010022, "First Catch: Barrel Jellyfish" },
+            { 2010023, "First Catch: Fried Egg Jellyfish" },
+            { 2010024, "First Catch: Stingray" },             // Red_Stingray variant
+            // NOTE: TID 2013xxx are PHOTO fish (Pink Dolphin, Manta Ray etc.) — not First Catch locations
+            // NOTE: TID 2011xxx are ABERRATION fish — not in AP locations
+            // NOTE: TID 2012xxx are SEAHORSE RACE fish — not catchable
+            // NOTE: TID 2010030, 2010124, 2010221, 2010223 etc. are BOSS variants — not First Catch
+            { 2010025, "First Catch: Whitetip Reefshark" },
+            { 2010026, "First Catch: Blackfin Barracuda" },
+            { 2010027, "First Catch: Stellate Puffer" },      // Stellate_Puffer
+            { 2010028, "First Catch: Moray Eel" },
+            { 2010029, "First Catch: Red Lionfish" },
+            { 2010031, "First Catch: Titan Triggerfish" },
+            { 2010051, "First Catch: Red Lionfish" },         // night variant
+            { 2010052, "First Catch: Titan Triggerfish" },    // night variant
+            { 2010053, "First Catch: Stellate Puffer" },      // Threetooth Puffer variant?
+            { 2010055, "First Catch: Whitetip Reefshark" },   // night variant
+            { 2010056, "First Catch: Barrel Jellyfish" },     // night variant
+            { 2010057, "First Catch: Fried Egg Jellyfish" },  // night variant
+            { 2010058, "First Catch: Blacktip Reefshark" },
+            { 2010059, "First Catch: Copper Shark" },
+            { 2010060, "First Catch: Box Jellyfish" },
+            { 2010061, "First Catch: Bluefin Tuna" },
+            { 2010062, "First Catch: Yellowfin Tuna" },
+            { 2010064, "First Catch: Flame Angelfish" },
+            { 2010065, "First Catch: Sheepshead" },            // Asian_Sheepshead
+            { 2010066, "First Catch: Emperor Angelfish" },
+            { 2010067, "First Catch: Stingray" },              // Red_Stingray
+            { 2010069, "First Catch: Marbled Electric Ray" },
+            { 2010070, "First Catch: Whiteleg Shrimp" },
+            { 2010071, "First Catch: Striped Catfish" },
+            { 2010072, "First Catch: Purple Sea Urchin" },
+            { 2010073, "First Catch: Shortfin Mako" },
+            { 2010074, "First Catch: Zebra Shark" },
+            { 2010075, "First Catch: Marlin" },                // Striped_Marlin
+            { 2010077, "First Catch: Sailfish" },
+            { 2010078, "First Catch: Longspine Porcupinefish" },
+            { 2010079, "First Catch: Longspine Squirrelfish" },
+            { 2010080, "First Catch: Clearfin Lionfish" },
+            { 2010081, "First Catch: Red-banded Lobster" },
+            { 2010082, "First Catch: American Lobster" },
+            { 2010083, "First Catch: Blue Lobster" },
+            { 2010084, "First Catch: European Lobster" },
+            { 2010085, "First Catch: Green Sea Urchin" },
+            { 2010101, "First Catch: Bluehead Tilefish" },
+            { 2010102, "First Catch: Clown Frogfish" },        // Warty_Frogfish
+            { 2010103, "First Catch: Painted Comber" },
+            { 2010104, "First Catch: Spiny Seahorse" },
+            { 2010105, "First Catch: Bigeye Scad" },
+            { 2010106, "First Catch: Striped Red Mullet" },    // Red_Mullet
+            { 2010107, "First Catch: Mackerel Scad" },
+            { 2010108, "First Catch: Harlequin Hind" },
+            { 2010109, "First Catch: Bigeye Trevally" },
+            { 2010110, "First Catch: Coral Trout" },
+            { 2010111, "First Catch: Grey Triggerfish" },
+            { 2010112, "First Catch: Atlantic Bonito" },
+            { 2010113, "First Catch: White Trevally" },
+            { 2010114, "First Catch: Cuttlefish" },
+            { 2010115, "First Catch: Dusky Grouper" },
+            { 2010116, "First Catch: Atlantic Mackerel" },
+            { 2010117, "First Catch: Giant Trevally" },
+            { 2010118, "First Catch: White Spotted Jellyfish" }, // Australian_Spotted_Jellyfish
+            { 2010119, "First Catch: Tiger Shark" },
+            { 2010121, "First Catch: Great Barracuda" },
+            { 2010122, "First Catch: Salema Porgy" },          // Cow_Pattern_Snapper
+            { 2010123, "First Catch: Narrow-Barred Spanish Mackerel" },
+            { 2010125, "First Catch: Longnose Sawshark" },     // LongNoseSaw_Shark
+            { 2010126, "First Catch: Great Barracuda" },       // duplicate
+            { 2010127, "First Catch: Longnose Sawshark" },     // duplicate
+            { 2010128, "First Catch: Tiger Shark" },           // duplicate
+            { 2010129, "First Catch: Atlantic Anglerfish" },
+            { 2010130, "First Catch: Sally Lightfoot Crab" },
+            { 2010131, "First Catch: Black Tiger Shrimp" },
+            { 2010132, "First Catch: Thresher Shark" },
+            { 2010133, "First Catch: Smooth Hammerhead" },
+            { 2010134, "First Catch: White Shrimp" },
+            { 2010135, "First Catch: Humboldt Squid" },
+            { 2010136, "First Catch: Devil Scorpionfish" },
+            { 2010137, "First Catch: Blackfin Barracuda" },    // duplicate
+            { 2010138, "First Catch: Spear Squid" },
+            { 2010139, "First Catch: California Spiny Lobster" },
+            { 2010140, "First Catch: Fan Lobster" },
+            { 2010141, "First Catch: Tropical Rock Lobster" },
+            { 2010142, "First Catch: Crystal Lobster" },
+            { 2010201, "First Catch: Chambered Nautilus" },
+            { 2010202, "First Catch: Fangtooth" },
+            { 2010203, "First Catch: Pacific Fanfish" },       // ElephantFish
+            { 2010204, "First Catch: Frilled Shark" },
+            { 2010205, "First Catch: Bluespotted Stargazer" }, // Stargazer
+            { 2010207, "First Catch: Rhinochimaeridae" },
+            { 2010208, "First Catch: Spider Crab" },           // Great_Spider_Crab
+            { 2010209, "First Catch: Eastern Rock Lobster" },  // Spiny_Red_Crab
+            { 2010210, "First Catch: Megamouth Shark" },
+            { 2010211, "First Catch: Cookiecutter Shark" },
+            { 2010212, "First Catch: Clione" },
+            { 2010214, "First Catch: Sea Toad" },
+            { 2010215, "First Catch: Salmon Snailfish" },
+            { 2010217, "First Catch: Pacific Fanfish" },
+            { 2010218, "First Catch: Threetooth Puffer" },
+            { 2010219, "First Catch: Comb Jelly" },
+            { 2010220, "First Catch: Blood-belly Comb Jellyfish" },
+            { 2010222, "First Catch: Red Bream" },
+            { 2010240, "First Catch: Norway Lobster" },
+            { 2010241, "First Catch: Eastern Rock Lobster" },
+            { 2010301, "First Catch: Peacock Squid" },
+            { 2010302, "First Catch: Dumbo Octopus" },
+            { 2010303, "First Catch: Barreleye" },
+            { 2010304, "First Catch: Blobfish" },
+            { 2010305, "First Catch: Vampire Squid" },
+            { 2010306, "First Catch: Pelican Eel" },
+            { 2010401, "First Catch: Arctic Cod" },
+            { 2010402, "First Catch: Gelatinous Snailfish" },
+            { 2010403, "First Catch: Antarctic Octopus" },
+            { 2010404, "First Catch: Greenland Shark" },
+            { 2010405, "First Catch: Polar Eelpout" },
+            { 2010406, "First Catch: Porbeagle Shark" },
+            { 2010407, "First Catch: Ice Fish" },
+            { 2010408, "First Catch: Capelin" },
+            { 2010409, "First Catch: Narwhal" },
+            { 2010410, "First Catch: Haddock" },
+            { 2010411, "First Catch: Starry Skate" },          // Antarctic_Starry_Skate
+            { 2010412, "First Catch: Arctic Telescope Fish" },
+            { 2010413, "First Catch: Alaska Pollock" },
+            { 2010414, "First Catch: Lumpfish" },
+            { 2010415, "First Catch: Snub-nosed Spiny Eel" },
+            { 2010416, "First Catch: Golden King Crab" },
+            { 2010417, "First Catch: Snow Crab" },
+            { 2010418, "First Catch: Horsehair Crab" },
+            { 2010501, "First Catch: Waptia Fieldensis" },
+            { 2010502, "First Catch: Pikaia" },
+            { 2010503, "First Catch: Allenypterus" },
+            { 2010504, "First Catch: Qingmendous" },
+            { 2010505, "First Catch: Falcatus" },
+            { 2010506, "First Catch: Drepanaspis" },
+            { 2010507, "First Catch: Dunkleosteus" },
+            { 2010508, "First Catch: Megalograptus" },
+            { 2010510, "First Catch: Xenacanthus" },
+            { 2010511, "First Catch: Dollocaris Ingens" },
+            { 2010512, "First Catch: Tokummia Katalepsis" },
+            { 2010216, "First Catch: Leafy Seadragon" },       // Coelacanth — check AP name
+            // Jungle DLC fish (42010xxx range)
+            { 42011102, "First Catch: Stethacanthus" },
+            { 42011103, "First Catch: Xenacanthus" },          // Ophthalmosaurus — check
         };
 
         public static string? GetLocationFromFishId(int fishId) =>
