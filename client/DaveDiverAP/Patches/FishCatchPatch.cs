@@ -37,9 +37,39 @@ namespace DaveDiverAP.Patches
         // build the fish TID → AP location mapping.
         // UpdateMission has multiple overloads — removed to avoid ambiguous match error.
 
-        // ── Secondary: hook for small fish (harpoon/net pickup) ─────────────
-        // TODO: Need to find correct method via Unity Explorer.
-        // Run tools/unity_explorer_find_hooks.cs in-game to discover available methods.
+        // ── Secondary: hook FishInteractionBody.SuccessSubInteract ──────────
+        // ✅ CONFIRMED via Unity Explorer: SuccessSubInteract(BaseCharacter) exists
+        // This fires for small fish caught with harpoon/net (sub-interaction path)
+        // as opposed to SuccessInteract which fires for large fish (carve path).
+        [HarmonyPatch(typeof(FishInteractionBody), "SuccessSubInteract")]
+        [HarmonyPostfix]
+        public static void SuccessSubInteract_Postfix(FishInteractionBody __instance)
+        {
+            try
+            {
+                Plugin.Log.LogInfo($"[FishCatchPatch] SuccessSubInteract fired! GO={__instance?.gameObject?.name ?? "null"} Connected={ArchipelagoClient.IsConnected}");
+                if (!ArchipelagoClient.IsConnected) return;
+                if (!ItemQueue.IsGameLoaded) return;
+
+                var goName = __instance?.gameObject?.name ?? "";
+                if (string.IsNullOrEmpty(goName)) return;
+
+                var locationName = FishNameMapper.GetLocationFromGameObject(goName);
+                if (locationName != null)
+                {
+                    Plugin.Log.LogInfo($"[FishCaught via SubInteract] GO={goName} → Location=\"{locationName}\"");
+                    ArchipelagoClient.CheckLocation(locationName);
+                }
+                else
+                {
+                    Plugin.Log.LogWarning($"[FishCaught via SubInteract] GO={goName} — no location mapping found");
+                }
+            }
+            catch (System.Exception ex)
+            {
+                Plugin.Log.LogError($"[FishCatchPatch] SuccessSubInteract_Postfix threw: {ex}");
+            }
+        }
 
         // ── Primary: hook FishInteractionBody.SuccessInteract ────────────────
         // ✅ CONFIRMED: fires for LARGE fish (kill + carve path) only.
