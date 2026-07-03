@@ -23,9 +23,14 @@ namespace DaveDiverAP
         // in the base game. Completing them via MissionManager makes the game
         // behave as if the player earned them normally (flags, cutscenes, etc.)
         // Source: dump.cs MissionData constants + MissionClearType enum.
-        // Prologue skip — complete the tutorial/prologue mission so AP games start at Chapter 1.
-        // TID 10010002 = Sushi Bar setup (prologue end). Idempotent — safe to call every load.
-        private const int TID_PROLOGUE_COMPLETE   = 10010002; // "Story: Complete Prologue"
+        // Prologue skip — complete tutorial missions so AP games start at Chapter 1.
+        // 10010001 = "Prepare Sushi Ingredients" — opens sushi bar (end of tutorial)
+        // 10010003 = "Weaponsmith Duff" — unlocks weapon crafting
+        // 10010004 = "Tracking the Sea People" = Chapter 1 Mission 1, NOT prologue — do NOT include
+        private static readonly int[] TID_PROLOGUE_MISSIONS = {
+            10010001, // "Prepare Sushi Ingredients" — opens sushi bar
+            10010003, // "Weaponsmith Duff" — unlocks weapon crafting
+        };
 
         // Marinca (FishCard) unlock — ContentsList ID confirmed via Unity Explorer:
         // ContentsUnlockDataDic TID=14030031 ContentsID=10031 NameTextID=ContentsName_FishCard
@@ -308,9 +313,10 @@ namespace DaveDiverAP
         {
             Log.LogInfo("[ItemHandler] Reapplying all received items to game state...");
 
-            // Always skip prologue for AP — complete tutorial so game starts at Chapter 1.
-            // Idempotent: calling CompleteMission on an already-completed mission is safe.
-            CompleteMission(TID_PROLOGUE_COMPLETE);
+            // Always skip prologue for AP — complete all 3 tutorial missions.
+            // Idempotent: CompleteMission on an already-cleared mission is safe.
+            foreach (var tid in TID_PROLOGUE_MISSIONS)
+                CompleteMission(tid);
 
             // Always unlock Marinca (FishCard) and iDiver for AP — needed from game start.
             // Uses ContentsList IDs confirmed via Unity Explorer.
