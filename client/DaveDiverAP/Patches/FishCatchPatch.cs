@@ -47,7 +47,9 @@ namespace DaveDiverAP.Patches
         {
             try
             {
-                Plugin.Log.LogInfo($"[FishCatchPatch] SuccessSubInteract fired! GO={__instance?.gameObject?.name ?? "null"} Connected={ArchipelagoClient.IsConnected}");
+                var goName = __instance?.gameObject?.name ?? "";
+                Plugin.Log.LogInfo($"[FishCatchPatch] SuccessSubInteract fired! GO={goName}");
+                CheckFishCatchFromGameObject(goName);
                 if (!ArchipelagoClient.IsConnected) return;
                 if (!ItemQueue.IsGameLoaded) return;
 
@@ -96,16 +98,41 @@ namespace DaveDiverAP.Patches
             }
         }
 
+        // ── Helper: extract fish TID from GameObject name ─────────────────────
+        // Format confirmed: "SA_2010125_Longnosesaw_Shark(Clone)" → TID=2010125
+        private static void CheckFishCatchFromGameObject(string goName)
+        {
+            if (!ArchipelagoClient.IsConnected) return;
+            if (!ItemQueue.IsGameLoaded) return;
+
+            // Parse TID from "SA_XXXXXXX_..." format
+            int tid = FishNameMapper.GetTIDFromGameObjectName(goName);
+            if (tid <= 0) return;
+
+            Plugin.Log.LogInfo($"[FishCaught] GO={goName} TID={tid}");
+            var locationName = FishNameMapper.GetLocationFromFishId(tid);
+            if (locationName != null)
+            {
+                Plugin.Log.LogInfo($"[FishCaught] → \"{locationName}\"");
+                ArchipelagoClient.CheckLocation(locationName);
+            }
+            else
+            {
+                Plugin.Log.LogInfo($"[FishCaught] TID={tid} → no AP location mapping");
+            }
+        }
+
         // ── Primary: hook FishInteractionBody.SuccessInteract ────────────────
         // ✅ CONFIRMED: fires for LARGE fish (kill + carve path) only.
-        // Now just a debug log — AddCaughtFish handles the actual AP check.
         [HarmonyPatch(typeof(FishInteractionBody), "SuccessInteract")]
         [HarmonyPostfix]
         public static void SuccessInteract_Postfix(FishInteractionBody __instance)
         {
             try
             {
-                Plugin.Log.LogInfo($"[FishCatchPatch] SuccessInteract fired! GO={__instance?.gameObject?.name ?? "null"} — AddCaughtFish will handle AP check");
+                var goName = __instance?.gameObject?.name ?? "";
+                Plugin.Log.LogInfo($"[FishCatchPatch] SuccessInteract fired! GO={goName}");
+                CheckFishCatchFromGameObject(goName);
             }
             catch (System.Exception ex)
             {
@@ -887,5 +914,18 @@ namespace DaveDiverAP.Patches
 
         public static string? GetLocationFromFishId(int fishId) =>
             _fishIdMap.TryGetValue(fishId, out var name) ? name : null;
+
+        // Parse TID from GameObject name format: "SA_2010125_Longnosesaw_Shark(Clone)" → 2010125
+        public static int GetTIDFromGameObjectName(string goName)
+        {
+            if (string.IsNullOrEmpty(goName)) return -1;
+            // Format: SA_XXXXXXX_... where XXXXXXX is the TID
+            if (!goName.StartsWith("SA_")) return -1;
+            var parts = goName.Split('_');
+            if (parts.Length < 2) return -1;
+            if (int.TryParse(parts[1], out int tid))
+                return tid;
+            return -1;
+        }
     }
 }
