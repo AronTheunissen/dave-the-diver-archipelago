@@ -54,16 +54,8 @@ namespace DaveDiverAP.Patches
                 var goName = __instance?.gameObject?.name ?? "";
                 if (string.IsNullOrEmpty(goName)) return;
 
-                var locationName = FishNameMapper.GetLocationFromGameObject(goName);
-                if (locationName != null)
-                {
-                    Plugin.Log.LogInfo($"[FishCaught via SubInteract] GO={goName} → Location=\"{locationName}\"");
-                    ArchipelagoClient.CheckLocation(locationName);
-                }
-                else
-                {
-                    Plugin.Log.LogWarning($"[FishCaught via SubInteract] GO={goName} — no location mapping found");
-                }
+                // AddCaughtFish handles the actual location check — this just provides extra debug info
+                Plugin.Log.LogInfo($"[FishCaught via SubInteract] GO={goName} — AddCaughtFish will handle check");
             }
             catch (System.Exception ex)
             {
