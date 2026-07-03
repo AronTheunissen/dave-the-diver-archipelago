@@ -59,8 +59,8 @@ namespace DaveDiverAP.Patches
                 if (!ArchipelagoClient.IsConnected) return;
                 if (data == null) return;
 
-                int tid = data.id;
-                int level = data.level;
+                int tid = data.recipeID;
+                int level = data.studyLevel;
                 Plugin.Log.LogInfo($"[DishUpgrade] AddCookingStudySaveData TID={tid} Level={level}");
 
                 var dishName = RecipeNameMapper.GetDisplayName(tid);
@@ -91,8 +91,8 @@ namespace DaveDiverAP.Patches
                 if (!ArchipelagoClient.IsConnected) return;
                 if (data == null) return;
 
-                int tid = data.id;
-                int level = data.level;
+                int tid = data.recipeID;
+                int level = data.studyLevel;
                 Plugin.Log.LogInfo($"[DishUpgrade] UpdateCookingStudySaveData TID={tid} Level={level}");
 
                 var dishName = RecipeNameMapper.GetDisplayName(tid);
