@@ -71,6 +71,38 @@ namespace DaveDiverAP.Patches
             }
         }
 
+        // ── Hook SaveData.AddCaughtFish — fires for ALL fish catches ──────────
+        // ✅ CONFIRMED via Unity Explorer: AddCaughtFish(Int32 id, Int32 grade, Boolean isForce)
+        // id = fish data TID, grade = quality, isForce = override (true when replaying from save)
+        // This fires for harpoon, net, AND carve — covers all catch methods.
+        [HarmonyPatch(typeof(global::SaveData), "AddCaughtFish", new System.Type[] { typeof(int), typeof(int), typeof(bool) })]
+        [HarmonyPostfix]
+        public static void AddCaughtFish_Postfix(int id, int grade, bool isForce)
+        {
+            try
+            {
+                Plugin.Log.LogInfo($"[FishCaught] AddCaughtFish id={id} grade={grade} isForce={isForce}");
+                if (!ArchipelagoClient.IsConnected) return;
+                if (!ItemQueue.IsGameLoaded) return;
+                if (isForce) return; // isForce=true = replaying from save, not a real new catch
+
+                var locationName = FishNameMapper.GetLocationFromFishId(id);
+                if (locationName != null)
+                {
+                    Plugin.Log.LogInfo($"[FishCaught] id={id} → \"{locationName}\"");
+                    ArchipelagoClient.CheckLocation(locationName);
+                }
+                else
+                {
+                    Plugin.Log.LogInfo($"[FishCaught] id={id} — no AP location mapping");
+                }
+            }
+            catch (System.Exception ex)
+            {
+                Plugin.Log.LogError($"[FishCatchPatch] AddCaughtFish_Postfix threw: {ex}");
+            }
+        }
+
         // ── Primary: hook FishInteractionBody.SuccessInteract ────────────────
         // ✅ CONFIRMED: fires for LARGE fish (kill + carve path) only.
         //    Small fish caught with harpoon/net use a different pickup path.
