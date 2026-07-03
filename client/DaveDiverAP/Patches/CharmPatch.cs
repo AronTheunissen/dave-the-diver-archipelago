@@ -39,7 +39,9 @@ namespace DaveDiverAP.Patches
                 if (!ItemQueue.IsGameReady) return;
                 if (!ArchipelagoClient.IsConnected) return;
 
-                var (charmName, sourceMission) = CharmMapper.GetCharmInfo(tid);
+                var charmInfo = CharmMapper.GetCharmInfo(tid);
+                var charmName = charmInfo.charm;
+                var sourceMission = charmInfo.mission;
                 if (charmName != null && sourceMission != null)
                 {
                     Plugin.Log.LogInfo($"[Charm] Acquired: {charmName} via {sourceMission} (TID={tid})");
