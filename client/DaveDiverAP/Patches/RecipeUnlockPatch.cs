@@ -55,7 +55,6 @@ namespace DaveDiverAP.Patches
         {
             try
             {
-                if (!ItemQueue.IsGameLoaded) return;
                 if (!ArchipelagoClient.IsConnected) return;
                 if (data == null) return;
 
@@ -87,7 +86,6 @@ namespace DaveDiverAP.Patches
         {
             try
             {
-                if (!ItemQueue.IsGameLoaded) return;
                 if (!ArchipelagoClient.IsConnected) return;
                 if (data == null) return;
 
