@@ -158,8 +158,8 @@ namespace DaveDiverAP.UI
             if (!GoalTracker.YawieDefeated)
             {
                 GUILayout.Label("    Required to reach Yawie:");
-                string btn = SaveData.GetControlRoomButtons() >= 3 ? "✓" : "○";
-                GUILayout.Label($"      {btn} Control Room Buttons: {SaveData.GetControlRoomButtons()}/3");
+                string btn = ModSaveData.GetControlRoomButtons() >= 3 ? "✓" : "○";
+                GUILayout.Label($"      {btn} Control Room Buttons: {ModSaveData.GetControlRoomButtons()}/3");
                 string laser = ModSaveData.HasLaserDevice ? "✓" : "○";
                 GUILayout.Label($"      {laser} Laser Device");
             }
@@ -194,7 +194,7 @@ namespace DaveDiverAP.UI
             DrawProgressiveItem("Harpoon",        ModSaveData.GetHarpoonLevel(),      4);
             DrawProgressiveItem("Cargo Box",      ModSaveData.GetCargoBoxLevel(),     3);
             DrawProgressiveItem("Tech Suit Parts",        ModSaveData.GetTechSuitParts(),      3);
-            DrawProgressiveItem("Control Room Buttons",   SaveData.GetControlRoomButtons(), 3);
+            DrawProgressiveItem("Control Room Buttons",   ModSaveData.GetControlRoomButtons(), 3);
             DrawProgressiveItem("Cooksta Rank",           ModSaveData.GetCookstaRank(),        5);
         }
 
@@ -208,7 +208,7 @@ namespace DaveDiverAP.UI
         {
             var items = new (string label, bool have)[]
             {
-                ("Sea People Gloves",     SaveData.HasSeaPeopleGloves),
+                ("Sea People Gloves",     ModSaveData.HasSeaPeopleGloves),
                 ("Sea People Translator", ModSaveData.HasTranslator),
                 ("Key to Tenzhin",        ModSaveData.HasKeyToTenzhin),
                 ("Laser Device",          ModSaveData.HasLaserDevice),

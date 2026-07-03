@@ -38,7 +38,7 @@ namespace DaveDiverAP.UI
 
         public void Awake()
         {
-            var (url, port, slotName, _) = SaveData.LoadConnectionInfo();
+            var (url, port, slotName, _) = ModSaveData.LoadConnectionInfo();
             _server   = url;
             _port     = port.ToString();
             _slotName = slotName;
@@ -207,7 +207,7 @@ namespace DaveDiverAP.UI
             _statusIsError = false;
             _statusMessage = "Connecting...";
 
-            SaveData.SaveConnectionInfo(_server, port, _slotName, _password);
+            ModSaveData.SaveConnectionInfo(_server, port, _slotName, _password);
 
             bool success = await ArchipelagoClient.ConnectAsync(_server, port, _slotName, _password);
 

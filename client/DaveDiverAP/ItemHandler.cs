@@ -258,7 +258,7 @@ namespace DaveDiverAP
             if (name == "Progressive Diving Suit")    { UpgradeDivingSuit();    return; }
 
             // ── Area unlock items ────────────────────────────────────────────
-            if (name == "Sea People Gloves")          { UnlockKeyItem(TID_SEA_PEOPLE_GLOVES,  () => SaveData.HasSeaPeopleGloves,  v => SaveData.HasSeaPeopleGloves  = v); return; }
+            if (name == "Sea People Gloves")          { UnlockKeyItem(TID_SEA_PEOPLE_GLOVES,  () => ModSaveData.HasSeaPeopleGloves,  v => ModSaveData.HasSeaPeopleGloves  = v); return; }
             if (name == "Sea People Translator")      { UnlockKeyItem(TID_TRANSLATOR,         () => ModSaveData.HasTranslator,       v => ModSaveData.HasTranslator       = v); return; }
             if (name == "Key to Tenzhin")             { UnlockKeyItem(TID_KEY_TO_TENZHIN,     () => ModSaveData.HasKeyToTenzhin,     v => ModSaveData.HasKeyToTenzhin     = v); return; }
             if (name == "Laser Device")               { UnlockKeyItem(TID_LASER_DEVICE,       () => ModSaveData.HasLaserDevice,      v => ModSaveData.HasLaserDevice      = v); return; }
@@ -346,7 +346,7 @@ namespace DaveDiverAP
             ApplyCargoBoxLevel(ModSaveData.GetCargoBoxLevel());
 
             // Boolean key items
-            if (SaveData.HasSeaPeopleGloves) CompleteMission(TID_SEA_PEOPLE_GLOVES);
+            if (ModSaveData.HasSeaPeopleGloves) CompleteMission(TID_SEA_PEOPLE_GLOVES);
             if (ModSaveData.HasTranslator)      CompleteMission(TID_TRANSLATOR);
             if (ModSaveData.HasKeyToTenzhin)    CompleteMission(TID_KEY_TO_TENZHIN);
             if (ModSaveData.HasLaserDevice)     CompleteMission(TID_LASER_DEVICE);

@@ -87,7 +87,7 @@ namespace DaveDiverAP
             // Auto-connect if configured
             if (ModConfig.AutoConnectOnLaunch.Value)
             {
-                var (url, port, slot, pass) = SaveData.LoadConnectionInfo();
+                var (url, port, slot, pass) = ModSaveData.LoadConnectionInfo();
                 if (!string.IsNullOrEmpty(url) && !string.IsNullOrEmpty(slot))
                 {
                     Log.LogInfo("Auto-connecting to Archipelago...");
