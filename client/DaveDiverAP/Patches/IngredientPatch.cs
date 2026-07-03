@@ -20,10 +20,10 @@ namespace DaveDiverAP.Patches
         //    IngredientsStorage is a SingletonNoMono — fires only during actual gameplay ingredient
         //    additions (pickup, purchase), NOT during save load replay. Safe hook point.
         //
-        // NOTE: The old SaveData.AddIngredientsSaveData hook was disabled because it fired during
+        // NOTE: The old ModSaveData.AddIngredientsSaveData hook was disabled because it fired during
         //    save loading. This IngredientsStorage hook does NOT have that problem.
         //
-        // Dedup uses SaveData.IsIngredientFound/MarkIngredientFound — persists across game restarts
+        // Dedup uses ModSaveData.IsIngredientFound/MarkIngredientFound — persists across game restarts
         // so a previously checked ingredient won't fire again in a new session.
         [HarmonyPatch(typeof(IngredientsStorage), "AddIngredients")]
         [HarmonyPostfix]
@@ -38,8 +38,8 @@ namespace DaveDiverAP.Patches
                 if (ingredientName == null) return;
 
                 // Persistent dedup — survives game restarts (stored in archipelago_save.json)
-                if (SaveData.IsIngredientFound(ingredientName)) return;
-                SaveData.MarkIngredientFound(ingredientName);
+                if (ModSaveData.IsIngredientFound(ingredientName)) return;
+                ModSaveData.MarkIngredientFound(ingredientName);
 
                 Plugin.Log.LogInfo($"[Ingredient] First time collected: {ingredientName} (TID={ingredientsID})");
                 LocationTracker.OnIngredientFirstFound(ingredientName);

@@ -160,7 +160,7 @@ namespace DaveDiverAP.UI
                 GUILayout.Label("    Required to reach Yawie:");
                 string btn = SaveData.GetControlRoomButtons() >= 3 ? "✓" : "○";
                 GUILayout.Label($"      {btn} Control Room Buttons: {SaveData.GetControlRoomButtons()}/3");
-                string laser = SaveData.HasLaserDevice ? "✓" : "○";
+                string laser = ModSaveData.HasLaserDevice ? "✓" : "○";
                 GUILayout.Label($"      {laser} Laser Device");
             }
 
@@ -189,13 +189,13 @@ namespace DaveDiverAP.UI
 
         private static void DrawEquipmentTab()
         {
-            DrawProgressiveItem("Oxygen Tank",    SaveData.GetOxygenTankLevel(),   6);
-            DrawProgressiveItem("Diving Suit",    SaveData.GetDivingSuitLevel(),   8);
-            DrawProgressiveItem("Harpoon",        SaveData.GetHarpoonLevel(),      4);
-            DrawProgressiveItem("Cargo Box",      SaveData.GetCargoBoxLevel(),     3);
-            DrawProgressiveItem("Tech Suit Parts",        SaveData.GetTechSuitParts(),      3);
+            DrawProgressiveItem("Oxygen Tank",    ModSaveData.GetOxygenTankLevel(),   6);
+            DrawProgressiveItem("Diving Suit",    ModSaveData.GetDivingSuitLevel(),   8);
+            DrawProgressiveItem("Harpoon",        ModSaveData.GetHarpoonLevel(),      4);
+            DrawProgressiveItem("Cargo Box",      ModSaveData.GetCargoBoxLevel(),     3);
+            DrawProgressiveItem("Tech Suit Parts",        ModSaveData.GetTechSuitParts(),      3);
             DrawProgressiveItem("Control Room Buttons",   SaveData.GetControlRoomButtons(), 3);
-            DrawProgressiveItem("Cooksta Rank",           SaveData.GetCookstaRank(),        5);
+            DrawProgressiveItem("Cooksta Rank",           ModSaveData.GetCookstaRank(),        5);
         }
 
         private static void DrawProgressiveItem(string label, int level, int max)
@@ -209,21 +209,21 @@ namespace DaveDiverAP.UI
             var items = new (string label, bool have)[]
             {
                 ("Sea People Gloves",     SaveData.HasSeaPeopleGloves),
-                ("Sea People Translator", SaveData.HasTranslator),
-                ("Key to Tenzhin",        SaveData.HasKeyToTenzhin),
-                ("Laser Device",          SaveData.HasLaserDevice),
-                ("Sea People's Trust",    SaveData.HasSeaPeopleTrust),
-                ("Teleport Mirror",       SaveData.HasTeleportMirror),
-                ("Teleport → SPV",        SaveData.HasTeleportSPV),
-                ("Teleport → Glacier",    SaveData.HasTeleportGlacier),
-                ("Teleport → Deep",       SaveData.HasTeleportDeep),
-                ("Unlock Fish Farm",      SaveData.HasFishFarm),
-                ("Unlock Veg Farm",       SaveData.HasVegetableFarm),
-                ("Unlock Chicken Farm",   SaveData.HasChickenFarm),
-                ("Bug Net",               SaveData.HasBugNet),
-                ("Night Dive",            SaveData.HasNightDive),
-                ("iDiver App",            SaveData.HasiDiverApp),
-                ("Sea People Bracelet",   SaveData.HasOxygenGrace),
+                ("Sea People Translator", ModSaveData.HasTranslator),
+                ("Key to Tenzhin",        ModSaveData.HasKeyToTenzhin),
+                ("Laser Device",          ModSaveData.HasLaserDevice),
+                ("Sea People's Trust",    ModSaveData.HasSeaPeopleTrust),
+                ("Teleport Mirror",       ModSaveData.HasTeleportMirror),
+                ("Teleport → SPV",        ModSaveData.HasTeleportSPV),
+                ("Teleport → Glacier",    ModSaveData.HasTeleportGlacier),
+                ("Teleport → Deep",       ModSaveData.HasTeleportDeep),
+                ("Unlock Fish Farm",      ModSaveData.HasFishFarm),
+                ("Unlock Veg Farm",       ModSaveData.HasVegetableFarm),
+                ("Unlock Chicken Farm",   ModSaveData.HasChickenFarm),
+                ("Bug Net",               ModSaveData.HasBugNet),
+                ("Night Dive",            ModSaveData.HasNightDive),
+                ("iDiver App",            ModSaveData.HasiDiverApp),
+                ("Sea People Bracelet",   ModSaveData.HasOxygenGrace),
             };
             foreach (var (label, have) in items)
                 GUILayout.Label($"  {(have ? "✓" : "○")} {label}");
@@ -241,7 +241,7 @@ namespace DaveDiverAP.UI
             int got = 0;
             foreach (var c in charms)
             {
-                bool have = SaveData.IsCharmAcquired(c);
+                bool have = ModSaveData.IsCharmAcquired(c);
                 if (have) got++;
                 GUILayout.Label($"  {(have ? "✓" : "○")} {c}");
             }
@@ -265,7 +265,7 @@ namespace DaveDiverAP.UI
             foreach (var (treeName, variants) in trees)
             {
                 int got = 0;
-                foreach (var v in variants) if (SaveData.IsWeaponUnlocked(v)) got++;
+                foreach (var v in variants) if (ModSaveData.IsWeaponUnlocked(v)) got++;
                 DrawBar($"{treeName}: {got}/{variants.Length}", (float)got / variants.Length);
             }
         }

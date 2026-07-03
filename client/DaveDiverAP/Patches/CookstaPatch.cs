@@ -75,8 +75,8 @@ namespace DaveDiverAP.Patches
         // ── Researched recipe count changed ───────────────────────────────────
         // ✅ CONFIRMED via dump.cs: AchievementEventType.ResearchRecipeCnt = 2
         //    const string ResearchRecipeCnt = "ResearchRecipeCnt" used as achievement key
-        //    Hook SaveData.UpdateUnlockRecipeSave (already in RecipeUnlockPatch) and
-        //    cross-check total researched count from SaveData.unlockRecipeData dictionary.
+        //    Hook ModSaveData.UpdateUnlockRecipeSave (already in RecipeUnlockPatch) and
+        //    cross-check total researched count from ModSaveData.unlockRecipeData dictionary.
         // We hook SNSInfoManager.RankupRoutine as it checks all rank-up conditions including recipes.
         [HarmonyPatch(typeof(SNSInfoManager), "CheckGradeConditionMessage")]
         [HarmonyPostfix]

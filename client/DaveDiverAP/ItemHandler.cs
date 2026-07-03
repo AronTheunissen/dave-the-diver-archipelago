@@ -9,9 +9,9 @@ namespace DaveDiverAP
     /// Applies received Archipelago items to the game state using confirmed
     /// game API calls from dump.cs (game version v1.0.5.1791 + Jungle DLC).
     ///
-    /// Design principle: state is always tracked in our SaveData first, then
+    /// Design principle: state is always tracked in our ModSaveData first, then
     /// applied to the game. On game load, Plugin.cs calls ReapplyAllItems()
-    /// to restore everything from SaveData in case the game save doesn't
+    /// to restore everything from ModSaveData in case the game save doesn't
     /// persist our changes (e.g. a new save file, or the player started fresh).
     /// </summary>
     public static class ItemHandler
@@ -250,7 +250,7 @@ namespace DaveDiverAP
             Log.LogInfo($"[ItemHandler] Applying item: {name}");
 
             // Save item index so we don't replay it next session
-            SaveData.SetLastItemIndex((int)item.ItemId);
+            ModSaveData.SetLastItemIndex((int)item.ItemId);
 
             // ── Progressive equipment ────────────────────────────────────────
             if (name == "Progressive Oxygen Tank")    { UpgradeOxygenTank();    return; }
@@ -259,14 +259,14 @@ namespace DaveDiverAP
 
             // ── Area unlock items ────────────────────────────────────────────
             if (name == "Sea People Gloves")          { UnlockKeyItem(TID_SEA_PEOPLE_GLOVES,  () => SaveData.HasSeaPeopleGloves,  v => SaveData.HasSeaPeopleGloves  = v); return; }
-            if (name == "Sea People Translator")      { UnlockKeyItem(TID_TRANSLATOR,         () => SaveData.HasTranslator,       v => SaveData.HasTranslator       = v); return; }
-            if (name == "Key to Tenzhin")             { UnlockKeyItem(TID_KEY_TO_TENZHIN,     () => SaveData.HasKeyToTenzhin,     v => SaveData.HasKeyToTenzhin     = v); return; }
-            if (name == "Laser Device")               { UnlockKeyItem(TID_LASER_DEVICE,       () => SaveData.HasLaserDevice,      v => SaveData.HasLaserDevice      = v); return; }
+            if (name == "Sea People Translator")      { UnlockKeyItem(TID_TRANSLATOR,         () => ModSaveData.HasTranslator,       v => ModSaveData.HasTranslator       = v); return; }
+            if (name == "Key to Tenzhin")             { UnlockKeyItem(TID_KEY_TO_TENZHIN,     () => ModSaveData.HasKeyToTenzhin,     v => ModSaveData.HasKeyToTenzhin     = v); return; }
+            if (name == "Laser Device")               { UnlockKeyItem(TID_LASER_DEVICE,       () => ModSaveData.HasLaserDevice,      v => ModSaveData.HasLaserDevice      = v); return; }
             if (name == "Sea People's Trust")         { UnlockSeaPeopleTrust();                                                                                            return; }
-            if (name == "Teleport Mirror")            { UnlockKeyItem(TID_TELEPORT_MIRROR,    () => SaveData.HasTeleportMirror,   v => SaveData.HasTeleportMirror   = v); return; }
-            if (name == "Teleport to Sea People Village") { UnlockKeyItem(TID_TELEPORT_SPV,   () => SaveData.HasTeleportSPV,      v => SaveData.HasTeleportSPV      = v); return; }
-            if (name == "Teleport to Glacier")        { UnlockKeyItem(TID_TELEPORT_GLACIER,   () => SaveData.HasTeleportGlacier,  v => SaveData.HasTeleportGlacier  = v); return; }
-            if (name == "Teleport to Deep Blue Hole") { UnlockKeyItem(TID_TELEPORT_DEEP,      () => SaveData.HasTeleportDeep,     v => SaveData.HasTeleportDeep     = v); return; }
+            if (name == "Teleport Mirror")            { UnlockKeyItem(TID_TELEPORT_MIRROR,    () => ModSaveData.HasTeleportMirror,   v => ModSaveData.HasTeleportMirror   = v); return; }
+            if (name == "Teleport to Sea People Village") { UnlockKeyItem(TID_TELEPORT_SPV,   () => ModSaveData.HasTeleportSPV,      v => ModSaveData.HasTeleportSPV      = v); return; }
+            if (name == "Teleport to Glacier")        { UnlockKeyItem(TID_TELEPORT_GLACIER,   () => ModSaveData.HasTeleportGlacier,  v => ModSaveData.HasTeleportGlacier  = v); return; }
+            if (name == "Teleport to Deep Blue Hole") { UnlockKeyItem(TID_TELEPORT_DEEP,      () => ModSaveData.HasTeleportDeep,     v => ModSaveData.HasTeleportDeep     = v); return; }
 
             // ── Counter key items ─────────────────────────────────────────────
             if (name == "Tech Suit Parts")            { AddTechSuitPart();      return; }
@@ -305,10 +305,10 @@ namespace DaveDiverAP
             if (IsIngredient(name)) { GiveIngredient(name); return; }
 
             // ── Story key items ───────────────────────────────────────────────
-            if (name == "Sea People Bracelet") { UnlockKeyItem(TID_OXYGEN_GRACE, () => SaveData.HasOxygenGrace,  v => SaveData.HasOxygenGrace  = v); return; }
-            if (name == "Bug Net")             { UnlockKeyItem(TID_BUG_NET,      () => SaveData.HasBugNet,       v => SaveData.HasBugNet       = v); return; }
-            if (name == "Night Dive Unlock")   { UnlockKeyItem(TID_NIGHT_DIVE,   () => SaveData.HasNightDive,    v => SaveData.HasNightDive    = v); return; }
-            if (name == "iDiver App")          { UnlockKeyItem(TID_IDIVER_APP,   () => SaveData.HasiDiverApp,    v => SaveData.HasiDiverApp    = v); return; }
+            if (name == "Sea People Bracelet") { UnlockKeyItem(TID_OXYGEN_GRACE, () => ModSaveData.HasOxygenGrace,  v => ModSaveData.HasOxygenGrace  = v); return; }
+            if (name == "Bug Net")             { UnlockKeyItem(TID_BUG_NET,      () => ModSaveData.HasBugNet,       v => ModSaveData.HasBugNet       = v); return; }
+            if (name == "Night Dive Unlock")   { UnlockKeyItem(TID_NIGHT_DIVE,   () => ModSaveData.HasNightDive,    v => ModSaveData.HasNightDive    = v); return; }
+            if (name == "iDiver App")          { UnlockKeyItem(TID_IDIVER_APP,   () => ModSaveData.HasiDiverApp,    v => ModSaveData.HasiDiverApp    = v); return; }
             if (name == "Cargo Box Upgrade")   { UpgradeCargoBox();                                                                                  return; }
 
             // ── Currency (filler) ─────────────────────────────────────────────
@@ -340,53 +340,53 @@ namespace DaveDiverAP
                 UnlockContents(contentsId);
 
             // Progressive equipment
-            ApplyOxygenTankLevel(SaveData.GetOxygenTankLevel());
-            ApplyHarpoonLevel(SaveData.GetHarpoonLevel());
-            ApplyDivingSuitLevel(SaveData.GetDivingSuitLevel());
-            ApplyCargoBoxLevel(SaveData.GetCargoBoxLevel());
+            ApplyOxygenTankLevel(ModSaveData.GetOxygenTankLevel());
+            ApplyHarpoonLevel(ModSaveData.GetHarpoonLevel());
+            ApplyDivingSuitLevel(ModSaveData.GetDivingSuitLevel());
+            ApplyCargoBoxLevel(ModSaveData.GetCargoBoxLevel());
 
             // Boolean key items
             if (SaveData.HasSeaPeopleGloves) CompleteMission(TID_SEA_PEOPLE_GLOVES);
-            if (SaveData.HasTranslator)      CompleteMission(TID_TRANSLATOR);
-            if (SaveData.HasKeyToTenzhin)    CompleteMission(TID_KEY_TO_TENZHIN);
-            if (SaveData.HasLaserDevice)     CompleteMission(TID_LASER_DEVICE);
-            if (SaveData.HasTeleportMirror)  CompleteMission(TID_TELEPORT_MIRROR);
-            if (SaveData.HasTeleportSPV)     CompleteMission(TID_TELEPORT_SPV);
-            if (SaveData.HasTeleportGlacier) CompleteMission(TID_TELEPORT_GLACIER);
-            if (SaveData.HasTeleportDeep)    CompleteMission(TID_TELEPORT_DEEP);
-            if (SaveData.HasFishFarm)        CompleteMission(TID_FISH_FARM);
-            if (SaveData.HasVegetableFarm)   CompleteMission(TID_VEGETABLE_FARM);
-            if (SaveData.HasChickenFarm)     CompleteMission(TID_CHICKEN_FARM);
-            if (SaveData.HasBugNet)          CompleteMission(TID_BUG_NET);
-            if (SaveData.HasNightDive)       CompleteMission(TID_NIGHT_DIVE);
-            if (SaveData.HasiDiverApp)       CompleteMission(TID_IDIVER_APP);
-            if (SaveData.HasOxygenGrace)     CompleteMission(TID_OXYGEN_GRACE);
-            if (SaveData.HasSeaPeopleTrust)  ApplySeaPeopleTrust();
+            if (ModSaveData.HasTranslator)      CompleteMission(TID_TRANSLATOR);
+            if (ModSaveData.HasKeyToTenzhin)    CompleteMission(TID_KEY_TO_TENZHIN);
+            if (ModSaveData.HasLaserDevice)     CompleteMission(TID_LASER_DEVICE);
+            if (ModSaveData.HasTeleportMirror)  CompleteMission(TID_TELEPORT_MIRROR);
+            if (ModSaveData.HasTeleportSPV)     CompleteMission(TID_TELEPORT_SPV);
+            if (ModSaveData.HasTeleportGlacier) CompleteMission(TID_TELEPORT_GLACIER);
+            if (ModSaveData.HasTeleportDeep)    CompleteMission(TID_TELEPORT_DEEP);
+            if (ModSaveData.HasFishFarm)        CompleteMission(TID_FISH_FARM);
+            if (ModSaveData.HasVegetableFarm)   CompleteMission(TID_VEGETABLE_FARM);
+            if (ModSaveData.HasChickenFarm)     CompleteMission(TID_CHICKEN_FARM);
+            if (ModSaveData.HasBugNet)          CompleteMission(TID_BUG_NET);
+            if (ModSaveData.HasNightDive)       CompleteMission(TID_NIGHT_DIVE);
+            if (ModSaveData.HasiDiverApp)       CompleteMission(TID_IDIVER_APP);
+            if (ModSaveData.HasOxygenGrace)     CompleteMission(TID_OXYGEN_GRACE);
+            if (ModSaveData.HasSeaPeopleTrust)  ApplySeaPeopleTrust();
 
             // Chapters
             for (int ch = 1; ch <= 7; ch++)
             {
-                if ((SaveData.CompletedChapters & (1 << (ch - 1))) != 0)
+                if ((ModSaveData.CompletedChapters & (1 << (ch - 1))) != 0)
                     ApplyChapterComplete(ch);
             }
 
             // Cooksta rank
-            ApplyCookstaRank(SaveData.GetCookstaRank());
+            ApplyCookstaRank(ModSaveData.GetCookstaRank());
 
             // Weapons
-            foreach (var weapon in SaveData.GetUnlockedWeapons())
+            foreach (var weapon in ModSaveData.GetUnlockedWeapons())
                 ApplyWeaponUnlock(weapon);
 
             // Charms
-            foreach (var charm in SaveData.GetAcquiredCharms())
+            foreach (var charm in ModSaveData.GetAcquiredCharms())
                 ApplyCharmUnlock(charm);
 
             // Recipes
-            foreach (var recipe in SaveData.GetUnlockedRecipes())
+            foreach (var recipe in ModSaveData.GetUnlockedRecipes())
                 ApplyRecipeUnlock(recipe);
 
             // Dish research levels
-            foreach (var (dish, level) in SaveData.GetDishResearchLevels())
+            foreach (var (dish, level) in ModSaveData.GetDishResearchLevels())
                 ApplyDishResearchLevel(dish, level);
 
             Log.LogInfo("[ItemHandler] Reapply complete.");
@@ -396,8 +396,8 @@ namespace DaveDiverAP
 
         private static void UpgradeOxygenTank()
         {
-            var newLevel = SaveData.IncrementOxygenTank();
-            SaveData.Save();
+            var newLevel = ModSaveData.IncrementOxygenTank();
+            ModSaveData.Save();
             ApplyOxygenTankLevel(newLevel);
             Log.LogInfo($"[ItemHandler] Oxygen Tank → level {newLevel}");
         }
@@ -414,8 +414,8 @@ namespace DaveDiverAP
 
         private static void UpgradeHarpoon()
         {
-            var newLevel = SaveData.IncrementHarpoon();
-            SaveData.Save();
+            var newLevel = ModSaveData.IncrementHarpoon();
+            ModSaveData.Save();
             ApplyHarpoonLevel(newLevel);
             Log.LogInfo($"[ItemHandler] Harpoon → level {newLevel}");
         }
@@ -430,8 +430,8 @@ namespace DaveDiverAP
 
         private static void UpgradeDivingSuit()
         {
-            var newLevel = SaveData.IncrementDivingSuit();
-            SaveData.Save();
+            var newLevel = ModSaveData.IncrementDivingSuit();
+            ModSaveData.Save();
             ApplyDivingSuitLevel(newLevel);
             Log.LogInfo($"[ItemHandler] Diving Suit → level {newLevel}");
         }
@@ -446,8 +446,8 @@ namespace DaveDiverAP
 
         private static void UpgradeCargoBox()
         {
-            var newLevel = SaveData.IncrementCargoBox();
-            SaveData.Save();
+            var newLevel = ModSaveData.IncrementCargoBox();
+            ModSaveData.Save();
             ApplyCargoBoxLevel(newLevel);
             Log.LogInfo($"[ItemHandler] Cargo Box → level {newLevel}");
         }
@@ -464,10 +464,10 @@ namespace DaveDiverAP
 
         /// <summary>
         /// Generic handler for single-copy boolean key items.
-        /// Marks the flag in SaveData (for persistence) then calls MissionManager
+        /// Marks the flag in ModSaveData (for persistence) then calls MissionManager
         /// to complete the associated mission — which triggers the game's normal
         /// item-grant flow (inventory update, flag set, UI notification).
-        /// Uses Func/Action delegates to read/write SaveData properties (C# doesn't
+        /// Uses Func/Action delegates to read/write ModSaveData properties (C# doesn't
         /// allow ref on properties, so delegates are the cleanest approach here).
         /// </summary>
         private static void UnlockKeyItem(int missionTID, Func<bool> getFlag, Action<bool> setFlag)
@@ -477,14 +477,14 @@ namespace DaveDiverAP
                 Log.LogInfo($"[ItemHandler] Key item TID={missionTID} already applied, skipping.");
                 return;
             }
-            setFlag(true);  // persists to disk via SaveData property setter
+            setFlag(true);  // persists to disk via ModSaveData property setter
             CompleteMission(missionTID);
         }
 
         private static void UnlockSeaPeopleTrust()
         {
-            if (SaveData.HasSeaPeopleTrust) return;
-            SaveData.HasSeaPeopleTrust = true;
+            if (ModSaveData.HasSeaPeopleTrust) return;
+            ModSaveData.HasSeaPeopleTrust = true;
             ApplySeaPeopleTrust();
             Log.LogInfo("[ItemHandler] Sea People's Trust unlocked.");
         }
@@ -509,7 +509,7 @@ namespace DaveDiverAP
             try
             {
                 // Use CompleteMission with the ContentsUnlock TID (14030000 + offset)
-                // This is the mission that triggers the contents unlock in SaveData.
+                // This is the mission that triggers the contents unlock in ModSaveData.
                 // ContentsList ID 10031 (FishCard) = TID 14030031, etc.
                 int contentsTID = 14020000 + contentsId;
                 CompleteMission(contentsTID);
@@ -552,8 +552,8 @@ namespace DaveDiverAP
 
         private static void AddTechSuitPart()
         {
-            var count = SaveData.IncrementTechSuitParts();
-            SaveData.Save();
+            var count = ModSaveData.IncrementTechSuitParts();
+            ModSaveData.Save();
             // The game checks PlayerInfoSave for tech suit parts count.
             // We store in our save and apply by giving the item directly to inventory.
             // Item ID 6001001 = Tech Suit Part (from dump.cs ItemSpecData)
@@ -563,8 +563,8 @@ namespace DaveDiverAP
 
         private static void AddControlRoomButton()
         {
-            var count = SaveData.IncrementControlRoomButtons();
-            SaveData.Save();
+            var count = ModSaveData.IncrementControlRoomButtons();
+            ModSaveData.Save();
             // Item ID 6001002 = Control Room Button
             IngredientsStorage.Instance?.AddIngredients(6001002, 1, (SushiBar.Place)0);
             Log.LogInfo($"[ItemHandler] Control Room Buttons: {count}/3");
@@ -572,11 +572,11 @@ namespace DaveDiverAP
 
         private static void AddVortexEntry()
         {
-            var count = SaveData.IncrementVortexEntries();
-            SaveData.Save();
+            var count = ModSaveData.IncrementVortexEntries();
+            ModSaveData.Save();
             // Vortex entry is tracked purely in our save — the game doesn't have
             // a native "vortex pass" item. Instead, we gate this in the APWorld logic
-            // and the GoalTracker checks SaveData.GetVortexEntries() before allowing
+            // and the GoalTracker checks ModSaveData.GetVortexEntries() before allowing
             // vortex boss defeat checks to fire.
             Log.LogInfo($"[ItemHandler] Vortex Entries: {count}");
         }
@@ -587,16 +587,16 @@ namespace DaveDiverAP
         {
             switch (farmType)
             {
-                case "fish"      when !SaveData.HasFishFarm:
-                    SaveData.HasFishFarm = true;
+                case "fish"      when !ModSaveData.HasFishFarm:
+                    ModSaveData.HasFishFarm = true;
                     CompleteMission(missionTID);
                     break;
-                case "vegetable" when !SaveData.HasVegetableFarm:
-                    SaveData.HasVegetableFarm = true;
+                case "vegetable" when !ModSaveData.HasVegetableFarm:
+                    ModSaveData.HasVegetableFarm = true;
                     CompleteMission(missionTID);
                     break;
-                case "chicken"   when !SaveData.HasChickenFarm:
-                    SaveData.HasChickenFarm = true;
+                case "chicken"   when !ModSaveData.HasChickenFarm:
+                    ModSaveData.HasChickenFarm = true;
                     CompleteMission(missionTID);
                     break;
                 default:
@@ -610,8 +610,8 @@ namespace DaveDiverAP
 
         private static void UpgradeCookstaRank()
         {
-            var newRank = SaveData.IncrementCookstaRank();
-            SaveData.Save();
+            var newRank = ModSaveData.IncrementCookstaRank();
+            ModSaveData.Save();
             ApplyCookstaRank(newRank);
             Log.LogInfo($"[ItemHandler] Cooksta Rank → {CookstaRankName(newRank)}");
         }
@@ -640,12 +640,12 @@ namespace DaveDiverAP
         {
             if (chapter < 1 || chapter > 7) return;
             int bit = 1 << (chapter - 1);
-            if ((SaveData.CompletedChapters & bit) != 0)
+            if ((ModSaveData.CompletedChapters & bit) != 0)
             {
                 Log.LogInfo($"[ItemHandler] Chapter {chapter} already marked complete.");
                 return;
             }
-            SaveData.CompletedChapters |= bit;
+            ModSaveData.CompletedChapters |= bit;
             ApplyChapterComplete(chapter);
             Log.LogInfo($"[ItemHandler] Chapter {chapter} complete.");
         }
@@ -667,8 +667,8 @@ namespace DaveDiverAP
 
         private static void UnlockCharm(string charmName)
         {
-            if (SaveData.IsCharmAcquired(charmName)) return;
-            SaveData.MarkCharmAcquired(charmName);
+            if (ModSaveData.IsCharmAcquired(charmName)) return;
+            ModSaveData.MarkCharmAcquired(charmName);
             ApplyCharmUnlock(charmName);
             Log.LogInfo($"[ItemHandler] Charm unlocked: {charmName}");
         }
@@ -684,7 +684,7 @@ namespace DaveDiverAP
             {
                 // Complete the mission that grants the charm — same as earning it normally.
                 // CharmPatch.AutoEquipCharmItem failed to patch (method not found), so we
-                // use CompleteMission which marks the charm mission as done in SaveData.
+                // use CompleteMission which marks the charm mission as done in ModSaveData.
                 CompleteMission(tid);
                 Log.LogInfo($"[ItemHandler] Charm mission completed: {charmName} (TID={tid})");
             }
@@ -698,8 +698,8 @@ namespace DaveDiverAP
 
         private static void UnlockWeapon(string weaponName)
         {
-            if (SaveData.IsWeaponUnlocked(weaponName)) return;
-            SaveData.MarkWeaponUnlocked(weaponName);
+            if (ModSaveData.IsWeaponUnlocked(weaponName)) return;
+            ModSaveData.MarkWeaponUnlocked(weaponName);
             ApplyWeaponUnlock(weaponName);
             Log.LogInfo($"[ItemHandler] Weapon unlocked: {weaponName}");
         }
@@ -721,8 +721,8 @@ namespace DaveDiverAP
 
         private static void UpgradeDish(string dishName)
         {
-            var newLevel = SaveData.IncrementDishResearchLevel(dishName);
-            SaveData.Save();
+            var newLevel = ModSaveData.IncrementDishResearchLevel(dishName);
+            ModSaveData.Save();
             ApplyDishResearchLevel(dishName, newLevel);
             Log.LogInfo($"[ItemHandler] Dish '{dishName}' researched to level {newLevel}");
         }
@@ -736,7 +736,7 @@ namespace DaveDiverAP
             }
             try
             {
-                // Use CompleteMission — direct SaveData.Instance access fails due to namespace collision.
+                // Use CompleteMission — direct ModSaveData.Instance access fails due to namespace collision.
                 // The recipe upgrade mission TID corresponds to reaching this research level.
                 CompleteMission(tid);
                 Log.LogInfo($"[ItemHandler] Dish research applied via mission: {dishName} → level {level} (TID={tid})");
@@ -751,8 +751,8 @@ namespace DaveDiverAP
 
         private static void UnlockRecipe(string recipeName)
         {
-            if (SaveData.IsRecipeUnlocked(recipeName)) return;
-            SaveData.MarkRecipeUnlocked(recipeName);
+            if (ModSaveData.IsRecipeUnlocked(recipeName)) return;
+            ModSaveData.MarkRecipeUnlocked(recipeName);
             ApplyRecipeUnlock(recipeName);
             Log.LogInfo($"[ItemHandler] Recipe unlocked: {recipeName}");
         }
@@ -767,7 +767,7 @@ namespace DaveDiverAP
             try
             {
                 // Use CompleteMission to unlock the recipe via the mission system.
-                // Direct SaveData.Instance access fails due to namespace collision with our own SaveData class.
+                // Direct ModSaveData.Instance access fails due to namespace collision with our own ModSaveData class.
                 CompleteMission(tid);
                 Log.LogInfo($"[ItemHandler] Recipe unlocked via mission: {recipeName} (TID={tid})");
             }
@@ -809,8 +809,8 @@ namespace DaveDiverAP
                        : itemName.Contains("Medium") ? 2000
                        : 500;
 
-            // TODO: SaveData singleton accessor not confirmed
-            Log.LogWarning($"[ItemHandler] Cannot give {type} currency — SaveData accessor not confirmed");
+            // TODO: ModSaveData singleton accessor not confirmed
+            Log.LogWarning($"[ItemHandler] Cannot give {type} currency — ModSaveData accessor not confirmed");
             return;
         }
 

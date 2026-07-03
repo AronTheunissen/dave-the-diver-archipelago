@@ -223,7 +223,7 @@ namespace DaveDiverAP
 
             // The Archipelago library handles replaying items automatically,
             // but we track _lastItemIndex to avoid double-applying.
-            _lastItemIndex = SaveData.LoadLastItemIndex();
+            _lastItemIndex = ModSaveData.LoadLastItemIndex();
             Log.LogInfo($"Resuming from item index {_lastItemIndex}");
         }
 
@@ -232,7 +232,7 @@ namespace DaveDiverAP
             if (Session == null) return;
 
             // Load previously checked locations from save data
-            var saved = SaveData.LoadCheckedLocations();
+            var saved = ModSaveData.LoadCheckedLocations();
             foreach (var id in saved)
                 _checkedLocations.Add(id);
 
