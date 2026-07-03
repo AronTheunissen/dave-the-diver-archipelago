@@ -67,7 +67,8 @@ namespace DaveDiverAP.Patches
         // ✅ CONFIRMED via Unity Explorer: AddCaughtFish(Int32 id, Int32 grade, Boolean isForce)
         // id = fish data TID, grade = quality, isForce = override (true when replaying from save)
         // This fires for harpoon, net, AND carve — covers all catch methods.
-        [HarmonyPatch(typeof(global::SaveData), "AddCaughtFish", new System.Type[] { typeof(int), typeof(int), typeof(bool) })]
+        // Note: using no explicit type list — let Harmony find the right overload
+        [HarmonyPatch(typeof(global::SaveData), "AddCaughtFish")]
         [HarmonyPostfix]
         public static void AddCaughtFish_Postfix(int id, int grade, bool isForce)
         {
@@ -97,38 +98,14 @@ namespace DaveDiverAP.Patches
 
         // ── Primary: hook FishInteractionBody.SuccessInteract ────────────────
         // ✅ CONFIRMED: fires for LARGE fish (kill + carve path) only.
-        //    Small fish caught with harpoon/net use a different pickup path.
-        // ✅ CONFIRMED via dump.cs: SuccessInteract(BaseCharacter player) is the real method name
+        // Now just a debug log — AddCaughtFish handles the actual AP check.
         [HarmonyPatch(typeof(FishInteractionBody), "SuccessInteract")]
         [HarmonyPostfix]
         public static void SuccessInteract_Postfix(FishInteractionBody __instance)
         {
             try
             {
-                Plugin.Log.LogInfo($"[FishCatchPatch] SuccessInteract fired! GO={__instance?.gameObject?.name ?? "null"} Connected={ArchipelagoClient.IsConnected}");
-                if (!ArchipelagoClient.IsConnected) return;
-
-                // GameObject name format confirmed via UnityExplorer (2026-06-27):
-                // "SA_2010132_Thresher_Shark01(Clone)" — TID is the number after "SA_"
-                // This is much more reliable than string matching on species names.
-                string goName = __instance.gameObject.name;
-
-                // Try TID-based lookup first (preferred)
-                var fishName = FishNameMapper.GetDisplayNameFromTID(goName);
-
-                // Fall back to name-based lookup for any fish not yet in the TID map
-                if (fishName == null)
-                    fishName = FishNameMapper.GetDisplayNameFromGameObject(goName);
-
-                if (fishName != null)
-                {
-                    Plugin.Log.LogInfo($"[FishCaught] GO={goName} → Location=\"First Catch: {fishName}\"");
-                    LocationTracker.OnFirstFishCatch(fishName);
-                }
-                else
-                {
-                    Plugin.Log.LogInfo($"[FishCaught] GO={goName} → UNMAPPED (add to FishNameMapper)");
-                }
+                Plugin.Log.LogInfo($"[FishCatchPatch] SuccessInteract fired! GO={__instance?.gameObject?.name ?? "null"} — AddCaughtFish will handle AP check");
             }
             catch (System.Exception ex)
             {
