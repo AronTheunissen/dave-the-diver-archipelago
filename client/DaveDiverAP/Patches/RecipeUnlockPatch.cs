@@ -66,7 +66,12 @@ namespace DaveDiverAP.Patches
                 if (dishName != null)
                 {
                     Plugin.Log.LogInfo($"[DishUpgrade] {dishName} → Level {level}");
-                    LocationTracker.OnDishUpgraded(dishName, level);
+                    // Level 1 = first unlock → send recipe unlock check
+                    // Level 2+ = research upgrade → send dish upgrade check
+                    if (level <= 1)
+                        LocationTracker.OnRecipeUnlocked(dishName);
+                    else
+                        LocationTracker.OnDishUpgraded(dishName, level);
                 }
                 else
                 {
