@@ -698,12 +698,10 @@ namespace DaveDiverAP
             }
             try
             {
-                var sd = global::SaveData.Instance;
-                if (sd == null) { Log.LogWarning($"[ItemHandler] SaveData.Instance null — cannot apply dish {dishName}"); return; }
-                // UpdateUnlockRecipeSave sets the research level for a dish.
-                // Call once per level to bring the dish to the target level.
-                sd.UpdateUnlockRecipeSave(tid, level);
-                Log.LogInfo($"[ItemHandler] Dish research applied: {dishName} → level {level} (TID={tid})");
+                // Use CompleteMission — direct SaveData.Instance access fails due to namespace collision.
+                // The recipe upgrade mission TID corresponds to reaching this research level.
+                CompleteMission(tid);
+                Log.LogInfo($"[ItemHandler] Dish research applied via mission: {dishName} → level {level} (TID={tid})");
             }
             catch (Exception ex)
             {
@@ -730,11 +728,10 @@ namespace DaveDiverAP
             }
             try
             {
-                // AddUnlockRecipeSaveData marks the recipe as unlocked in the game's save.
-                var sd = global::SaveData.Instance;
-                if (sd == null) { Log.LogWarning($"[ItemHandler] SaveData.Instance null — cannot unlock recipe {recipeName}"); return; }
-                sd.AddUnlockRecipeSaveData(tid);
-                Log.LogInfo($"[ItemHandler] Recipe unlocked in-game: {recipeName} (TID={tid})");
+                // Use CompleteMission to unlock the recipe via the mission system.
+                // Direct SaveData.Instance access fails due to namespace collision with our own SaveData class.
+                CompleteMission(tid);
+                Log.LogInfo($"[ItemHandler] Recipe unlocked via mission: {recipeName} (TID={tid})");
             }
             catch (Exception ex)
             {
