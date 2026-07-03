@@ -27,10 +27,10 @@ namespace DaveDiverAP
         // TID 10010002 = Sushi Bar setup (prologue end). Idempotent — safe to call every load.
         private const int TID_PROLOGUE_COMPLETE   = 10010002; // "Story: Complete Prologue"
 
-        // Marinca (FishCard) unlock — always applied at game start for AP.
-        // TID is from the 'Fishcard_Contents_Unlock_Sato' scenario mission.
-        // TODO: verify this TID via [MissionCleared] debug log — set to 0 until confirmed.
-        private const int TID_MARINCA_UNLOCK      = 0;        // UNCONFIRMED — needs verification
+        // Marinca (FishCard) unlock — ContentsList ID confirmed via Unity Explorer:
+        // ContentsUnlockDataDic TID=14030031 ContentsID=10031 NameTextID=ContentsName_FishCard
+        private const int CONTENTS_ID_MARINCA     = 10031;    // FishCard/Marinca unlock
+        private const int CONTENTS_ID_IDIVER      = 10014;    // iDiver app unlock
 
         private const int TID_SEA_PEOPLE_GLOVES   = 1010040;  // "Find Sea People Gloves"
         private const int TID_TRANSLATOR           = 1010050;  // "Get Sea People Translator"
@@ -312,11 +312,11 @@ namespace DaveDiverAP
             // Idempotent: calling CompleteMission on an already-completed mission is safe.
             CompleteMission(TID_PROLOGUE_COMPLETE);
 
-            // Always unlock Marinca (FishCard) for AP — needed from game start
-            // so players can see which fish they've caught.
-            // TID_MARINCA_UNLOCK is 0 until confirmed — skip if unconfirmed.
-            if (TID_MARINCA_UNLOCK > 0)
-                CompleteMission(TID_MARINCA_UNLOCK);
+            // Always unlock Marinca (FishCard) and iDiver for AP — needed from game start.
+            // Uses ContentsList IDs confirmed via Unity Explorer.
+            // AddContentsUnlockSaveData is idempotent — safe to call every load.
+            UnlockContents(CONTENTS_ID_MARINCA);
+            UnlockContents(CONTENTS_ID_IDIVER);
 
             // Progressive equipment
             ApplyOxygenTankLevel(SaveData.GetOxygenTankLevel());
@@ -483,6 +483,27 @@ namespace DaveDiverAP
         /// game's standard mission-complete flow: grants items, sets flags, may
         /// show a cutscene, and updates any dependent systems.
         /// </summary>
+        private static void UnlockContents(int contentsId)
+        {
+            try
+            {
+                // Use ContentsUnlockManager to unlock the content — same as normal gameplay.
+                // ContentsUnlockManager.Instance.UnlockContents(ContentsList) handles the SaveData call.
+                var cum = ContentsUnlockManager.Instance;
+                if (cum == null)
+                {
+                    Log.LogWarning($"[ItemHandler] ContentsUnlockManager.Instance null — cannot unlock contents {contentsId}");
+                    return;
+                }
+                cum.UnlockContents((ContentsList)contentsId);
+                Log.LogInfo($"[ItemHandler] Contents unlocked: ID={contentsId}");
+            }
+            catch (Exception ex)
+            {
+                Log.LogError($"[ItemHandler] UnlockContents({contentsId}) failed: {ex.Message}");
+            }
+        }
+
         private static void CompleteMission(int missionTID)
         {
             try
