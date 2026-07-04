@@ -91,9 +91,9 @@ namespace DaveDiverAP.Patches
         }
 
         // Hook the FishInfoData overload — small fish (harpoon/net pickups) may use this one instead
-        [HarmonyPatch(typeof(global::SaveData), "AddCaughtFish", new System.Type[] { typeof(FishInfoData), typeof(int), typeof(bool) })]
+        [HarmonyPatch(typeof(global::SaveData), "AddCaughtFish", new System.Type[] { typeof(DR.FishInfoData), typeof(int), typeof(bool) })]
         [HarmonyPostfix]
-        public static void AddCaughtFish_Data_Postfix(FishInfoData data, int grade, bool isForce)
+        public static void AddCaughtFish_Data_Postfix(DR.FishInfoData data, int grade, bool isForce)
         {
             try
             {
