@@ -67,6 +67,8 @@ namespace DaveDiverAP
             // Idle, ThumbsUp, or other non-boat states that come after the initial load.
             if (!_isGameLoaded) return;
             if (!ArchipelagoClient.IsConnected) return;
+            if (_queue.Count > 0)
+                Log.LogInfo($"[ItemQueue] Update: {_queue.Count} items pending, IsGameLoaded={_isGameLoaded}");
             ProcessPending();
         }
 
