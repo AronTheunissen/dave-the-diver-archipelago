@@ -46,7 +46,26 @@ namespace DaveDiverAP.Patches
             }
         }
 
-        // ── Dish upgrade (research complete using Artisan's Flame) ───────────
+        // ── Block auto-leveling by game (prefix) ─────────────────────────────
+        // When connected to AP, dish research levels are controlled by AP items,
+        // NOT by the game's normal progression (catching fish auto-levels sushi).
+        // We cancel AddCookingStudySaveData unless AP explicitly triggered it.
+        internal static bool _allowDishSave = false;
+
+        [HarmonyPatch(typeof(global::SaveData), "AddCookingStudySaveData")]
+        [HarmonyPrefix]
+        public static bool AddCookingStudySaveData_Prefix(CookingStudyData data)
+        {
+            if (!ArchipelagoClient.IsConnected) return true; // not connected — allow normally
+            if (_allowDishSave) return true;                 // AP-driven — allow through
+
+            // Game is trying to auto-level a dish — block it and send AP check instead
+            if (data != null)
+                Plugin.Log.LogInfo($"[DishUpgrade] Blocked auto-level for TID={data.recipeID} Level={data.studyLevel} (AP controls this)");
+            return false; // cancel the original method
+        }
+
+        // ── Dish unlock/upgrade (postfix for AP check sending) ───────────────
         // ✅ CONFIRMED via Unity Explorer: AddCookingStudySaveData(CookingStudyData data)
         // fires when a dish research is completed. CookingStudyData has id and level fields.
         [HarmonyPatch(typeof(global::SaveData), "AddCookingStudySaveData")]

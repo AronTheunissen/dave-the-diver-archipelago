@@ -106,18 +106,25 @@ namespace DaveDiverAP.Patches
             }
         }
 
-        // ── Restaurant / SushiBar (additional disable) ────────────────────────
-        // ✅ CONFIRMED via dump.cs: SushiBarManager has private void OnStartOpeningSushiBar()
-        //    which fires when the restaurant opens for service each night.
-        //    Also public void OnEventSushiBarOpened() — the public event callback.
+        // ── Restaurant / SushiBar ─────────────────────────────────────────────
+        // ✅ CONFIRMED via dump.cs: SushiBarManager has public void OnEventSushiBarOpened()
+        //    Items CAN be processed during the restaurant — we used to disable here but
+        //    that caused items to never arrive during the prologue (which goes straight
+        //    to the restaurant without a prior InBoat/Diving state).
         [HarmonyPatch(typeof(SushiBarManager), "OnEventSushiBarOpened")]
         [HarmonyPostfix]
         public static void OnRestaurantStart_Postfix()
         {
             try
             {
-                Log.LogInfo("Game state: RESTAURANT — item processing disabled.");
-                ItemQueue.SetGameReady(false);
+                Log.LogInfo("Game state: RESTAURANT — item processing enabled.");
+                ItemQueue.SetGameReady(true);
+                if (!_itemsReapplied)
+                {
+                    _itemsReapplied = true;
+                    Log.LogInfo("Game state: First restaurant entry — reapplying all items.");
+                    ItemHandler.ReapplyAllItems();
+                }
             }
             catch (System.Exception ex)
             {

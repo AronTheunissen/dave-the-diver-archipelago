@@ -736,14 +736,18 @@ namespace DaveDiverAP
             }
             try
             {
-                // Use CompleteMission — direct ModSaveData.Instance access fails due to namespace collision.
-                // The recipe upgrade mission TID corresponds to reaching this research level.
+                // Allow this AP-driven save through our prefix block
+                Patches.RecipeUnlockPatch._allowDishSave = true;
                 CompleteMission(tid);
                 Log.LogInfo($"[ItemHandler] Dish research applied via mission: {dishName} → level {level} (TID={tid})");
             }
             catch (Exception ex)
             {
                 Log.LogError($"[ItemHandler] ApplyDishResearchLevel failed for {dishName}: {ex.Message}");
+            }
+            finally
+            {
+                Patches.RecipeUnlockPatch._allowDishSave = false;
             }
         }
 
@@ -766,14 +770,18 @@ namespace DaveDiverAP
             }
             try
             {
-                // Use CompleteMission to unlock the recipe via the mission system.
-                // Direct ModSaveData.Instance access fails due to namespace collision with our own ModSaveData class.
+                // Allow this AP-driven save through our prefix block
+                Patches.RecipeUnlockPatch._allowDishSave = true;
                 CompleteMission(tid);
                 Log.LogInfo($"[ItemHandler] Recipe unlocked via mission: {recipeName} (TID={tid})");
             }
             catch (Exception ex)
             {
                 Log.LogError($"[ItemHandler] ApplyRecipeUnlock failed for {recipeName}: {ex.Message}");
+            }
+            finally
+            {
+                Patches.RecipeUnlockPatch._allowDishSave = false;
             }
         }
 
