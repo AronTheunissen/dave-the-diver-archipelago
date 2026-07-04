@@ -910,20 +910,16 @@ namespace DaveDiverAP
 
             try
             {
-                var save = global::SaveData.Instance;
-                if (save == null) { Log.LogWarning("[ItemHandler] SaveData.Instance is null — cannot give currency"); return; }
+                var playerInfo = SaveSystem.Instance?.PlayerInfoSave;
+                if (playerInfo == null) { Log.LogWarning("[ItemHandler] PlayerInfoSave is null — cannot give currency"); return; }
 
                 if (type == "gold")
                 {
-                    var playerInfo = save.PlayerInfoSave;
-                    if (playerInfo == null) { Log.LogWarning("[ItemHandler] PlayerInfoSave is null"); return; }
                     playerInfo.set_Gold(playerInfo.get_Gold() + amount);
                     Log.LogInfo($"[ItemHandler] Gave {amount} gold");
                 }
                 else if (type == "bei")
                 {
-                    var playerInfo = save.PlayerInfoSave;
-                    if (playerInfo == null) { Log.LogWarning("[ItemHandler] PlayerInfoSave is null"); return; }
                     playerInfo.set_bei(playerInfo.get_bei() + amount);
                     Log.LogInfo($"[ItemHandler] Gave {amount} bei");
                 }
