@@ -941,8 +941,7 @@ namespace DaveDiverAP.Patches
             // Ocean catchable seahorses must use different TIDs — catch one and check the log!
             // When you catch a seahorse, look for: [FishCaught] AddCaughtFish id=XXXXX
             // { ???, "First Catch: Big-Belly Seahorse" },  // TID unknown — find via log
-            // { ???, "First Catch: Spiny Seahorse" },      // TID 2010104 confirmed (spawn TID)
-            { 2010104, "First Catch: Spiny Seahorse" },     // confirmed spawn TID
+            // Spiny Seahorse TID 2010104 is already mapped above (line ~845)
             // Jungle DLC fish (42010xxx range)
             { 42011102, "First Catch: Stethacanthus" },
         };
