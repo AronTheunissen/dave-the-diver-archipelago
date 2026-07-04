@@ -220,22 +220,111 @@ namespace DaveDiverAP
         // The structure is ready; add entries as TIDs are discovered.
         private static readonly Dictionary<string, int> RecipeTIDs = new()
         {
-            // Boss recipes (confirmed — these are triggered by boss defeat missions)
-            { "Blanched Lusca Tentacle",          8100001 },
-            { "Lusca Neck Tadaki",                8100002 },
-            { "Goblin Shark Belly Roast",         8100003 },
-            { "Boiled Mantis Shrimp with Soy Paste", 8100004 },
-            { "Stir-Fried Hermit Crab and Seaweed",  8100005 },
-            { "Clione Queen Soup",                8100006 },
-            { "Steamed Wolf Eel",                 8100007 },
-            { "Phantom Jellyfish Jelly",          8100008 },
-            { "Roasted Helicoprion Tail",         8100009 },
-            { "Steamed Kronosaurus Tongue",       8100010 },
-            { "White Shark Omelet",               8100011 },
-            { "Yawie Steamed Meat",               8100012 },
-            // TODO: Add Cooksta rank recipes, VIP recipes, staff training recipes
-            // as TIDs are discovered via UnityExplorer during in-game testing.
-            // See docs/TID_RECORDING_SHEET.md for the recording process.
+            // Boss recipes (confirmed — triggered by boss defeat missions)
+            { "Blanched Lusca Tentacle",                  8100001 },
+            { "Lusca Neck Tadaki",                        8100002 },
+            { "Goblin Shark Belly Roast",                 8100003 },
+            { "Boiled Mantis Shrimp with Soy Paste",      8100004 },
+            { "Stir-Fried Hermit Crab and Seaweed",       8100005 },
+            { "Clione Queen Soup",                        8100006 },
+            { "Steamed Wolf Eel",                         8100007 },
+            { "Phantom Jellyfish Jelly",                  8100008 },
+            { "Roasted Helicoprion Tail",                 8100009 },
+            { "Steamed Kronosaurus Tongue",               8100010 },
+            { "White Shark Omelet",                       8100011 },
+            { "Yawie Steamed Meat",                       8100012 },
+            // Non-sushi cooked dishes (8051xxx) — same TIDs as RecipeNameMapper
+            { "Boiled Yellowback Fusilier",               8051001 },
+            { "Seahorse Skewers",                         8051002 },
+            { "Salt-grilled Redtoothed Triggerfish",      8051003 },
+            { "Agar Tokoroten",                           8051004 },
+            { "Seasoned Kajime",                          8051005 },
+            { "Smallspotted Dart Kajime Soup",            8051006 },
+            { "Stellate Puffer Nicogori",                 8051007 },
+            { "Moray Eel Curry",                          8051008 },
+            { "Whole-Roasted Shark Head",                 8051009 },
+            { "Striped Red Mullet Tangle Roll",           8051010 },
+            { "White Trevally Kombu Ochazuke",            8051011 },
+            { "Seagrapes Jellyfish Sushi",                8051012 },
+            { "Stellate Puffer Special Sushi",            8051013 },
+            { "Batfish Ricebowl",                         8051015 },
+            { "Trout Sea Grapes Ricebowl",                8051016 },
+            { "Seahorse Udon",                            8051017 },
+            { "Mackerel Scad Hotdog",                     8051018 },
+            { "Shark Karaage",                            8051019 },
+            { "Black Vinegar Braised Parrotfish",         8051020 },
+            { "Atlantic Bonito Curry",                    8051021 },
+            { "Narwhal Miso Soup",                        8051022 },
+            { "Humphead Parrotfish Curry",                8051023 },
+            { "Trevally Nanbanzuke",                      8051024 },
+            { "Fried Onion Cuttlefish",                   8051025 },
+            { "Dusky Grouper Steak",                      8051026 },
+            { "Seahorse Salad",                           8051027 },
+            { "Great Barracuda Canape",                   8051028 },
+            { "Tropical Fish Sushi Set",                  8051029 },
+            { "Vegetable Sushi",                          8051030 },
+            { "Sweet and Sour Stargazer",                 8051031 },
+            { "Nasu Dengaku",                             8051034 },
+            { "Deep-Fried Eggplant Shrimp Meatballs",    8051035 },
+            { "Deep Fish Tempura",                        8051036 },
+            { "Humboldt Ink Pasta",                       8051037 },
+            { "Pickled Vegetables",                       8051038 },
+            { "Deep-Fried Vegetables",                    8051039 },
+            { "Special Fried Shrimp Sushi",               8051041 },
+            { "Rice with White Shrimp Meat",              8051043 },
+            { "Boiled and Deep-Fried White Shrimp",       8051044 },
+            { "Marlin and Soybean Paste Roast",           8051045 },
+            { "Boiled Sailfish and Seaweed",              8051046 },
+            { "Wrasse Curry",                             8051047 },
+            { "Great Spider Crab Curry",                  8051048 },
+            { "Fried Rice with Sally Lightfoot Crab",     8051049 },
+            { "Blobfish Spring Roll",                     8051050 },
+            { "Tomato Egg Soup",                          8051051 },
+            { "Mianbao Xia",                              8051052 },
+            { "Fried Tomato and Snailfish",               8051053 },
+            { "Plotosid Pie",                             8051054 },
+            { "Pelican Eel Jelly",                        8051055 },
+            { "Smoked Atlantic Mackerel Scramble",        8051056 },
+            { "Comber Sandwich",                          8051057 },
+            { "Narrow-barred Spanish Mackerel Arancini",  8051058 },
+            { "Antarctic Octopus Carpaccio",              8051059 },
+            { "Arctic Cod Risotto",                       8051060 },
+            { "Peacock Squid Ripieni",                    8051061 },
+            { "Haddock Acqua Pazza",                      8051062 },
+            { "Seaweed Rolled Omelet",                    8051063 },
+            { "Latok Omelet",                             8051064 },
+            { "Three-Colored Squid Roast",                8051065 },
+            { "Dried Stingray",                           8051066 },
+            { "Dumbo Takoyaki",                           8051067 },
+            { "Roasted Capelin",                          8051068 },
+            { "Boiled Porbeagle Shark",                   8051069 },
+            { "Rice with Purple Sea Urchin Sushi",        8051070 },
+            { "Deep-Fried Red Lionfish",                  8051071 },
+            { "Roasted Tropical Fish and Garlic",         8051072 },
+            { "Crimson Fish Roll",                        8051073 },
+            { "Big-Eyed Scad and Soybean Paste Roast",   8051074 },
+            { "Fried Seahorses",                          8051075 },
+            { "Trevally Sandwich",                        8051076 },
+            { "Ice Fish Curry",                           8051077 },
+            { "Rice with Great Spider Crab Meat",         8051078 },
+            { "Seasoned Jellyfish",                       8051079 },
+            { "Falcatus Soybean Paste Soup",              8051080 },
+            { "Seasoned Waptia Fieldensis",               8051081 },
+            { "Pikaia Ramen",                             8051082 },
+            { "Stir-fried Habanero Lobster",              8051085 },
+            { "Fried Habanero Fangtooth",                 8051087 },
+            { "Hot Pepper Tuna",                          8051088 },
+            { "Crystal Lobster Roll",                     8051092 },
+            { "Seasoned Long-spine Porcupinefish Skin",   8051093 },
+            // Ichiban DLC recipes
+            { "Stingray Sashimi Cold Noodles",            8051097 },
+            { "Eggplant Soba Oyaki",                      8051098 },
+            { "Spear Squid Soba Futomaki",                8051099 },
+            { "Warm Atlantic Mackerel Soba",              8051100 },
+            // Godzilla DLC recipes
+            { "Ebirah Chasing Sashimi",                   8051094 },
+            { "Godzilla vs. Ebirah Curry",                8051095 },
+            { "Deep Sea Kaiju Ramen",                     8051096 },
         };
 
         // ── Main dispatch ─────────────────────────────────────────────────────
@@ -819,9 +908,30 @@ namespace DaveDiverAP
                        : itemName.Contains("Medium") ? 2000
                        : 500;
 
-            // TODO: ModSaveData singleton accessor not confirmed
-            Log.LogWarning($"[ItemHandler] Cannot give {type} currency — ModSaveData accessor not confirmed");
-            return;
+            try
+            {
+                var save = global::SaveData.Instance;
+                if (save == null) { Log.LogWarning("[ItemHandler] SaveData.Instance is null — cannot give currency"); return; }
+
+                if (type == "gold")
+                {
+                    var playerInfo = save.PlayerInfoSave;
+                    if (playerInfo == null) { Log.LogWarning("[ItemHandler] PlayerInfoSave is null"); return; }
+                    playerInfo.set_Gold(playerInfo.get_Gold() + amount);
+                    Log.LogInfo($"[ItemHandler] Gave {amount} gold");
+                }
+                else if (type == "bei")
+                {
+                    var playerInfo = save.PlayerInfoSave;
+                    if (playerInfo == null) { Log.LogWarning("[ItemHandler] PlayerInfoSave is null"); return; }
+                    playerInfo.set_bei(playerInfo.get_bei() + amount);
+                    Log.LogInfo($"[ItemHandler] Gave {amount} bei");
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.LogError($"[ItemHandler] GiveCurrency failed: {ex.Message}");
+            }
         }
 
         // ── Helpers ───────────────────────────────────────────────────────────
