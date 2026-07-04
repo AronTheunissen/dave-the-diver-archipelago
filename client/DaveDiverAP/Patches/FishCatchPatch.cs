@@ -68,9 +68,8 @@ namespace DaveDiverAP.Patches
         {
             try
             {
-                Plugin.Log.LogInfo($"[FishCaught] AddCaughtFish(int) FIRED id={id} grade={grade} isForce={isForce} connected={ArchipelagoClient.IsConnected} loaded={ItemQueue.IsGameLoaded}");
+                Plugin.Log.LogInfo($"[FishCaught] AddCaughtFish(int) FIRED id={id} grade={grade} isForce={isForce} connected={ArchipelagoClient.IsConnected}");
                 if (!ArchipelagoClient.IsConnected) return;
-                if (!ItemQueue.IsGameLoaded) return;
                 if (isForce) return; // isForce=true = replaying from save, not a real new catch
 
                 var locationName = FishNameMapper.GetLocationFromFishId(id);
@@ -98,9 +97,8 @@ namespace DaveDiverAP.Patches
             try
             {
                 int id = data?.TID ?? -1;
-                Plugin.Log.LogInfo($"[FishCaught] AddCaughtFish(FishInfoData) FIRED id={id} grade={grade} isForce={isForce} connected={ArchipelagoClient.IsConnected} loaded={ItemQueue.IsGameLoaded}");
+                Plugin.Log.LogInfo($"[FishCaught] AddCaughtFish(FishInfoData) FIRED id={id} grade={grade} isForce={isForce} connected={ArchipelagoClient.IsConnected}");
                 if (!ArchipelagoClient.IsConnected) return;
-                if (!ItemQueue.IsGameLoaded) return;
                 if (isForce) return;
                 if (id <= 0) return;
 
@@ -130,11 +128,8 @@ namespace DaveDiverAP.Patches
                 Plugin.Log.LogInfo($"[FishCaught] Skipped (not connected) GO={goName}");
                 return;
             }
-            if (!ItemQueue.IsGameLoaded)
-            {
-                Plugin.Log.LogInfo($"[FishCaught] Skipped (game not loaded) GO={goName}");
-                return;
-            }
+            // NOTE: No IsGameLoaded check here — fish catches should fire any time,
+            // including during the prologue which doesn't trigger ChangeLobbyPlayerState.
 
             // Parse TID from "SA_XXXXXXX_..." format
             int tid = FishNameMapper.GetTIDFromGameObjectName(goName);
