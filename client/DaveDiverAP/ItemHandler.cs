@@ -249,8 +249,10 @@ namespace DaveDiverAP
             var name = item.ItemName;
             Log.LogInfo($"[ItemHandler] Applying item: {name}");
 
-            // Save item index so we don't replay it next session
-            ModSaveData.SetLastItemIndex((int)item.ItemId);
+            // NOTE: Item index tracking is handled by ArchipelagoClient.OnItemReceivedHandler
+            // via helper.Index — NOT by item.ItemId. Do NOT save item.ItemId as the index
+            // because item IDs are large numbers (4470000+) that would cause all future items
+            // to be skipped (helper.Index is sequential: 1, 2, 3... and would never exceed ItemId).
 
             // ── Progressive equipment ────────────────────────────────────────
             if (name == "Progressive Oxygen Tank")    { UpgradeOxygenTank();    return; }

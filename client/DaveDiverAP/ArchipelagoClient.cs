@@ -209,7 +209,9 @@ namespace DaveDiverAP
                 }
 
                 _lastItemIndex = helper.Index;
-                Log.LogInfo($"Item received: {item.ItemName} (ID: {item.ItemId}) from {item.Player}");
+                // Persist the sequential index (NOT item.ItemId) so we resume correctly next session
+                ModSaveData.SetLastItemIndex(_lastItemIndex);
+                Log.LogInfo($"Item received: {item.ItemName} (index={helper.Index}, ID={item.ItemId}) from {item.Player}");
                 OnItemReceived?.Invoke(item);
 
                 // Queue for main-thread processing (game API calls must be on main thread)
@@ -224,6 +226,17 @@ namespace DaveDiverAP
             // The Archipelago library handles replaying items automatically,
             // but we track _lastItemIndex to avoid double-applying.
             _lastItemIndex = ModSaveData.LoadLastItemIndex();
+
+            // Sanity check: AP sequential indices are small numbers (1, 2, 3...).
+            // If the saved value is huge (> 100000) it was corrupted by an old bug
+            // that saved item.ItemId (4470000+) instead of helper.Index. Reset it.
+            if (_lastItemIndex > 100000)
+            {
+                Log.LogWarning($"Saved item index {_lastItemIndex} looks corrupted (too large) — resetting to 0 to replay all items.");
+                _lastItemIndex = 0;
+                ModSaveData.SetLastItemIndex(0);
+            }
+
             Log.LogInfo($"Resuming from item index {_lastItemIndex}");
         }
 
