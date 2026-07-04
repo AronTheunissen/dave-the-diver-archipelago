@@ -444,10 +444,10 @@ recipe_unlock_locations: Dict[str, LocationData] = {
 
     # --- VIP mission recipes ---
     # --- Ichiban DLC recipes ---
-    "Unlock Recipe: Stingray Sashimi Cold Noodles (Ichiban)": LocationData(BASE_ID + 877, "Bancho Sushi", "dlc_ichiban"),
-    "Unlock Recipe: Spear Squid Soba Futomaki (Ichiban)":     LocationData(BASE_ID + 878, "Bancho Sushi", "dlc_ichiban"),
-    "Unlock Recipe: Eggplant Soba Oyaki (Ichiban)":           LocationData(BASE_ID + 879, "Bancho Sushi", "dlc_ichiban"),
-    "Unlock Recipe: Warm Atlantic Mackerel Soba (Ichiban)":   LocationData(BASE_ID + 880, "Bancho Sushi", "dlc_ichiban"),
+    "Unlock Recipe: Stingray Sashimi Cold Noodles": LocationData(BASE_ID + 877, "Bancho Sushi", "dlc_ichiban"),
+    "Unlock Recipe: Spear Squid Soba Futomaki":     LocationData(BASE_ID + 878, "Bancho Sushi", "dlc_ichiban"),
+    "Unlock Recipe: Eggplant Soba Oyaki":           LocationData(BASE_ID + 879, "Bancho Sushi", "dlc_ichiban"),
+    "Unlock Recipe: Warm Atlantic Mackerel Soba":   LocationData(BASE_ID + 880, "Bancho Sushi", "dlc_ichiban"),
 
     # --- Godzilla DLC recipes (all 3 unlocked via the DLC story) ---
     "Unlock Recipe: Godzilla vs. Ebirah Curry": LocationData(BASE_ID + 855, "Bancho Sushi", "dlc_godzilla"),
@@ -1065,18 +1065,18 @@ jungle_boss_fish_locations: Dict[str, LocationData] = {
 }
 
 recipe_unlock_locations.update({
-    "Unlock Recipe: Seagrapes Jellyfish Sushi (Vincent)": LocationData(BASE_ID + 820, "Bancho Sushi", "recipe"),
-    "Unlock Recipe: Tropical Fish Sushi Set (Michael Bang)": LocationData(BASE_ID + 821, "Bancho Sushi", "recipe"),
-    "Unlock Recipe: Vegetable Sushi (Sammy)": LocationData(BASE_ID + 822, "Bancho Sushi", "recipe"),
-    "Unlock Recipe: Sweet and Sour Stargazer (Wang Pang)": LocationData(BASE_ID + 823, "Bancho Sushi", "recipe"),
-    "Unlock Recipe: Blobfish Spring Roll (Wang Pang)": LocationData(BASE_ID + 824, "Bancho Sushi", "recipe"),
-    "Unlock Recipe: Deep Fish Tempura (Alex)": LocationData(BASE_ID + 825, "Bancho Sushi", "recipe"),
-    "Unlock Recipe: Comber Sandwich (Alex)": LocationData(BASE_ID + 826, "Bancho Sushi", "recipe"),
-    "Unlock Recipe: Humboldt Ink Pasta (Pastro)": LocationData(BASE_ID + 827, "Bancho Sushi", "recipe"),
-    "Unlock Recipe: Antarctic Octopus Carpaccio (Pastro)": LocationData(BASE_ID + 828, "Bancho Sushi", "recipe"),
-    "Unlock Recipe: Haddock Acqua Pazza (Pastro)": LocationData(BASE_ID + 829, "Bancho Sushi", "recipe"),
-    "Unlock Recipe: Arctic Cod Risotto (Pastro)": LocationData(BASE_ID + 830, "Bancho Sushi", "recipe"),
-    "Unlock Recipe: Peacock Squid Ripieni (Pastro)": LocationData(BASE_ID + 831, "Bancho Sushi", "recipe"),
+    "Unlock Recipe: Seagrapes Jellyfish Sushi": LocationData(BASE_ID + 820, "Bancho Sushi", "recipe"),
+    "Unlock Recipe: Tropical Fish Sushi Set": LocationData(BASE_ID + 821, "Bancho Sushi", "recipe"),
+    "Unlock Recipe: Vegetable Sushi": LocationData(BASE_ID + 822, "Bancho Sushi", "recipe"),
+    "Unlock Recipe: Sweet and Sour Stargazer": LocationData(BASE_ID + 823, "Bancho Sushi", "recipe"),
+    "Unlock Recipe: Blobfish Spring Roll": LocationData(BASE_ID + 824, "Bancho Sushi", "recipe"),
+    "Unlock Recipe: Deep Fish Tempura": LocationData(BASE_ID + 825, "Bancho Sushi", "recipe"),
+    "Unlock Recipe: Comber Sandwich": LocationData(BASE_ID + 826, "Bancho Sushi", "recipe"),
+    "Unlock Recipe: Humboldt Ink Pasta": LocationData(BASE_ID + 827, "Bancho Sushi", "recipe"),
+    "Unlock Recipe: Antarctic Octopus Carpaccio": LocationData(BASE_ID + 828, "Bancho Sushi", "recipe"),
+    "Unlock Recipe: Haddock Acqua Pazza": LocationData(BASE_ID + 829, "Bancho Sushi", "recipe"),
+    "Unlock Recipe: Arctic Cod Risotto": LocationData(BASE_ID + 830, "Bancho Sushi", "recipe"),
+    "Unlock Recipe: Peacock Squid Ripieni": LocationData(BASE_ID + 831, "Bancho Sushi", "recipe"),
 
     # --- Boss defeat recipes ---
     "Unlock Recipe: Stir-Fried Hermit Crab and Seaweed": LocationData(BASE_ID + 835, "Bancho Sushi", "recipe"),

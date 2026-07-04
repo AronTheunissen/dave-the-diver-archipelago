@@ -48,7 +48,7 @@ namespace DaveDiverAP.Patches
             try
             {
                 var goName = __instance?.gameObject?.name ?? "";
-                Plugin.Log.LogInfo($"[FishCatchPatch] SuccessSubInteract fired! GO={goName}");
+                Plugin.Log.LogInfo($"[FishCatchPatch] SuccessSubInteract fired! GO={goName} Connected={ArchipelagoClient.IsConnected} Loaded={ItemQueue.IsGameLoaded}");
                 CheckFishCatchFromGameObject(goName);
             }
             catch (System.Exception ex)
@@ -64,11 +64,11 @@ namespace DaveDiverAP.Patches
         // Explicitly target the (int, int, bool) overload to avoid ambiguity with (FishInfoData, int, bool)
         [HarmonyPatch(typeof(global::SaveData), "AddCaughtFish", new System.Type[] { typeof(int), typeof(int), typeof(bool) })]
         [HarmonyPostfix]
-        public static void AddCaughtFish_Postfix(int id, int grade, bool isForce)
+        public static void AddCaughtFish_Int_Postfix(int id, int grade, bool isForce)
         {
             try
             {
-                Plugin.Log.LogInfo($"[FishCaught] AddCaughtFish FIRED id={id} grade={grade} isForce={isForce} connected={ArchipelagoClient.IsConnected} loaded={ItemQueue.IsGameLoaded}");
+                Plugin.Log.LogInfo($"[FishCaught] AddCaughtFish(int) FIRED id={id} grade={grade} isForce={isForce} connected={ArchipelagoClient.IsConnected} loaded={ItemQueue.IsGameLoaded}");
                 if (!ArchipelagoClient.IsConnected) return;
                 if (!ItemQueue.IsGameLoaded) return;
                 if (isForce) return; // isForce=true = replaying from save, not a real new catch
@@ -86,7 +86,38 @@ namespace DaveDiverAP.Patches
             }
             catch (System.Exception ex)
             {
-                Plugin.Log.LogError($"[FishCatchPatch] AddCaughtFish_Postfix threw: {ex}");
+                Plugin.Log.LogError($"[FishCatchPatch] AddCaughtFish_Int_Postfix threw: {ex}");
+            }
+        }
+
+        // Hook the FishInfoData overload — small fish (harpoon/net pickups) may use this one instead
+        [HarmonyPatch(typeof(global::SaveData), "AddCaughtFish", new System.Type[] { typeof(FishInfoData), typeof(int), typeof(bool) })]
+        [HarmonyPostfix]
+        public static void AddCaughtFish_Data_Postfix(FishInfoData data, int grade, bool isForce)
+        {
+            try
+            {
+                int id = data?.TID ?? -1;
+                Plugin.Log.LogInfo($"[FishCaught] AddCaughtFish(FishInfoData) FIRED id={id} grade={grade} isForce={isForce} connected={ArchipelagoClient.IsConnected} loaded={ItemQueue.IsGameLoaded}");
+                if (!ArchipelagoClient.IsConnected) return;
+                if (!ItemQueue.IsGameLoaded) return;
+                if (isForce) return;
+                if (id <= 0) return;
+
+                var locationName = FishNameMapper.GetLocationFromFishId(id);
+                if (locationName != null)
+                {
+                    Plugin.Log.LogInfo($"[FishCaught] FishInfoData id={id} → \"{locationName}\"");
+                    ArchipelagoClient.CheckLocation(locationName);
+                }
+                else
+                {
+                    Plugin.Log.LogInfo($"[FishCaught] FishInfoData id={id} — no AP location mapping");
+                }
+            }
+            catch (System.Exception ex)
+            {
+                Plugin.Log.LogError($"[FishCatchPatch] AddCaughtFish_Data_Postfix threw: {ex}");
             }
         }
 
@@ -94,12 +125,24 @@ namespace DaveDiverAP.Patches
         // Format confirmed: "SA_2010125_Longnosesaw_Shark(Clone)" → TID=2010125
         private static void CheckFishCatchFromGameObject(string goName)
         {
-            if (!ArchipelagoClient.IsConnected) return;
-            if (!ItemQueue.IsGameLoaded) return;
+            if (!ArchipelagoClient.IsConnected)
+            {
+                Plugin.Log.LogInfo($"[FishCaught] Skipped (not connected) GO={goName}");
+                return;
+            }
+            if (!ItemQueue.IsGameLoaded)
+            {
+                Plugin.Log.LogInfo($"[FishCaught] Skipped (game not loaded) GO={goName}");
+                return;
+            }
 
             // Parse TID from "SA_XXXXXXX_..." format
             int tid = FishNameMapper.GetTIDFromGameObjectName(goName);
-            if (tid <= 0) return;
+            if (tid <= 0)
+            {
+                Plugin.Log.LogInfo($"[FishCaught] Skipped (no TID parsed) GO={goName}");
+                return;
+            }
 
             Plugin.Log.LogInfo($"[FishCaught] GO={goName} TID={tid}");
             var locationName = FishNameMapper.GetLocationFromFishId(tid);
