@@ -908,26 +908,10 @@ namespace DaveDiverAP
                        : itemName.Contains("Medium") ? 2000
                        : 500;
 
-            try
-            {
-                var playerInfo = SaveSystem.Instance?.PlayerInfoSave;
-                if (playerInfo == null) { Log.LogWarning("[ItemHandler] PlayerInfoSave is null — cannot give currency"); return; }
-
-                if (type == "gold")
-                {
-                    playerInfo.set_Gold(playerInfo.get_Gold() + amount);
-                    Log.LogInfo($"[ItemHandler] Gave {amount} gold");
-                }
-                else if (type == "bei")
-                {
-                    playerInfo.set_bei(playerInfo.get_bei() + amount);
-                    Log.LogInfo($"[ItemHandler] Gave {amount} bei");
-                }
-            }
-            catch (Exception ex)
-            {
-                Log.LogError($"[ItemHandler] GiveCurrency failed: {ex.Message}");
-            }
+            // TODO: SaveSystem not in interop DLL — need to find correct accessor for PlayerInfoSave
+            // Once SaveSystem is available: SaveSystem.Instance.PlayerInfoSave.set_Gold(amount)
+            // For now, log the amount so we know items are being processed correctly
+            Log.LogInfo($"[ItemHandler] TODO: Give {amount} {type} (SaveSystem not yet in interop DLL)");
         }
 
         // ── Helpers ───────────────────────────────────────────────────────────
