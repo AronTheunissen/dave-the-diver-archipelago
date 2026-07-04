@@ -61,7 +61,12 @@ namespace DaveDiverAP
 
         public void Update()
         {
-            if (!_isGameReady) return;
+            // Process items whenever the game has loaded at least once AND we're connected.
+            // IsGameLoaded is set true by the first valid game state (AfternoonStart, InBoat, etc.)
+            // and never resets — so items can be delivered even after state transitions like
+            // Idle, ThumbsUp, or other non-boat states that come after the initial load.
+            if (!_isGameLoaded) return;
+            if (!ArchipelagoClient.IsConnected) return;
             ProcessPending();
         }
 
