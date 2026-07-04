@@ -94,9 +94,12 @@ namespace DaveDiverAP.Patches
                         }
                         break;
 
-                    // Restaurant, farms, cutscenes, loading — disable item delivery
+                    // Other states (farms, cutscenes, etc.) — keep current ready state
+                    // Don't actively disable here: items that arrived while in a valid
+                    // state should continue to be processed. Only loading screens (which
+                    // don't call ChangeLobbyPlayerState) cause IsGameReady to be false.
                     default:
-                        ItemQueue.SetGameReady(false);
+                        Log.LogInfo($"Game state: {state} — item processing unchanged (IsGameReady={ItemQueue.IsGameReady}).");
                         break;
                 }
             }

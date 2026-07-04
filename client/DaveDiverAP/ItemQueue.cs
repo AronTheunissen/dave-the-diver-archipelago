@@ -68,10 +68,12 @@ namespace DaveDiverAP
         /// <summary>
         /// Enqueue an item for processing on the main thread.
         /// Safe to call from any thread.
+        /// Items are processed in Update() — which runs every frame when IsGameReady.
         /// </summary>
         public static void Enqueue(ItemInfo item)
         {
             _queue.Enqueue(item);
+            Log.LogInfo($"[ItemQueue] Enqueued: {item.ItemName} (queue size now {_queue.Count}, IsGameReady={_isGameReady})");
         }
 
         /// <summary>
