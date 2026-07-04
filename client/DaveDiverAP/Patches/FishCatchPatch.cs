@@ -62,12 +62,16 @@ namespace DaveDiverAP.Patches
         // id = fish data TID, grade = quality, isForce = override (true when replaying from save)
         // This fires for harpoon, net, AND carve — covers all catch methods.
         // Explicitly target the (int, int, bool) overload to avoid ambiguity with (FishInfoData, int, bool)
+        // Captured SaveData instance for use by ItemHandler (currency giving)
+        public static global::SaveData CapturedSaveData { get; private set; }
+
         [HarmonyPatch(typeof(global::SaveData), "AddCaughtFish", new System.Type[] { typeof(int), typeof(int), typeof(bool) })]
         [HarmonyPostfix]
-        public static void AddCaughtFish_Int_Postfix(int id, int grade, bool isForce)
+        public static void AddCaughtFish_Int_Postfix(global::SaveData __instance, int id, int grade, bool isForce)
         {
             try
             {
+                if (__instance != null) CapturedSaveData = __instance;
                 Plugin.Log.LogInfo($"[FishCaught] AddCaughtFish(int) FIRED id={id} grade={grade} isForce={isForce} connected={ArchipelagoClient.IsConnected}");
                 if (!ArchipelagoClient.IsConnected) return;
                 if (isForce) return; // isForce=true = replaying from save, not a real new catch
@@ -92,10 +96,11 @@ namespace DaveDiverAP.Patches
         // Hook the FishInfoData overload — small fish (harpoon/net pickups) may use this one instead
         [HarmonyPatch(typeof(global::SaveData), "AddCaughtFish", new System.Type[] { typeof(DR.FishInfoData), typeof(int), typeof(bool) })]
         [HarmonyPostfix]
-        public static void AddCaughtFish_Data_Postfix(DR.FishInfoData data, int grade, bool isForce)
+        public static void AddCaughtFish_Data_Postfix(global::SaveData __instance, DR.FishInfoData data, int grade, bool isForce)
         {
             try
             {
+                if (__instance != null) CapturedSaveData = __instance;
                 int id = data?.TID ?? -1;
                 Plugin.Log.LogInfo($"[FishCaught] AddCaughtFish(FishInfoData) FIRED id={id} grade={grade} isForce={isForce} connected={ArchipelagoClient.IsConnected}");
                 if (!ArchipelagoClient.IsConnected) return;

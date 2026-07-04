@@ -908,10 +908,28 @@ namespace DaveDiverAP
                        : itemName.Contains("Medium") ? 2000
                        : 500;
 
-            // TODO: SaveSystem not in interop DLL — need to find correct accessor for PlayerInfoSave
-            // Once SaveSystem is available: SaveSystem.Instance.PlayerInfoSave.set_Gold(amount)
-            // For now, log the amount so we know items are being processed correctly
-            Log.LogInfo($"[ItemHandler] TODO: Give {amount} {type} (SaveSystem not yet in interop DLL)");
+            try
+            {
+                // SaveData instance is captured from our fish catch patch
+                var save = Patches.FishCatchPatch.CapturedSaveData;
+                if (save == null) { Log.LogWarning("[ItemHandler] SaveData not yet captured — cannot give currency"); return; }
+                var pi = save.playerInfo;
+                if (pi == null) { Log.LogWarning("[ItemHandler] playerInfo is null"); return; }
+                if (type == "gold")
+                {
+                    pi.gold = pi.gold + amount;
+                    Log.LogInfo($"[ItemHandler] Gave {amount} gold (new total: {pi.gold})");
+                }
+                else if (type == "bei")
+                {
+                    pi.bei = pi.bei + amount;
+                    Log.LogInfo($"[ItemHandler] Gave {amount} bei (new total: {pi.bei})");
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.LogError($"[ItemHandler] GiveCurrency failed: {ex.Message}");
+            }
         }
 
         // ── Helpers ───────────────────────────────────────────────────────────
