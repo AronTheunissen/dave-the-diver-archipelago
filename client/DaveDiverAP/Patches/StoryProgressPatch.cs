@@ -201,17 +201,9 @@ namespace DaveDiverAP.Patches
                             LocationTracker.OnQuestCompleted(locationName);
                     }
 
-                    // Try invoking the onFinish callback so state machine continues
-                    try
-                    {
-                        var cb = __args[1];
-                        if (cb != null)
-                        {
-                            var invokeMethod = cb.GetType().GetMethod("Invoke");
-                            invokeMethod?.Invoke(cb, new object[] { true });
-                        }
-                    }
-                    catch { }
+                    // Do NOT invoke onFinish callback — calling it prematurely can corrupt
+                    // the game state machine and cause NullReferenceExceptions during scene loads.
+                    // The game will advance on its own after returning false.
                     return false;
                 }
             }
