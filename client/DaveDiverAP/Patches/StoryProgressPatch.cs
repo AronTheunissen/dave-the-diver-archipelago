@@ -159,11 +159,16 @@ namespace DaveDiverAP.Patches
             var dialogueBundleID = __args?[0] as string;
             if (dialogueBundleID == null) return true;
 
+            // Never skip scenarios that fire while diving — in-water cutscenes advance
+            // mission state (e.g. dolphin missions, boss intros) and must play through.
+            try { if (InGameManager.Instance != null) return true; }
+            catch { }
+
             foreach (var prefix in _skipPrefixes)
             {
                 if (dialogueBundleID.StartsWith(prefix))
                 {
-                    Plugin.Log.LogInfo($"[ScenarioSkip] Skipping tutorial scenario: {dialogueBundleID}");
+                    Plugin.Log.LogInfo($"[ScenarioSkip] Skipping scenario: {dialogueBundleID}");
                     // Try invoking the onFinish callback so state machine continues
                     try
                     {
