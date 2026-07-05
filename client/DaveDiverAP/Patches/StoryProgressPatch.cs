@@ -449,6 +449,7 @@ namespace DaveDiverAP.Patches
             // ── Main story missions ───────────────────────────────────────────
             // Note: sub-step _Complete scenarios (e.g. _13_1_Complete) are intermediate
             // steps and map to the same story beat as the final _Complete.
+            { "Main_Mission00_Complete",        "Story: Complete Prologue" },
             { "Main_Mission01_Complete",        "Story: Complete Chapter 1 (Traces of the Sea People)" },
             { "Main_Mission07_Complete",        "Story: Complete Chapter 2 (Into the Deep)" },
             { "Main_Mission09_Complete",        "Story: Complete Chapter 3 (A Request from the Sea People)" },
