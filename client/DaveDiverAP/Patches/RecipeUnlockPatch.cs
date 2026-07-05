@@ -28,6 +28,7 @@ namespace DaveDiverAP.Patches
             try
             {
                 if (!ArchipelagoClient.IsConnected) return;
+                if (_allowDishSave) return; // AP-driven unlock — don't send duplicate check
 
                 var recipeName = RecipeNameMapper.GetDisplayName(id);
                 if (recipeName != null)
@@ -75,6 +76,7 @@ namespace DaveDiverAP.Patches
             try
             {
                 if (!ArchipelagoClient.IsConnected) return;
+                if (_allowDishSave) return; // AP-driven save — don't send duplicate check
                 if (data == null) return;
 
                 int tid = data.recipeID;
@@ -105,26 +107,31 @@ namespace DaveDiverAP.Patches
 
         // Also hook UpdateCookingStudySaveData for when research is updated (not just added)
         [HarmonyPatch(typeof(global::SaveData), "UpdateCookingStudySaveData")]
-        [HarmonyPostfix]
-        public static void UpdateCookingStudySaveData_Postfix(CookingStudyData data)
+        [HarmonyPrefix]
+        public static bool UpdateCookingStudySaveData_Prefix(CookingStudyData data)
         {
-            try
-            {
-                if (!ArchipelagoClient.IsConnected) return;
-                if (data == null) return;
+            if (!ArchipelagoClient.IsConnected) return true; // not connected — allow normally
+            if (_allowDishSave) return true;                 // AP-driven — allow through
 
+            // Game is trying to upgrade a dish — block it and send AP check instead
+            if (data != null)
+            {
                 int tid = data.recipeID;
                 int level = data.studyLevel;
-                Plugin.Log.LogInfo($"[DishUpgrade] UpdateCookingStudySaveData TID={tid} Level={level}");
-
+                Plugin.Log.LogInfo($"[DishUpgrade] Blocked vanilla upgrade for TID={tid} Level={level} (AP controls this)");
                 var dishName = RecipeNameMapper.GetDisplayName(tid);
                 if (dishName != null)
                     LocationTracker.OnDishUpgraded(dishName, level);
             }
-            catch (System.Exception ex)
-            {
-                Plugin.Log.LogError($"[RecipeUnlockPatch] UpdateCookingStudySaveData_Postfix threw: {ex}");
-            }
+            return false; // cancel the original method
+        }
+
+        [HarmonyPatch(typeof(global::SaveData), "UpdateCookingStudySaveData")]
+        [HarmonyPostfix]
+        public static void UpdateCookingStudySaveData_Postfix(CookingStudyData data)
+        {
+            // Only fires when _allowDishSave=true (AP-driven upgrade went through)
+            // Nothing to do here — the AP-driven path already logged in ApplyDishResearchLevel
         }
     }
 
@@ -463,5 +470,29 @@ namespace DaveDiverAP.Patches
 
         public static string? GetDisplayName(int recipeId) =>
             _map.TryGetValue(recipeId, out var name) ? name : null;
+
+        // Reverse lookup: name → TID (built lazily from _map)
+        private static System.Collections.Generic.Dictionary<string, int>? _reverseMap;
+        private static System.Collections.Generic.Dictionary<string, int> ReverseMap
+        {
+            get
+            {
+                if (_reverseMap == null)
+                {
+                    _reverseMap = new System.Collections.Generic.Dictionary<string, int>(System.StringComparer.OrdinalIgnoreCase);
+                    foreach (var kvp in _map)
+                    {
+                        // Use lowercase name as key; skip duplicates (keep first)
+                        if (!_reverseMap.ContainsKey(kvp.Value))
+                            _reverseMap[kvp.Value] = kvp.Key;
+                    }
+                }
+                return _reverseMap;
+            }
+        }
+
+        /// <summary>Returns the recipe TID for the given display name, or -1 if not found.</summary>
+        public static int GetTIDFromName(string recipeName) =>
+            ReverseMap.TryGetValue(recipeName, out var tid) ? tid : -1;
     }
 }

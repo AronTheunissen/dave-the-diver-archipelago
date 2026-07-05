@@ -16,22 +16,40 @@ namespace DaveDiverAP.Patches
         //    Fields: int craftID, int rowIndex, int colIndex
         //    Trigger method: DREventTriggerManager.WeaponCraftTreeEventTrigger(int craftID, int row, int col)
         //    DREventTriggerManager is a static class (TypeDefIndex: 2463) confirmed at line 94078 of dump.cs
+        //
+        // We use a PREFIX to intercept the craft:
+        //   - If AP is connected AND this isn't an AP-driven craft: block the vanilla craft,
+        //     send an AP check instead (the item will come back from the server).
+        //   - If AP is not connected OR _allowWeaponCraft is true: let it through normally.
+        public static bool _allowWeaponCraft = false;
+
         [HarmonyPatch(typeof(DREventTriggerManager), "WeaponCraftTreeEventTrigger")]
-        [HarmonyPostfix]
-        public static void OnWeaponCrafted_Postfix(int craftID, int row, int col)
+        [HarmonyPrefix]
+        public static bool OnWeaponCrafted_Prefix(int craftID, int row, int col)
         {
             try
             {
-                if (!ArchipelagoClient.IsConnected) return;
+                if (!ArchipelagoClient.IsConnected) return true; // not connected — allow normally
+                if (_allowWeaponCraft) return true;              // AP-driven grant — allow through
 
-                // craftID maps to the weapon's design sheet TID
+                // Player crafted a weapon in Duff's shop — send AP check, block the vanilla grant
                 var weaponName = WeaponNameMapper.GetDisplayNameFromCraftID(craftID);
                 if (weaponName != null)
+                {
+                    Plugin.Log.LogInfo($"[WeaponCraft] Intercepted craft of '{weaponName}' (craftID={craftID}) — sending AP check instead");
                     LocationTracker.OnWeaponCrafted(weaponName);
+                    return false; // block the vanilla weapon grant
+                }
+                else
+                {
+                    Plugin.Log.LogWarning($"[WeaponCraft] Unknown craftID={craftID} — allowing normally");
+                    return true;
+                }
             }
             catch (System.Exception ex)
             {
-                Plugin.Log.LogError($"[WeaponCraftPatch] OnWeaponCrafted_Postfix threw: {ex}");
+                Plugin.Log.LogError($"[WeaponCraftPatch] OnWeaponCrafted_Prefix threw: {ex}");
+                return true; // on error, allow through to avoid softlocks
             }
         }
     }

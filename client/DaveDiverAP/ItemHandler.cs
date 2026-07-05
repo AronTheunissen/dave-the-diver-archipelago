@@ -602,7 +602,9 @@ namespace DaveDiverAP
                 // Use CompleteMission with the ContentsUnlock TID (14030000 + offset)
                 // This is the mission that triggers the contents unlock in ModSaveData.
                 // ContentsList ID 10031 (FishCard) = TID 14030031, etc.
-                int contentsTID = 14020000 + contentsId;
+                // ContentsList IDs confirmed from Unity Explorer: DataManager.ContentsUnlockDataDic
+                // TID = 14030000 + contentsId (e.g. FishCard ID=10031 → TID=14030031)
+                int contentsTID = 14030000 + contentsId;
                 CompleteMission(contentsTID);
                 Log.LogInfo($"[ItemHandler] Contents unlock attempted: ID={contentsId} via TID={contentsTID}");
             }
@@ -802,10 +804,23 @@ namespace DaveDiverAP
                 Log.LogWarning($"[ItemHandler] Unknown weapon craft spec for: {weaponName}");
                 return;
             }
-            // WeaponCraftTreeEventTrigger marks the weapon as crafted in the save
-            // and adds it to the player's weapon inventory. This is exactly the
-            // call the game makes when the player crafts a weapon at Duff's shop.
-            DREventTriggerManager.WeaponCraftTreeEventTrigger(spec.craftID, spec.row, spec.col);
+            try
+            {
+                // Allow this AP-driven weapon through our prefix block
+                Patches.WeaponCraftPatch._allowWeaponCraft = true;
+                // WeaponCraftTreeEventTrigger marks the weapon as crafted in the save
+                // and adds it to the player's weapon inventory.
+                DREventTriggerManager.WeaponCraftTreeEventTrigger(spec.craftID, spec.row, spec.col);
+                Log.LogInfo($"[ItemHandler] Weapon unlock triggered: {weaponName} (craftID={spec.craftID})");
+            }
+            catch (Exception ex)
+            {
+                Log.LogError($"[ItemHandler] ApplyWeaponUnlock failed for {weaponName}: {ex.Message}");
+            }
+            finally
+            {
+                Patches.WeaponCraftPatch._allowWeaponCraft = false;
+            }
         }
 
         // ── Dish upgrades ─────────────────────────────────────────────────────
@@ -820,17 +835,40 @@ namespace DaveDiverAP
 
         private static void ApplyDishResearchLevel(string dishName, int level)
         {
-            if (!RecipeTIDs.TryGetValue(dishName, out var tid))
+            if (level <= 0) return;
+            if (!RecipeTIDs.TryGetValue(dishName, out var recipeTID))
             {
                 Log.LogWarning($"[ItemHandler] Dish TID not yet mapped for: '{dishName}' (level={level}).");
                 return;
             }
             try
             {
+                var saveData = Patches.FishCatchPatch.CapturedSaveData;
+                if (saveData == null)
+                {
+                    Log.LogWarning($"[ItemHandler] SaveData not yet captured — cannot apply dish research for '{dishName}'");
+                    return;
+                }
+
                 // Allow this AP-driven save through our prefix block
                 Patches.RecipeUnlockPatch._allowDishSave = true;
-                CompleteMission(tid);
-                Log.LogInfo($"[ItemHandler] Dish research applied via mission: {dishName} → level {level} (TID={tid})");
+
+                // Check if dish already exists in save (use Update) or needs to be added (use Add)
+                var cookingStudy = saveData.cookingStudySave;
+                bool alreadyExists = cookingStudy != null && cookingStudy.ContainsKey(recipeTID);
+
+                // Build a CookingStudyData with the target level
+                var data = new CookingStudyData();
+                data.recipeID = recipeTID;
+                data.studyLevel = level;
+                data.isNew = false;
+
+                if (alreadyExists)
+                    saveData.UpdateCookingStudySaveData(data);
+                else
+                    saveData.AddCookingStudySaveData(data);
+
+                Log.LogInfo($"[ItemHandler] Dish research applied: {dishName} → level {level} (recipeTID={recipeTID})");
             }
             catch (Exception ex)
             {
@@ -854,17 +892,37 @@ namespace DaveDiverAP
 
         private static void ApplyRecipeUnlock(string recipeName)
         {
-            if (!RecipeTIDs.TryGetValue(recipeName, out var tid))
+            // Recipe unlocks use the RecipeNameMapper TID (8050xxx / 8051xxx / 8052xxx)
+            // We look it up from RecipeNameMapper instead of RecipeTIDs since RecipeTIDs
+            // only covers cooked dishes, not sushi.
+            int recipeTID = Patches.RecipeNameMapper.GetTIDFromName(recipeName);
+            if (recipeTID <= 0)
             {
-                Log.LogWarning($"[ItemHandler] Recipe TID not yet mapped for: '{recipeName}'.");
+                Log.LogWarning($"[ItemHandler] Recipe TID not found for: '{recipeName}'.");
                 return;
             }
             try
             {
+                var saveData = Patches.FishCatchPatch.CapturedSaveData;
+                if (saveData == null)
+                {
+                    Log.LogWarning($"[ItemHandler] SaveData not yet captured — cannot apply recipe unlock for '{recipeName}'");
+                    return;
+                }
+
                 // Allow this AP-driven save through our prefix block
                 Patches.RecipeUnlockPatch._allowDishSave = true;
-                CompleteMission(tid);
-                Log.LogInfo($"[ItemHandler] Recipe unlocked via mission: {recipeName} (TID={tid})");
+
+                // Only add if not already unlocked
+                if (!saveData.IsUnlockRecipe(recipeTID))
+                {
+                    saveData.AddUnlockRecipeSaveData(recipeTID, Il2CppSystem.DateTime.Now);
+                    Log.LogInfo($"[ItemHandler] Recipe unlocked: {recipeName} (TID={recipeTID})");
+                }
+                else
+                {
+                    Log.LogInfo($"[ItemHandler] Recipe '{recipeName}' already unlocked (TID={recipeTID}), skipping.");
+                }
             }
             catch (Exception ex)
             {
