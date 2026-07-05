@@ -192,6 +192,15 @@ namespace DaveDiverAP.Patches
                 if (dialogueBundleID.StartsWith(prefix))
                 {
                     Plugin.Log.LogInfo($"[ScenarioSkip] Skipping scenario: {dialogueBundleID}");
+
+                    // Check if this scenario name maps to an AP location
+                    if (ArchipelagoClient.IsConnected)
+                    {
+                        var locationName = QuestNameMapper.GetLocationNameFromScenario(dialogueBundleID);
+                        if (locationName != null)
+                            LocationTracker.OnQuestCompleted(locationName);
+                    }
+
                     // Try invoking the onFinish callback so state machine continues
                     try
                     {
@@ -431,5 +440,35 @@ namespace DaveDiverAP.Patches
 
         public static string? GetLocationName(int missionTID) =>
             _map.TryGetValue(missionTID, out var name) ? name : null;
+
+        // Maps scenario completion names to AP location names.
+        // Scenario names ending in "_Complete" indicate mission completion.
+        // TODO: Fill in the correct mappings by playing through the game and
+        // watching for "[ScenarioSkip] Unknown completion scenario: X" in the log.
+        // The scenario name numbering does NOT correspond to chapter numbers.
+        private static readonly System.Collections.Generic.Dictionary<string, string> _scenarioMap = new()
+        {
+            // ── Sub-missions (confirmed from actual gameplay) ─────────────────
+            { "Side_Dolphin01_Complete",    "Sub-Mission: A Dolphin's Request" },
+            { "Side_Dolphin02_Complete",    "Sub-Mission: What Happened to the Dolphins?" },
+            { "Side_Ellie_01_Complete",     "Sub-Mission: Assisting Ellie" },
+            { "Side_Duff01_Complete",       "Sub-Mission: Weaponsmith Duff" },
+            // TODO: Add more as you play through and see the scenario names in the log
+        };
+
+        public static string? GetLocationNameFromScenario(string scenarioName)
+        {
+            if (scenarioName == null) return null;
+
+            // Direct lookup first
+            if (_scenarioMap.TryGetValue(scenarioName, out var name))
+                return name;
+
+            // Log unknown _Complete scenarios so we can map them later
+            if (scenarioName.EndsWith("_Complete"))
+                Plugin.Log.LogInfo($"[ScenarioSkip] Unknown completion scenario: {scenarioName} — add to QuestNameMapper");
+
+            return null;
+        }
     }
 }
