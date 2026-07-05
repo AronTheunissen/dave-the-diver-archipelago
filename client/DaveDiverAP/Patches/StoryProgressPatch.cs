@@ -28,64 +28,59 @@ namespace DaveDiverAP.Patches
 
         public static void Apply(HarmonyLib.Harmony harmony)
         {
-            // Find GetClearMissionDialogData by name and parameter count: (MissionData, bool) = 2 params
-            var methods = typeof(MissionManager).GetMethods(
+            // Hook ApplyMissionClear(int missionID) — fires when any mission is marked cleared.
+            // Simple int parameter, no IL2CPP type matching issues.
+            // Confirmed from Unity Explorer: ApplyMissionClear(System.Int32 missionID)
+            var target = typeof(MissionManager).GetMethod("ApplyMissionClear",
                 System.Reflection.BindingFlags.Public |
                 System.Reflection.BindingFlags.NonPublic |
-                System.Reflection.BindingFlags.Instance);
-
-            System.Reflection.MethodInfo? target = null;
-            foreach (var m in methods)
-            {
-                if (m.Name != "GetClearMissionDialogData") continue;
-                var parms = m.GetParameters();
-                if (parms.Length == 2 &&
-                    parms[0].ParameterType.Name == "MissionData" &&
-                    parms[1].ParameterType == typeof(bool))
-                {
-                    target = m;
-                    break;
-                }
-            }
+                System.Reflection.BindingFlags.Instance,
+                null,
+                new System.Type[] { typeof(int) },
+                null);
 
             if (target == null)
             {
-                Plugin.Log.LogWarning("[StoryProgress] Could not find GetClearMissionDialogData(MissionData, bool) — mission checks won't fire");
+                Plugin.Log.LogWarning("[StoryProgress] Could not find ApplyMissionClear(int) — mission checks won't fire");
                 return;
             }
 
             var postfix = new HarmonyLib.HarmonyMethod(
                 typeof(StoryProgressPatch).GetMethod(nameof(OnMissionCleared_Postfix)));
             harmony.Patch(target, postfix: postfix);
-            Plugin.Log.LogInfo("[StoryProgress] Successfully patched GetClearMissionDialogData");
+            Plugin.Log.LogInfo("[StoryProgress] Successfully patched ApplyMissionClear");
         }
 
-        public static void OnMissionCleared_Postfix(object[] __args)
+        public static void OnMissionCleared_Postfix(int missionID)
         {
             try
             {
-                var missionData = __args?[0];
-                if (missionData == null) return;
+                if (missionID == 0) return;
 
-                // Use reflection to get TID, Type, Title, NameTextID from MissionData
-                var type = missionData.GetType();
-                int tid = (int)(type.GetProperty("TID")?.GetValue(missionData) ?? 0);
-                if (tid == 0) return;
-
-                string missionType = type.GetProperty("Type")?.GetValue(missionData)?.ToString() ?? "";
-                string title = type.GetProperty("Title")?.GetValue(missionData) as string ?? "";
-                string nameTextId = type.GetProperty("NameTextID")?.GetValue(missionData) as string ?? "unknown";
-
-                // Skip internal state machine missions
-                if (missionType == "JungleRankReward" || missionType == "JungleRelationEvent") return;
+                // Look up mission data from MissionManager to get title/type for logging
+                string title = "";
+                string missionType = "";
+                try
+                {
+                    var mm = MissionManager.Instance;
+                    var missionData = mm?.GetMissionData(missionID);
+                    if (missionData != null)
+                    {
+                        title = missionData.Title ?? "";
+                        missionType = missionData.Type.ToString();
+                        // Skip internal state machine missions
+                        if (missionType == "JungleRankReward" || missionType == "JungleRelationEvent") return;
+                    }
+                }
+                catch { }
 
                 // Always log — invaluable for mapping TIDs to AP locations
-                Log.LogInfo($"[MissionCleared] TID={tid} Type={missionType} Title=\"{title}\" NameTextID={nameTextId}");
+                Log.LogInfo($"[MissionCleared] TID={missionID} Type={missionType} Title=\"{title}\"");
 
                 if (!ArchipelagoClient.IsConnected) return;
 
                 // Route to AP location check if this TID is mapped
-                var locationName = QuestNameMapper.GetLocationName(tid);
+                var locationName = QuestNameMapper.GetLocationName(missionID);
                 if (locationName != null)
                     LocationTracker.OnQuestCompleted(locationName);
             }
