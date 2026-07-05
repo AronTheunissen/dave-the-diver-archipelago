@@ -17,49 +17,70 @@ namespace DaveDiverAP.Patches
     /// for "[MissionCleared] TID=XXXXX NameTextID=YYYYYYY" in the log. Use those
     /// values to populate QuestNameMapper._map below.
     /// </summary>
-    [HarmonyPatch]
+    /// <summary>
+    /// Detects mission completions via manual Harmony patching (same approach as ScenarioSkipPatch).
+    /// MissionManager.GetClearMissionDialogData fires when any mission is fully cleared.
+    /// </summary>
     public static class StoryProgressPatch
     {
         private static readonly ManualLogSource Log =
             BepInEx.Logging.Logger.CreateLogSource("DaveDiverAP.Missions");
 
-        // ── Chapter completion ────────────────────────────────────────────────
-        // TODO: ChapterManager and ChapterInfo not found in current interop DLL.
-        // Confirmed via dump.cs: ChapterManager is a Singleton with currentChapterInfo (ChapterInfo).
-        // Regenerate interop by relaunching game with BepInEx.
-        //
-        // [HarmonyPatch(typeof(ChapterManager), "set_currentChapterInfo")]
-        // [HarmonyPostfix]
-        // public static void OnChapterChanged_Postfix(ChapterInfo value)
-        // {
-        //     if (!ArchipelagoClient.IsConnected) return;
-        //     if (value == null) return;
-        //     LocationTracker.OnChapterComplete(value.chapterNumber);
-        // }
+        public static void Apply(HarmonyLib.Harmony harmony)
+        {
+            // Find GetClearMissionDialogData by name and parameter count: (MissionData, bool) = 2 params
+            var methods = typeof(MissionManager).GetMethods(
+                System.Reflection.BindingFlags.Public |
+                System.Reflection.BindingFlags.NonPublic |
+                System.Reflection.BindingFlags.Instance);
 
-        // ── Mission/Quest completion ──────────────────────────────────────────
-        // ✅ CONFIRMED via dump.cs: MissionManager.GetClearMissionDialogData(MissionData, bool)
-        //    fires when any mission is fully cleared. MissionData.TID is the design-sheet ID.
-        //    This is better than hooking UpdateMission because it only fires on CLEAR (not progress).
-        [HarmonyPatch(typeof(MissionManager), "GetClearMissionDialogData", new System.Type[] { typeof(MissionData), typeof(bool) })]
-        [HarmonyPostfix]
-        public static void OnMissionCleared_Postfix(MissionData missionData, bool isAddNextData)
+            System.Reflection.MethodInfo? target = null;
+            foreach (var m in methods)
+            {
+                if (m.Name != "GetClearMissionDialogData") continue;
+                var parms = m.GetParameters();
+                if (parms.Length == 2 &&
+                    parms[0].ParameterType.Name == "MissionData" &&
+                    parms[1].ParameterType == typeof(bool))
+                {
+                    target = m;
+                    break;
+                }
+            }
+
+            if (target == null)
+            {
+                Plugin.Log.LogWarning("[StoryProgress] Could not find GetClearMissionDialogData(MissionData, bool) — mission checks won't fire");
+                return;
+            }
+
+            var postfix = new HarmonyLib.HarmonyMethod(
+                typeof(StoryProgressPatch).GetMethod(nameof(OnMissionCleared_Postfix)));
+            harmony.Patch(target, postfix: postfix);
+            Plugin.Log.LogInfo("[StoryProgress] Successfully patched GetClearMissionDialogData");
+        }
+
+        public static void OnMissionCleared_Postfix(object[] __args)
         {
             try
             {
+                var missionData = __args?[0];
                 if (missionData == null) return;
 
-                int tid = missionData.TID;
-                string type = missionData.Type.ToString();
-                string title = missionData.Title ?? "";
-                string nameTextId = missionData.NameTextID ?? "unknown";
+                // Use reflection to get TID, Type, Title, NameTextID from MissionData
+                var type = missionData.GetType();
+                int tid = (int)(type.GetProperty("TID")?.GetValue(missionData) ?? 0);
+                if (tid == 0) return;
 
-                // Skip internal state machine missions (no title = not player-facing)
-                // JungleRankReward and JungleRelationEvent are internal-only
-                if (type == "JungleRankReward" || type == "JungleRelationEvent") return;
+                string missionType = type.GetProperty("Type")?.GetValue(missionData)?.ToString() ?? "";
+                string title = type.GetProperty("Title")?.GetValue(missionData) as string ?? "";
+                string nameTextId = type.GetProperty("NameTextID")?.GetValue(missionData) as string ?? "unknown";
 
-                // Always log cleared missions with full info — invaluable for debugging
-                Log.LogInfo($"[MissionCleared] TID={tid} Type={type} Title=\"{title}\" NameTextID={nameTextId}");
+                // Skip internal state machine missions
+                if (missionType == "JungleRankReward" || missionType == "JungleRelationEvent") return;
+
+                // Always log — invaluable for mapping TIDs to AP locations
+                Log.LogInfo($"[MissionCleared] TID={tid} Type={missionType} Title=\"{title}\" NameTextID={nameTextId}");
 
                 if (!ArchipelagoClient.IsConnected) return;
 

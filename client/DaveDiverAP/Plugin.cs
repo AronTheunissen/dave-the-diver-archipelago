@@ -48,7 +48,8 @@ namespace DaveDiverAP
                 typeof(FishCatchPatch),
                 typeof(RecipeUnlockPatch),
                 typeof(BossDefeatedPatch),
-                typeof(StoryProgressPatch),
+                // StoryProgressPatch uses manual Apply() below (IL2CPP type matching issues)
+                // typeof(StoryProgressPatch),
                 typeof(WeaponCraftPatch),
                 typeof(PlayerDeathPatch),
                 typeof(GameStatePatch),
@@ -70,7 +71,9 @@ namespace DaveDiverAP
                 catch (Exception ex) { Log.LogWarning($"[Harmony] Failed to patch {patchType.Name}: {ex.Message}"); }
             }
 
-            // Manual patch for ScenarioSkipPatch (can't use PatchAll due to IL2CPP generic type issues)
+            // Manual patches (can't use PatchAll due to IL2CPP type matching issues)
+            try { StoryProgressPatch.Apply(_harmony); }
+            catch (Exception ex) { Log.LogWarning($"[Harmony] Failed to patch StoryProgressPatch: {ex.Message}"); }
             try { ScenarioSkipPatch.Apply(_harmony); }
             catch (Exception ex) { Log.LogWarning($"[Harmony] Failed to patch ScenarioSkipPatch: {ex.Message}"); }
 
