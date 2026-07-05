@@ -110,16 +110,11 @@ namespace DaveDiverAP.Patches
         // Scenario name prefixes to skip when connected to AP.
         // We skip boat/lobby/restaurant cutscenes but NOT in-dive cutscenes.
         private static readonly string[] _skipPrefixes = {
-            // Tutorial & prologue
-            "Tutorial_Mission",
-            "Tutorial_IDiver",
-            "Tutorial07",
-            "Tutorial08",
+            // Prologue restaurant tutorial (safe to skip after Tutorial_ guard above)
             "BanchoSushi_upgrade",
-            "BanchoSushi_upgrade_boat",
             // Main story missions (boat conversations)
             "Main_Mission",
-            // Side missions (boat/lobby only — in-dive ones excluded below)
+            // Side missions (boat/lobby only — in-dive ones excluded by neverSkip/InGameManager)
             "Side_",
             // In-restaurant side mission dialogues
             "dialog_Side_",
@@ -182,6 +177,10 @@ namespace DaveDiverAP.Patches
             // mission state (e.g. dolphin missions, boss intros) and must play through.
             try { if (InGameManager.Instance != null) return true; }
             catch { }
+
+            // Never skip Tutorial_ scenarios — they run critical game initialization
+            // code during new game creation. Skipping them breaks scene loading.
+            if (dialogueBundleID.StartsWith("Tutorial_")) return true;
 
             // Check never-skip list — these are always interactive and must play
             foreach (var never in _neverSkip)
