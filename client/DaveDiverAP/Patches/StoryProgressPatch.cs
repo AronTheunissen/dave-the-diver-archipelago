@@ -108,8 +108,7 @@ namespace DaveDiverAP.Patches
     public static class ScenarioSkipPatch
     {
         // Scenario name prefixes to skip when connected to AP.
-        // We skip boat/lobby/restaurant cutscenes but NOT in-dive cutscenes
-        // (dialog_IngameCutscene_*) since those trigger boss encounters and story beats.
+        // We skip boat/lobby/restaurant cutscenes but NOT in-dive cutscenes.
         private static readonly string[] _skipPrefixes = {
             // Tutorial & prologue
             "Tutorial_Mission",
@@ -120,12 +119,22 @@ namespace DaveDiverAP.Patches
             "BanchoSushi_upgrade_boat",
             // Main story missions (boat conversations)
             "Main_Mission",
-            // Side missions
+            // Side missions (boat/lobby only — in-dive ones excluded below)
             "Side_",
             // In-restaurant side mission dialogues
             "dialog_Side_",
             // NPC unlock cutscenes (Sato/Marinca, etc.)
             "Fishcard_Contents_Unlock",
+        };
+
+        // Scenario name substrings that must NEVER be skipped (interactive in-dive events).
+        // These take priority over _skipPrefixes.
+        private static readonly string[] _neverSkip = {
+            "Dolphin",   // dolphin missions have rope-cutting QTEs
+            "Whale",     // whale missions
+            "Cutscene",  // all in-game cutscenes
+            "Boss",      // boss encounter triggers
+            "Escape",    // escape pod sequences
         };
 
         public static void Apply(HarmonyLib.Harmony harmony)
@@ -173,6 +182,10 @@ namespace DaveDiverAP.Patches
             // mission state (e.g. dolphin missions, boss intros) and must play through.
             try { if (InGameManager.Instance != null) return true; }
             catch { }
+
+            // Check never-skip list — these are always interactive and must play
+            foreach (var never in _neverSkip)
+                if (dialogueBundleID.Contains(never)) return true;
 
             foreach (var prefix in _skipPrefixes)
             {
