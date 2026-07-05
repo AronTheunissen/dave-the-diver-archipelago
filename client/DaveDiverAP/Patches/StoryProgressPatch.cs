@@ -95,27 +95,26 @@ namespace DaveDiverAP.Patches
             "BanchoSushi_upgrade",
         };
 
-        // Exact signature from Unity Explorer:
-        // StartScenario(String dialogueBundleID, Il2CppSystem.Action`1<bool> onTotalFinish,
-        //               bool useButton, bool showCurtain, bool isIgnorePlayingScenario)
-        [HarmonyPatch(typeof(ScenarioManager), "StartScenario",
+        // Patch StartScenarioInternal which all overloads funnel into.
+        // Confirmed from Unity Explorer: StartScenarioInternal(String, Action`1<bool>, bool, bool, bool)
+        // This has only ONE overload so no ambiguity for Harmony.
+        [HarmonyPatch(typeof(ScenarioManager), "StartScenarioInternal",
             new System.Type[] { typeof(string), typeof(Il2CppSystem.Action<bool>), typeof(bool), typeof(bool), typeof(bool) })]
         [HarmonyPrefix]
-        public static bool StartScenario_Prefix(string dialogueBundleID, Il2CppSystem.Action<bool> onTotalFinish, bool useButton, bool showCurtain, bool isIgnorePlayingScenario)
+        public static bool StartScenarioInternal_Prefix(string dialogueBundleID, Il2CppSystem.Action<bool> onTotalFinish, bool useButton, bool showCurtain, bool isIgnorePlayingScenario)
         {
-            if (!ArchipelagoClient.IsConnected) return true; // not connected — play normally
+            if (!ArchipelagoClient.IsConnected) return true;
 
             foreach (var prefix in _skipPrefixes)
             {
                 if (dialogueBundleID != null && dialogueBundleID.StartsWith(prefix))
                 {
                     Plugin.Log.LogInfo($"[ScenarioSkip] Skipping tutorial scenario: {dialogueBundleID}");
-                    // Invoke the callback so the game's state machine continues normally
                     try { onTotalFinish?.Invoke(true); } catch { }
-                    return false; // skip the actual scenario
+                    return false; // skip
                 }
             }
-            return true; // not a tutorial — play normally
+            return true;
         }
     }
 
