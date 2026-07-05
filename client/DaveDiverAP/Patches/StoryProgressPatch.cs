@@ -95,20 +95,23 @@ namespace DaveDiverAP.Patches
             "BanchoSushi_upgrade",
         };
 
+        // Exact signature from Unity Explorer:
+        // StartScenario(String dialogueBundleID, Il2CppSystem.Action`1<bool> onTotalFinish,
+        //               bool useButton, bool showCurtain, bool isIgnorePlayingScenario)
         [HarmonyPatch(typeof(ScenarioManager), "StartScenario",
             new System.Type[] { typeof(string), typeof(Il2CppSystem.Action<bool>), typeof(bool), typeof(bool), typeof(bool) })]
         [HarmonyPrefix]
-        public static bool StartScenario_Prefix(string sceneName, Il2CppSystem.Action<bool> onFinish, bool isIgnorePlayingScenario, bool arg3, bool arg4)
+        public static bool StartScenario_Prefix(string dialogueBundleID, Il2CppSystem.Action<bool> onTotalFinish, bool useButton, bool showCurtain, bool isIgnorePlayingScenario)
         {
             if (!ArchipelagoClient.IsConnected) return true; // not connected — play normally
 
             foreach (var prefix in _skipPrefixes)
             {
-                if (sceneName != null && sceneName.StartsWith(prefix))
+                if (dialogueBundleID != null && dialogueBundleID.StartsWith(prefix))
                 {
-                    Plugin.Log.LogInfo($"[ScenarioSkip] Skipping tutorial scenario: {sceneName}");
+                    Plugin.Log.LogInfo($"[ScenarioSkip] Skipping tutorial scenario: {dialogueBundleID}");
                     // Invoke the callback so the game's state machine continues normally
-                    onFinish?.Invoke(true);
+                    try { onTotalFinish?.Invoke(true); } catch { }
                     return false; // skip the actual scenario
                 }
             }
