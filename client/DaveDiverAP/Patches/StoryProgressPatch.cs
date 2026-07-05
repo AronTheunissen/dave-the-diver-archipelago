@@ -77,13 +77,8 @@ namespace DaveDiverAP.Patches
 
     /// <summary>
     /// Skips tutorial/prologue scenario cutscenes when connected to AP.
-    /// Hooks ScenarioManager.StartScenario(string, Action, bool, bool, bool) and returns false
-    /// for scenario names that match known tutorial/prologue patterns.
-    /// The 3rd bool parameter is isIgnorePlayingScenario — we just skip the whole call.
-    /// Mission rewards are granted by MissionManager separately, so skipping the
-    /// cutscene/dialogue wrapper doesn't lose any rewards.
+    /// Uses manual Harmony patching via AccessTools to avoid IL2CPP generic type matching issues.
     /// </summary>
-    [HarmonyPatch]
     public static class ScenarioSkipPatch
     {
         // Tutorial/prologue scenario name prefixes to skip when connected to AP
@@ -95,23 +90,64 @@ namespace DaveDiverAP.Patches
             "BanchoSushi_upgrade",
         };
 
-        // Patch StartScenarioInternal which all overloads funnel into.
-        // Confirmed from Unity Explorer: StartScenarioInternal(String, Action`1<bool>, bool, bool, bool)
-        // This has only ONE overload so no ambiguity for Harmony.
-        [HarmonyPatch(typeof(ScenarioManager), "StartScenarioInternal",
-            new System.Type[] { typeof(string), typeof(Il2CppSystem.Action<bool>), typeof(bool), typeof(bool), typeof(bool) })]
-        [HarmonyPrefix]
-        public static bool StartScenarioInternal_Prefix(string dialogueBundleID, Il2CppSystem.Action<bool> onTotalFinish, bool useButton, bool showCurtain, bool isIgnorePlayingScenario)
+        public static void Apply(HarmonyLib.Harmony harmony)
+        {
+            // Find StartScenarioInternal by parameter count: (string, Action<bool>, bool, bool, bool) = 5 params
+            var methods = typeof(ScenarioManager).GetMethods(
+                System.Reflection.BindingFlags.Public |
+                System.Reflection.BindingFlags.NonPublic |
+                System.Reflection.BindingFlags.Instance);
+
+            System.Reflection.MethodInfo? target = null;
+            foreach (var m in methods)
+            {
+                if (m.Name != "StartScenarioInternal") continue;
+                var parms = m.GetParameters();
+                if (parms.Length == 5 &&
+                    parms[0].ParameterType == typeof(string) &&
+                    parms[1].ParameterType.Name.Contains("Action") &&
+                    parms[2].ParameterType == typeof(bool))
+                {
+                    target = m;
+                    break;
+                }
+            }
+
+            if (target == null)
+            {
+                Plugin.Log.LogWarning("[ScenarioSkip] Could not find StartScenarioInternal(string, Action<bool>, bool, bool, bool) — skipping patch");
+                return;
+            }
+
+            var prefix = new HarmonyLib.HarmonyMethod(
+                typeof(ScenarioSkipPatch).GetMethod(nameof(StartScenarioInternal_Prefix)));
+            harmony.Patch(target, prefix: prefix);
+            Plugin.Log.LogInfo("[ScenarioSkip] Successfully patched StartScenarioInternal for tutorial skipping");
+        }
+
+        public static bool StartScenarioInternal_Prefix(object[] __args)
         {
             if (!ArchipelagoClient.IsConnected) return true;
+            var dialogueBundleID = __args?[0] as string;
+            if (dialogueBundleID == null) return true;
 
             foreach (var prefix in _skipPrefixes)
             {
-                if (dialogueBundleID != null && dialogueBundleID.StartsWith(prefix))
+                if (dialogueBundleID.StartsWith(prefix))
                 {
                     Plugin.Log.LogInfo($"[ScenarioSkip] Skipping tutorial scenario: {dialogueBundleID}");
-                    try { onTotalFinish?.Invoke(true); } catch { }
-                    return false; // skip
+                    // Try invoking the onFinish callback so state machine continues
+                    try
+                    {
+                        var cb = __args[1];
+                        if (cb != null)
+                        {
+                            var invokeMethod = cb.GetType().GetMethod("Invoke");
+                            invokeMethod?.Invoke(cb, new object[] { true });
+                        }
+                    }
+                    catch { }
+                    return false;
                 }
             }
             return true;

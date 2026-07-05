@@ -70,6 +70,10 @@ namespace DaveDiverAP
                 catch (Exception ex) { Log.LogWarning($"[Harmony] Failed to patch {patchType.Name}: {ex.Message}"); }
             }
 
+            // Manual patch for ScenarioSkipPatch (can't use PatchAll due to IL2CPP generic type issues)
+            try { ScenarioSkipPatch.Apply(_harmony); }
+            catch (Exception ex) { Log.LogWarning($"[Harmony] Failed to patch ScenarioSkipPatch: {ex.Message}"); }
+
             Log.LogInfo("Harmony patches applied.");
 
             // Initialize the Archipelago client
