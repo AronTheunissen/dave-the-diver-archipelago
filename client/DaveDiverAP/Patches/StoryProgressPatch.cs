@@ -81,13 +81,25 @@ namespace DaveDiverAP.Patches
     /// </summary>
     public static class ScenarioSkipPatch
     {
-        // Tutorial/prologue scenario name prefixes to skip when connected to AP
+        // Scenario name prefixes to skip when connected to AP.
+        // We skip boat/lobby/restaurant cutscenes but NOT in-dive cutscenes
+        // (dialog_IngameCutscene_*) since those trigger boss encounters and story beats.
         private static readonly string[] _skipPrefixes = {
+            // Tutorial & prologue
             "Tutorial_Mission",
             "Tutorial_IDiver",
             "Tutorial07",
             "Tutorial08",
             "BanchoSushi_upgrade",
+            "BanchoSushi_upgrade_boat",
+            // Main story missions (boat conversations)
+            "Main_Mission",
+            // Side missions
+            "Side_",
+            // In-restaurant side mission dialogues
+            "dialog_Side_",
+            // NPC unlock cutscenes (Sato/Marinca, etc.)
+            "Fishcard_Contents_Unlock",
         };
 
         public static void Apply(HarmonyLib.Harmony harmony)
