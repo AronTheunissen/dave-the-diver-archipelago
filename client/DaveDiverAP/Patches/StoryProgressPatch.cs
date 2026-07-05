@@ -75,6 +75,47 @@ namespace DaveDiverAP.Patches
         }
     }
 
+    /// <summary>
+    /// Skips tutorial/prologue scenario cutscenes when connected to AP.
+    /// Hooks ScenarioManager.StartScenario(string, Action, bool, bool, bool) and returns false
+    /// for scenario names that match known tutorial/prologue patterns.
+    /// The 3rd bool parameter is isIgnorePlayingScenario — we just skip the whole call.
+    /// Mission rewards are granted by MissionManager separately, so skipping the
+    /// cutscene/dialogue wrapper doesn't lose any rewards.
+    /// </summary>
+    [HarmonyPatch]
+    public static class ScenarioSkipPatch
+    {
+        // Tutorial/prologue scenario name prefixes to skip when connected to AP
+        private static readonly string[] _skipPrefixes = {
+            "Tutorial_Mission",
+            "Tutorial_IDiver",
+            "Tutorial07",
+            "Tutorial08",
+            "BanchoSushi_upgrade",
+        };
+
+        [HarmonyPatch(typeof(ScenarioManager), "StartScenario",
+            new System.Type[] { typeof(string), typeof(Il2CppSystem.Action<bool>), typeof(bool), typeof(bool), typeof(bool) })]
+        [HarmonyPrefix]
+        public static bool StartScenario_Prefix(string sceneName, Il2CppSystem.Action<bool> onFinish, bool isIgnorePlayingScenario, bool arg3, bool arg4)
+        {
+            if (!ArchipelagoClient.IsConnected) return true; // not connected — play normally
+
+            foreach (var prefix in _skipPrefixes)
+            {
+                if (sceneName != null && sceneName.StartsWith(prefix))
+                {
+                    Plugin.Log.LogInfo($"[ScenarioSkip] Skipping tutorial scenario: {sceneName}");
+                    // Invoke the callback so the game's state machine continues normally
+                    onFinish?.Invoke(true);
+                    return false; // skip the actual scenario
+                }
+            }
+            return true; // not a tutorial — play normally
+        }
+    }
+
     public static class QuestNameMapper
     {
         // Maps mission TID → AP location name suffix.
