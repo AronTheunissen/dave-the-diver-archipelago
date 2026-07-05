@@ -442,18 +442,50 @@ namespace DaveDiverAP.Patches
             _map.TryGetValue(missionTID, out var name) ? name : null;
 
         // Maps scenario completion names to AP location names.
-        // Scenario names ending in "_Complete" indicate mission completion.
-        // TODO: Fill in the correct mappings by playing through the game and
-        // watching for "[ScenarioSkip] Unknown completion scenario: X" in the log.
-        // The scenario name numbering does NOT correspond to chapter numbers.
+        // Confirmed from ConversationDic dump via Unity Explorer (2026-07-05).
+        // Note: scenarios fire WITHOUT the "Sequence_" prefix.
         private static readonly System.Collections.Generic.Dictionary<string, string> _scenarioMap = new()
         {
-            // ── Sub-missions (confirmed from actual gameplay) ─────────────────
-            { "Side_Dolphin01_Complete",    "Sub-Mission: A Dolphin's Request" },
-            { "Side_Dolphin02_Complete",    "Sub-Mission: What Happened to the Dolphins?" },
-            { "Side_Ellie_01_Complete",     "Sub-Mission: Assisting Ellie" },
-            { "Side_Duff01_Complete",       "Sub-Mission: Weaponsmith Duff" },
-            // TODO: Add more as you play through and see the scenario names in the log
+            // ── Main story missions ───────────────────────────────────────────
+            // Note: sub-step _Complete scenarios (e.g. _13_1_Complete) are intermediate
+            // steps and map to the same story beat as the final _Complete.
+            { "Main_Mission01_Complete",        "Story: Complete Chapter 1 (Traces of the Sea People)" },
+            { "Main_Mission07_Complete",        "Story: Complete Chapter 2 (Into the Deep)" },
+            { "Main_Mission09_Complete",        "Story: Complete Chapter 3 (A Request from the Sea People)" },
+            { "Main_Mission13_Complete",        "Story: Complete Chapter 4 (Abandoned Cave)" },
+            { "Main_Mission14_Complete",        "Story: Discover Glacier Passage" },
+            { "Main_Mission15_2_Complete",      "Story: Complete Chapter 5 (Frozen Passage)" },
+            { "Main_Mission16_Complete",        "Story: Complete Chapter 6 (Melting Glacier)" },
+            { "Main_Mission17_Complete",        "Story: Complete Chapter 7 (Broken Control Room)" },
+            { "Main_Mission18_Complete",        "Story: Complete The Leahs-chan Rescue" },
+            { "Main_Mission11_3_Complete",      "Story: Complete Deliver Key to Tenzhin" },
+            { "MainMission29_Complete",         "Story: Complete Cobra's Lost Crowbar" },
+            { "Main_Mission09_3_1_Complete",    "Story: Discover Sea People Village" },
+
+            // ── Sub-missions ──────────────────────────────────────────────────
+            { "Side_Dolphin01_Complete",        "Sub-Mission: A Dolphin's Request" },
+            { "Side_Dolphin02_Complete",        "Sub-Mission: What Happened to the Dolphins?" },
+            { "Side_Dolphin03_Complete",        "Sub-Mission: Finding the Baby Whale" },
+            { "Side_Ellie_01_Complete",         "Sub-Mission: Assisting Ellie" },
+            { "Side_Ellie_02_Complete",         "Sub-Mission: Reticent Girl" },
+            { "Side_Mission01_Complete",        "Sub-Mission: A Scolding from Yoshie" },
+            { "Side_Duff_MermanWeapon_Complete","Sub-Mission: Weaponsmith Duff" },
+            { "Side_Udo01_EllieTask_Complete",  "Sub-Mission: Red Ecological Data" },
+            { "Side_Doowa02_Mining_Complete",   "Sub-Mission: Sea Person at the Workshop" },
+            { "Side_Maro02_LostKid_Complete",   "Sub-Mission: Find the Children's Ball" },
+            { "Side_Doowa03_DryTree_Complete",  "Sub-Mission: Repair Kinglong's Statue" },
+            { "Side_Linchen04_Pet_Squid_Jellyfish_complete", "Sub-Mission: Pet Squid Selgio" },
+
+            // ── Boss fights ───────────────────────────────────────────────────
+            { "Boss_Klaus_Complete",            "Defeat: Great White Shark Klaus" },
+            { "Boss_MantisShrimp_Complete",     "Defeat: Mantis Shrimp" },
+            { "Boss_Lusca_Complete",            "Defeat: Lusca" },
+
+            // ── VIP / Special quests ──────────────────────────────────────────
+            { "Special_Maki_Mission_Complete",  "Quest: Serve Mxmtoon" },
+
+            // ── Godzilla DLC ──────────────────────────────────────────────────
+            { "Godzilla_FigureCollect_Complete","Defeat: Giant Gadon" },
         };
 
         public static string? GetLocationNameFromScenario(string scenarioName)
