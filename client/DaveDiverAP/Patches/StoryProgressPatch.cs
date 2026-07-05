@@ -28,34 +28,44 @@ namespace DaveDiverAP.Patches
 
         public static void Apply(HarmonyLib.Harmony harmony)
         {
-            // Hook ApplyMissionClear(int missionID) — fires when any mission is marked cleared.
-            // Simple int parameter, no IL2CPP type matching issues.
-            // Confirmed from Unity Explorer: ApplyMissionClear(System.Int32 missionID)
-            var target = typeof(MissionManager).GetMethod("ApplyMissionClear",
-                System.Reflection.BindingFlags.Public |
-                System.Reflection.BindingFlags.NonPublic |
-                System.Reflection.BindingFlags.Instance,
-                null,
-                new System.Type[] { typeof(int) },
-                null);
-
-            if (target == null)
+            // Try patching both ApplyMissionClear and ClearMission — one of them must fire.
+            // Confirmed from Unity Explorer both exist with (int) parameter.
+            int patchCount = 0;
+            foreach (var methodName in new[] { "ApplyMissionClear", "ClearMission" })
             {
-                Plugin.Log.LogWarning("[StoryProgress] Could not find ApplyMissionClear(int) — mission checks won't fire");
-                return;
-            }
+                var target = typeof(MissionManager).GetMethod(methodName,
+                    System.Reflection.BindingFlags.Public |
+                    System.Reflection.BindingFlags.NonPublic |
+                    System.Reflection.BindingFlags.Instance,
+                    null,
+                    new System.Type[] { typeof(int) },
+                    null);
 
-            var postfix = new HarmonyLib.HarmonyMethod(
-                typeof(StoryProgressPatch).GetMethod(nameof(OnMissionCleared_Postfix)));
-            harmony.Patch(target, postfix: postfix);
-            Plugin.Log.LogInfo("[StoryProgress] Successfully patched ApplyMissionClear");
+                if (target == null)
+                {
+                    Plugin.Log.LogWarning($"[StoryProgress] Could not find {methodName}(int)");
+                    continue;
+                }
+
+                var postfix = new HarmonyLib.HarmonyMethod(
+                    typeof(StoryProgressPatch).GetMethod(nameof(OnMissionCleared_Postfix)));
+                harmony.Patch(target, postfix: postfix);
+                Plugin.Log.LogInfo($"[StoryProgress] Successfully patched {methodName}");
+                patchCount++;
+            }
+            if (patchCount == 0)
+                Plugin.Log.LogWarning("[StoryProgress] No mission clear methods patched — mission checks won't fire");
         }
+
+        private static readonly System.Collections.Generic.HashSet<int> _loggedMissions = new();
 
         public static void OnMissionCleared_Postfix(int missionID)
         {
             try
             {
                 if (missionID == 0) return;
+                // Deduplicate — both ApplyMissionClear and ClearMission may fire for same mission
+                if (!_loggedMissions.Add(missionID)) return;
 
                 // Look up mission data from MissionManager to get title/type for logging
                 string title = "";
