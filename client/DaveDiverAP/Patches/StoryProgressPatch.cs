@@ -180,12 +180,15 @@ namespace DaveDiverAP.Patches
             // code during new game creation. Skipping them breaks scene loading.
             if (dialogueBundleID.StartsWith("Tutorial_")) return true;
 
-            // Only skip if we're past chapter 0 (past the prologue).
-            // During the prologue many scenarios are critical for game state initialization.
+            // Only skip if the save data has mission progress (past the prologue).
+            // During a fresh new game, scenarios run critical initialization code.
             try
             {
-                var chapterNum = ChapterManager.Instance?.currentChapterInfo?.chapterNumber ?? 0;
-                if (chapterNum <= 0) return true; // still in prologue — don't skip anything
+                var saveData = FishCatchPatch.CapturedSaveData;
+                if (saveData == null) return true; // no save data yet — don't skip
+                // If we have any cleared missions, we're past the prologue
+                var missionData = saveData.MissionData;
+                if (missionData == null || missionData.Count == 0) return true;
             }
             catch { return true; } // if we can't check, play safe and don't skip
 
