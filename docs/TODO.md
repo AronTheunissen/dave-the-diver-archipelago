@@ -1,151 +1,54 @@
-# Dave the Diver Archipelago - TODO List
+# Dave the Diver Archipelago — Master TODO
 
-> Last updated: June 30, 2026
-> Current status: APWorld complete, 1,400+ locations, 320+ items, 77 tests. C# client complete with 18 patches, all core functionality working with IsGameReady guards. Jungle DLC fully implemented. In-game testing phase.
+> Last updated: 2026-07-07
+> Goal: A fully working, submittable Archipelago randomizer for Dave the Diver (all DLC).
 
----
-
-## ✅ COMPLETED
-
-### APWorld (Python)
-- [x] Core world class (`__init__.py`) with item pool, location placement, slot data
-- [x] 1,400+ locations across 23 regions (incl. all DLC)
-- [x] 320+ items (fish, weapons, recipes, charms, ingredients, progressive equipment, DLC items)
-- [x] 5 victory conditions (Defeat Yawie, All Bosses, Diamond Rank, Master Diver, 100%)
-- [x] Comprehensive logic rules — boss gates, item chains, quest prerequisites (see `docs/LOGIC_NOTES.md`)
-- [x] All base game fish species (203) placed in correct depth zones with night dive rules
-- [x] All weapon trees (79 variants across 9 weapons)
-- [x] All dish upgrades (549 checks) with correct max levels + recipe unlock prerequisite rules
-- [x] Cooksta rank system (5 ranks, 12 requirement checks, gated by A Scolding from Yoshie)
-- [x] Ecowatcher missions (44+ real checks with depth/region gates)
-- [x] Ingredient first-find checks + filler items
-- [x] Charm system (12 charms from missions + Ecowatcher)
-- [x] Staff system (24 named staff, hire + training, configurable depth)
-- [x] Sub-missions (29 checks, toggleable, with quest chains)
-- [x] Cooking competition chain (4 fights with ingredient gates)
-- [x] VIP quest locations with ingredient access gates
-- [x] Photography system (20 real photo spots + 8 murals, all gated on Underwater Camera)
-- [x] `should_include_item()` and `should_include_location()` filtering
-- [x] `fill_slot_data()` passing all 28 options to client
-- [x] 7 chapters with correct story structure
-- [x] Unit tests (77/77 passing)
-
-### DLC Content
-- [x] **DREDGE DLC** — Aberration vortex fish (34), Drain Gun tree, Leo Keychain, tagged `dlc_dredge`
-- [x] **Godzilla DLC** — 2 recipes + 20 Kaiju figurine checks (all regions, gated by Ebirah), tagged `dlc_godzilla`
-- [x] **Ichiban DLC** — 4 recipe unlocks + dish upgrades, Buckwheat crop, Beat 'Em Up, Karaoke, 3 staff (Hamako/Etsuko/Chitose), Torben boss, 2 missions (Operation Sea Blue Eradication + Cold Noodles), gated by Chapter 5 + Cocktails Unlocked, tagged `dlc_ichiban`
-- [x] **Jungle DLC structure** — 8 regions, 30+ items, 100+ location checks (see below for TODOs), tagged `dlc_jungle`
-
-### Jungle DLC (Substantially Implemented)
-- [x] 8 new regions: Utara Village, Bancho Grill, Utara Lake Upper/Lower, Lakebed Sea, Setah Forest, Murau Temple, Surga Falls
-- [x] 7 chapter + epilogue story checks
-- [x] 6 boss defeat checks (Caiman, Snapping Turtle, Sulong, Stethacanthus, Xiphactinus, Basilosaurus)
-- [x] 9 staff unlock checks (Yasuto, Martin Tweed, Rover, Om Nom, Charlie Bonnet III, William Longbottom, Mita, Udo, Sato)
-- [x] 28 villager friendship reward checks (14 confirmed villagers × 2 tiers)
-- [x] 8 minigame checks (beetle battles, hide & seek, shooting range, duck hunting, rope puzzle, land fishing)
-- [x] 5 Insectagram checks
-- [x] 57 lake fish (Utara Lake Upper/Lower, Lakebed Sea) + 6 boss fish across 4 zones
-- [x] 36 insects (19 net-caught + 17 battle beetles) with TIDs 40001-40038
-- [x] 32 skewer recipes with TIDs 48150001-48150109
-- [x] 71 Bancho Grill complex recipe unlock locations with confirmed TIDs
-- [x] 24 Jungle Gun upgrade locations (4 modes × 6 levels)
-- [x] 10 jungle ingredient first-find checks
-- [x] 5 Bancho Grill restaurant milestone checks
-- [x] 9 exploration milestone checks
-- [x] Progressive Purification Filter (3 tiers), Machete, Bug Net, Fishing Rod, Villager Trust, Jungle Gun forms
-- [x] Full logic rules (region gating, tool requirements, boss sequence)
-
-### C# Client Mod
-- [x] Plugin entry point (BepInEx 6 IL2CPP)
-- [x] Archipelago connection with auto-reconnect
-- [x] Item queue (thread-safe, boat-only delivery)
-- [x] Death Link support
-- [x] 3-tab in-game UI (F9): Connection · Hints · Progress
-- [x] Goal tracker for all 5 victory conditions
-- [x] Hint system (request by item or location name)
-- [x] Progress tracker with item tracker (Equipment/Key Items/Charms/Weapons tabs) + live category breakdown
-- [x] Toast notifications (item received, death, connection, goal)
-- [x] BepInEx config file support
-- [x] Save/restore session state (full persistent state for all item types)
-- [x] SlotData parsing (all 28 options)
-- [x] 17 Harmony patches — **all real class names confirmed via dump.cs** ✅
-- [x] **ItemHandler — all game API calls implemented** (PhoneAppUpgradeManager, MissionManager, SaveData, ChapterManager, etc.)
-- [x] SaveLoadPatch — reapplies all items on save load via first boat entry
-- [x] LocationTracker for all location categories
-- [x] **StoryProgressPatch redesigned** — uses GetClearMissionDialogData hook, auto-logs mission TIDs to BepInEx log
-- [x] **QuestNameMapper** — all quest entries as commented placeholders, ready to fill during gameplay
-
-### Reverse Engineering
-- [x] Generated dump.cs via Il2CppDumper on game machine
-- [x] Confirmed all 17 patch class/method names from dump.cs
-- [x] Updated `docs/CLASS_NAME_CHEAT_SHEET.md` with all confirmed names
-- [x] Identified key save data classes: `SaveData`, `SNSInfoSave`, `ChapterManager`, `MissionManager`
-
-### Documentation
-- [x] `docs/SETUP_GUIDE.md` — player setup guide
-- [x] `docs/MODDING_NOTES.md` — reverse engineering guide
-- [x] `docs/DESIGN.md` — design decisions
-- [x] `docs/CLASS_NAME_CHEAT_SHEET.md` — all confirmed class names from dump.cs
+This file lists **only what remains to be done**. Completed work is not tracked here.
+See session notes and git log for history.
 
 ---
 
 ## 🔴 CRITICAL — Blocking Actual Play
 
-### ✅ COMPLETED IN SESSION 3 (2026-06-30)
-- [x] **IngredientPatch**: Re-implemented using `IngredientsStorage.AddIngredients()` with persistent dedup via `ItemQueue.IsGameReady`
-- [x] **RecipeUnlockPatch**: Re-enabled with `IsGameReady` load guard
-- [x] **CharmPatch**: Re-enabled with `IsGameReady` load guard
-- [x] **CookstaPatch** follower/grade hooks: Re-enabled with `IsGameReady` load guard
-- [x] **ChallengePatch**: Deleted (was placeholder content)
-- [x] **challenge_locations**: Removed from `locations.py`
-- [x] **BossDefeatedPatch**: Void-prefix guard added for NullRef loop (non-blocking workaround)
-- [x] **SaveData**: Added `FoundIngredients` persistence for archipelago items
-- [x] **ItemQueue**: Added `IsGameReady` public property for load-time guards
-- [x] **23 new tests added** (total 77/77 passing)
-- [x] **Lusca rule bug fixed** (missing Vortex Entry requirement)
-- [x] **Humboldt Squid duplicate rule cleaned up**
+These must be fixed before anyone can run a real game.
 
-### 🟡 OPEN ISSUES / TODO
+### C# Client Patches
 
-#### Known Issues (Not Blocking)
-- [ ] **Save-load crash on 'Continue'** from main menu — May be fixed by IsGameReady guards. Needs in-game testing.
-- [ ] **CommonBossDead.DoJob NullRef loop** — Partially mitigated by void prefix guard; real fix needs to patch base class `BossSceneSO.JobStuff` or find better hook point
-- [ ] **CharmPatch**: Need to verify TIDs are correct in-game
-- [ ] **staff_training_locations**: Not being used anywhere in the location_table aggregation — check if this should be included!
+- [ ] **Save-load crash on "Continue"** — The mod may crash when loading a save from the main menu. Believed to be fixed by `IsGameReady` guards added in Session 3, but needs in-game verification. If still crashing, bisect by disabling patches one by one (see `SESSION_NOTES_2026-06-29.md`).
 
-#### Disabled Patches (SaveSystem/Interop Missing)
-- [ ] **SaveLoadPatch** — Disabled (SaveSystem not in interop DLL)
-- [ ] **MinigamePatch** — Disabled (seahorse racing, card games — interop missing)
-- [ ] **EcowatcherPatch** — Disabled (EcoWatcherDeliverPopup not found in interop)
+- [ ] **CommonBossDead.DoJob NullRef loop** — Boss defeat fires a NullRef repeatedly after the cutscene. Current void-prefix guard stops the loop but is a workaround. Real fix: patch `BossSceneSO.JobStuff` base class, or find a cleaner hook point. Not game-breaking but noisy.
 
-#### Partial Implementation (Hooks Not Yet Applied)
-- [ ] **RecipeUnlockPatch.UpgradeDish_Postfix** — Still commented out (LocationTracker.OnDishResearchUpdated not implemented)
+- [ ] **RecipeUnlockPatch.UpgradeDish_Postfix** — Currently commented out. `LocationTracker.OnDishResearchUpdated` is not yet implemented. This means dish upgrade checks are never sent to the AP server during play — a major gap.
 
-### In-Game Testing Checklist
-- [ ] Build mod on game machine (`dotnet build` in `client/DaveDiverAP/`)
-- [ ] Install and connect to a test Archipelago server
-- [ ] Verify fish catches trigger correctly
-- [ ] Verify boss defeats trigger correctly
-- [ ] Verify boat-only item delivery works
-- [ ] Verify goal completion fires correctly
-- [ ] Test save/load 'Continue' flow (should not crash with IsGameReady guards)
+- [ ] **SaveLoadPatch** — Disabled because `SaveSystem` is not in the interop DLL. Need to either find it in another DLL or re-implement the hook via a different class. Required for reapplying items on game load.
+
+- [ ] **MinigamePatch** — Disabled (seahorse racing, card games — interop class missing). Minigame location checks will silently never fire.
+
+- [ ] **EcowatcherPatch** — Disabled (`EcoWatcherDeliverPopup` not found in interop). Ecowatcher location checks will silently never fire.
+
+- [ ] **CharmPatch TID verification** — Charm TIDs need to be verified in-game to confirm they are correct.
+
+- [ ] **staff_training_locations not in location_table** — `staff_training_locations` dict is defined but never added to `location_table` in `locations.py`. Either add it or confirm it's intentionally excluded (superseded by `staff_all_levels_locations`).
 
 ---
 
-## 🟡 IMPORTANT — Data To Fill In (Requires Playing)
+## 🟠 HIGH PRIORITY — Required for Completeness
 
-### Godzilla DLC
-- [x] Confirm exact Kaiju figurine locations per region — all 20 named figurines with correct regions ✅
+These are needed for the randomizer to cover all game content correctly.
 
-### Jungle DLC — Remaining Gaps
-- [x] 57 lake fish (Utara Lake Upper/Lower, Lakebed Sea) — fully implemented ✅
-- [x] 6 boss fish across jungle zones — fully implemented ✅
-- [x] 36 insects (net + battle beetles) — fully implemented with TIDs 40001-40038 ✅
-- [x] 32 skewer recipes — fully implemented with TIDs 48150001-48150109 ✅
-- [x] 71 Bancho Grill complex recipe unlocks — fully implemented with confirmed TIDs ✅
-- [x] 24 Jungle Gun upgrade locations — fully implemented ✅
-- [ ] **Jungle grill recipe TID dump** — Run `tools/unity_explorer_dump_grill.cs` in-game via UnityExplorer (uses `GrillRecipeDataDic`). Output saves to `grill_dump.txt` in persistent data path and copies to clipboard. We need TIDs for ~75 simple "Grilled X" recipes that are NOT yet in `jungle_restaurant_locations`. These recipes ARE upgradeable (same as simple sushi) so they need to be added as locations. After getting the dump, paste into chat and we'll populate `jungle_restaurant_locations` + `SUSHI_UPGRADE_LEVELS.md`. See `docs/SUSHI_UPGRADE_LEVELS.md` → Jungle section for the full list of known dish names.
-- [ ] **Jungle grill recipe name verification** — Several complex recipes in our code may have wrong names vs. the actual in-game names. Check these pairs when in-game (see `SUSHI_UPGRADE_LEVELS.md` for full list with ✅/❌ status):
+### Dish Upgrade Checks (Major Gap)
+
+- [ ] **Add sushi dishes to dish_upgrade_locations** — All base game sushi (8050xxx) and Tuna Bar sushi (8052xxx) are upgradeable (max level 10 confirmed from spreadsheet) but are NOT yet in `dish_upgrade_locations`. Need to add them all. See `docs/SUSHI_UPGRADE_LEVELS.md` for the full list.
+
+- [ ] **Update existing dish_upgrade_locations max levels** — The spreadsheet confirms all non-truffle, non-boss cooked dishes are max level 10. Many entries in the code have incorrect lower values (e.g. 3, 4, 6, 7, 9, 12). These should all be updated to 10. Notable cases flagged in `SUSHI_UPGRADE_LEVELS.md` Notes column.
+
+- [ ] **Special Fried Shrimp Sushi and Vegetable Sushi** — Currently set to max level 1 in code (no upgrades). Spreadsheet says max level 10. Verify in-game and update if confirmed.
+
+### Jungle Grill Recipes (Major Gap)
+
+- [ ] **TID dump for all grill recipes** — Run `tools/unity_explorer_dump_grill.cs` in UnityExplorer while in-game. It uses `GrillRecipeDataDic` and saves to `grill_dump.txt` + clipboard. Paste output into chat. We need TIDs for ~75 simple "Grilled X" recipes not yet in `jungle_restaurant_locations`. These are upgradeable and need to be added as locations.
+
+- [ ] **Verify recipe name mismatches** — Several complex grill recipes in the code may have wrong names. Check these pairs in the in-game recipe research screen:
   - "Gourami Fried" vs "Sweet and Sour Gourami"
   - "Largemouth Bass Boiled" vs "Spicy Largemouth Bass Stew"
   - "Banana Halo-Halo" vs "Fruit Halo-Halo"
@@ -161,44 +64,105 @@
   - "Tambaqui Grilled" vs "Tambaqui Steak"
   - "Tangsuyuk" vs "Sweet and Sour Pork"
   - "King Trumpet Mushroom Stir-fried" vs "Stir-Fried Spicy King Oyster Mushrooms"
-  - "Xiphactinus Spicy Soup" vs "Xiphactinus Tamarind Soup" (boss)
-  - "Stethacanthus Coconut Stew" vs "Stethacanthus Fin Soup" (boss)
-  - "Ophtalmosaurus Grilled" vs "Ophthalmosaurus Whole Roasted Head" (boss)
-- [ ] **Jungle grill recipes missing from code entirely** — Add these once TIDs are confirmed from dump: Triple Fried Bananas, Steamed Tricolor Discus, Herb-Stuffed Sarcastic Fringehead Roast, Aquilolamna Stew (and all ~75 simple "Grilled X" recipes)
-- [ ] **Jungle grill recipe max upgrade levels** — Need in-game research screen to check max stars for each recipe. Fill in the Max Level column in `docs/SUSHI_UPGRADE_LEVELS.md` → Jungle section.
-- [ ] Jungle ingredient wiki data (crop types, unlocks, exact locations) — still needed for detailed item descriptions
-- [ ] Villager friendship quest details (exact friendship gates, item unlock conditions) — structure in place, details pending
-- [ ] Dr. Bacon research checks (jungle-specific research progression) — needs verification
+  - "Xiphactinus Spicy Soup" vs "Xiphactinus Tamarind Soup" (boss recipe)
+  - "Stethacanthus Coconut Stew" vs "Stethacanthus Fin Soup" (boss recipe)
+  - "Ophtalmosaurus Grilled" vs "Ophthalmosaurus Whole Roasted Head" (boss recipe)
 
-### Base Game
-- [x] Ichiban DLC recipe unlock conditions confirmed — staff training recipes ✅
+- [ ] **Add missing complex grill recipes** — After TID dump, add: Triple Fried Bananas, Steamed Tricolor Discus, Herb-Stuffed Sarcastic Fringehead Roast, Aquilolamna Stew, and all confirmed "Grilled X" simple recipes.
+
+- [ ] **Jungle grill recipe max upgrade levels** — Check the in-game research screen for a sample of jungle grill recipes to confirm whether they all cap at 10, or vary. Fill in the Max Level column in `docs/SUSHI_UPGRADE_LEVELS.md` → Jungle section.
+
+### Quest / Mission TIDs (Client-Side)
+
+- [ ] **QuestNameMapper — fill in mission TIDs** — `QuestNameMapper` in the client has all quest entries as commented placeholders. Mission TIDs need to be recorded in-game via the `StoryProgressPatch` auto-logging (check BepInEx log after triggering each quest/story beat). A few are confirmed (see `SESSION_NOTES_2026-07-03.md`); most are not.
+  - Particularly needed: all sub-mission TIDs, cooking competition TIDs, chapter completion TIDs
+
+- [ ] **Verify mission TID 10010002** — Listed in session notes as "NOT cleared — prologue skip TID?" — check in-game what this refers to.
+
+### Logic Gaps
+
+- [ ] **Salvage Drone source quest** — Currently ungated in logic. Find the exact quest/trigger that gives the player the Salvage Drone and add as a gate in `rules.py`.
+
+- [ ] **Sub-missions with unknown triggers** — These locations exist in code but have no prerequisite rules confirmed:
+  - `Sub-Mission: Assisting Ellie` — what triggers Ellie's mission?
+  - `Sub-Mission: Reticent Girl` — unknown trigger
+  - `Sub-Mission: Sea Person at the Workshop` — any village prerequisites?
+  - `Sub-Mission: Wedding Song Record` — any prerequisites?
+  - `Sub-Mission: Find the Children's Ball` — any prerequisites?
+
+- [ ] **Dr. Bacon jungle research checks** — Structure not yet implemented. What are the research milestones and their triggers in the jungle DLC?
+
+- [ ] **Villager friendship details** — Structure is in place (14 villagers × 2 tiers) but exact friendship point thresholds and reward conditions need verification from gameplay.
 
 ---
 
-## 🟡 IMPORTANT — Quality & Completeness
+## 🟡 IMPORTANT — In-Game Testing
 
-### Unit Tests (54/54 passing ✅)
-- [x] ID uniqueness, no duplicate IDs, no item/location collisions
-- [x] `should_include_item()` filtering — all categories, DLC flags, traps
-- [x] `should_include_location()` filtering — fish 3-way, all toggles, DLC
-- [x] All location regions valid (in REGION_NAMES)
-- [x] `fill_slot_data()` key coverage and value types
-- [ ] Test region access rules (needs Archipelago State mock)
-- [ ] Test victory conditions end-to-end (needs full world generation)
+Nothing below is blocked on code changes — it just requires playing the game with the mod active.
+
+### Build & Connect
+- [ ] Build mod on game machine: `dotnet build` in `client/DaveDiverAP/`
+- [ ] Connect to a test Archipelago server and start a new game
+
+### Core Functionality
+- [ ] Fish catches trigger location checks correctly
+- [ ] Boss defeats trigger location checks correctly
+- [ ] Recipe unlocks trigger location checks correctly
+- [ ] Dish upgrade checks fire correctly (requires `UpgradeDish_Postfix` fix above first)
+- [ ] Items received from AP are applied correctly (ingredients, recipes, weapons, equipment)
+- [ ] Boat-only item delivery works (items queue and deliver on first boat arrival)
+- [ ] Save/load "Continue" does not crash (critical — see above)
+- [ ] Items are correctly reapplied after loading a save
+- [ ] Goal completion fires for all 5 victory conditions
+
+### UI & Polish
+- [ ] Connection UI works correctly (connect/disconnect, status display)
+- [ ] Progress UI shows correct counts for all categories
+- [ ] Hint system returns correct item/location information
+- [ ] Toast notifications appear for item received, death link, goal complete
+- [ ] Death Link sends and receives correctly
 
 ---
 
-## 🟢 NICE TO HAVE — Polish
+## 🟢 NICE TO HAVE — Polish & Submission
 
-### Connection UI Improvements
-- [ ] Auto-connect on game launch (config option exists, needs UI toggle)
-- [ ] Better error messages for common connection failures
-- [ ] Server browser / recent servers list
+These are not blocking play but are needed before submitting to Archipelago.
 
-### Spoiler Log Viewer
-- [ ] Add 4th tab to UI showing where your items are in the multiworld
+### APWorld Polish
+- [ ] **Archipelago submission review** — Review the official Archipelago game submission guidelines and checklist
+- [ ] **`apworld/davethediver/data/` folder** — Check if any required data files (item/location tables, etc.) are needed by the AP framework
+- [ ] **Logic unit tests** — Add tests for region access rules and victory conditions (requires Archipelago State mock)
+- [ ] **End-to-end world generation test** — Generate a full world and verify all locations are reachable
 
-### Archipelago Submission
-- [ ] Review Archipelago submission guidelines
-- [ ] Add `apworld/davethediver/data/` folder with any required data files
-- [ ] Register on Archipelago website
+### Client Polish
+- [ ] **Auto-connect on game launch** — Config option exists, needs UI toggle to expose it
+- [ ] **Better connection error messages** — More descriptive errors for common failures (wrong port, server down, etc.)
+- [ ] **Spoiler log tab** — 4th tab in the F9 UI showing where your items are in the multiworld
+- [ ] **Recent servers list** — Remember last-used server/port/slot in connection UI
+
+### Documentation
+- [ ] **YAML_GUIDE.md** — Verify all options and their effects are documented accurately
+- [ ] **SETUP_GUIDE.md** — Update with final mod installation steps once build process is finalized
+- [ ] **Register on Archipelago website** — Once submission is accepted
+
+---
+
+## 📋 Reference: Known Correct Data
+
+Quick reference for things already confirmed and implemented:
+
+| Thing | Status |
+|-------|--------|
+| Base game sushi max level | All 10 (confirmed via spreadsheet) |
+| Tuna Bar sushi max level | All 10 (confirmed via spreadsheet) |
+| Truffle VIP dish max level | All 5 (confirmed via spreadsheet) |
+| Boss recipe max level | All 1 (no upgrades) |
+| Cooked dish max levels in code | Mostly wrong (should be 10) — see SUSHI_UPGRADE_LEVELS.md |
+| Jungle grill recipe max levels | Unknown — needs in-game research |
+| All fish TIDs | Confirmed via FishCatchPatch._fishIdMap |
+| All weapon TIDs | Confirmed via weapon_locations |
+| Quest TIDs | Partially confirmed — see SESSION_NOTES_2026-07-03.md |
+| Jungle insect TIDs | Confirmed: 40001–40038 |
+| Jungle skewer recipe TIDs | Confirmed: 48150001–48150109 |
+| Jungle complex grill recipe TIDs | Confirmed: 8054101–8054308 |
+| Simple "Grilled X" recipe TIDs | ❌ Not yet recorded — needs UnityExplorer dump |
