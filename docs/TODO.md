@@ -144,6 +144,28 @@
 - [x] 32 skewer recipes — fully implemented with TIDs 48150001-48150109 ✅
 - [x] 71 Bancho Grill complex recipe unlocks — fully implemented with confirmed TIDs ✅
 - [x] 24 Jungle Gun upgrade locations — fully implemented ✅
+- [ ] **Jungle grill recipe TID dump** — Run `tools/unity_explorer_dump_grill.cs` in-game via UnityExplorer (uses `GrillRecipeDataDic`). Output saves to `grill_dump.txt` in persistent data path and copies to clipboard. We need TIDs for ~75 simple "Grilled X" recipes that are NOT yet in `jungle_restaurant_locations`. These recipes ARE upgradeable (same as simple sushi) so they need to be added as locations. After getting the dump, paste into chat and we'll populate `jungle_restaurant_locations` + `SUSHI_UPGRADE_LEVELS.md`. See `docs/SUSHI_UPGRADE_LEVELS.md` → Jungle section for the full list of known dish names.
+- [ ] **Jungle grill recipe name verification** — Several complex recipes in our code may have wrong names vs. the actual in-game names. Check these pairs when in-game (see `SUSHI_UPGRADE_LEVELS.md` for full list with ✅/❌ status):
+  - "Gourami Fried" vs "Sweet and Sour Gourami"
+  - "Largemouth Bass Boiled" vs "Spicy Largemouth Bass Stew"
+  - "Banana Halo-Halo" vs "Fruit Halo-Halo"
+  - "Banana Blossom Salad" vs "Banana Flower Salad"
+  - "Mud Carp Grilled in Banana Leaf" vs "Grilled Mud Carp with Herbs"
+  - "Piraiba Catfish Tamarind Soup" vs "Piraiba Catfish Soup"
+  - "Electric Eel Sliced" vs "Smoked Eel Slices"
+  - "Crayfish Sambal Stir-fried" vs "Red Swamp Crayfish Sambal Stir-Fry"
+  - "Crayfish Lemongrass Steamed" vs "Steamed Freshwater Crayfish with Lemongrass"
+  - "Ciurcopterus Stir-fried" vs "Braised Ciurcopterus"
+  - "Ammonite Salad" vs "Ammonite Water Spinach Salad"
+  - "Clown Featherback Taro Fried" vs "Clown Featherback Taro Croquette"
+  - "Tambaqui Grilled" vs "Tambaqui Steak"
+  - "Tangsuyuk" vs "Sweet and Sour Pork"
+  - "King Trumpet Mushroom Stir-fried" vs "Stir-Fried Spicy King Oyster Mushrooms"
+  - "Xiphactinus Spicy Soup" vs "Xiphactinus Tamarind Soup" (boss)
+  - "Stethacanthus Coconut Stew" vs "Stethacanthus Fin Soup" (boss)
+  - "Ophtalmosaurus Grilled" vs "Ophthalmosaurus Whole Roasted Head" (boss)
+- [ ] **Jungle grill recipes missing from code entirely** — Add these once TIDs are confirmed from dump: Triple Fried Bananas, Steamed Tricolor Discus, Herb-Stuffed Sarcastic Fringehead Roast, Aquilolamna Stew (and all ~75 simple "Grilled X" recipes)
+- [ ] **Jungle grill recipe max upgrade levels** — Need in-game research screen to check max stars for each recipe. Fill in the Max Level column in `docs/SUSHI_UPGRADE_LEVELS.md` → Jungle section.
 - [ ] Jungle ingredient wiki data (crop types, unlocks, exact locations) — still needed for detailed item descriptions
 - [ ] Villager friendship quest details (exact friendship gates, item unlock conditions) — structure in place, details pending
 - [ ] Dr. Bacon research checks (jungle-specific research progression) — needs verification
