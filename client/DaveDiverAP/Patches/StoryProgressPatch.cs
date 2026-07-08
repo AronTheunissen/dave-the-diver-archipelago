@@ -110,7 +110,9 @@ namespace DaveDiverAP.Patches
         // Scenario name prefixes to skip when connected to AP.
         // We skip boat/lobby/restaurant cutscenes but NOT in-dive cutscenes.
         private static readonly string[] _skipPrefixes = {
-            // Main story missions (boat conversations) - NOT during tutorial
+            // Tutorial scenarios (Cobra opening dialogue etc.)
+            "Tutorial_",
+            // Main story missions (boat conversations)
             "Main_Mission",
             // Side missions (boat/lobby only — in-dive ones excluded by neverSkip/InGameManager)
             "Side_",
@@ -171,32 +173,10 @@ namespace DaveDiverAP.Patches
             var dialogueBundleID = __args?[0] as string;
             if (dialogueBundleID == null) return true;
 
-            // Never skip scenarios during the initial load sequence.
-            // The "Continue" save load fires story scenarios (e.g. Cobra's opening dialogue)
-            // BEFORE the game is fully ready. Skipping them at that point orphans the
-            // TalkPanel_InGame singleton → NullReferenceException cascade → hardlock.
-            if (!ItemQueue.IsGameLoaded) return true;
-
             // Never skip scenarios that fire while diving — in-water cutscenes advance
             // mission state (e.g. dolphin missions, boss intros) and must play through.
             try { if (InGameManager.Instance != null) return true; }
             catch { }
-
-            // Never skip Tutorial_ scenarios — they run critical game initialization
-            // code during new game creation. Skipping them breaks scene loading.
-            if (dialogueBundleID.StartsWith("Tutorial_")) return true;
-
-            // Only skip if the save data has mission progress (past the prologue).
-            // During a fresh new game, scenarios run critical initialization code.
-            try
-            {
-                var saveData = FishCatchPatch.CapturedSaveData;
-                if (saveData == null) return true; // no save data yet — don't skip
-                // If we have any cleared missions, we're past the prologue
-                var missionData = saveData.MissionData;
-                if (missionData == null || missionData.Count == 0) return true;
-            }
-            catch { return true; } // if we can't check, play safe and don't skip
 
             // Check never-skip list — these are always interactive and must play
             foreach (var never in _neverSkip)
