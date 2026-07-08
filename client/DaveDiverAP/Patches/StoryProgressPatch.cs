@@ -135,10 +135,11 @@ namespace DaveDiverAP.Patches
 
         public static void Apply(HarmonyLib.Harmony harmony)
         {
-            // Patch ALL methods on ScenarioManager whose name contains "StartScenario"
-            // and whose first parameter is a string. The game logs "Req StartScenario :X"
-            // which suggests a public StartScenario method is the real entry point.
-            // We also patch StartScenarioInternal as a fallback.
+            // Only patch the 3-param overload of StartScenarioInternal — this is the one
+            // the game uses for lobby/tutorial scenarios. Patching ALL StartScenario* methods
+            // was causing IL2CPP crashes during lobby init even when the prefix never fired,
+            // because Harmony's IL rewriting broke the JIT compilation of coroutine-called
+            // methods that fire during scene initialization.
             var methods = typeof(ScenarioManager).GetMethods(
                 System.Reflection.BindingFlags.Public |
                 System.Reflection.BindingFlags.NonPublic |
@@ -150,10 +151,11 @@ namespace DaveDiverAP.Patches
             int patchCount = 0;
             foreach (var m in methods)
             {
-                if (!m.Name.Contains("StartScenario")) continue;
+                if (m.Name != "StartScenarioInternal") continue;
                 var parms = m.GetParameters();
-                // Must have at least one parameter and the first must be a string (the scenario name)
-                if (parms.Length == 0 || parms[0].ParameterType != typeof(string)) continue;
+                // Only patch the 3-param overload (string, Action<bool>, bool)
+                if (parms.Length != 3) continue;
+                if (parms[0].ParameterType != typeof(string)) continue;
 
                 try
                 {
@@ -168,7 +170,7 @@ namespace DaveDiverAP.Patches
             }
 
             if (patchCount == 0)
-                Plugin.Log.LogWarning("[ScenarioSkip] Could not find any StartScenario* overload — skipping patch");
+                Plugin.Log.LogWarning("[ScenarioSkip] Could not find StartScenarioInternal(3 params) — skipping patch");
             else
                 Plugin.Log.LogInfo($"[ScenarioSkip] Successfully patched {patchCount} StartScenario* overload(s)");
         }
