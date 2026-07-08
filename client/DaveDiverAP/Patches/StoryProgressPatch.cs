@@ -171,6 +171,12 @@ namespace DaveDiverAP.Patches
             var dialogueBundleID = __args?[0] as string;
             if (dialogueBundleID == null) return true;
 
+            // Never skip scenarios during the initial load sequence.
+            // The "Continue" save load fires story scenarios (e.g. Cobra's opening dialogue)
+            // BEFORE the game is fully ready. Skipping them at that point orphans the
+            // TalkPanel_InGame singleton → NullReferenceException cascade → hardlock.
+            if (!ItemQueue.IsGameLoaded) return true;
+
             // Never skip scenarios that fire while diving — in-water cutscenes advance
             // mission state (e.g. dolphin missions, boss intros) and must play through.
             try { if (InGameManager.Instance != null) return true; }
