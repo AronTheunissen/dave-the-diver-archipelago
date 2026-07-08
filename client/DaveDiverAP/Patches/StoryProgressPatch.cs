@@ -111,8 +111,6 @@ namespace DaveDiverAP.Patches
         // Scenario name prefixes to skip when connected to AP.
         // We skip boat/lobby/restaurant cutscenes but NOT in-dive cutscenes.
         private static readonly string[] _skipPrefixes = {
-            // Tutorial scenarios (Cobra opening dialogue etc.)
-            "Tutorial_",
             // Main story missions (boat conversations)
             "Main_Mission",
             // Side missions (boat/lobby only — in-dive ones excluded by neverSkip/InGameManager)
@@ -135,78 +133,73 @@ namespace DaveDiverAP.Patches
 
         public static void Apply(HarmonyLib.Harmony harmony)
         {
-            // ScenarioManager is NOT safe to patch — any patch causes IL2CPP JIT crash.
-            // Instead patch TutorialManager.ActivateTutorial which is what triggers
-            // Tutorial_Mission01 via the tutorial system.
-            var methods = typeof(TutorialManager).GetMethods(
+            // Patch the 5-param StartScenarioInternal — this is the internal method called
+            // after StartScenario validates its arguments. Confirmed safe to patch (original
+            // working approach from before today's changes).
+            var methods = typeof(ScenarioManager).GetMethods(
                 System.Reflection.BindingFlags.Public |
                 System.Reflection.BindingFlags.NonPublic |
                 System.Reflection.BindingFlags.Instance);
 
-            var prefix = new HarmonyLib.HarmonyMethod(
-                typeof(ScenarioSkipPatch).GetMethod(nameof(ActivateTutorial_Prefix)));
-
-            var postfix = new HarmonyLib.HarmonyMethod(
-                typeof(ScenarioSkipPatch).GetMethod(nameof(ActivateTutorial_Postfix)));
-
-            int patchCount = 0;
+            System.Reflection.MethodInfo? target = null;
             foreach (var m in methods)
             {
-                if (m.Name != "ActivateTutorial" && m.Name != "InitActivateTutorial") continue;
-                try
+                if (m.Name != "StartScenarioInternal") continue;
+                var parms = m.GetParameters();
+                if (parms.Length == 5 &&
+                    parms[0].ParameterType == typeof(string) &&
+                    parms[1].ParameterType.Name.Contains("Action") &&
+                    parms[2].ParameterType == typeof(bool))
                 {
-                    harmony.Patch(m, prefix: prefix, postfix: postfix);
-                    Plugin.Log.LogInfo($"[ScenarioSkip] Patched TutorialManager.{m.Name}");
-                    patchCount++;
-                }
-                catch (Exception ex)
-                {
-                    Plugin.Log.LogWarning($"[ScenarioSkip] Failed to patch TutorialManager.{m.Name}: {ex.Message}");
+                    target = m;
+                    break;
                 }
             }
 
-            if (patchCount == 0)
-                Plugin.Log.LogWarning("[ScenarioSkip] Could not patch any TutorialManager methods");
-            else
-                Plugin.Log.LogInfo($"[ScenarioSkip] Successfully patched {patchCount} TutorialManager method(s)");
+            if (target == null)
+            {
+                Plugin.Log.LogWarning("[ScenarioSkip] Could not find StartScenarioInternal(string, Action<bool>, bool, bool, bool) — skipping patch");
+                return;
+            }
+
+            var prefix = new HarmonyLib.HarmonyMethod(
+                typeof(ScenarioSkipPatch).GetMethod(nameof(StartScenarioInternal_Prefix)));
+            harmony.Patch(target, prefix: prefix);
+            Plugin.Log.LogInfo("[ScenarioSkip] Successfully patched StartScenarioInternal for scenario skipping");
         }
 
-        // Scenario names to skip — mapped from mission dialogue bundle IDs
-        private static bool ShouldSkipScenario(string? bundleId)
-        {
-            if (bundleId == null) return false;
-            foreach (var prefix in _skipPrefixes)
-                if (bundleId.StartsWith(prefix)) return true;
-            foreach (var never in _neverSkip)
-                if (bundleId.Contains(never)) return false;
-            return false;
-        }
-
-        // Prefix for TutorialManager.ActivateTutorial / InitActivateTutorial
-        // We allow it to run (so lobby time/water-exit initialize correctly) but
-        // immediately stop any scenario it starts via ForceStopScenario postfix.
-        public static bool ActivateTutorial_Prefix()
-        {
-            return true; // always allow — postfix will stop the scenario
-        }
-
-        // Postfix: after ActivateTutorial runs, immediately force-stop any queued scenario.
-        // This lets the tutorial system initialize game state (time, water exit, etc.)
-        // while preventing the Cobra dialogue from playing.
-        public static void ActivateTutorial_Postfix()
+        public static bool StartScenarioInternal_Prefix(string dialogueBundleID)
         {
             try
             {
-                if (!ArchipelagoClient.IsConnected) return;
-                var sm = ScenarioManager.Instance;
-                if (sm == null) return;
-                Plugin.Log.LogInfo("[ScenarioSkip] ForceStopScenario after ActivateTutorial (AP mode)");
-                sm.ForceStopScenario();
+                if (!ArchipelagoClient.IsConnected) return true;
+                if (dialogueBundleID == null) return true;
+
+                // Never skip while diving
+                try { if (InGameManager.Instance != null) return true; } catch { }
+
+                // Check never-skip list
+                foreach (var never in _neverSkip)
+                    if (dialogueBundleID.Contains(never)) return true;
+
+                // Check skip prefixes
+                foreach (var prefix in _skipPrefixes)
+                {
+                    if (dialogueBundleID.StartsWith(prefix))
+                    {
+                        Plugin.Log.LogInfo($"[ScenarioSkip] Skipping scenario: {dialogueBundleID}");
+                        var locationName = QuestNameMapper.GetLocationNameFromScenario(dialogueBundleID);
+                        if (locationName != null)
+                            LocationTracker.OnQuestCompleted(locationName);
+                        return false;
+                    }
+                }
             }
             catch (Exception ex)
             {
-                Plugin.Log.LogWarning($"[ScenarioSkip] ActivateTutorial_Postfix threw: {ex.Message}");
+                Plugin.Log.LogWarning($"[ScenarioSkip] StartScenarioInternal_Prefix threw: {ex.Message}");
             }
+            return true;
         }
     }
 
