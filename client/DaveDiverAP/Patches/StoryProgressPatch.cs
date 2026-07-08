@@ -1,4 +1,3 @@
-using System;
 using HarmonyLib;
 // ChapterInfo, ChapterManager are game types in the global namespace (Assembly-CSharp)
 using BepInEx.Logging;
@@ -29,44 +28,34 @@ namespace DaveDiverAP.Patches
 
         public static void Apply(HarmonyLib.Harmony harmony)
         {
-            // Try patching both ApplyMissionClear and ClearMission — one of them must fire.
-            // Confirmed from Unity Explorer both exist with (int) parameter.
-            int patchCount = 0;
-            foreach (var methodName in new[] { "ApplyMissionClear", "ClearMission" })
+            // Hook ApplyMissionClear(int missionID) — fires when any mission is marked cleared.
+            // Simple int parameter, no IL2CPP type matching issues.
+            // Confirmed from Unity Explorer: ApplyMissionClear(System.Int32 missionID)
+            var target = typeof(MissionManager).GetMethod("ApplyMissionClear",
+                System.Reflection.BindingFlags.Public |
+                System.Reflection.BindingFlags.NonPublic |
+                System.Reflection.BindingFlags.Instance,
+                null,
+                new System.Type[] { typeof(int) },
+                null);
+
+            if (target == null)
             {
-                var target = typeof(MissionManager).GetMethod(methodName,
-                    System.Reflection.BindingFlags.Public |
-                    System.Reflection.BindingFlags.NonPublic |
-                    System.Reflection.BindingFlags.Instance,
-                    null,
-                    new System.Type[] { typeof(int) },
-                    null);
-
-                if (target == null)
-                {
-                    Plugin.Log.LogWarning($"[StoryProgress] Could not find {methodName}(int)");
-                    continue;
-                }
-
-                var postfix = new HarmonyLib.HarmonyMethod(
-                    typeof(StoryProgressPatch).GetMethod(nameof(OnMissionCleared_Postfix)));
-                harmony.Patch(target, postfix: postfix);
-                Plugin.Log.LogInfo($"[StoryProgress] Successfully patched {methodName}");
-                patchCount++;
+                Plugin.Log.LogWarning("[StoryProgress] Could not find ApplyMissionClear(int) — mission checks won't fire");
+                return;
             }
-            if (patchCount == 0)
-                Plugin.Log.LogWarning("[StoryProgress] No mission clear methods patched — mission checks won't fire");
-        }
 
-        private static readonly System.Collections.Generic.HashSet<int> _loggedMissions = new();
+            var postfix = new HarmonyLib.HarmonyMethod(
+                typeof(StoryProgressPatch).GetMethod(nameof(OnMissionCleared_Postfix)));
+            harmony.Patch(target, postfix: postfix);
+            Plugin.Log.LogInfo("[StoryProgress] Successfully patched ApplyMissionClear");
+        }
 
         public static void OnMissionCleared_Postfix(int missionID)
         {
             try
             {
                 if (missionID == 0) return;
-                // Deduplicate — both ApplyMissionClear and ClearMission may fire for same mission
-                if (!_loggedMissions.Add(missionID)) return;
 
                 // Look up mission data from MissionManager to get title/type for logging
                 string title = "";
@@ -109,9 +98,10 @@ namespace DaveDiverAP.Patches
     public static class ScenarioSkipPatch
     {
         // Scenario name prefixes to skip when connected to AP.
-        // We skip boat/lobby/restaurant cutscenes but NOT in-dive cutscenes.
+        // We skip boat/lobby/restaurant cutscenes but NOT in-dive cutscenes
+        // (dialog_IngameCutscene_*) since those trigger boss encounters and story beats.
         private static readonly string[] _skipPrefixes = {
-            // Tutorial & prologue (specific ones safe to skip — NOT Tutorial_Mission01)
+            // Tutorial & prologue
             "Tutorial_Mission",
             "Tutorial_IDiver",
             "Tutorial07",
@@ -120,22 +110,12 @@ namespace DaveDiverAP.Patches
             "BanchoSushi_upgrade_boat",
             // Main story missions (boat conversations)
             "Main_Mission",
-            // Side missions (boat/lobby only — in-dive ones excluded by neverSkip/InGameManager)
+            // Side missions
             "Side_",
             // In-restaurant side mission dialogues
             "dialog_Side_",
             // NPC unlock cutscenes (Sato/Marinca, etc.)
             "Fishcard_Contents_Unlock",
-        };
-
-        // Scenario name substrings that must NEVER be skipped (interactive in-dive events).
-        // These take priority over _skipPrefixes.
-        private static readonly string[] _neverSkip = {
-            "Dolphin",   // dolphin missions have rope-cutting QTEs
-            "Whale",     // whale missions
-            "Cutscene",  // all in-game cutscenes
-            "Boss",      // boss encounter triggers
-            "Escape",    // escape pod sequences
         };
 
         public static void Apply(HarmonyLib.Harmony harmony)
@@ -173,9 +153,6 @@ namespace DaveDiverAP.Patches
             Plugin.Log.LogInfo("[ScenarioSkip] Successfully patched StartScenarioInternal for tutorial skipping");
         }
 
-        // No-op stub so GameStatePatch can still call ApplyLate safely
-        public static void ApplyLate() { }
-
         public static bool StartScenarioInternal_Prefix(object[] __args)
         {
             if (!ArchipelagoClient.IsConnected) return true;
@@ -187,22 +164,12 @@ namespace DaveDiverAP.Patches
             try { if (InGameManager.Instance != null) return true; }
             catch { }
 
-            // Check never-skip list — these are always interactive and must play
-            foreach (var never in _neverSkip)
-                if (dialogueBundleID.Contains(never)) return true;
-
             foreach (var prefix in _skipPrefixes)
             {
                 if (dialogueBundleID.StartsWith(prefix))
                 {
                     Plugin.Log.LogInfo($"[ScenarioSkip] Skipping scenario: {dialogueBundleID}");
-
-                    // Check if this scenario name maps to an AP location
-                    var locationName = QuestNameMapper.GetLocationNameFromScenario(dialogueBundleID);
-                    if (locationName != null)
-                        LocationTracker.OnQuestCompleted(locationName);
-
-                    // Invoke the onFinish callback so the state machine continues
+                    // Try invoking the onFinish callback so state machine continues
                     try
                     {
                         var cb = __args[1];
@@ -213,7 +180,6 @@ namespace DaveDiverAP.Patches
                         }
                     }
                     catch { }
-
                     return false;
                 }
             }
@@ -442,68 +408,5 @@ namespace DaveDiverAP.Patches
 
         public static string? GetLocationName(int missionTID) =>
             _map.TryGetValue(missionTID, out var name) ? name : null;
-
-        // Maps scenario completion names to AP location names.
-        // Confirmed from ConversationDic dump via Unity Explorer (2026-07-05).
-        // Note: scenarios fire WITHOUT the "Sequence_" prefix.
-        private static readonly System.Collections.Generic.Dictionary<string, string> _scenarioMap = new()
-        {
-            // ── Main story missions ───────────────────────────────────────────
-            // Note: sub-step _Complete scenarios (e.g. _13_1_Complete) are intermediate
-            // steps and map to the same story beat as the final _Complete.
-            { "Main_Mission00_Complete",        "Story: Complete Prologue" },
-            { "Main_Mission01_Complete",        "Story: Complete Chapter 1 (Traces of the Sea People)" },
-            { "Main_Mission07_Complete",        "Story: Complete Chapter 2 (Into the Deep)" },
-            { "Main_Mission09_Complete",        "Story: Complete Chapter 3 (A Request from the Sea People)" },
-            { "Main_Mission13_Complete",        "Story: Complete Chapter 4 (Abandoned Cave)" },
-            { "Main_Mission14_Complete",        "Story: Discover Glacier Passage" },
-            { "Main_Mission15_2_Complete",      "Story: Complete Chapter 5 (Frozen Passage)" },
-            { "Main_Mission16_Complete",        "Story: Complete Chapter 6 (Melting Glacier)" },
-            { "Main_Mission17_Complete",        "Story: Complete Chapter 7 (Broken Control Room)" },
-            { "Main_Mission18_Complete",        "Story: Complete The Leahs-chan Rescue" },
-            { "Main_Mission11_3_Complete",      "Story: Complete Deliver Key to Tenzhin" },
-            { "MainMission29_Complete",         "Story: Complete Cobra's Lost Crowbar" },
-            { "Main_Mission09_3_1_Complete",    "Story: Discover Sea People Village" },
-
-            // ── Sub-missions ──────────────────────────────────────────────────
-            { "Side_Dolphin01_Complete",        "Sub-Mission: A Dolphin's Request" },
-            { "Side_Dolphin02_Complete",        "Sub-Mission: What Happened to the Dolphins?" },
-            { "Side_Dolphin03_Complete",        "Sub-Mission: Finding the Baby Whale" },
-            { "Side_Ellie_01_Complete",         "Sub-Mission: Assisting Ellie" },
-            { "Side_Ellie_02_Complete",         "Sub-Mission: Reticent Girl" },
-            { "Side_Mission01_Complete",        "Sub-Mission: A Scolding from Yoshie" },
-            { "Side_Duff_MermanWeapon_Complete","Sub-Mission: Weaponsmith Duff" },
-            { "Side_Udo01_EllieTask_Complete",  "Sub-Mission: Red Ecological Data" },
-            { "Side_Doowa02_Mining_Complete",   "Sub-Mission: Sea Person at the Workshop" },
-            { "Side_Maro02_LostKid_Complete",   "Sub-Mission: Find the Children's Ball" },
-            { "Side_Doowa03_DryTree_Complete",  "Sub-Mission: Repair Kinglong's Statue" },
-            { "Side_Linchen04_Pet_Squid_Jellyfish_complete", "Sub-Mission: Pet Squid Selgio" },
-
-            // ── Boss fights ───────────────────────────────────────────────────
-            { "Boss_Klaus_Complete",            "Defeat: Great White Shark Klaus" },
-            { "Boss_MantisShrimp_Complete",     "Defeat: Mantis Shrimp" },
-            { "Boss_Lusca_Complete",            "Defeat: Lusca" },
-
-            // ── VIP / Special quests ──────────────────────────────────────────
-            { "Special_Maki_Mission_Complete",  "Quest: Serve Mxmtoon" },
-
-            // ── Godzilla DLC ──────────────────────────────────────────────────
-            { "Godzilla_FigureCollect_Complete","Defeat: Giant Gadon" },
-        };
-
-        public static string? GetLocationNameFromScenario(string scenarioName)
-        {
-            if (scenarioName == null) return null;
-
-            // Direct lookup first
-            if (_scenarioMap.TryGetValue(scenarioName, out var name))
-                return name;
-
-            // Log unknown _Complete scenarios so we can map them later
-            if (scenarioName.EndsWith("_Complete"))
-                Plugin.Log.LogInfo($"[ScenarioSkip] Unknown completion scenario: {scenarioName} — add to QuestNameMapper");
-
-            return null;
-        }
     }
 }
