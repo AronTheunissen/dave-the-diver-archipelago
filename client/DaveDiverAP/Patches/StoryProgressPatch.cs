@@ -1,3 +1,4 @@
+using System;
 using HarmonyLib;
 // ChapterInfo, ChapterManager are game types in the global namespace (Assembly-CSharp)
 using BepInEx.Logging;
@@ -134,37 +135,41 @@ namespace DaveDiverAP.Patches
 
         public static void Apply(HarmonyLib.Harmony harmony)
         {
-            // Find StartScenarioInternal by parameter count: (string, Action<bool>, bool, bool, bool) = 5 params
+            // Patch ALL overloads of StartScenarioInternal that take a string as first parameter.
+            // The game uses different overloads in different contexts (lobby vs tutorial vs dive),
+            // so we must cover all of them to reliably intercept scenario starts.
             var methods = typeof(ScenarioManager).GetMethods(
                 System.Reflection.BindingFlags.Public |
                 System.Reflection.BindingFlags.NonPublic |
                 System.Reflection.BindingFlags.Instance);
 
-            System.Reflection.MethodInfo? target = null;
+            var prefix = new HarmonyLib.HarmonyMethod(
+                typeof(ScenarioSkipPatch).GetMethod(nameof(StartScenarioInternal_Prefix)));
+
+            int patchCount = 0;
             foreach (var m in methods)
             {
                 if (m.Name != "StartScenarioInternal") continue;
                 var parms = m.GetParameters();
-                if (parms.Length == 5 &&
-                    parms[0].ParameterType == typeof(string) &&
-                    parms[1].ParameterType.Name.Contains("Action") &&
-                    parms[2].ParameterType == typeof(bool))
+                // Must have at least one parameter and the first must be a string (the scenario name)
+                if (parms.Length == 0 || parms[0].ParameterType != typeof(string)) continue;
+
+                try
                 {
-                    target = m;
-                    break;
+                    harmony.Patch(m, prefix: prefix);
+                    Plugin.Log.LogInfo($"[ScenarioSkip] Patched StartScenarioInternal({parms.Length} params)");
+                    patchCount++;
+                }
+                catch (Exception ex)
+                {
+                    Plugin.Log.LogWarning($"[ScenarioSkip] Failed to patch StartScenarioInternal({parms.Length} params): {ex.Message}");
                 }
             }
 
-            if (target == null)
-            {
-                Plugin.Log.LogWarning("[ScenarioSkip] Could not find StartScenarioInternal(string, Action<bool>, bool, bool, bool) — skipping patch");
-                return;
-            }
-
-            var prefix = new HarmonyLib.HarmonyMethod(
-                typeof(ScenarioSkipPatch).GetMethod(nameof(StartScenarioInternal_Prefix)));
-            harmony.Patch(target, prefix: prefix);
-            Plugin.Log.LogInfo("[ScenarioSkip] Successfully patched StartScenarioInternal for tutorial skipping");
+            if (patchCount == 0)
+                Plugin.Log.LogWarning("[ScenarioSkip] Could not find any StartScenarioInternal overload — skipping patch");
+            else
+                Plugin.Log.LogInfo($"[ScenarioSkip] Successfully patched {patchCount} StartScenarioInternal overload(s)");
         }
 
         public static bool StartScenarioInternal_Prefix(object[] __args)
