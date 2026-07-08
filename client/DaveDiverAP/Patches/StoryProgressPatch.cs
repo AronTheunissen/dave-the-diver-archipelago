@@ -153,6 +153,9 @@ namespace DaveDiverAP.Patches
             Plugin.Log.LogInfo("[ScenarioSkip] Successfully patched StartScenarioInternal for tutorial skipping");
         }
 
+        // No-op stub — kept for compatibility with GameStatePatch.ApplyLate() call
+        public static void ApplyLate() { }
+
         public static bool StartScenarioInternal_Prefix(object[] __args)
         {
             if (!ArchipelagoClient.IsConnected) return true;
