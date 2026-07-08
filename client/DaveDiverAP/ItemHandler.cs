@@ -629,14 +629,9 @@ namespace DaveDiverAP
                     return;
                 }
                 // Signature: UpdateMission(MissionClearType, int, int, Action<MissionConditionData,int>, bool, Predicate<MissionData>)
-                // isSkipEnqueueDialogData = true prevents MissionManager from enqueuing
-                // dialogue/cutscene data when we programmatically complete missions.
-                // Without this, completing TID 10010001 (Prepare Sushi Ingredients) causes
-                // MissionManager to enqueue Tutorial_Mission01 which loads the dive scene
-                // into the lobby → TalkPanel_InGame singleton conflict → hardlock.
                 instance.UpdateMission((MissionClearType)1, missionTID, 1,
                     (Il2CppSystem.Action<MissionConditionData, int>)null,
-                    true,
+                    false,
                     (Il2CppSystem.Predicate<MissionData>)null);
                 Log.LogInfo($"[ItemHandler] CompleteMission TID={missionTID}");
             }
