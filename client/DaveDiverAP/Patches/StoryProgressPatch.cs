@@ -135,28 +135,10 @@ namespace DaveDiverAP.Patches
 
         public static void Apply(HarmonyLib.Harmony harmony)
         {
-            // ScenarioManager methods are NOT safe to patch with Harmony in IL2CPP —
-            // any patch on StartScenario*/StartScenarioInternal crashes the game during
-            // lobby init because Harmony's IL rewriting breaks coroutine JIT compilation.
-            //
-            // Instead we patch MissionManager.GetClearMissionDialogData which is called
-            // BEFORE a scenario is queued. Returning null for tutorial/story missions
-            // prevents their dialogue from being enqueued entirely.
-            var target = typeof(MissionManager).GetMethod("GetClearMissionDialogData",
-                System.Reflection.BindingFlags.Public |
-                System.Reflection.BindingFlags.NonPublic |
-                System.Reflection.BindingFlags.Instance);
-
-            if (target == null)
-            {
-                Plugin.Log.LogWarning("[ScenarioSkip] Could not find MissionManager.GetClearMissionDialogData — scenario skipping disabled");
-                return;
-            }
-
-            var prefix = new HarmonyLib.HarmonyMethod(
-                typeof(ScenarioSkipPatch).GetMethod(nameof(GetClearMissionDialogData_Prefix)));
-            harmony.Patch(target, prefix: prefix);
-            Plugin.Log.LogInfo("[ScenarioSkip] Patched MissionManager.GetClearMissionDialogData for scenario skipping");
+            // Patch the 5-param StartScenario overload using HarmonyPatch attribute approach.
+            // We use PatchAll on this class which uses the [HarmonyPatch] attribute below.
+            harmony.PatchAll(typeof(ScenarioSkipPatch));
+            Plugin.Log.LogInfo("[ScenarioSkip] Applied ScenarioSkipPatch via PatchAll");
         }
 
         // Scenario names to skip — mapped from mission dialogue bundle IDs
@@ -170,35 +152,42 @@ namespace DaveDiverAP.Patches
             return false;
         }
 
-        // Prologue mission TIDs whose dialogue we always suppress in AP mode.
-        // These trigger Tutorial_Mission01 (Cobra opening dialogue) which tries to load
-        // the dive scene into the lobby → TalkPanel_InGame singleton conflict → hardlock.
-        private static readonly System.Collections.Generic.HashSet<int> _skipDialogueTIDs = new()
-        {
-            10010001, // "Prepare Sushi Ingredients" → triggers Tutorial_Mission01
-            10010003, // "Weaponsmith Duff"
-        };
-
-        // GetClearMissionDialogData is void — just return false to skip it entirely
-        public static bool GetClearMissionDialogData_Prefix(MissionData missionData, bool isAddNextData)
+        // Patch the 5-param StartScenario overload using HarmonyPatch attribute.
+        // Confirmed signature from UnityExplorer:
+        // Void StartScenario(String dialogueBundleID, Action<bool> onTotalFinish, Boolean useButton, Boolean showCurtain, Boolean isIgnorePlayingScenario)
+        [HarmonyPatch(typeof(ScenarioManager), "StartScenario",
+            typeof(string), typeof(Il2CppSystem.Action<bool>), typeof(bool), typeof(bool), typeof(bool))]
+        [HarmonyPrefix]
+        public static bool StartScenario_Prefix(string dialogueBundleID)
         {
             try
             {
                 if (!ArchipelagoClient.IsConnected) return true;
-                if (missionData == null) return true;
+                if (dialogueBundleID == null) return true;
 
-                int tid = 0;
-                try { tid = missionData.TID; } catch { return true; }
+                // Never skip while diving
+                try { if (InGameManager.Instance != null) return true; } catch { }
 
-                if (_skipDialogueTIDs.Contains(tid))
+                // Check never-skip list
+                foreach (var never in _neverSkip)
+                    if (dialogueBundleID.Contains(never)) return true;
+
+                // Check skip prefixes
+                foreach (var prefix in _skipPrefixes)
                 {
-                    Plugin.Log.LogInfo($"[ScenarioSkip] Suppressing dialogue data for prologue mission TID={tid}");
-                    return false; // skip original void method entirely — no dialogue queued
+                    if (dialogueBundleID.StartsWith(prefix))
+                    {
+                        Plugin.Log.LogInfo($"[ScenarioSkip] Skipping scenario: {dialogueBundleID}");
+                        var locationName = QuestNameMapper.GetLocationNameFromScenario(dialogueBundleID);
+                        if (locationName != null)
+                            LocationTracker.OnQuestCompleted(locationName);
+                        return false;
+                    }
                 }
             }
             catch (Exception ex)
             {
-                Plugin.Log.LogWarning($"[ScenarioSkip] GetClearMissionDialogData_Prefix threw: {ex.Message}");
+                Plugin.Log.LogWarning($"[ScenarioSkip] StartScenario_Prefix threw: {ex.Message}");
             }
             return true;
         }
