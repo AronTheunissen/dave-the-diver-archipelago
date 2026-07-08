@@ -172,10 +172,9 @@ namespace DaveDiverAP.Patches
                 Plugin.Log.LogInfo($"[ScenarioSkip] Successfully patched {patchCount} StartScenarioInternal overload(s)");
         }
 
-        public static bool StartScenarioInternal_Prefix(object[] __args)
+        public static bool StartScenarioInternal_Prefix(string dialogueBundleID)
         {
             if (!ArchipelagoClient.IsConnected) return true;
-            var dialogueBundleID = __args?[0] as string;
             if (dialogueBundleID == null) return true;
 
             // Never skip scenarios that fire while diving — in-water cutscenes advance

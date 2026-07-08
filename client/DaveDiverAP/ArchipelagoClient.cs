@@ -84,6 +84,18 @@ namespace DaveDiverAP
                     var slotDataRaw = ((LoginSuccessful)loginResult).SlotData;
                     SlotData = new SlotData(slotDataRaw);
 
+                    // Detect new AP room by comparing a unique key (server+port+slot).
+                    // If it changed, wipe all mod save data so we don't replay items
+                    // from the old room into a fresh one.
+                    var currentRoomKey = $"{url}:{port}/{slotName}";
+                    var savedRoomKey = ModSaveData.RoomSeed;
+                    if (savedRoomKey != currentRoomKey)
+                    {
+                        Log.LogInfo($"New AP room detected ('{savedRoomKey}' → '{currentRoomKey}') — resetting mod save data.");
+                        ModSaveData.Reset();
+                        ModSaveData.RoomSeed = currentRoomKey;
+                    }
+
                     // Initialize Death Link if enabled
                     DeathLinkHandler.Initialize(Session!);
 
