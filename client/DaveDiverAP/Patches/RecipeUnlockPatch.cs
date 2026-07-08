@@ -60,6 +60,12 @@ namespace DaveDiverAP.Patches
             if (!ArchipelagoClient.IsConnected) return true; // not connected — allow normally
             if (_allowDishSave) return true;                 // AP-driven — allow through
 
+            // Only block during actual gameplay (not during save loading/initialization).
+            // Blocking during save load can prevent critical save data flags from being set,
+            // causing SushiBarStaffDataManager to think it needs to replay tutorial state
+            // → loads InGame scene assets into lobby → TalkPanel_InGame singleton conflict.
+            if (!ItemQueue.IsGameLoaded) return true;
+
             // Game is trying to auto-level a dish — block it and send AP check instead
             if (data != null)
                 Plugin.Log.LogInfo($"[DishUpgrade] Blocked auto-level for TID={data.recipeID} Level={data.studyLevel} (AP controls this)");
@@ -112,6 +118,7 @@ namespace DaveDiverAP.Patches
         {
             if (!ArchipelagoClient.IsConnected) return true; // not connected — allow normally
             if (_allowDishSave) return true;                 // AP-driven — allow through
+            if (!ItemQueue.IsGameLoaded) return true;        // save loading — allow through
 
             // Game is trying to upgrade a dish — block it and send AP check instead
             if (data != null)
