@@ -109,6 +109,27 @@ namespace DaveDiverAP.Patches
             }
         }
 
+        // ── Title screen / return to main menu ───────────────────────────────
+        // When the player returns to the title screen, reset game-load state so
+        // that save-load guards (IsGameLoaded) work correctly on the next session.
+        // ✅ CONFIRMED via dump.cs: SystemEntry exists and manages scene transitions.
+        //    "GoToTitle" or equivalent method fires when returning to the title screen.
+        [HarmonyPatch(typeof(SystemEntry), "GoToTitle")]
+        [HarmonyPostfix]
+        public static void OnGoToTitle_Postfix()
+        {
+            try
+            {
+                Log.LogInfo("[GameStatePatch] Returned to title — resetting session state.");
+                _itemsReapplied = false;
+                ItemQueue.ResetForNewSession();
+            }
+            catch (System.Exception ex)
+            {
+                Log.LogError($"[GameStatePatch] OnGoToTitle_Postfix threw: {ex}");
+            }
+        }
+
         // ── Restaurant / SushiBar ─────────────────────────────────────────────
         // ✅ CONFIRMED via dump.cs: SushiBarManager has public void OnEventSushiBarOpened()
         //    Items CAN be processed during the restaurant — we used to disable here but

@@ -116,5 +116,16 @@ namespace DaveDiverAP
                 Log.LogInfo("Game ready — processing queued items.");
             }
         }
+
+        /// <summary>
+        /// Call this when returning to the title screen / main menu.
+        /// Resets IsGameLoaded so that save-load guards work correctly on the next session.
+        /// </summary>
+        public static void ResetForNewSession()
+        {
+            _isGameReady = false;
+            _isGameLoaded = false;
+            Log.LogInfo("[ItemQueue] Session reset — IsGameLoaded=false, IsGameReady=false.");
+        }
     }
 }
