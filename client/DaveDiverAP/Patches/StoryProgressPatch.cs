@@ -135,9 +135,10 @@ namespace DaveDiverAP.Patches
 
         public static void Apply(HarmonyLib.Harmony harmony)
         {
-            // Patch ALL overloads of StartScenarioInternal that take a string as first parameter.
-            // The game uses different overloads in different contexts (lobby vs tutorial vs dive),
-            // so we must cover all of them to reliably intercept scenario starts.
+            // Patch ALL methods on ScenarioManager whose name contains "StartScenario"
+            // and whose first parameter is a string. The game logs "Req StartScenario :X"
+            // which suggests a public StartScenario method is the real entry point.
+            // We also patch StartScenarioInternal as a fallback.
             var methods = typeof(ScenarioManager).GetMethods(
                 System.Reflection.BindingFlags.Public |
                 System.Reflection.BindingFlags.NonPublic |
@@ -149,7 +150,7 @@ namespace DaveDiverAP.Patches
             int patchCount = 0;
             foreach (var m in methods)
             {
-                if (m.Name != "StartScenarioInternal") continue;
+                if (!m.Name.Contains("StartScenario")) continue;
                 var parms = m.GetParameters();
                 // Must have at least one parameter and the first must be a string (the scenario name)
                 if (parms.Length == 0 || parms[0].ParameterType != typeof(string)) continue;
@@ -157,19 +158,19 @@ namespace DaveDiverAP.Patches
                 try
                 {
                     harmony.Patch(m, prefix: prefix);
-                    Plugin.Log.LogInfo($"[ScenarioSkip] Patched StartScenarioInternal({parms.Length} params)");
+                    Plugin.Log.LogInfo($"[ScenarioSkip] Patched {m.Name}({parms.Length} params)");
                     patchCount++;
                 }
                 catch (Exception ex)
                 {
-                    Plugin.Log.LogWarning($"[ScenarioSkip] Failed to patch StartScenarioInternal({parms.Length} params): {ex.Message}");
+                    Plugin.Log.LogWarning($"[ScenarioSkip] Failed to patch {m.Name}({parms.Length} params): {ex.Message}");
                 }
             }
 
             if (patchCount == 0)
-                Plugin.Log.LogWarning("[ScenarioSkip] Could not find any StartScenarioInternal overload — skipping patch");
+                Plugin.Log.LogWarning("[ScenarioSkip] Could not find any StartScenario* overload — skipping patch");
             else
-                Plugin.Log.LogInfo($"[ScenarioSkip] Successfully patched {patchCount} StartScenarioInternal overload(s)");
+                Plugin.Log.LogInfo($"[ScenarioSkip] Successfully patched {patchCount} StartScenario* overload(s)");
         }
 
         public static bool StartScenarioInternal_Prefix(string dialogueBundleID)
