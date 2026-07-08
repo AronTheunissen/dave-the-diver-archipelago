@@ -158,32 +158,34 @@ namespace DaveDiverAP.Patches
                 System.Reflection.BindingFlags.NonPublic |
                 System.Reflection.BindingFlags.Instance);
 
-            System.Reflection.MethodInfo? target = null;
+            var prefix = new HarmonyLib.HarmonyMethod(
+                typeof(ScenarioSkipPatch).GetMethod(nameof(StartScenarioInternal_Prefix)));
+
+            int patchCount = 0;
             foreach (var m in methods)
             {
-                if (m.Name != "StartScenarioInternal") continue;
+                // Patch ALL StartScenario* methods whose first param is a string.
+                // Different overloads are called in different contexts (lobby, dive, branch).
+                if (!m.Name.StartsWith("StartScenario")) continue;
                 var parms = m.GetParameters();
-                if (parms.Length == 5 &&
-                    parms[0].ParameterType == typeof(string) &&
-                    parms[1].ParameterType.Name.Contains("Action") &&
-                    parms[2].ParameterType == typeof(bool))
+                if (parms.Length == 0 || parms[0].ParameterType != typeof(string)) continue;
+                // Skip coroutine/enumerator methods — they cannot be Harmony-patched
+                if (m.ReturnType.Name.Contains("IEnumerator") || m.ReturnType.Name.Contains("Coroutine")) continue;
+
+                try
                 {
-                    target = m;
-                    break;
+                    _harmony.Patch(m, prefix: prefix);
+                    Plugin.Log.LogInfo($"[ScenarioSkip] Lazily patched {m.Name}({parms.Length} params)");
+                    patchCount++;
+                }
+                catch (Exception ex)
+                {
+                    Plugin.Log.LogWarning($"[ScenarioSkip] Failed to patch {m.Name}({parms.Length} params): {ex.Message}");
                 }
             }
 
-            if (target == null)
-            {
-                Plugin.Log.LogWarning("[ScenarioSkip] Could not find StartScenarioInternal — scenario skipping disabled");
-                return;
-            }
-
-            var prefix = new HarmonyLib.HarmonyMethod(
-                typeof(ScenarioSkipPatch).GetMethod(nameof(StartScenarioInternal_Prefix)));
-            _harmony.Patch(target, prefix: prefix);
-            _patched = true;
-            Plugin.Log.LogInfo("[ScenarioSkip] Lazily patched StartScenarioInternal after AfternoonStart.");
+            _patched = patchCount > 0;
+            Plugin.Log.LogInfo($"[ScenarioSkip] Lazily patched {patchCount} StartScenario* overload(s).");
         }
 
         public static bool StartScenarioInternal_Prefix(string dialogueBundleID)
