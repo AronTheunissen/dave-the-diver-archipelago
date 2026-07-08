@@ -72,10 +72,12 @@ namespace DaveDiverAP
             }
 
             // Manual patches (can't use PatchAll due to IL2CPP type matching issues)
-            try { StoryProgressPatch.Apply(_harmony); }
-            catch (Exception ex) { Log.LogWarning($"[Harmony] Failed to patch StoryProgressPatch: {ex.Message}"); }
-            try { ScenarioSkipPatch.Apply(_harmony); }
-            catch (Exception ex) { Log.LogWarning($"[Harmony] Failed to patch ScenarioSkipPatch: {ex.Message}"); }
+            // DIAGNOSTIC: StoryProgressPatch temporarily disabled to isolate hardlock cause
+            // try { StoryProgressPatch.Apply(_harmony); }
+            // catch (Exception ex) { Log.LogWarning($"[Harmony] Failed to patch StoryProgressPatch: {ex.Message}"); }
+            // DIAGNOSTIC: ScenarioSkipPatch temporarily disabled to isolate hardlock cause
+            // try { ScenarioSkipPatch.Apply(_harmony); }
+            // catch (Exception ex) { Log.LogWarning($"[Harmony] Failed to patch ScenarioSkipPatch: {ex.Message}"); }
 
             Log.LogInfo("Harmony patches applied.");
 
