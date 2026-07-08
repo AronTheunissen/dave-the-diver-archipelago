@@ -179,7 +179,7 @@ namespace DaveDiverAP.Patches
             10010003, // "Weaponsmith Duff"
         };
 
-        public static bool GetClearMissionDialogData_Prefix(MissionData missionData, bool isSkipEnqueueDialogData, ref object? __result)
+        public static bool GetClearMissionDialogData_Prefix(MissionData missionData, bool isAddNextData, ref object? __result)
         {
             try
             {
