@@ -135,10 +135,37 @@ namespace DaveDiverAP.Patches
 
         public static void Apply(HarmonyLib.Harmony harmony)
         {
-            // Patch the 5-param StartScenario overload using HarmonyPatch attribute approach.
-            // We use PatchAll on this class which uses the [HarmonyPatch] attribute below.
-            harmony.PatchAll(typeof(ScenarioSkipPatch));
-            Plugin.Log.LogInfo("[ScenarioSkip] Applied ScenarioSkipPatch via PatchAll");
+            // ScenarioManager is NOT safe to patch — any patch causes IL2CPP JIT crash.
+            // Instead patch TutorialManager.ActivateTutorial which is what triggers
+            // Tutorial_Mission01 via the tutorial system.
+            var methods = typeof(TutorialManager).GetMethods(
+                System.Reflection.BindingFlags.Public |
+                System.Reflection.BindingFlags.NonPublic |
+                System.Reflection.BindingFlags.Instance);
+
+            var prefix = new HarmonyLib.HarmonyMethod(
+                typeof(ScenarioSkipPatch).GetMethod(nameof(ActivateTutorial_Prefix)));
+
+            int patchCount = 0;
+            foreach (var m in methods)
+            {
+                if (m.Name != "ActivateTutorial" && m.Name != "InitActivateTutorial") continue;
+                try
+                {
+                    harmony.Patch(m, prefix: prefix);
+                    Plugin.Log.LogInfo($"[ScenarioSkip] Patched TutorialManager.{m.Name}");
+                    patchCount++;
+                }
+                catch (Exception ex)
+                {
+                    Plugin.Log.LogWarning($"[ScenarioSkip] Failed to patch TutorialManager.{m.Name}: {ex.Message}");
+                }
+            }
+
+            if (patchCount == 0)
+                Plugin.Log.LogWarning("[ScenarioSkip] Could not patch any TutorialManager methods");
+            else
+                Plugin.Log.LogInfo($"[ScenarioSkip] Successfully patched {patchCount} TutorialManager method(s)");
         }
 
         // Scenario names to skip — mapped from mission dialogue bundle IDs
@@ -152,42 +179,20 @@ namespace DaveDiverAP.Patches
             return false;
         }
 
-        // Patch the 5-param StartScenario overload using HarmonyPatch attribute.
-        // Confirmed signature from UnityExplorer:
-        // Void StartScenario(String dialogueBundleID, Action<bool> onTotalFinish, Boolean useButton, Boolean showCurtain, Boolean isIgnorePlayingScenario)
-        [HarmonyPatch(typeof(ScenarioManager), "StartScenario",
-            typeof(string), typeof(Il2CppSystem.Action<bool>), typeof(bool), typeof(bool), typeof(bool))]
-        [HarmonyPrefix]
-        public static bool StartScenario_Prefix(string dialogueBundleID)
+        // Prefix for TutorialManager.ActivateTutorial / InitActivateTutorial
+        // These methods trigger Tutorial_Mission01 when chapter == 0.
+        // By skipping them when connected to AP, we prevent the Cobra opening dialogue.
+        public static bool ActivateTutorial_Prefix()
         {
             try
             {
                 if (!ArchipelagoClient.IsConnected) return true;
-                if (dialogueBundleID == null) return true;
-
-                // Never skip while diving
-                try { if (InGameManager.Instance != null) return true; } catch { }
-
-                // Check never-skip list
-                foreach (var never in _neverSkip)
-                    if (dialogueBundleID.Contains(never)) return true;
-
-                // Check skip prefixes
-                foreach (var prefix in _skipPrefixes)
-                {
-                    if (dialogueBundleID.StartsWith(prefix))
-                    {
-                        Plugin.Log.LogInfo($"[ScenarioSkip] Skipping scenario: {dialogueBundleID}");
-                        var locationName = QuestNameMapper.GetLocationNameFromScenario(dialogueBundleID);
-                        if (locationName != null)
-                            LocationTracker.OnQuestCompleted(locationName);
-                        return false;
-                    }
-                }
+                Plugin.Log.LogInfo("[ScenarioSkip] Blocking TutorialManager.ActivateTutorial (AP mode)");
+                return false; // skip — no tutorial
             }
             catch (Exception ex)
             {
-                Plugin.Log.LogWarning($"[ScenarioSkip] StartScenario_Prefix threw: {ex.Message}");
+                Plugin.Log.LogWarning($"[ScenarioSkip] ActivateTutorial_Prefix threw: {ex.Message}");
             }
             return true;
         }
