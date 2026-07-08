@@ -148,14 +148,24 @@ namespace DaveDiverAP.Patches
             var prefix = new HarmonyLib.HarmonyMethod(
                 typeof(ScenarioSkipPatch).GetMethod(nameof(StartScenarioInternal_Prefix)));
 
+            // Log ALL StartScenario* methods found so we know what's available
             int patchCount = 0;
             foreach (var m in methods)
             {
-                if (m.Name != "StartScenarioInternal") continue;
+                if (!m.Name.Contains("StartScenario")) continue;
                 var parms = m.GetParameters();
-                // Only patch the 3-param overload (string, Action<bool>, bool)
-                if (parms.Length != 3) continue;
-                if (parms[0].ParameterType != typeof(string)) continue;
+                if (parms.Length == 0 || parms[0].ParameterType != typeof(string)) continue;
+                Plugin.Log.LogInfo($"[ScenarioSkip] Found: {m.Name}({parms.Length} params) — IsAbstract={m.IsAbstract} IsVirtual={m.IsVirtual}");
+            }
+
+            // Try to patch the public StartScenario method (not Internal) — the game logs
+            // "Req StartScenario :X" which is printed by this method before calling Internal.
+            // Avoid patching Internal overloads as they crash IL2CPP when Harmony rewrites them.
+            foreach (var m in methods)
+            {
+                if (m.Name != "StartScenario") continue;
+                var parms = m.GetParameters();
+                if (parms.Length == 0 || parms[0].ParameterType != typeof(string)) continue;
 
                 try
                 {
@@ -170,9 +180,9 @@ namespace DaveDiverAP.Patches
             }
 
             if (patchCount == 0)
-                Plugin.Log.LogWarning("[ScenarioSkip] Could not find StartScenarioInternal(3 params) — skipping patch");
+                Plugin.Log.LogWarning("[ScenarioSkip] Could not find public StartScenario method — skipping patch");
             else
-                Plugin.Log.LogInfo($"[ScenarioSkip] Successfully patched {patchCount} StartScenario* overload(s)");
+                Plugin.Log.LogInfo($"[ScenarioSkip] Successfully patched {patchCount} StartScenario overload(s)");
         }
 
         public static bool StartScenarioInternal_Prefix(string dialogueBundleID)
