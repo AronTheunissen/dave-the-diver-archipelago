@@ -111,6 +111,13 @@ namespace DaveDiverAP.Patches
         // Scenario name prefixes to skip when connected to AP.
         // We skip boat/lobby/restaurant cutscenes but NOT in-dive cutscenes.
         private static readonly string[] _skipPrefixes = {
+            // Tutorial & prologue (specific ones safe to skip — NOT Tutorial_Mission01)
+            "Tutorial_Mission",
+            "Tutorial_IDiver",
+            "Tutorial07",
+            "Tutorial08",
+            "BanchoSushi_upgrade",
+            "BanchoSushi_upgrade_boat",
             // Main story missions (boat conversations)
             "Main_Mission",
             // Side missions (boat/lobby only — in-dive ones excluded by neverSkip/InGameManager)
@@ -131,93 +138,84 @@ namespace DaveDiverAP.Patches
             "Escape",    // escape pod sequences
         };
 
-        private static HarmonyLib.Harmony? _harmony;
-        private static bool _patched = false;
-
         public static void Apply(HarmonyLib.Harmony harmony)
         {
-            // Store harmony instance for lazy patching.
-            // We do NOT patch ScenarioManager at startup — doing so causes IL2CPP JIT
-            // crashes during lobby initialization. Instead, we apply the patch lazily
-            // after AfternoonStart fires (lobby fully ready, tutorial complete).
-            _harmony = harmony;
-            Plugin.Log.LogInfo("[ScenarioSkip] Registered for lazy patching after AfternoonStart.");
-        }
-
-        /// <summary>
-        /// Called by GameStatePatch when AfternoonStart fires.
-        /// Applies the ScenarioManager patch at this point — safe because the lobby
-        /// is fully initialized and any tutorial coroutines have completed.
-        /// </summary>
-        public static void ApplyLate()
-        {
-            if (_patched || _harmony == null) return;
-
+            // Find StartScenarioInternal by parameter count: (string, Action<bool>, bool, bool, bool) = 5 params
             var methods = typeof(ScenarioManager).GetMethods(
                 System.Reflection.BindingFlags.Public |
                 System.Reflection.BindingFlags.NonPublic |
                 System.Reflection.BindingFlags.Instance);
 
-            var prefix = new HarmonyLib.HarmonyMethod(
-                typeof(ScenarioSkipPatch).GetMethod(nameof(StartScenarioInternal_Prefix)));
-
-            int patchCount = 0;
+            System.Reflection.MethodInfo? target = null;
             foreach (var m in methods)
             {
-                // Patch ALL StartScenario* methods whose first param is a string.
-                // Different overloads are called in different contexts (lobby, dive, branch).
-                if (!m.Name.StartsWith("StartScenario")) continue;
+                if (m.Name != "StartScenarioInternal") continue;
                 var parms = m.GetParameters();
-                if (parms.Length == 0 || parms[0].ParameterType != typeof(string)) continue;
-                // Skip coroutine/enumerator methods — they cannot be Harmony-patched
-                if (m.ReturnType.Name.Contains("IEnumerator") || m.ReturnType.Name.Contains("Coroutine")) continue;
-
-                try
+                if (parms.Length == 5 &&
+                    parms[0].ParameterType == typeof(string) &&
+                    parms[1].ParameterType.Name.Contains("Action") &&
+                    parms[2].ParameterType == typeof(bool))
                 {
-                    _harmony.Patch(m, prefix: prefix);
-                    Plugin.Log.LogInfo($"[ScenarioSkip] Lazily patched {m.Name}({parms.Length} params)");
-                    patchCount++;
-                }
-                catch (Exception ex)
-                {
-                    Plugin.Log.LogWarning($"[ScenarioSkip] Failed to patch {m.Name}({parms.Length} params): {ex.Message}");
+                    target = m;
+                    break;
                 }
             }
 
-            _patched = patchCount > 0;
-            Plugin.Log.LogInfo($"[ScenarioSkip] Lazily patched {patchCount} StartScenario* overload(s).");
+            if (target == null)
+            {
+                Plugin.Log.LogWarning("[ScenarioSkip] Could not find StartScenarioInternal(string, Action<bool>, bool, bool, bool) — skipping patch");
+                return;
+            }
+
+            var prefix = new HarmonyLib.HarmonyMethod(
+                typeof(ScenarioSkipPatch).GetMethod(nameof(StartScenarioInternal_Prefix)));
+            harmony.Patch(target, prefix: prefix);
+            Plugin.Log.LogInfo("[ScenarioSkip] Successfully patched StartScenarioInternal for tutorial skipping");
         }
 
-        public static bool StartScenarioInternal_Prefix(string dialogueBundleID)
+        // No-op stub so GameStatePatch can still call ApplyLate safely
+        public static void ApplyLate() { }
+
+        public static bool StartScenarioInternal_Prefix(object[] __args)
         {
-            try
+            if (!ArchipelagoClient.IsConnected) return true;
+            var dialogueBundleID = __args?[0] as string;
+            if (dialogueBundleID == null) return true;
+
+            // Never skip scenarios that fire while diving — in-water cutscenes advance
+            // mission state (e.g. dolphin missions, boss intros) and must play through.
+            try { if (InGameManager.Instance != null) return true; }
+            catch { }
+
+            // Check never-skip list — these are always interactive and must play
+            foreach (var never in _neverSkip)
+                if (dialogueBundleID.Contains(never)) return true;
+
+            foreach (var prefix in _skipPrefixes)
             {
-                if (!ArchipelagoClient.IsConnected) return true;
-                if (dialogueBundleID == null) return true;
-
-                // Never skip while diving
-                try { if (InGameManager.Instance != null) return true; } catch { }
-
-                // Check never-skip list
-                foreach (var never in _neverSkip)
-                    if (dialogueBundleID.Contains(never)) return true;
-
-                // Check skip prefixes
-                foreach (var prefix in _skipPrefixes)
+                if (dialogueBundleID.StartsWith(prefix))
                 {
-                    if (dialogueBundleID.StartsWith(prefix))
+                    Plugin.Log.LogInfo($"[ScenarioSkip] Skipping scenario: {dialogueBundleID}");
+
+                    // Check if this scenario name maps to an AP location
+                    var locationName = QuestNameMapper.GetLocationNameFromScenario(dialogueBundleID);
+                    if (locationName != null)
+                        LocationTracker.OnQuestCompleted(locationName);
+
+                    // Invoke the onFinish callback so the state machine continues
+                    try
                     {
-                        Plugin.Log.LogInfo($"[ScenarioSkip] Skipping scenario: {dialogueBundleID}");
-                        var locationName = QuestNameMapper.GetLocationNameFromScenario(dialogueBundleID);
-                        if (locationName != null)
-                            LocationTracker.OnQuestCompleted(locationName);
-                        return false;
+                        var cb = __args[1];
+                        if (cb != null)
+                        {
+                            var invokeMethod = cb.GetType().GetMethod("Invoke");
+                            invokeMethod?.Invoke(cb, new object[] { true });
+                        }
                     }
+                    catch { }
+
+                    return false;
                 }
-            }
-            catch (Exception ex)
-            {
-                Plugin.Log.LogWarning($"[ScenarioSkip] StartScenarioInternal_Prefix threw: {ex.Message}");
             }
             return true;
         }
