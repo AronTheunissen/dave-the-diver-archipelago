@@ -159,6 +159,12 @@ namespace DaveDiverAP.Patches
             var dialogueBundleID = __args?[0] as string;
             if (dialogueBundleID == null) return true;
 
+            // Never skip scenarios that fire while diving — in-water cutscenes advance
+            // mission state (e.g. dolphin missions, boss intros) and must play through.
+            // Use the static IsDiving flag instead of InGameManager.Instance to avoid
+            // IL2CPP crashes when accessing singletons from a Harmony prefix.
+            if (GameStatePatch.IsDiving) return true;
+
             foreach (var prefix in _skipPrefixes)
             {
                 if (dialogueBundleID.StartsWith(prefix))

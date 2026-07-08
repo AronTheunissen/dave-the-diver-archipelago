@@ -41,6 +41,11 @@ namespace DaveDiverAP.Patches
         // saves still triggers a full reapply on the next boat entry.
         private static bool _itemsReapplied = false;
 
+        // Set to true while Dave is actively diving. Used by ScenarioSkipPatch
+        // to avoid skipping in-dive cutscenes without touching InGameManager.Instance
+        // (which causes IL2CPP crashes when accessed from a Harmony prefix).
+        public static bool IsDiving { get; private set; } = false;
+
         /// <summary>Called by Plugin when a save file is loaded/reloaded.</summary>
         public static void OnSaveLoaded() => _itemsReapplied = false;
 
@@ -61,6 +66,7 @@ namespace DaveDiverAP.Patches
                 {
                     case LobbyPlayer.LobbyPlayerState.InBoat:
                         Log.LogInfo("Game state: IN BOAT — item processing enabled.");
+                        IsDiving = false;
                         ItemQueue.SetGameReady(true);
                         // Reapply all received items on the first boat entry after a save load,
                         // so progressive upgrades, key items, etc. persist across sessions.
@@ -74,6 +80,7 @@ namespace DaveDiverAP.Patches
 
                     case LobbyPlayer.LobbyPlayerState.Diving:
                         Log.LogInfo("Game state: DIVING — item processing enabled (checks can fire while diving).");
+                        IsDiving = true;
                         ItemQueue.SetGameReady(true);
                         if (!_itemsReapplied)
                         {
