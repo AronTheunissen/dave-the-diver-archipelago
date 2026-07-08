@@ -97,6 +97,13 @@ namespace DaveDiverAP.Patches
     /// </summary>
     public static class ScenarioSkipPatch
     {
+        // Scenarios that must NEVER be skipped even if they match a skip prefix.
+        // These fire in-dive and advance critical mission state.
+        private static readonly string[] _neverSkip =
+        {
+            "Dolphin",   // Pink dolphin missions — must play to free/complete dolphin
+        };
+
         // Scenario name prefixes to skip when connected to AP.
         // We skip boat/lobby/restaurant cutscenes but NOT in-dive cutscenes
         // (dialog_IngameCutscene_*) since those trigger boss encounters and story beats.
@@ -164,6 +171,10 @@ namespace DaveDiverAP.Patches
             // Use the static IsDiving flag instead of InGameManager.Instance to avoid
             // IL2CPP crashes when accessing singletons from a Harmony prefix.
             if (GameStatePatch.IsDiving) return true;
+
+            // Check never-skip list first — these must always play
+            foreach (var never in _neverSkip)
+                if (dialogueBundleID.Contains(never)) return true;
 
             foreach (var prefix in _skipPrefixes)
             {
