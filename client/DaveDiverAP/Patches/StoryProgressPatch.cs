@@ -179,7 +179,8 @@ namespace DaveDiverAP.Patches
             10010003, // "Weaponsmith Duff"
         };
 
-        public static bool GetClearMissionDialogData_Prefix(MissionData missionData, bool isAddNextData, ref object? __result)
+        // GetClearMissionDialogData is void — just return false to skip it entirely
+        public static bool GetClearMissionDialogData_Prefix(MissionData missionData, bool isAddNextData)
         {
             try
             {
@@ -192,8 +193,7 @@ namespace DaveDiverAP.Patches
                 if (_skipDialogueTIDs.Contains(tid))
                 {
                     Plugin.Log.LogInfo($"[ScenarioSkip] Suppressing dialogue data for prologue mission TID={tid}");
-                    __result = null;
-                    return false; // skip original method — return null dialogue data
+                    return false; // skip original void method entirely — no dialogue queued
                 }
             }
             catch (Exception ex)
