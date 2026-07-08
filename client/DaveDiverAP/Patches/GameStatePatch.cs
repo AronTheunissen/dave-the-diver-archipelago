@@ -62,10 +62,6 @@ namespace DaveDiverAP.Patches
                     case LobbyPlayer.LobbyPlayerState.InBoat:
                         Log.LogInfo("Game state: IN BOAT — item processing enabled.");
                         ItemQueue.SetGameReady(true);
-                        // Apply scenario skip patch lazily here — safe because InBoat fires
-                        // after the lobby and tutorial are fully initialized, avoiding the
-                        // IL2CPP JIT crash that occurs when patching ScenarioManager at startup.
-                        ScenarioSkipPatch.ApplyLate();
                         // Reapply all received items on the first boat entry after a save load,
                         // so progressive upgrades, key items, etc. persist across sessions.
                         if (!_itemsReapplied)
@@ -110,27 +106,6 @@ namespace DaveDiverAP.Patches
             catch (System.Exception ex)
             {
                 Log.LogError($"[GameStatePatch] OnLobbyStateChanged_Postfix threw: {ex}");
-            }
-        }
-
-        // ── Title screen / return to main menu ───────────────────────────────
-        // When the player returns to the title screen, reset game-load state so
-        // that save-load guards (IsGameLoaded) work correctly on the next session.
-        // ✅ CONFIRMED via dump.cs: SystemEntry exists and manages scene transitions.
-        //    "GoToTitle" or equivalent method fires when returning to the title screen.
-        [HarmonyPatch(typeof(SystemEntry), "GoToTitle")]
-        [HarmonyPostfix]
-        public static void OnGoToTitle_Postfix()
-        {
-            try
-            {
-                Log.LogInfo("[GameStatePatch] Returned to title — resetting session state.");
-                _itemsReapplied = false;
-                ItemQueue.ResetForNewSession();
-            }
-            catch (System.Exception ex)
-            {
-                Log.LogError($"[GameStatePatch] OnGoToTitle_Postfix threw: {ex}");
             }
         }
 
