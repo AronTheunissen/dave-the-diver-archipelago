@@ -96,6 +96,12 @@ namespace DaveDiverAP
             return (_state.LastServer, _state.LastPort, _state.LastSlotName, _state.LastPassword);
         }
 
+        public static string RoomSeed
+        {
+            get => _state.RoomSeed;
+            set { _state.RoomSeed = value; Save(); }
+        }
+
         public static void Reset()
         {
             _state = new SaveState
@@ -104,6 +110,7 @@ namespace DaveDiverAP
                 LastPort     = _state.LastPort,
                 LastSlotName = _state.LastSlotName,
                 LastPassword = _state.LastPassword,
+                RoomSeed     = _state.RoomSeed,
             };
             Save();
         }
@@ -116,6 +123,9 @@ namespace DaveDiverAP
             public int    LastPort     { get; set; } = 38281;
             public string LastSlotName { get; set; } = "Player";
             public string LastPassword { get; set; } = "";
+            // AP room identifier — used to detect when the player connects to a new room
+            // so we can auto-reset all AP state (items, recipes, weapons, etc.)
+            public string RoomSeed { get; set; } = "";
 
             // Progressive item counts — how many copies of each progressive item received
             public int OxygenTankLevel   { get; set; } = 0;
