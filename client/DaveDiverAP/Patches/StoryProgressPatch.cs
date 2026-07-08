@@ -146,13 +146,16 @@ namespace DaveDiverAP.Patches
             var prefix = new HarmonyLib.HarmonyMethod(
                 typeof(ScenarioSkipPatch).GetMethod(nameof(ActivateTutorial_Prefix)));
 
+            var postfix = new HarmonyLib.HarmonyMethod(
+                typeof(ScenarioSkipPatch).GetMethod(nameof(ActivateTutorial_Postfix)));
+
             int patchCount = 0;
             foreach (var m in methods)
             {
                 if (m.Name != "ActivateTutorial" && m.Name != "InitActivateTutorial") continue;
                 try
                 {
-                    harmony.Patch(m, prefix: prefix);
+                    harmony.Patch(m, prefix: prefix, postfix: postfix);
                     Plugin.Log.LogInfo($"[ScenarioSkip] Patched TutorialManager.{m.Name}");
                     patchCount++;
                 }
@@ -180,21 +183,30 @@ namespace DaveDiverAP.Patches
         }
 
         // Prefix for TutorialManager.ActivateTutorial / InitActivateTutorial
-        // These methods trigger Tutorial_Mission01 when chapter == 0.
-        // By skipping them when connected to AP, we prevent the Cobra opening dialogue.
+        // We allow it to run (so lobby time/water-exit initialize correctly) but
+        // immediately stop any scenario it starts via ForceStopScenario postfix.
         public static bool ActivateTutorial_Prefix()
+        {
+            return true; // always allow — postfix will stop the scenario
+        }
+
+        // Postfix: after ActivateTutorial runs, immediately force-stop any queued scenario.
+        // This lets the tutorial system initialize game state (time, water exit, etc.)
+        // while preventing the Cobra dialogue from playing.
+        public static void ActivateTutorial_Postfix()
         {
             try
             {
-                if (!ArchipelagoClient.IsConnected) return true;
-                Plugin.Log.LogInfo("[ScenarioSkip] Blocking TutorialManager.ActivateTutorial (AP mode)");
-                return false; // skip — no tutorial
+                if (!ArchipelagoClient.IsConnected) return;
+                var sm = ScenarioManager.Instance;
+                if (sm == null) return;
+                Plugin.Log.LogInfo("[ScenarioSkip] ForceStopScenario after ActivateTutorial (AP mode)");
+                sm.ForceStopScenario();
             }
             catch (Exception ex)
             {
-                Plugin.Log.LogWarning($"[ScenarioSkip] ActivateTutorial_Prefix threw: {ex.Message}");
+                Plugin.Log.LogWarning($"[ScenarioSkip] ActivateTutorial_Postfix threw: {ex.Message}");
             }
-            return true;
         }
     }
 
