@@ -62,6 +62,10 @@ namespace DaveDiverAP.Patches
                     case LobbyPlayer.LobbyPlayerState.InBoat:
                         Log.LogInfo("Game state: IN BOAT — item processing enabled.");
                         ItemQueue.SetGameReady(true);
+                        // Apply scenario skip patch lazily here — safe because InBoat fires
+                        // after the lobby and tutorial are fully initialized, avoiding the
+                        // IL2CPP JIT crash that occurs when patching ScenarioManager at startup.
+                        ScenarioSkipPatch.ApplyLate();
                         // Reapply all received items on the first boat entry after a save load,
                         // so progressive upgrades, key items, etc. persist across sessions.
                         if (!_itemsReapplied)

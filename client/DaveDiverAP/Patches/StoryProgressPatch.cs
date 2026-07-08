@@ -131,11 +131,28 @@ namespace DaveDiverAP.Patches
             "Escape",    // escape pod sequences
         };
 
+        private static HarmonyLib.Harmony? _harmony;
+        private static bool _patched = false;
+
         public static void Apply(HarmonyLib.Harmony harmony)
         {
-            // Patch the 5-param StartScenarioInternal — this is the internal method called
-            // after StartScenario validates its arguments. Confirmed safe to patch (original
-            // working approach from before today's changes).
+            // Store harmony instance for lazy patching.
+            // We do NOT patch ScenarioManager at startup — doing so causes IL2CPP JIT
+            // crashes during lobby initialization. Instead, we apply the patch lazily
+            // after AfternoonStart fires (lobby fully ready, tutorial complete).
+            _harmony = harmony;
+            Plugin.Log.LogInfo("[ScenarioSkip] Registered for lazy patching after AfternoonStart.");
+        }
+
+        /// <summary>
+        /// Called by GameStatePatch when AfternoonStart fires.
+        /// Applies the ScenarioManager patch at this point — safe because the lobby
+        /// is fully initialized and any tutorial coroutines have completed.
+        /// </summary>
+        public static void ApplyLate()
+        {
+            if (_patched || _harmony == null) return;
+
             var methods = typeof(ScenarioManager).GetMethods(
                 System.Reflection.BindingFlags.Public |
                 System.Reflection.BindingFlags.NonPublic |
@@ -158,14 +175,15 @@ namespace DaveDiverAP.Patches
 
             if (target == null)
             {
-                Plugin.Log.LogWarning("[ScenarioSkip] Could not find StartScenarioInternal(string, Action<bool>, bool, bool, bool) — skipping patch");
+                Plugin.Log.LogWarning("[ScenarioSkip] Could not find StartScenarioInternal — scenario skipping disabled");
                 return;
             }
 
             var prefix = new HarmonyLib.HarmonyMethod(
                 typeof(ScenarioSkipPatch).GetMethod(nameof(StartScenarioInternal_Prefix)));
-            harmony.Patch(target, prefix: prefix);
-            Plugin.Log.LogInfo("[ScenarioSkip] Successfully patched StartScenarioInternal for scenario skipping");
+            _harmony.Patch(target, prefix: prefix);
+            _patched = true;
+            Plugin.Log.LogInfo("[ScenarioSkip] Lazily patched StartScenarioInternal after AfternoonStart.");
         }
 
         public static bool StartScenarioInternal_Prefix(string dialogueBundleID)
