@@ -53,18 +53,9 @@ namespace DaveDiverAP.Patches
         // We cancel AddCookingStudySaveData unless AP explicitly triggered it.
         internal static bool _allowDishSave = false;
 
-        [HarmonyPatch(typeof(global::SaveData), "AddCookingStudySaveData")]
-        [HarmonyPrefix]
-        public static bool AddCookingStudySaveData_Prefix(CookingStudyData data)
-        {
-            if (!ArchipelagoClient.IsConnected) return true; // not connected — allow normally
-            if (_allowDishSave) return true;                 // AP-driven — allow through
-
-            // Game is trying to auto-level a dish — block it and send AP check instead
-            if (data != null)
-                Plugin.Log.LogInfo($"[DishUpgrade] Blocked auto-level for TID={data.recipeID} Level={data.studyLevel} (AP controls this)");
-            return false; // cancel the original method
-        }
+        // AddCookingStudySaveData_Prefix removed 2026-07-10:
+        // With Option 1 design (game tracks levels naturally), we no longer block any
+        // dish saves. The postfix below handles sending checks.
 
         // ── Dish unlock/upgrade (postfix for AP check sending) ───────────────
         // ✅ CONFIRMED via Unity Explorer: AddCookingStudySaveData(CookingStudyData data)
@@ -105,30 +96,15 @@ namespace DaveDiverAP.Patches
             }
         }
 
-        // ── ANALYSIS: How dish research saves work ────────────────────────────────────────
+        // ── DESIGN: Dish research (Option 1 — game tracks levels naturally) ─────────────────
         // Both sushi (8050xxx/8052xxx) AND cooked dishes (8051xxx) use cookingStudySave:
-        //   - AddCookingStudySaveData(CookingStudyData)  → first time a dish gets a research level
-        //   - UpdateCookingStudySaveData(CookingStudyData) → subsequent level increases
-        // UpdateUnlockRecipeSave() just persists unlockRecipeData (which tracks recipe unlock
-        // timestamps), NOT research levels. We do NOT need to hook it.
-        //
-        // Problem: when the player upgrades a dish in the restaurant UI, the game:
-        //   1. Modifies the in-memory CookingStudyData level (level++)
-        //   2. Calls UpdateCookingStudySaveData to persist it
-        // Our UpdateCookingStudySaveData_Prefix blocks step 2 and sends the AP check.
-        // BUT: the in-memory level is already changed in step 1, so the dish APPEARS upgraded
-        // in the UI even though the save was blocked. We need to revert the in-memory level too.
-        //
-        // Fix: in UpdateCookingStudySaveData_Prefix, revert data.studyLevel to oldLevel before
-        // blocking, so the in-memory state stays consistent with what AP will set it to.
+        //   - AddCookingStudySaveData  → first time a dish gets a research level (unlock / first research)
+        //   - UpdateCookingStudySaveData → subsequent level increases (restaurant research panel)
+        // We do NOT block either — the game handles levels normally.
+        // We only observe via postfixes to send AP checks.
+        // No AP items are sent back for dish upgrades (one-way checks).
 
         // ── Hook UpdateCookingStudySaveData to send AP check when dish is upgraded ──────────
-        // Design decision (Option 1): Let the game track dish research levels normally.
-        // The game upgrade goes through as normal (dish visually levels up, costs scale).
-        // We intercept to send the AP check — the item received back from AP is informational
-        // (ApplyDishResearchLevel will skip if dish is already at or above the target level).
-        // This means: upgrading a dish in-game sends a check AND levels the dish normally.
-        // AP items are effectively no-ops if the game has already applied the level.
         [HarmonyPatch(typeof(global::SaveData), "UpdateCookingStudySaveData")]
         [HarmonyPostfix]
         public static void UpdateCookingStudySaveData_Postfix(CookingStudyData data)
