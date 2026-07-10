@@ -903,7 +903,7 @@ namespace DaveDiverAP
                     }
 
                     Patches.RecipeUnlockPatch._allowDishSave = true;
-                    unlockData[recipeTID].studyLevel = level;
+                    Patches.RecipeUnlockPatch.SetUnlockRecipeLevelPublic(unlockData[recipeTID], level);
                     saveData.UpdateUnlockRecipeSave();
                 }
 

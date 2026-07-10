@@ -128,7 +128,7 @@ namespace DaveDiverAP.Patches
             _lastKnownLevels.Clear();
             if (saveData?.unlockRecipeData == null) return;
             foreach (var kvp in saveData.unlockRecipeData)
-                _lastKnownLevels[kvp.Key] = kvp.Value.studyLevel;
+                _lastKnownLevels[kvp.Key] = GetUnlockRecipeLevel(kvp.Value);
         }
 
         // Call this after AP applies a dish research level so the diff stays accurate.
@@ -136,6 +136,27 @@ namespace DaveDiverAP.Patches
         {
             _lastKnownLevels[recipeTID] = level;
         }
+
+        // TODO: Confirm the actual field name on UnlockRecipeSave that stores research level.
+        // Use UnityExplorer: find a SaveData instance → unlockRecipeData → inspect an entry.
+        // Common candidates: "studyLevel", "StudyLevel", "researchLevel", "level", "Level"
+        private const string UNLOCK_RECIPE_LEVEL_FIELD = "studyLevel"; // ← UPDATE THIS
+
+        private static int GetUnlockRecipeLevel(global::UnlockRecipeSave entry)
+        {
+            try { return HarmonyLib.Traverse.Create(entry).Field<int>(UNLOCK_RECIPE_LEVEL_FIELD).Value; }
+            catch { return 0; }
+        }
+
+        private static void SetUnlockRecipeLevel(global::UnlockRecipeSave entry, int level)
+        {
+            try { HarmonyLib.Traverse.Create(entry).Field<int>(UNLOCK_RECIPE_LEVEL_FIELD).Value = level; }
+            catch (System.Exception ex) { Plugin.Log.LogWarning($"[DishUpgrade] SetUnlockRecipeLevel failed: {ex.Message}"); }
+        }
+
+        // Public accessor for ItemHandler
+        internal static void SetUnlockRecipeLevelPublic(global::UnlockRecipeSave entry, int level)
+            => SetUnlockRecipeLevel(entry, level);
 
         [HarmonyPatch(typeof(global::SaveData), "UpdateUnlockRecipeSave")]
         [HarmonyPrefix]
@@ -150,7 +171,7 @@ namespace DaveDiverAP.Patches
                 foreach (var kvp in __instance.unlockRecipeData)
                 {
                     int tid = kvp.Key;
-                    int newLevel = kvp.Value.studyLevel;
+                    int newLevel = GetUnlockRecipeLevel(kvp.Value);
                     _lastKnownLevels.TryGetValue(tid, out int oldLevel);
                     if (newLevel > oldLevel)
                     {
@@ -162,7 +183,7 @@ namespace DaveDiverAP.Patches
 
                         // Revert the in-memory change so the level stays at oldLevel
                         // (AP will set it to the correct value when the item is received)
-                        kvp.Value.studyLevel = oldLevel;
+                        SetUnlockRecipeLevel(kvp.Value, oldLevel);
                         _lastKnownLevels[tid] = oldLevel;
                     }
                 }
