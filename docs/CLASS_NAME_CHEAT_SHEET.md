@@ -13,6 +13,11 @@ with Jungle DLC installed (dump dated 2026-06-19).
 | `BossDefeatedPatch` | `CommonBossDead` | `DoJob()` | Fires for ALL bosses via BossSceneSO job system |
 | `RecipeUnlockPatch` | `SaveData` | `AddUnlockRecipeSaveData(int, DateTime)` | Fires when a recipe is unlocked and saved |
 | `RecipeUnlockPatch` | `SaveData` | `UpdateUnlockRecipeSave()` | Fires when dish research level increases |
+| —                   | `CookingStudySave` | `.StudyLevel` (int) | Research level 1–10 — confirmed UnityExplorer 2026-07-10 |
+| —                   | `CookingStudySave` | `.RecipeID` (int) | TID of the dish |
+| —                   | `CookingStudySave` | `.IsNew` (bool) | Newly unlocked flag |
+| —                   | `CookingStudySave` | `.IsVIPTemp` (bool) | VIP/truffle dish flag |
+| —                   | `CookingStudySave` | `.UnlockTime` | When dish was unlocked |
 | `WeaponCraftPatch` | `DREventTriggerManager` | `WeaponCraftTreeEventTrigger(int, int, int)` | Static method; craftID, row, col |
 | `StoryProgressPatch` | `ChapterManager` | `set_currentChapterInfo` | Fires when chapter changes |
 | `StoryProgressPatch` | `MissionManager` | `UpdateMission(MissionClearType, int, int, ...)` | Central hub for ALL mission updates |
