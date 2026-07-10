@@ -117,11 +117,20 @@ namespace DaveDiverAP.Patches
 
                 int tid = data.recipeID;
                 int level = data.studyLevel;
+
+                // Level 0 = dish becoming researchable (not yet researched) — ignore
+                if (level <= 0) return;
+
                 var dishName = RecipeNameMapper.GetDisplayName(tid);
                 if (dishName != null)
                 {
                     Plugin.Log.LogInfo($"[DishUpgrade] UpdateCookingStudySaveData: {dishName} → Level {level}");
-                    LocationTracker.OnDishUpgraded(dishName, level);
+                    if (level == 1)
+                        // First research of a dish (manual research in recipe book)
+                        LocationTracker.OnRecipeUnlocked(dishName);
+                    else
+                        // Subsequent upgrades in restaurant research panel
+                        LocationTracker.OnDishUpgraded(dishName, level);
                 }
                 else
                 {
