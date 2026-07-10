@@ -344,264 +344,13 @@ story_key_items: Dict[str, ItemData] = {
 # These are sent as AP items when a player completes a dish research check.
 # Classification: useful (they improve restaurant income but aren't progression gates).
 
-def _prog_dish(base_id: int, max_level: int, category: str = "dish_upgrade") -> ItemData:
-    return ItemData(base_id, ItemClassification.useful, count=max_level - 1, category=category)
+# _PD = ITEM_BASE + 3000 is RESERVED — do not reuse these IDs.
+# dish_upgrade_items was removed 2026-07-10: dish upgrades are now purely one-way checks.
+# Upgrading a dish in-game sends an AP check; no items are sent back for dish levels.
+# The ID block _PD+0 .. _PD+337 is permanently retired to avoid save-data corruption
+# in any worlds generated before this change.
 
-_PD = ITEM_BASE + 3000  # Start at 3000 to avoid all other item ID ranges
-
-dish_upgrade_items: Dict[str, ItemData] = {
-    # === Cooked dishes (8051xxx) — all max level 10, count = 9 ===
-    # IDs _PD+0 .. _PD+97 mirror the slot layout in dish_upgrade_locations (_D block).
-    # All counts updated to 9 (= max_level 10 − 1) per spreadsheet (2026-07-07).
-    "Progressive Agar Tokoroten":                          _prog_dish(_PD + 0,  10),
-    "Progressive Antarctic Octopus Carpaccio":             _prog_dish(_PD + 1,  10),
-    "Progressive Arctic Cod Risotto":                      _prog_dish(_PD + 2,  10),
-    "Progressive Atlantic Bonito Curry":                   _prog_dish(_PD + 3,  10),
-    "Progressive Batfish Ricebowl":                        _prog_dish(_PD + 4,  10),
-    "Progressive Big-Eyed Scad and Soybean Paste Roast":   _prog_dish(_PD + 5,  10),
-    "Progressive Black Vinegar Braised Parrotfish":        _prog_dish(_PD + 6,  10),
-    "Progressive Blobfish Spring Roll":                    _prog_dish(_PD + 7,  10),
-    "Progressive Boiled Porbeagle Shark":                  _prog_dish(_PD + 8,  10),  # slot 9 in locations (8 reserved for boss)
-    "Progressive Boiled Sailfish and Seaweed":             _prog_dish(_PD + 9,  10),
-    "Progressive Boiled Yellowback Fusilier":              _prog_dish(_PD + 10, 10),
-    "Progressive Boiled and Deep-Fried White Shrimp":      _prog_dish(_PD + 11, 10),
-    "Progressive Bluefin Tuna Rice Bowl":                  _prog_dish(_PD + 12, 10),
-    "Progressive Comber Sandwich":                         _prog_dish(_PD + 13, 10),
-    "Progressive Crimson Fish Roll":                       _prog_dish(_PD + 14, 10),
-    "Progressive Crystal Lobster Roll":                    _prog_dish(_PD + 15, 10),
-    "Progressive Deep Fish Tempura":                       _prog_dish(_PD + 16, 10),
-    "Progressive Deep Sea Kaiju Ramen":                    _prog_dish(_PD + 17, 10, "dlc_godzilla"),
-    "Progressive Deep-Fried Eggplant Shrimp Meatballs":   _prog_dish(_PD + 18, 10),
-    "Progressive Deep-Fried Red Lionfish":                 _prog_dish(_PD + 19, 10),
-    "Progressive Deep-Fried Vegetables":                   _prog_dish(_PD + 20, 10),
-    "Progressive Dried Stingray":                          _prog_dish(_PD + 21, 10),
-    "Progressive Dumbo Takoyaki":                          _prog_dish(_PD + 22, 10),
-    "Progressive Dusky Grouper Steak":                     _prog_dish(_PD + 23, 10),
-    "Progressive Eggplant Soba Oyaki":                     _prog_dish(_PD + 24, 10, "dlc_ichiban"),
-    "Progressive Falcatus Soybean Paste Soup":             _prog_dish(_PD + 25, 10),
-    "Progressive Fried Habanero Fangtooth":                _prog_dish(_PD + 26, 10),
-    "Progressive Fried Onion Cuttlefish":                  _prog_dish(_PD + 27, 10),
-    "Progressive Fried Rice with Sally Lightfoot Crab":    _prog_dish(_PD + 28, 10),
-    "Progressive Fried Seahorses":                         _prog_dish(_PD + 29, 10),
-    "Progressive Fried Tomato and Snailfish":              _prog_dish(_PD + 30, 10),
-    "Progressive Great Barracuda Canape":                  _prog_dish(_PD + 31, 10),
-    "Progressive Great Spider Crab Curry":                 _prog_dish(_PD + 32, 10),
-    "Progressive Hawaiian Poke":                           _prog_dish(_PD + 33, 10),
-    "Progressive Hot Pepper Tuna":                         _prog_dish(_PD + 34, 10),
-    "Progressive Humboldt Ink Pasta":                      _prog_dish(_PD + 35, 10),
-    "Progressive Humphead Parrotfish Curry":               _prog_dish(_PD + 36, 10),
-    "Progressive Ice Fish Curry":                          _prog_dish(_PD + 37, 10),
-    "Progressive Latok Omelet":                            _prog_dish(_PD + 38, 10),
-    "Progressive Mackerel Scad Hotdog":                    _prog_dish(_PD + 39, 10),
-    "Progressive Marlin and Soybean Paste Roast":          _prog_dish(_PD + 40, 10),
-    "Progressive Mianbao Xia":                             _prog_dish(_PD + 41, 10),
-    "Progressive Moray Eel Curry":                         _prog_dish(_PD + 42, 10),
-    "Progressive Narrow-barred Spanish Mackerel Arancini": _prog_dish(_PD + 43, 10),
-    "Progressive Narwhal Miso Soup":                       _prog_dish(_PD + 44, 10),
-    "Progressive Nasu Dengaku":                            _prog_dish(_PD + 45, 10),
-    "Progressive Peacock Squid Ripieni":                   _prog_dish(_PD + 46, 10),
-    "Progressive Pelican Eel Jelly":                       _prog_dish(_PD + 47, 10),
-    "Progressive Pickled Vegetables":                      _prog_dish(_PD + 48, 10),
-    "Progressive Pikaia Ramen":                            _prog_dish(_PD + 49, 10),
-    "Progressive Plotosid Pie":                            _prog_dish(_PD + 50, 10),
-    "Progressive Rice with Great Spider Crab Meat":        _prog_dish(_PD + 51, 10),
-    "Progressive Rice with Purple Sea Urchin Sushi":       _prog_dish(_PD + 52, 10),
-    "Progressive Rice with White Shrimp Meat":             _prog_dish(_PD + 53, 10),
-    "Progressive Roasted Capelin":                         _prog_dish(_PD + 54, 10),
-    "Progressive Roasted Tropical Fish and Garlic":        _prog_dish(_PD + 55, 10),
-    "Progressive Salt-grilled Redtoothed Triggerfish":     _prog_dish(_PD + 56, 10),
-    "Progressive Seahorse Salad":                          _prog_dish(_PD + 57, 10),
-    "Progressive Seahorse Udon":                           _prog_dish(_PD + 58, 10),
-    "Progressive Seasoned Jellyfish":                      _prog_dish(_PD + 59, 10),
-    "Progressive Seasoned Kajime":                         _prog_dish(_PD + 60, 10),
-    "Progressive Seasoned Long-spine Porcupinefish Skin":  _prog_dish(_PD + 61, 10),
-    "Progressive Seasoned Waptia Fieldensis":              _prog_dish(_PD + 62, 10),
-    "Progressive Seaweed Rolled Omelet":                   _prog_dish(_PD + 63, 10),
-    "Progressive Shark Karaage":                           _prog_dish(_PD + 64, 10),
-    "Progressive Smallspotted Dart Kajime Soup":           _prog_dish(_PD + 65, 10),
-    "Progressive Smoked Atlantic Mackerel Scramble":       _prog_dish(_PD + 66, 10),
-    "Progressive Spear Squid Soba Futomaki":               _prog_dish(_PD + 67, 10, "dlc_ichiban"),
-    "Progressive Special Fried Shrimp Sushi":              _prog_dish(_PD + 68, 10),  # was 1 in code, spreadsheet=10
-    "Progressive Stellate Puffer Nicogori":                _prog_dish(_PD + 69, 10),
-    "Progressive Stingray Sashimi Cold Noodles":           _prog_dish(_PD + 70, 10, "dlc_ichiban"),
-    "Progressive Stir-fried Habanero Lobster":             _prog_dish(_PD + 71, 10),
-    "Progressive Striped Red Mullet Tangle Roll":          _prog_dish(_PD + 72, 10),
-    "Progressive Sweet and Sour Stargazer":                _prog_dish(_PD + 73, 10),
-    "Progressive Three-Colored Squid Roast":               _prog_dish(_PD + 74, 10),
-    "Progressive Tomato Egg Soup":                         _prog_dish(_PD + 75, 10),
-    "Progressive Trevally Nanbanzuke":                     _prog_dish(_PD + 76, 10),
-    "Progressive Trevally Sandwich":                       _prog_dish(_PD + 77, 10),
-    "Progressive Tropical Fish Sushi Set":                 _prog_dish(_PD + 78, 10),
-    "Progressive Trout Sea Grapes Ricebowl":               _prog_dish(_PD + 79, 10),
-    "Progressive Vegetable Sushi":                         _prog_dish(_PD + 80, 10),  # was 1 in code, spreadsheet=10
-    "Progressive White Trevally Kombu Ochazuke":           _prog_dish(_PD + 81, 10),
-    "Progressive Whole-Roasted Shark Head":                _prog_dish(_PD + 82, 10),
-    "Progressive Wrasse Curry":                            _prog_dish(_PD + 83, 10),
-    "Progressive Yellowfin Tuna Steak":                    _prog_dish(_PD + 84, 10),
-    "Progressive Warm Atlantic Mackerel Soba":             _prog_dish(_PD + 85, 10, "dlc_ichiban"),
-    "Progressive Godzilla vs. Ebirah Curry":               _prog_dish(_PD + 86, 10, "dlc_godzilla"),
-    "Progressive Ebirah Chasing Sashimi":                  _prog_dish(_PD + 87, 10, "dlc_godzilla"),
-    # --- Missing cooked dishes (overflow from _D2 block in locations.py) ---
-    "Progressive Great Spider Crab and Cucumber Sushi":    _prog_dish(_PD + 88, 10),
-    "Progressive Grilled Eel with Habanero":               _prog_dish(_PD + 89, 10),
-    "Progressive Haddock Acqua Pazza":                     _prog_dish(_PD + 90, 10),
-    "Progressive Lobster Platter":                         _prog_dish(_PD + 91, 10),
-    "Progressive Moonlight Bladderwrack Roll":             _prog_dish(_PD + 92, 10),
-    "Progressive Pufferfish Dumpling Soup":                _prog_dish(_PD + 93, 10),
-    "Progressive Seagrapes Jellyfish Sushi":               _prog_dish(_PD + 94, 10),
-    "Progressive Seagrapes Special Sushi":                 _prog_dish(_PD + 95, 10),
-    "Progressive Sea Toad and Cucumber Gunkan Sushi":      _prog_dish(_PD + 96, 10),
-    "Progressive Skewered Cucumber":                       _prog_dish(_PD + 97, 10),
-    # --- Truffle (VIP) dishes — max level 5, count = 4 ---
-    # IDs _PD+100 .. _PD+106 (leaving _PD+98-99 as buffer, and _PD+97 just used above)
-    "Progressive Soy Sauce Marinated Crab":                _prog_dish(_PD + 98,  10),
-    "Progressive Stellate Puffer Special Sushi":           _prog_dish(_PD + 99,  10),
-    "Progressive Boiled Asian Sheepshead Wrasse & Truffle": _prog_dish(_PD + 100, 5),
-    "Progressive Grilled Antarctic Octopus & Truffle":     _prog_dish(_PD + 101, 5),
-    "Progressive Hyalonema Tuna Sashimi":                  _prog_dish(_PD + 102, 5),
-    "Progressive Steamed Hyalonema Angler Fish":           _prog_dish(_PD + 103, 5),
-    "Progressive Truffle Blue Lobster Tail Sushi":         _prog_dish(_PD + 104, 5),
-    "Progressive Truffle Sailfish Tartare":                _prog_dish(_PD + 105, 5),
-    "Progressive Truffle Shark Sandwich":                  _prog_dish(_PD + 106, 5),
-    # === Base game sushi (8050xxx) — max level 10, count = 9 ===
-    # IDs _PD+200 .. _PD+325 (starting at 200 to leave room in _PD+100s for future cooked dishes)
-    "Progressive Clownfish Sushi":                         _prog_dish(_PD + 200, 10),  # 8050001
-    "Progressive Comber Sushi":                            _prog_dish(_PD + 201, 10),  # 8050002
-    "Progressive Cardinalfish Sushi":                      _prog_dish(_PD + 202, 10),  # 8050003
-    "Progressive Sea Goldie Sushi":                        _prog_dish(_PD + 203, 10),  # 8050004
-    "Progressive Pyramid Butterflyfish Sushi":             _prog_dish(_PD + 204, 10),  # 8050005
-    "Progressive Yellow Tang Sushi":                       _prog_dish(_PD + 205, 10),  # 8050006
-    "Progressive Salema Porgy Sushi":                      _prog_dish(_PD + 206, 10),  # 8050007
-    "Progressive Orbicular Batfish Fry":                   _prog_dish(_PD + 207, 10),  # 8050008
-    "Progressive Blue Tang Sushi":                         _prog_dish(_PD + 208, 10),  # 8050009
-    "Progressive Rainbow Wrasse Sushi":                    _prog_dish(_PD + 209, 10),  # 8050011
-    "Progressive Lagoon Triggerfish Sushi":                _prog_dish(_PD + 210, 10),  # 8050012
-    "Progressive Smallspotted Dart Sushi":                 _prog_dish(_PD + 211, 10),  # 8050013
-    "Progressive Yellowback Fusilier Sushi":               _prog_dish(_PD + 212, 10),  # 8050014
-    "Progressive Ornate Wrasse Sushi":                     _prog_dish(_PD + 213, 10),  # 8050015
-    "Progressive Longfin Batfish Sushi":                   _prog_dish(_PD + 214, 10),  # 8050016
-    "Progressive Mediterranean Parrotfish Sushi":          _prog_dish(_PD + 215, 10),  # 8050017
-    "Progressive Redtoothed Triggerfish Sushi":            _prog_dish(_PD + 216, 10),  # 8050018
-    "Progressive B&W Snapper Sushi":                       _prog_dish(_PD + 217, 10),  # 8050019
-    "Progressive Green Humphead Parrotfish Sushi":         _prog_dish(_PD + 218, 10),  # 8050020
-    "Progressive Red Lionfish Sushi":                      _prog_dish(_PD + 219, 10),  # 8050021
-    "Progressive Bluehead Tilefish Sushi":                 _prog_dish(_PD + 220, 10),  # 8050022
-    "Progressive Clown Frogfish Sushi":                    _prog_dish(_PD + 221, 10),  # 8050023
-    "Progressive Painted Comber Sushi":                    _prog_dish(_PD + 222, 10),  # 8050024
-    "Progressive Humphead Parrotfish Sushi":               _prog_dish(_PD + 223, 10),  # 8050025
-    "Progressive Bigeye Scad Sushi":                       _prog_dish(_PD + 224, 10),  # 8050026
-    "Progressive Striped Red Mullet Sushi":                _prog_dish(_PD + 225, 10),  # 8050027
-    "Progressive Harlequin Hind Sushi":                    _prog_dish(_PD + 226, 10),  # 8050029
-    "Progressive Bigeye Trevally Sushi":                   _prog_dish(_PD + 227, 10),  # 8050030
-    "Progressive Coral Trout Sushi":                       _prog_dish(_PD + 228, 10),  # 8050031
-    "Progressive Grey Triggerfish Sushi":                  _prog_dish(_PD + 229, 10),  # 8050032
-    "Progressive Atlantic Bonito Sushi":                   _prog_dish(_PD + 230, 10),  # 8050033
-    "Progressive Atlantic Mackerel Sushi":                 _prog_dish(_PD + 231, 10),  # 8050034
-    "Progressive White Trevally Sushi":                    _prog_dish(_PD + 232, 10),  # 8050035
-    "Progressive Cuttlefish Sushi":                        _prog_dish(_PD + 233, 10),  # 8050036
-    "Progressive Dusky Grouper Sushi":                     _prog_dish(_PD + 234, 10),  # 8050037
-    "Progressive Narrow-barred Spanish Mackerel Sushi":    _prog_dish(_PD + 235, 10),  # 8050038
-    "Progressive Giant Trevally Sushi":                    _prog_dish(_PD + 236, 10),  # 8050042
-    "Progressive Blackfin Barracuda Sushi":                _prog_dish(_PD + 237, 10),  # 8050043
-    "Progressive Whitetip Reefshark Sushi":                _prog_dish(_PD + 238, 10),  # 8050044
-    "Progressive Tiger Shark Sushi":                       _prog_dish(_PD + 239, 10),  # 8050045
-    "Progressive Barrel Jellyfish Sushi":                  _prog_dish(_PD + 240, 10),  # 8050046
-    "Progressive Fried Egg Jellyfish Sushi":               _prog_dish(_PD + 241, 10),  # 8050047
-    "Progressive White Spotted Jellyfish Sushi":           _prog_dish(_PD + 242, 10),  # 8050048
-    "Progressive Great Barracuda Sushi":                   _prog_dish(_PD + 243, 10),  # 8050049
-    "Progressive Mackerel Scad Sushi":                     _prog_dish(_PD + 244, 10),  # 8050050
-    "Progressive Titan Triggerfish Sushi":                 _prog_dish(_PD + 245, 10),  # 8050051
-    "Progressive Longnose Sawshark Sushi":                 _prog_dish(_PD + 246, 10),  # 8050053
-    "Progressive Chambered Nautilus Sushi":                _prog_dish(_PD + 247, 10),  # 8050054
-    "Progressive Fangtooth Sushi":                         _prog_dish(_PD + 248, 10),  # 8050055
-    "Progressive Frilled Shark Sushi":                     _prog_dish(_PD + 249, 10),  # 8050056
-    "Progressive Bluespotted Stargazer Sushi":             _prog_dish(_PD + 250, 10),  # 8050057
-    "Progressive Rhinochimaeridae Sushi":                  _prog_dish(_PD + 251, 10),  # 8050059
-    "Progressive Spider Crab Sushi":                       _prog_dish(_PD + 252, 10),  # 8050060
-    "Progressive Megamouth Shark Sushi":                   _prog_dish(_PD + 253, 10),  # 8050061
-    "Progressive Cookiecutter Shark Sushi":                _prog_dish(_PD + 254, 10),  # 8050062
-    "Progressive Sea Toad Sushi":                          _prog_dish(_PD + 255, 10),  # 8050063
-    "Progressive Salmon Snailfish Sushi":                  _prog_dish(_PD + 256, 10),  # 8050064
-    "Progressive Pacific Fanfish Sushi":                   _prog_dish(_PD + 257, 10),  # 8050065
-    "Progressive Threetooth Puffer Sushi":                 _prog_dish(_PD + 258, 10),  # 8050066
-    "Progressive Red Bream Sushi":                         _prog_dish(_PD + 259, 10),  # 8050067
-    "Progressive Atlantic Anglerfish Sushi":               _prog_dish(_PD + 260, 10),  # 8050068
-    "Progressive Comb Jelly Sushi":                        _prog_dish(_PD + 261, 10),  # 8050069
-    "Progressive Blood-belly Comb Jelly Sushi":            _prog_dish(_PD + 262, 10),  # 8050070
-    "Progressive Blacktip Reefshark Sushi":                _prog_dish(_PD + 263, 10),  # 8050071
-    "Progressive Copper Shark Sushi":                      _prog_dish(_PD + 264, 10),  # 8050072
-    "Progressive Box Jellyfish Sushi":                     _prog_dish(_PD + 265, 10),  # 8050073
-    "Progressive Moray Eel Sushi":                         _prog_dish(_PD + 266, 10),  # 8050074
-    "Progressive Sally Lightfoot Crab Sushi":              _prog_dish(_PD + 267, 10),  # 8050075
-    "Progressive Peacock Squid Sushi":                     _prog_dish(_PD + 268, 10),  # 8050076
-    "Progressive Dumbo Octopus Sushi":                     _prog_dish(_PD + 269, 10),  # 8050077
-    "Progressive Barreleye Sushi":                         _prog_dish(_PD + 270, 10),  # 8050078
-    "Progressive Blobfish Sushi":                          _prog_dish(_PD + 271, 10),  # 8050079
-    "Progressive Vampire Squid Sushi":                     _prog_dish(_PD + 272, 10),  # 8050080
-    "Progressive Arctic Cod Sushi":                        _prog_dish(_PD + 273, 10),  # 8050081
-    "Progressive Gelatinous Snailfish Sushi":              _prog_dish(_PD + 274, 10),  # 8050082
-    "Progressive Antarctic Octopus Sushi":                 _prog_dish(_PD + 275, 10),  # 8050083
-    "Progressive Greenland Shark Sushi":                   _prog_dish(_PD + 276, 10),  # 8050084
-    "Progressive Polar Eelpout Sushi":                     _prog_dish(_PD + 277, 10),  # 8050085
-    "Progressive Porbeagle Shark Sushi":                   _prog_dish(_PD + 278, 10),  # 8050086
-    "Progressive Ice Fish Sushi":                          _prog_dish(_PD + 279, 10),  # 8050087
-    "Progressive Capelin Sushi":                           _prog_dish(_PD + 280, 10),  # 8050088
-    "Progressive Narwhal Sushi":                           _prog_dish(_PD + 281, 10),  # 8050089
-    "Progressive Haddock Sushi":                           _prog_dish(_PD + 282, 10),  # 8050090
-    "Progressive Starry Skate Sushi":                      _prog_dish(_PD + 283, 10),  # 8050091
-    "Progressive Shortfin Mako Sushi":                     _prog_dish(_PD + 284, 10),  # 8050092
-    "Progressive Thresher Shark Sushi":                    _prog_dish(_PD + 285, 10),  # 8050093
-    "Progressive Smooth Hammerhead Sushi":                 _prog_dish(_PD + 286, 10),  # 8050094
-    "Progressive Zebra Shark Sushi":                       _prog_dish(_PD + 287, 10),  # 8050095
-    "Progressive Pelican Eel Sushi":                       _prog_dish(_PD + 288, 10),  # 8050096
-    "Progressive White Shrimp Sushi":                      _prog_dish(_PD + 289, 10),  # 8050097
-    "Progressive Humboldt Squid Sushi":                    _prog_dish(_PD + 290, 10),  # 8050098
-    "Progressive Devil Scorpionfish Sushi":                _prog_dish(_PD + 291, 10),  # 8050099
-    "Progressive Marlin Sushi":                            _prog_dish(_PD + 292, 10),  # 8050100
-    "Progressive Sailfish Sushi":                          _prog_dish(_PD + 293, 10),  # 8050102
-    "Progressive Waptia Sushi":                            _prog_dish(_PD + 294, 10),  # 8050103
-    "Progressive Pikaia Sushi":                            _prog_dish(_PD + 295, 10),  # 8050104
-    "Progressive Allenypterus Sushi":                      _prog_dish(_PD + 296, 10),  # 8050105
-    "Progressive Qingmenodus Sushi":                       _prog_dish(_PD + 297, 10),  # 8050106
-    "Progressive Falcatus Sushi":                          _prog_dish(_PD + 298, 10),  # 8050107
-    "Progressive Drepanaspis Sushi":                       _prog_dish(_PD + 299, 10),  # 8050108
-    "Progressive Dunkleosteus Sushi":                      _prog_dish(_PD + 300, 10),  # 8050109
-    "Progressive Megalograptus Sushi":                     _prog_dish(_PD + 301, 10),  # 8050110
-    "Progressive Seadragon Onigiri":                       _prog_dish(_PD + 302, 10),  # 8050112
-    "Progressive Arctic Telescope Fish Sushi":             _prog_dish(_PD + 303, 10),  # 8050113
-    "Progressive Alaska Pollock Sushi":                    _prog_dish(_PD + 304, 10),  # 8050114
-    "Progressive Lumpfish Sushi":                          _prog_dish(_PD + 305, 10),  # 8050115
-    "Progressive Snub-nosed Spiny Eel Sushi":              _prog_dish(_PD + 306, 10),  # 8050116
-    "Progressive Xenacanthus Sushi":                       _prog_dish(_PD + 307, 10),  # 8050117
-    "Progressive Longspine Squirrelfish Sushi":            _prog_dish(_PD + 308, 10),  # 8050119
-    "Progressive Clearfin Lionfish Sushi":                 _prog_dish(_PD + 309, 10),  # 8050120
-    "Progressive Spear Squid Sushi":                       _prog_dish(_PD + 310, 10),  # 8050122
-    "Progressive Red-banded Lobster Sushi":                _prog_dish(_PD + 311, 10),  # 8050123
-    "Progressive American Lobster Sushi":                  _prog_dish(_PD + 312, 10),  # 8050124
-    "Progressive Blue Lobster Sushi":                      _prog_dish(_PD + 313, 10),  # 8050125
-    "Progressive California Spiny Lobster Sushi":          _prog_dish(_PD + 314, 10),  # 8050126
-    "Progressive Fan Lobster Sushi":                       _prog_dish(_PD + 315, 10),  # 8050127
-    "Progressive Norway Lobster Sushi":                    _prog_dish(_PD + 316, 10),  # 8050128
-    "Progressive Golden King Crab Sushi":                  _prog_dish(_PD + 317, 10),  # 8050129
-    "Progressive Snow Crab Sushi":                         _prog_dish(_PD + 318, 10),  # 8050130
-    "Progressive Horsehair Crab Sushi":                    _prog_dish(_PD + 319, 10),  # 8050131
-    "Progressive European Lobster Sushi":                  _prog_dish(_PD + 320, 10),  # 8050132
-    "Progressive Tropical Rock Lobster Sushi":             _prog_dish(_PD + 321, 10),  # 8050133
-    "Progressive Crystal Lobster Sushi":                   _prog_dish(_PD + 322, 10),  # 8050134
-    "Progressive Eastern Rock Lobster Sushi":              _prog_dish(_PD + 323, 10),  # 8050135
-    "Progressive Dollocaris Ingens Sushi":                 _prog_dish(_PD + 324, 10),  # 8050136
-    "Progressive Tokummia Katalepsis Sushi":               _prog_dish(_PD + 325, 10),  # 8050137
-    # === Tuna Bar sushi (8052xxx) — max level 10, count = 9 ===
-    # IDs _PD+330 .. _PD+337
-    "Progressive Bluefin Tuna Akami Sushi":                _prog_dish(_PD + 330, 10),  # 8052001
-    "Progressive Bluefin Tuna Chutoro Sushi":              _prog_dish(_PD + 331, 10),  # 8052002
-    "Progressive Bluefin Tuna Ootoro Sushi":               _prog_dish(_PD + 332, 10),  # 8052003
-    "Progressive Yellowfin Tuna Akami Sushi":              _prog_dish(_PD + 333, 10),  # 8052004
-    "Progressive Yellowfin Tuna Chutoro Sushi":            _prog_dish(_PD + 334, 10),  # 8052005
-    "Progressive Yellowfin Tuna Ootoro Sushi":             _prog_dish(_PD + 335, 10),  # 8052006
-    "Progressive Raw Black Tiger Shrimp Sushi":            _prog_dish(_PD + 336, 10),  # 8052011
-    "Progressive Cooked Whiteleg Shrimp Sushi":            _prog_dish(_PD + 337, 10),  # 8052012
-}
+dish_upgrade_items: Dict[str, ItemData] = {}  # intentionally empty — see comment above
 
 # === COOKSTA RANK ITEMS ===
 # Progressive Cooksta Rank: 5 copies (Coal→Bronze→Silver→Gold→Platinum→Diamond)
@@ -768,8 +517,60 @@ jungle_progression_items: Dict[str, ItemData] = {
 
 # === TRAP ITEMS (Optional) ===
 trap_items: Dict[str, ItemData] = {
-    # "Broken Equipment": ItemData(ITEM_BASE + 700, ItemClassification.trap, category="trap"),
-    # TODO: Add trap items if desired
+    # === DIVING TRAPS ===
+    # These apply a temporary negative effect to Dave during diving.
+    "Oxygen Leak":          ItemData(ITEM_BASE + 700, ItemClassification.trap, category="trap"),  # Reduced O2 tank capacity temporarily
+    "Hostile Fish Spawn":   ItemData(ITEM_BASE + 701, ItemClassification.trap, category="trap"),  # Spawns aggressive fish near Dave
+    "Broken Harpoon":       ItemData(ITEM_BASE + 702, ItemClassification.trap, category="trap"),  # Harpoon deals reduced damage temporarily
+    "Gun Jam":              ItemData(ITEM_BASE + 703, ItemClassification.trap, category="trap"),  # Temporarily disables gun usage
+    "Resurface Trap":       ItemData(ITEM_BASE + 704, ItemClassification.trap, category="trap"),  # Immediately forces Dave out of water
+    "Dull Knife":           ItemData(ITEM_BASE + 705, ItemClassification.trap, category="trap"),  # Knife deals no damage temporarily
+    "Sluggish Trap":        ItemData(ITEM_BASE + 706, ItemClassification.trap, category="trap"),  # Dave moves slower for a short time
+    # === RESTAURANT TRAPS ===
+    "Impatient Customers":  ItemData(ITEM_BASE + 710, ItemClassification.trap, category="trap"),  # Reduces customer wait time temporarily
+    "Seagull Raid":         ItemData(ITEM_BASE + 711, ItemClassification.trap, category="trap"),  # Steals some ingredients from storage
+    "Dirty Dishes":         ItemData(ITEM_BASE + 712, ItemClassification.trap, category="trap"),  # Leaves a pile of dirty dishes to clear
+    # === FARM TRAPS ===
+    "Bad Season":           ItemData(ITEM_BASE + 713, ItemClassification.trap, category="trap"),  # No crop growth progress for one day
+    "Bad Soil":             ItemData(ITEM_BASE + 714, ItemClassification.trap, category="trap"),  # Reduces nutrition value of next harvest
+}
+
+# === FLAVOR FILLER ITEMS ===
+# These items have no in-game effect — they are purely flavor text / joke items.
+# They still occupy a slot in the AP item pool (count as filler).
+flavor_filler_items: Dict[str, ItemData] = {
+    # Kitchen Utensils
+    "Slightly Bent Fork":          ItemData(ITEM_BASE + 750, ItemClassification.filler),
+    "Mystery Spatula":             ItemData(ITEM_BASE + 751, ItemClassification.filler),
+    "Suspiciously Dull Peeler":    ItemData(ITEM_BASE + 752, ItemClassification.filler),
+    "Novelty Apron":               ItemData(ITEM_BASE + 753, ItemClassification.filler),
+    "Dave's Spare Chopsticks":     ItemData(ITEM_BASE + 754, ItemClassification.filler),
+    # Ocean Pollution
+    "Plastic Bag":                 ItemData(ITEM_BASE + 760, ItemClassification.filler),
+    "Waterlogged Boot":            ItemData(ITEM_BASE + 761, ItemClassification.filler),
+    "Rusty Tin Can":               ItemData(ITEM_BASE + 762, ItemClassification.filler),
+    "Tangled Fishing Line":        ItemData(ITEM_BASE + 763, ItemClassification.filler),
+    "Mystery Styrofoam Chunk":     ItemData(ITEM_BASE + 764, ItemClassification.filler),
+    # Beach Finds
+    "Sand Dollar":                 ItemData(ITEM_BASE + 770, ItemClassification.filler),
+    "Striped Seashell":            ItemData(ITEM_BASE + 771, ItemClassification.filler),
+    "Spotted Cowrie":              ItemData(ITEM_BASE + 772, ItemClassification.filler),
+    "Piece of Sea Glass":          ItemData(ITEM_BASE + 773, ItemClassification.filler),
+    "Perfectly Round Pebble":      ItemData(ITEM_BASE + 774, ItemClassification.filler),
+    # Anime Figurines
+    "Bootleg Anime Figurine":      ItemData(ITEM_BASE + 780, ItemClassification.filler),
+    "Limited Edition Figure (Damaged Box)": ItemData(ITEM_BASE + 781, ItemClassification.filler),
+    "Mystery Gashapon Capsule":    ItemData(ITEM_BASE + 782, ItemClassification.filler),
+    "Dave the Diver Action Figure": ItemData(ITEM_BASE + 783, ItemClassification.filler),
+    # Messages in a Bottle
+    "Message in a Bottle: 'Help!'":                           ItemData(ITEM_BASE + 790, ItemClassification.filler),
+    "Message in a Bottle: 'If found, please water my plants'": ItemData(ITEM_BASE + 791, ItemClassification.filler),
+    "Message in a Bottle: 'I owe Cobra $20'":                 ItemData(ITEM_BASE + 792, ItemClassification.filler),
+    "Message in a Bottle: 'The fish were 7/10 today'":        ItemData(ITEM_BASE + 793, ItemClassification.filler),
+    "Message in a Bottle: 'Dave ate my lunch again'":         ItemData(ITEM_BASE + 794, ItemClassification.filler),
+    "Message in a Bottle: 'Bancho says use more garlic'":     ItemData(ITEM_BASE + 795, ItemClassification.filler),
+    "Message in a Bottle: 'This is not a hint'":              ItemData(ITEM_BASE + 796, ItemClassification.filler),
+    "Message in a Bottle: 'Gone diving, back never'":         ItemData(ITEM_BASE + 797, ItemClassification.filler),
 }
 
 # Combine all items
@@ -785,6 +586,7 @@ item_table: Dict[str, ItemData] = {
     **ability_items,
     **dish_upgrade_items,
     **filler_items,
+    **flavor_filler_items,
     **trap_items,
     **jungle_progression_items,
 }

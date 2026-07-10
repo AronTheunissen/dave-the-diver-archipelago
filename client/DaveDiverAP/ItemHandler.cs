@@ -386,9 +386,6 @@ namespace DaveDiverAP
             // ── Weapons ──────────────────────────────────────────────────────
             if (IsWeapon(name)) { UnlockWeapon(name); return; }
 
-            // ── Progressive dish upgrades ─────────────────────────────────────
-            if (name.StartsWith("Progressive ")) { UpgradeDish(name[12..]); return; }
-
             // ── Recipes ──────────────────────────────────────────────────────
             if (name.StartsWith("Recipe: ")) { UnlockRecipe(name[8..]); return; }
 
@@ -475,10 +472,6 @@ namespace DaveDiverAP
             // Recipes
             foreach (var recipe in ModSaveData.GetUnlockedRecipes())
                 ApplyRecipeUnlock(recipe);
-
-            // Dish research levels
-            foreach (var (dish, level) in ModSaveData.GetDishResearchLevels())
-                ApplyDishResearchLevel(dish, level);
 
             Log.LogInfo("[ItemHandler] Reapply complete.");
         }
@@ -825,95 +818,10 @@ namespace DaveDiverAP
 
         // ── Dish upgrades ─────────────────────────────────────────────────────
 
-        private static void UpgradeDish(string dishName)
-        {
-            var newLevel = ModSaveData.IncrementDishResearchLevel(dishName);
-            ModSaveData.Save();
-            ApplyDishResearchLevel(dishName, newLevel);
-            Log.LogInfo($"[ItemHandler] Dish '{dishName}' researched to level {newLevel}");
-        }
-
-        private static void ApplyDishResearchLevel(string dishName, int level)
-        {
-            if (level <= 0) return;
-
-            // Resolve TID: try RecipeNameMapper first (covers all dishes including sushi),
-            // then fall back to RecipeTIDs for backward compatibility.
-            int recipeTID = Patches.RecipeNameMapper.GetTIDFromName(dishName);
-            if (recipeTID <= 0 && RecipeTIDs.TryGetValue(dishName, out var fallbackTID))
-                recipeTID = fallbackTID;
-
-            if (recipeTID <= 0)
-            {
-                Log.LogWarning($"[ItemHandler] Dish TID not yet mapped for: '{dishName}' (level={level}). Upgrade stored in ModSaveData for later reapply.");
-                return;
-            }
-
-            try
-            {
-                var saveData = Patches.FishCatchPatch.CapturedSaveData;
-                if (saveData == null)
-                {
-                    // Game not ready yet — level is already stored in ModSaveData,
-                    // so ReapplyAllItems() will apply it when the game loads.
-                    Log.LogWarning($"[ItemHandler] SaveData not yet captured — dish research for '{dishName}' level {level} will be applied on next load.");
-                    return;
-                }
-
-                // ALL dishes (sushi 8050xxx/8052xxx AND cooked 8051xxx) use cookingStudySave:
-                //   - AddCookingStudySaveData → first time a dish gets a research level
-                //   - UpdateCookingStudySaveData → subsequent level increases
-                //
-                // Design (Option 1): game tracks research levels normally. AP items are applied
-                // only if the game's current level is BELOW the AP-sent level. If the player
-                // already upgraded the dish in-game to level 3 and AP sends level 2, we skip.
-                var cookingStudy = saveData.cookingStudySave;
-                bool alreadyExists = cookingStudy != null && cookingStudy.ContainsKey(recipeTID);
-
-                // Check current in-game level.
-                // CookingStudySave.StudyLevel confirmed via UnityExplorer (2026-07-10).
-                int currentLevel = 0;
-                if (alreadyExists && cookingStudy.TryGetValue(recipeTID, out var existingEntry))
-                    currentLevel = existingEntry.StudyLevel;
-
-                if (currentLevel >= level)
-                {
-                    // Game already has this dish at or above the AP level — no-op
-                    Log.LogInfo($"[ItemHandler] '{dishName}' already at level {currentLevel} >= AP level {level} — skipping (TID={recipeTID})");
-                    return;
-                }
-
-                if (!alreadyExists && level <= 1)
-                {
-                    // Level 1 = recipe unlock. For dishes not yet unlocked (e.g. sushi where
-                    // fish hasn't been caught yet, or cooked dish not yet researched), do NOT
-                    // create the entry artificially — the game will create it naturally.
-                    // The check will be sent by AddCookingStudySaveData_Postfix at that point.
-                    Log.LogInfo($"[ItemHandler] '{dishName}' level 1 deferred — not yet unlocked in game (TID={recipeTID})");
-                    return;
-                }
-
-                Patches.RecipeUnlockPatch._allowDishSave = true;
-                var studyData = new CookingStudyData();
-                studyData.recipeID = recipeTID;
-                studyData.studyLevel = level;
-                studyData.isNew = false;
-                if (alreadyExists)
-                    saveData.UpdateCookingStudySaveData(studyData);
-                else
-                    saveData.AddCookingStudySaveData(studyData);
-
-                Log.LogInfo($"[ItemHandler] Dish research applied: {dishName} → level {level} (recipeTID={recipeTID})");
-            }
-            catch (Exception ex)
-            {
-                Log.LogError($"[ItemHandler] ApplyDishResearchLevel failed for {dishName}: {ex.Message}");
-            }
-            finally
-            {
-                Patches.RecipeUnlockPatch._allowDishSave = false;
-            }
-        }
+        // UpgradeDish and ApplyDishResearchLevel removed 2026-07-10.
+        // Dish upgrades are now purely one-way checks: upgrading a dish in-game sends
+        // an AP check; no Progressive dish items are sent back from AP.
+        // See RecipeUnlockPatch.UpdateCookingStudySaveData_Postfix for check sending.
 
         // ── Recipes ───────────────────────────────────────────────────────────
 
