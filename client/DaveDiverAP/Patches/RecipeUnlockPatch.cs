@@ -122,40 +122,43 @@ namespace DaveDiverAP.Patches
         // Fix: in UpdateCookingStudySaveData_Prefix, revert data.studyLevel to oldLevel before
         // blocking, so the in-memory state stays consistent with what AP will set it to.
 
-        // ── Hook UpdateCookingStudySaveData to intercept and block vanilla upgrades ─────────
-        [HarmonyPatch(typeof(global::SaveData), "UpdateCookingStudySaveData")]
-        [HarmonyPrefix]
-        public static bool UpdateCookingStudySaveData_Prefix(CookingStudyData data)
-        {
-            if (!ArchipelagoClient.IsConnected) return true;
-            if (_allowDishSave) return true;
-
-            if (data != null)
-            {
-                int tid = data.recipeID;
-                int newLevel = data.studyLevel;
-                var dishName = RecipeNameMapper.GetDisplayName(tid);
-                Plugin.Log.LogInfo($"[DishUpgrade] Blocked vanilla upgrade: TID={tid} ({dishName ?? "unknown"}) → Level {newLevel}");
-
-                // Revert in-memory level so the UI doesn't show the upgrade
-                // (AP will set the correct level when the item is received)
-                data.studyLevel = newLevel - 1;
-
-                if (dishName != null)
-                    LocationTracker.OnDishUpgraded(dishName, newLevel);
-            }
-            return false; // block the persist
-        }
-
-        // ── No-op postfix (needed for Harmony to allow both prefix and postfix on same method) ──
+        // ── Hook UpdateCookingStudySaveData to send AP check when dish is upgraded ──────────
+        // Design decision (Option 1): Let the game track dish research levels normally.
+        // The game upgrade goes through as normal (dish visually levels up, costs scale).
+        // We intercept to send the AP check — the item received back from AP is informational
+        // (ApplyDishResearchLevel will skip if dish is already at or above the target level).
+        // This means: upgrading a dish in-game sends a check AND levels the dish normally.
+        // AP items are effectively no-ops if the game has already applied the level.
         [HarmonyPatch(typeof(global::SaveData), "UpdateCookingStudySaveData")]
         [HarmonyPostfix]
         public static void UpdateCookingStudySaveData_Postfix(CookingStudyData data)
         {
-            // Only fires when _allowDishSave=true (AP-driven) — nothing to do here.
+            try
+            {
+                if (!ArchipelagoClient.IsConnected) return;
+                if (_allowDishSave) return; // AP-driven save — don't send duplicate check
+                if (data == null) return;
+
+                int tid = data.recipeID;
+                int level = data.studyLevel;
+                var dishName = RecipeNameMapper.GetDisplayName(tid);
+                if (dishName != null)
+                {
+                    Plugin.Log.LogInfo($"[DishUpgrade] UpdateCookingStudySaveData: {dishName} → Level {level}");
+                    LocationTracker.OnDishUpgraded(dishName, level);
+                }
+                else
+                {
+                    Plugin.Log.LogInfo($"[DishUpgrade] Unknown dish TID={tid} level={level}");
+                }
+            }
+            catch (System.Exception ex)
+            {
+                Plugin.Log.LogError($"[RecipeUnlockPatch] UpdateCookingStudySaveData_Postfix threw: {ex}");
+            }
         }
 
-        // ── Stubs for GameStatePatch compatibility (snapshot no longer needed) ───────────
+        // ── Stubs for GameStatePatch compatibility (no longer needed) ────────────────────
         internal static void SnapshotRecipeLevels(global::SaveData saveData) { /* no-op */ }
         internal static void UpdateSnapshotLevel(int recipeTID, int level) { /* no-op */ }
     }

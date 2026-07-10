@@ -863,8 +863,24 @@ namespace DaveDiverAP
                 // ALL dishes (sushi 8050xxx/8052xxx AND cooked 8051xxx) use cookingStudySave:
                 //   - AddCookingStudySaveData → first time a dish gets a research level
                 //   - UpdateCookingStudySaveData → subsequent level increases
+                //
+                // Design (Option 1): game tracks research levels normally. AP items are applied
+                // only if the game's current level is BELOW the AP-sent level. If the player
+                // already upgraded the dish in-game to level 3 and AP sends level 2, we skip.
                 var cookingStudy = saveData.cookingStudySave;
                 bool alreadyExists = cookingStudy != null && cookingStudy.ContainsKey(recipeTID);
+
+                // Check current in-game level
+                int currentLevel = 0;
+                if (alreadyExists && cookingStudy.TryGetValue(recipeTID, out var existingData))
+                    currentLevel = existingData.studyLevel;
+
+                if (currentLevel >= level)
+                {
+                    // Game already has this dish at or above the AP level — no-op
+                    Log.LogInfo($"[ItemHandler] '{dishName}' already at level {currentLevel} >= AP level {level} — skipping (TID={recipeTID})");
+                    return;
+                }
 
                 if (!alreadyExists && level <= 1)
                 {
