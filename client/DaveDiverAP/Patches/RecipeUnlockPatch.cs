@@ -105,33 +105,103 @@ namespace DaveDiverAP.Patches
             }
         }
 
-        // Also hook UpdateCookingStudySaveData for when research is updated (not just added)
-        [HarmonyPatch(typeof(global::SaveData), "UpdateCookingStudySaveData")]
+        // ── Block dish research upgrades (cooked dishes use UpdateUnlockRecipeSave) ──────
+        // CONFIRMED via CLASS_NAME_CHEAT_SHEET: cooked dish research upgrades call
+        // SaveData.UpdateUnlockRecipeSave() (no args). Since this method has no arguments,
+        // we snapshot unlockRecipeData levels in a Prefix, then diff in the same Prefix to
+        // find which dish just changed, send the check, and block the save.
+        //
+        // Flow: player confirms dish research upgrade in restaurant UI →
+        //   game modifies unlockRecipeData in-memory (level++) →
+        //   game calls UpdateUnlockRecipeSave() to persist it →
+        //   our Prefix detects the change, sends AP check, blocks the persist →
+        //   AP sends back "Progressive X" item →
+        //   ItemHandler.ApplyDishResearchLevel calls UpdateUnlockRecipeSave with _allowDishSave=true
+
+        // Snapshot of last-seen levels from unlockRecipeData, for diffing in UpdateUnlockRecipeSave_Prefix
+        private static System.Collections.Generic.Dictionary<int, int> _lastKnownLevels
+            = new System.Collections.Generic.Dictionary<int, int>();
+
+        // Call this after save load to initialise the snapshot
+        internal static void SnapshotRecipeLevels(global::SaveData saveData)
+        {
+            _lastKnownLevels.Clear();
+            if (saveData?.unlockRecipeData == null) return;
+            foreach (var kvp in saveData.unlockRecipeData)
+                _lastKnownLevels[kvp.Key] = kvp.Value.studyLevel;
+        }
+
+        // Call this after AP applies a dish research level so the diff stays accurate.
+        internal static void UpdateSnapshotLevel(int recipeTID, int level)
+        {
+            _lastKnownLevels[recipeTID] = level;
+        }
+
+        [HarmonyPatch(typeof(global::SaveData), "UpdateUnlockRecipeSave")]
         [HarmonyPrefix]
-        public static bool UpdateCookingStudySaveData_Prefix(CookingStudyData data)
+        public static bool UpdateUnlockRecipeSave_Prefix(global::SaveData __instance)
         {
             if (!ArchipelagoClient.IsConnected) return true; // not connected — allow normally
             if (_allowDishSave) return true;                 // AP-driven — allow through
 
-            // Game is trying to upgrade a dish — block it and send AP check instead
+            // Diff current unlockRecipeData against our snapshot to find what changed
+            if (__instance?.unlockRecipeData != null)
+            {
+                foreach (var kvp in __instance.unlockRecipeData)
+                {
+                    int tid = kvp.Key;
+                    int newLevel = kvp.Value.studyLevel;
+                    _lastKnownLevels.TryGetValue(tid, out int oldLevel);
+                    if (newLevel > oldLevel)
+                    {
+                        // This dish was just upgraded in-memory — block persist, send check
+                        var dishName = RecipeNameMapper.GetDisplayName(tid);
+                        Plugin.Log.LogInfo($"[DishUpgrade] Blocked vanilla research upgrade: TID={tid} ({dishName ?? "unknown"}) {oldLevel}→{newLevel}");
+                        if (dishName != null)
+                            LocationTracker.OnDishUpgraded(dishName, newLevel);
+
+                        // Revert the in-memory change so the level stays at oldLevel
+                        // (AP will set it to the correct value when the item is received)
+                        kvp.Value.studyLevel = oldLevel;
+                        _lastKnownLevels[tid] = oldLevel;
+                    }
+                }
+            }
+
+            return false; // block the persist regardless
+        }
+
+        // ── Sushi dish upgrade hook (AddCookingStudySaveData for level 2+) ────────────────
+        // Sushi dishes use AddCookingStudySaveData (not Update) for every level change.
+        // The prefix already handles blocking. The postfix sends checks.
+        // No additional hook needed here.
+
+        // ── Also hook UpdateCookingStudySaveData for sushi level changes via Update ────────
+        [HarmonyPatch(typeof(global::SaveData), "UpdateCookingStudySaveData")]
+        [HarmonyPrefix]
+        public static bool UpdateCookingStudySaveData_Prefix(CookingStudyData data)
+        {
+            if (!ArchipelagoClient.IsConnected) return true;
+            if (_allowDishSave) return true;
+
+            // Sushi dish is being upgraded by the game — block and send check
             if (data != null)
             {
                 int tid = data.recipeID;
                 int level = data.studyLevel;
-                Plugin.Log.LogInfo($"[DishUpgrade] Blocked vanilla upgrade for TID={tid} Level={level} (AP controls this)");
+                Plugin.Log.LogInfo($"[DishUpgrade] Blocked vanilla UpdateCookingStudySaveData TID={tid} Level={level}");
                 var dishName = RecipeNameMapper.GetDisplayName(tid);
                 if (dishName != null)
                     LocationTracker.OnDishUpgraded(dishName, level);
             }
-            return false; // cancel the original method
+            return false;
         }
 
         [HarmonyPatch(typeof(global::SaveData), "UpdateCookingStudySaveData")]
         [HarmonyPostfix]
         public static void UpdateCookingStudySaveData_Postfix(CookingStudyData data)
         {
-            // Only fires when _allowDishSave=true (AP-driven upgrade went through)
-            // Nothing to do here — the AP-driven path already logged in ApplyDishResearchLevel
+            // Only fires when _allowDishSave=true (AP-driven) — nothing to do here.
         }
     }
 

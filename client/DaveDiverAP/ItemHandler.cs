@@ -860,27 +860,57 @@ namespace DaveDiverAP
                     return;
                 }
 
-                // Allow this AP-driven save through our prefix block
-                Patches.RecipeUnlockPatch._allowDishSave = true;
+                // Determine which save system to use based on TID range:
+                //   8050xxx / 8052xxx = sushi → cookingStudySave (AddCookingStudySaveData / UpdateCookingStudySaveData)
+                //   8051xxx / 8058xxx / etc. = cooked dishes → unlockRecipeData (UpdateUnlockRecipeSave)
+                bool isSushi = (recipeTID >= 8050000 && recipeTID < 8051000)
+                            || (recipeTID >= 8052000 && recipeTID < 8053000);
 
-                // Check if dish already exists in save (use Update) or needs to be added (use Add).
-                // Note: for sushi dishes, the entry may not exist if the player hasn't caught the fish yet.
-                // AddCookingStudySaveData with a high studyLevel is safe — the game stores research level
-                // independently from whether the recipe is displayed in the menu.
-                var cookingStudy = saveData.cookingStudySave;
-                bool alreadyExists = cookingStudy != null && cookingStudy.ContainsKey(recipeTID);
+                if (isSushi)
+                {
+                    var cookingStudy = saveData.cookingStudySave;
+                    bool alreadyExists = cookingStudy != null && cookingStudy.ContainsKey(recipeTID);
 
-                var data = new CookingStudyData();
-                data.recipeID = recipeTID;
-                data.studyLevel = level;
-                data.isNew = false;
+                    if (!alreadyExists && level <= 1)
+                    {
+                        // Level 1 = recipe unlock. For sushi not yet unlocked (fish not caught yet),
+                        // do NOT create the entry artificially — the game will create it naturally.
+                        // The check will be sent by AddCookingStudySaveData_Postfix at that point.
+                        Log.LogInfo($"[ItemHandler] Sushi '{dishName}' level 1 deferred — fish not yet caught (TID={recipeTID})");
+                        return;
+                    }
 
-                if (alreadyExists)
-                    saveData.UpdateCookingStudySaveData(data);
+                    Patches.RecipeUnlockPatch._allowDishSave = true;
+                    var data = new CookingStudyData();
+                    data.recipeID = recipeTID;
+                    data.studyLevel = level;
+                    data.isNew = false;
+                    if (alreadyExists)
+                        saveData.UpdateCookingStudySaveData(data);
+                    else
+                        saveData.AddCookingStudySaveData(data);
+                }
                 else
-                    saveData.AddCookingStudySaveData(data);
+                {
+                    // Cooked dish: update unlockRecipeData and call UpdateUnlockRecipeSave
+                    var unlockData = saveData.unlockRecipeData;
+                    if (unlockData == null || !unlockData.ContainsKey(recipeTID))
+                    {
+                        // Dish not yet unlocked in game — defer until recipe is unlocked.
+                        // ModSaveData already stores the target level; ReapplyAllItems will retry.
+                        Log.LogInfo($"[ItemHandler] Cooked dish '{dishName}' not yet unlocked — level {level} deferred (TID={recipeTID})");
+                        return;
+                    }
+
+                    Patches.RecipeUnlockPatch._allowDishSave = true;
+                    unlockData[recipeTID].studyLevel = level;
+                    saveData.UpdateUnlockRecipeSave();
+                }
 
                 Log.LogInfo($"[ItemHandler] Dish research applied: {dishName} → level {level} (recipeTID={recipeTID})");
+                // Update the recipe level snapshot so the diff in UpdateUnlockRecipeSave_Prefix
+                // doesn't incorrectly treat this AP-driven update as a vanilla upgrade.
+                Patches.RecipeUnlockPatch.UpdateSnapshotLevel(recipeTID, level);
             }
             catch (Exception ex)
             {

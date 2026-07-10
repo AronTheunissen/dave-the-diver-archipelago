@@ -75,6 +75,7 @@ namespace DaveDiverAP.Patches
                             _itemsReapplied = true;
                             Log.LogInfo("Game state: First boat entry — reapplying all items.");
                             ItemHandler.ReapplyAllItems();
+                            RecipeUnlockPatch.SnapshotRecipeLevels(FishCatchPatch.CapturedSaveData);
                         }
                         break;
 
@@ -87,6 +88,7 @@ namespace DaveDiverAP.Patches
                             _itemsReapplied = true;
                             Log.LogInfo("Game state: First dive — reapplying all items.");
                             ItemHandler.ReapplyAllItems();
+                            RecipeUnlockPatch.SnapshotRecipeLevels(FishCatchPatch.CapturedSaveData);
                         }
                         break;
 
@@ -98,6 +100,7 @@ namespace DaveDiverAP.Patches
                         {
                             _itemsReapplied = true;
                             ItemHandler.ReapplyAllItems();
+                            RecipeUnlockPatch.SnapshotRecipeLevels(FishCatchPatch.CapturedSaveData);
                         }
                         break;
 
@@ -134,6 +137,7 @@ namespace DaveDiverAP.Patches
                     _itemsReapplied = true;
                     Log.LogInfo("Game state: First restaurant entry — reapplying all items.");
                     ItemHandler.ReapplyAllItems();
+                    RecipeUnlockPatch.SnapshotRecipeLevels(FishCatchPatch.CapturedSaveData);
                 }
             }
             catch (System.Exception ex)
