@@ -870,18 +870,11 @@ namespace DaveDiverAP
                 var cookingStudy = saveData.cookingStudySave;
                 bool alreadyExists = cookingStudy != null && cookingStudy.ContainsKey(recipeTID);
 
-                // Check current in-game level
-                // Note: cookingStudySave values are CookingStudySave objects — use Traverse
-                // since we don't have the exact field name confirmed from the interop DLL.
-                // Known field name from session notes: "studyLevel" on CookingStudyData,
-                // but the dictionary value type may be CookingStudySave (different class).
-                // Common candidates: "studyLevel", "level", "researchLevel"
+                // Check current in-game level.
+                // CookingStudySave.StudyLevel confirmed via UnityExplorer (2026-07-10).
                 int currentLevel = 0;
                 if (alreadyExists && cookingStudy.TryGetValue(recipeTID, out var existingEntry))
-                {
-                    try { currentLevel = HarmonyLib.Traverse.Create(existingEntry).Field<int>("studyLevel").Value; }
-                    catch { currentLevel = 0; }
-                }
+                    currentLevel = existingEntry.StudyLevel;
 
                 if (currentLevel >= level)
                 {
