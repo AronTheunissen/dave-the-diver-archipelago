@@ -315,110 +315,296 @@ def _dish_upgrades(dish: str, max_level: int, base: int, category: str = "dish_u
 # Each dish block: BASE_ID + 2000 + (dish_index * 15), giving room for 96+ dishes.
 _D = BASE_ID + 2000
 dish_upgrade_locations: Dict[str, LocationData] = {
-    **_dish_upgrades("Agar Tokoroten",                        7,  _D + 0*15),   # max 7
-    **_dish_upgrades("Antarctic Octopus Carpaccio",           7,  _D + 1*15),   # max 7
-    **_dish_upgrades("Arctic Cod Risotto",                    9,  _D + 2*15),   # max 9
-    # Atlantic Bonito Curry: see corrected entry at bottom (max 12)
-    **_dish_upgrades("Batfish Ricebowl",                      7,  _D + 4*15),   # max 7
-    **_dish_upgrades("Big-Eyed Scad and Soybean Paste Roast", 7, _D + 5*15),   # max 7
-    **_dish_upgrades("Black Vinegar Braised Parrotfish",      6,  _D + 6*15),   # max 6
+    **_dish_upgrades("Agar Tokoroten",                        10, _D + 0*15),   # max 10 (was 7)
+    **_dish_upgrades("Antarctic Octopus Carpaccio",           10, _D + 1*15),   # max 10 (was 7)
+    **_dish_upgrades("Arctic Cod Risotto",                    10, _D + 2*15),   # max 10 (was 9)
+    **_dish_upgrades("Atlantic Bonito Curry",                 10, _D + 3*15),   # max 10 (was 12)
+    **_dish_upgrades("Batfish Ricebowl",                      10, _D + 4*15),   # max 10 (was 7)
+    **_dish_upgrades("Big-Eyed Scad and Soybean Paste Roast", 10, _D + 5*15),  # max 10 (was 7)
+    **_dish_upgrades("Black Vinegar Braised Parrotfish",      10, _D + 6*15),   # max 10 (was 6)
     **_dish_upgrades("Blobfish Spring Roll",                  10, _D + 7*15),   # max 10
-    **_dish_upgrades("Boiled Mantis Shrimp with Soy Paste",  1,  _D + 8*15),   # max 1 (boss recipe, no upgrades — skip)
-    **_dish_upgrades("Boiled Porbeagle Shark",                7,  _D + 9*15),   # max 7
-    **_dish_upgrades("Boiled Sailfish and Seaweed",           9,  _D + 10*15),  # max 9
-    **_dish_upgrades("Boiled Yellowback Fusilier",            7,  _D + 11*15),  # max 7
+    # Boiled Mantis Shrimp with Soy Paste: boss recipe, max 1 — skip (slot 8 reserved)
+    **_dish_upgrades("Boiled Porbeagle Shark",                10, _D + 9*15),   # max 10 (was 7)
+    **_dish_upgrades("Boiled Sailfish and Seaweed",           10, _D + 10*15),  # max 10 (was 9)
+    **_dish_upgrades("Boiled Yellowback Fusilier",            10, _D + 11*15),  # max 10 (was 7)
     **_dish_upgrades("Boiled and Deep-Fried White Shrimp",   10, _D + 12*15),  # max 10
-    **_dish_upgrades("Bluefin Tuna Rice Bowl",                9,  _D + 13*15),  # max 9
-    **_dish_upgrades("Comber Sandwich",                       6,  _D + 14*15),  # max 6
-    **_dish_upgrades("Crimson Fish Roll",                     9,  _D + 15*15),  # max 9
-    **_dish_upgrades("Crystal Lobster Roll",                  9,  _D + 16*15),  # max 9
-    **_dish_upgrades("Deep Fish Tempura",                     7,  _D + 17*15),  # max 7
-    **_dish_upgrades("Deep Sea Kaiju Ramen",                  6,  _D + 18*15, "dlc_godzilla"),  # max 6 — Godzilla DLC
-    **_dish_upgrades("Deep-Fried Eggplant Shrimp Meatballs", 7,  _D + 19*15),  # max 7
-    **_dish_upgrades("Deep-Fried Red Lionfish",               4,  _D + 20*15),  # max 4
-    **_dish_upgrades("Deep-Fried Vegetables",                 3,  _D + 21*15),  # max 3
-    **_dish_upgrades("Dried Stingray",                        12, _D + 22*15),  # max 12
-    **_dish_upgrades("Dumbo Takoyaki",                        9,  _D + 23*15),  # max 9
-    **_dish_upgrades("Dusky Grouper Steak",                   7,  _D + 24*15),  # max 7
-    **_dish_upgrades("Eggplant Soba Oyaki",                   9,  _D + 25*15, "dlc_ichiban"),  # max 9
-    **_dish_upgrades("Falcatus Soybean Paste Soup",           7,  _D + 26*15),  # max 7
-    **_dish_upgrades("Fried Habanero Fangtooth",              7,  _D + 27*15),  # max 7
-    **_dish_upgrades("Fried Onion Cuttlefish",                7,  _D + 28*15),  # max 7
+    **_dish_upgrades("Bluefin Tuna Rice Bowl",                10, _D + 13*15),  # max 10 (was 9)
+    **_dish_upgrades("Comber Sandwich",                       10, _D + 14*15),  # max 10 (was 6)
+    **_dish_upgrades("Crimson Fish Roll",                     10, _D + 15*15),  # max 10 (was 9)
+    **_dish_upgrades("Crystal Lobster Roll",                  10, _D + 16*15),  # max 10 (was 9)
+    **_dish_upgrades("Deep Fish Tempura",                     10, _D + 17*15),  # max 10 (was 7)
+    **_dish_upgrades("Deep Sea Kaiju Ramen",                  10, _D + 18*15, "dlc_godzilla"),  # max 10 (was 6) — Godzilla DLC
+    **_dish_upgrades("Deep-Fried Eggplant Shrimp Meatballs", 10, _D + 19*15),  # max 10 (was 7)
+    **_dish_upgrades("Deep-Fried Red Lionfish",               10, _D + 20*15),  # max 10 (was 4)
+    **_dish_upgrades("Deep-Fried Vegetables",                 10, _D + 21*15),  # max 10 (was 3)
+    **_dish_upgrades("Dried Stingray",                        10, _D + 22*15),  # max 10 (was 12)
+    **_dish_upgrades("Dumbo Takoyaki",                        10, _D + 23*15),  # max 10 (was 9)
+    **_dish_upgrades("Dusky Grouper Steak",                   10, _D + 24*15),  # max 10 (was 7)
+    **_dish_upgrades("Eggplant Soba Oyaki",                   10, _D + 25*15, "dlc_ichiban"),  # max 10 (was 9)
+    **_dish_upgrades("Falcatus Soybean Paste Soup",           10, _D + 26*15),  # max 10 (was 7)
+    **_dish_upgrades("Fried Habanero Fangtooth",              10, _D + 27*15),  # max 10 (was 7)
+    **_dish_upgrades("Fried Onion Cuttlefish",                10, _D + 28*15),  # max 10 (was 7)
     **_dish_upgrades("Fried Rice with Sally Lightfoot Crab", 10, _D + 29*15),  # max 10
-    **_dish_upgrades("Fried Seahorses",                       4,  _D + 30*15),  # max 4
-    **_dish_upgrades("Fried Tomato and Snailfish",            7,  _D + 31*15),  # max 7
-    **_dish_upgrades("Goblin Shark Belly Roast",              1,  _D + 32*15),  # boss — no upgrades
-    **_dish_upgrades("Great Barracuda Canape",                6,  _D + 33*15),  # max 6
-    **_dish_upgrades("Great Spider Crab Curry",               9,  _D + 34*15),  # max 9
-    **_dish_upgrades("Hawaiian Poke",                         9,  _D + 35*15),  # max 9
-    **_dish_upgrades("Hot Pepper Tuna",                       7,  _D + 36*15),  # max 7
+    **_dish_upgrades("Fried Seahorses",                       10, _D + 30*15),  # max 10 (was 4)
+    **_dish_upgrades("Fried Tomato and Snailfish",            10, _D + 31*15),  # max 10 (was 7)
+    # Goblin Shark Belly Roast: boss recipe, max 1 — skip (slot 32 reserved)
+    **_dish_upgrades("Great Barracuda Canape",                10, _D + 33*15),  # max 10 (was 6)
+    **_dish_upgrades("Great Spider Crab Curry",               10, _D + 34*15),  # max 10 (was 9)
+    **_dish_upgrades("Hawaiian Poke",                         10, _D + 35*15),  # max 10 (was 9)
+    **_dish_upgrades("Hot Pepper Tuna",                       10, _D + 36*15),  # max 10 (was 7)
     **_dish_upgrades("Humboldt Ink Pasta",                    10, _D + 37*15),  # max 10
-    **_dish_upgrades("Humphead Parrotfish Curry",             6,  _D + 38*15),  # max 6
-    **_dish_upgrades("Ice Fish Curry",                        9,  _D + 39*15),  # max 9
-    **_dish_upgrades("Latok Omelet",                          9,  _D + 40*15),  # max 9
-    **_dish_upgrades("Mackerel Scad Hotdog",                  6,  _D + 41*15),  # max 6
-    **_dish_upgrades("Marlin and Soybean Paste Roast",        9,  _D + 42*15),  # max 9
+    **_dish_upgrades("Humphead Parrotfish Curry",             10, _D + 38*15),  # max 10 (was 6)
+    **_dish_upgrades("Ice Fish Curry",                        10, _D + 39*15),  # max 10 (was 9)
+    **_dish_upgrades("Latok Omelet",                          10, _D + 40*15),  # max 10 (was 9)
+    **_dish_upgrades("Mackerel Scad Hotdog",                  10, _D + 41*15),  # max 10 (was 6)
+    **_dish_upgrades("Marlin and Soybean Paste Roast",        10, _D + 42*15),  # max 10 (was 9)
     **_dish_upgrades("Mianbao Xia",                           10, _D + 43*15),  # max 10
-    **_dish_upgrades("Moray Eel Curry",                       6,  _D + 44*15),  # max 6
-    **_dish_upgrades("Narrow-barred Spanish Mackerel Arancini", 7, _D + 45*15), # max 7
-    **_dish_upgrades("Narwhal Miso Soup",                     12, _D + 46*15),  # max 12
-    **_dish_upgrades("Nasu Dengaku",                          4,  _D + 47*15),  # max 4
-    **_dish_upgrades("Peacock Squid Ripieni",                 7,  _D + 48*15),  # max 7
-    **_dish_upgrades("Pelican Eel Jelly",                     7,  _D + 49*15),  # max 7
-    **_dish_upgrades("Phantom Jellyfish Jelly",               1,  _D + 50*15),  # boss — no upgrades
-    **_dish_upgrades("Pickled Vegetables",                    3,  _D + 51*15),  # max 3
+    **_dish_upgrades("Moray Eel Curry",                       10, _D + 44*15),  # max 10 (was 6)
+    **_dish_upgrades("Narrow-barred Spanish Mackerel Arancini", 10, _D + 45*15), # max 10 (was 7)
+    **_dish_upgrades("Narwhal Miso Soup",                     10, _D + 46*15),  # max 10 (was 12)
+    **_dish_upgrades("Nasu Dengaku",                          10, _D + 47*15),  # max 10 (was 4)
+    **_dish_upgrades("Peacock Squid Ripieni",                 10, _D + 48*15),  # max 10 (was 7)
+    **_dish_upgrades("Pelican Eel Jelly",                     10, _D + 49*15),  # max 10 (was 7)
+    # Phantom Jellyfish Jelly: boss recipe, max 1 — skip (slot 50 reserved)
+    **_dish_upgrades("Pickled Vegetables",                    10, _D + 51*15),  # max 10 (was 3)
     **_dish_upgrades("Pikaia Ramen",                          10, _D + 52*15),  # max 10
-    **_dish_upgrades("Plotosid Pie",                          7,  _D + 53*15),  # max 7
-    **_dish_upgrades("Rice with Great Spider Crab Meat",      7,  _D + 54*15),  # max 7
-    **_dish_upgrades("Rice with Purple Sea Urchin Sushi",     4,  _D + 55*15),  # max 4
-    **_dish_upgrades("Rice with White Shrimp Meat",           9,  _D + 56*15),  # max 9
-    **_dish_upgrades("Roasted Capelin",                       12, _D + 57*15),  # max 12
-    **_dish_upgrades("Roasted Helicoprion Tail",              1,  _D + 58*15),  # boss — no upgrades
-    **_dish_upgrades("Roasted Tropical Fish and Garlic",      9,  _D + 59*15),  # max 9
-    **_dish_upgrades("Salt-grilled Redtoothed Triggerfish",   6,  _D + 60*15),  # max 6
-    **_dish_upgrades("Seahorse Salad",                        6,  _D + 61*15),  # max 6
-    **_dish_upgrades("Seahorse Skewers",                      1,  _D + 62*15),  # max 1 — no upgrades
-    **_dish_upgrades("Seahorse Udon",                         4,  _D + 63*15),  # max 4
-    **_dish_upgrades("Seasoned Jellyfish",                    6,  _D + 64*15),  # max 6
-    **_dish_upgrades("Seasoned Kajime",                       6,  _D + 65*15),  # max 6
-    **_dish_upgrades("Seasoned Long-spine Porcupinefish Skin", 7, _D + 66*15),  # max 7
-    **_dish_upgrades("Seasoned Waptia Fieldensis",            7,  _D + 67*15),  # max 7
-    **_dish_upgrades("Seaweed Rolled Omelet",                 9,  _D + 68*15),  # max 9
-    **_dish_upgrades("Shark Karaage",                         9,  _D + 69*15),  # max 9
-    **_dish_upgrades("Smallspotted Dart Kajime Soup",         7,  _D + 70*15),  # max 7
-    **_dish_upgrades("Smoked Atlantic Mackerel Scramble",     6,  _D + 71*15),  # max 6
-    **_dish_upgrades("Spear Squid Soba Futomaki",             9,  _D + 72*15, "dlc_ichiban"),  # max 9
-    **_dish_upgrades("Special Fried Shrimp Sushi",            1,  _D + 73*15),  # max 1 — no upgrades
-    **_dish_upgrades("Steamed Kronosaurus Tongue",            1,  _D + 74*15),  # boss — no upgrades
-    **_dish_upgrades("Steamed Wolf Eel",                      1,  _D + 75*15),  # boss — no upgrades
-    **_dish_upgrades("Stellate Puffer Nicogori",              7,  _D + 76*15),  # max 7
-    **_dish_upgrades("Stingray Sashimi Cold Noodles",         9,  _D + 77*15, "dlc_ichiban"),  # max 9
-    **_dish_upgrades("Stir-Fried Hermit Crab and Seaweed",   1,  _D + 78*15),  # boss — no upgrades
-    **_dish_upgrades("Stir-fried Habanero Lobster",          7,  _D + 79*15),  # max 7
-    **_dish_upgrades("Striped Red Mullet Tangle Roll",        7,  _D + 80*15),  # max 7
-    **_dish_upgrades("Sweet and Sour Stargazer",              6,  _D + 81*15),  # max 6
-    **_dish_upgrades("Three-Colored Squid Roast",             12, _D + 82*15),  # max 12
-    **_dish_upgrades("Tomato Egg Soup",                       12, _D + 83*15),  # max 12
-    **_dish_upgrades("Trevally Nanbanzuke",                   7,  _D + 84*15),  # max 7
-    **_dish_upgrades("Trevally Sandwich",                     7,  _D + 85*15),  # max 7
-    **_dish_upgrades("Tropical Fish Sushi Set",               9,  _D + 86*15),  # max 9
-    **_dish_upgrades("Trout Sea Grapes Ricebowl",             7,  _D + 87*15),  # max 7
-    **_dish_upgrades("Vegetable Sushi",                       1,  _D + 88*15),  # max 1 — no upgrades
-    **_dish_upgrades("White Shark Omelet",                    1,  _D + 89*15),  # boss — no upgrades
-    **_dish_upgrades("White Trevally Kombu Ochazuke",         7,  _D + 90*15),  # max 7
-    **_dish_upgrades("Whole-Roasted Shark Head",              7,  _D + 91*15),  # max 7
-    **_dish_upgrades("Wrasse Curry",                          6,  _D + 92*15),  # max 6
-    **_dish_upgrades("Yawie Steamed Meat",                    1,  _D + 93*15),  # boss — no upgrades
-    **_dish_upgrades("Yellowfin Tuna Steak",                  9,  _D + 94*15),  # max 9
-    **_dish_upgrades("Atlantic Bonito Curry",                 12, _D + 3*15),   # max 12 (corrected from duplicate)
+    **_dish_upgrades("Plotosid Pie",                          10, _D + 53*15),  # max 10 (was 7)
+    **_dish_upgrades("Rice with Great Spider Crab Meat",      10, _D + 54*15),  # max 10 (was 7)
+    **_dish_upgrades("Rice with Purple Sea Urchin Sushi",     10, _D + 55*15),  # max 10 (was 4)
+    **_dish_upgrades("Rice with White Shrimp Meat",           10, _D + 56*15),  # max 10 (was 9)
+    **_dish_upgrades("Roasted Capelin",                       10, _D + 57*15),  # max 10 (was 12)
+    # Roasted Helicoprion Tail: boss recipe, max 1 — skip (slot 58 reserved)
+    **_dish_upgrades("Roasted Tropical Fish and Garlic",      10, _D + 59*15),  # max 10 (was 9)
+    **_dish_upgrades("Salt-grilled Redtoothed Triggerfish",   10, _D + 60*15),  # max 10 (was 6)
+    **_dish_upgrades("Seahorse Salad",                        10, _D + 61*15),  # max 10 (was 6)
+    # Seahorse Skewers: max 1 — skip (slot 62 reserved)
+    **_dish_upgrades("Seahorse Udon",                         10, _D + 63*15),  # max 10 (was 4)
+    **_dish_upgrades("Seasoned Jellyfish",                    10, _D + 64*15),  # max 10 (was 6)
+    **_dish_upgrades("Seasoned Kajime",                       10, _D + 65*15),  # max 10 (was 6)
+    **_dish_upgrades("Seasoned Long-spine Porcupinefish Skin", 10, _D + 66*15), # max 10 (was 7)
+    **_dish_upgrades("Seasoned Waptia Fieldensis",            10, _D + 67*15),  # max 10 (was 7)
+    **_dish_upgrades("Seaweed Rolled Omelet",                 10, _D + 68*15),  # max 10 (was 9)
+    **_dish_upgrades("Shark Karaage",                         10, _D + 69*15),  # max 10 (was 9)
+    **_dish_upgrades("Smallspotted Dart Kajime Soup",         10, _D + 70*15),  # max 10 (was 7)
+    **_dish_upgrades("Smoked Atlantic Mackerel Scramble",     10, _D + 71*15),  # max 10 (was 6)
+    **_dish_upgrades("Spear Squid Soba Futomaki",             10, _D + 72*15, "dlc_ichiban"),  # max 10 (was 9)
+    **_dish_upgrades("Special Fried Shrimp Sushi",            10, _D + 73*15),  # max 10 (was 1 — spreadsheet confirmed)
+    # Steamed Kronosaurus Tongue: boss recipe, max 1 — skip (slot 74 reserved)
+    # Steamed Wolf Eel: boss recipe, max 1 — skip (slot 75 reserved)
+    **_dish_upgrades("Stellate Puffer Nicogori",              10, _D + 76*15),  # max 10 (was 7)
+    **_dish_upgrades("Stingray Sashimi Cold Noodles",         10, _D + 77*15, "dlc_ichiban"),  # max 10 (was 9)
+    # Stir-Fried Hermit Crab and Seaweed: boss recipe, max 1 — skip (slot 78 reserved)
+    **_dish_upgrades("Stir-fried Habanero Lobster",           10, _D + 79*15),  # max 10 (was 7)
+    **_dish_upgrades("Striped Red Mullet Tangle Roll",        10, _D + 80*15),  # max 10 (was 7)
+    **_dish_upgrades("Sweet and Sour Stargazer",              10, _D + 81*15),  # max 10 (was 6)
+    **_dish_upgrades("Three-Colored Squid Roast",             10, _D + 82*15),  # max 10 (was 12)
+    **_dish_upgrades("Tomato Egg Soup",                       10, _D + 83*15),  # max 10 (was 12)
+    **_dish_upgrades("Trevally Nanbanzuke",                   10, _D + 84*15),  # max 10 (was 7)
+    **_dish_upgrades("Trevally Sandwich",                     10, _D + 85*15),  # max 10 (was 7)
+    **_dish_upgrades("Tropical Fish Sushi Set",               10, _D + 86*15),  # max 10 (was 9)
+    **_dish_upgrades("Trout Sea Grapes Ricebowl",             10, _D + 87*15),  # max 10 (was 7)
+    **_dish_upgrades("Vegetable Sushi",                       10, _D + 88*15),  # max 10 (was 1 — spreadsheet confirmed)
+    # White Shark Omelet: boss recipe, max 1 — skip (slot 89 reserved)
+    **_dish_upgrades("White Trevally Kombu Ochazuke",         10, _D + 90*15),  # max 10 (was 7)
+    **_dish_upgrades("Whole-Roasted Shark Head",              10, _D + 91*15),  # max 10 (was 7)
+    **_dish_upgrades("Wrasse Curry",                          10, _D + 92*15),  # max 10 (was 6)
+    # Yawie Steamed Meat: boss recipe, max 1 — skip (slot 93 reserved)
+    **_dish_upgrades("Yellowfin Tuna Steak",                  10, _D + 94*15),  # max 10 (was 9)
     # --- Ichiban DLC dishes ---
-    **_dish_upgrades("Warm Atlantic Mackerel Soba",           9,  _D + 95*15, "dlc_ichiban"),  # max 9
+    **_dish_upgrades("Warm Atlantic Mackerel Soba",           10, _D + 95*15, "dlc_ichiban"),  # max 10 (was 9)
     # --- Godzilla DLC dishes ---
-    **_dish_upgrades("Godzilla vs. Ebirah Curry",             9,  _D + 96*15, "dlc_godzilla"),  # max 9
-    **_dish_upgrades("Ebirah Chasing Sashimi",                9,  _D + 97*15, "dlc_godzilla"),  # max 9
+    **_dish_upgrades("Godzilla vs. Ebirah Curry",             10, _D + 96*15, "dlc_godzilla"),  # max 10 (was 9)
+    **_dish_upgrades("Ebirah Chasing Sashimi",                10, _D + 97*15, "dlc_godzilla"),  # max 10 (was 9)
+    # --- Missing cooked dishes (added from spreadsheet) ---
+    # NOTE: slots 98-99 still fit under _D (end at BASE_ID+3493, _SA starts at BASE_ID+3500).
+    # Slots 100+ would collide with _SA (BASE_ID+3500), so they use _D2 = BASE_ID+6000 instead.
+    **_dish_upgrades("Great Spider Crab and Cucumber Sushi",  10, _D + 98*15),   # max 10
+    **_dish_upgrades("Grilled Eel with Habanero",             10, _D + 99*15),   # max 10
 }
 # Filter out any entries that somehow have no upgrades (defensive)
 dish_upgrade_locations = {k: v for k, v in dish_upgrade_locations.items()}
+
+# === DISH UPGRADES OVERFLOW — _D2 block ===
+# _D slots 100+ collide with _SA (BASE_ID+3500), so overflow entries use a higher base.
+# Known occupied ranges (all relative to BASE_ID):
+#   +2000..+3493  : _D dish upgrade slots 0–99
+#   +3500..+3979  : _SA staff all-levels
+#   +4000..+~6000 : _J jungle locations
+#   +8000..+8097  : dish_upgrade_items in items.py (ITEM_BASE+3000..+3097)
+#   +10000..+10118: recipe_unlock_locations extended sushi unlocks
+# _D2 must start at BASE_ID+12000 to be safely clear of all the above.
+# _D2 range: BASE_ID+12000 .. BASE_ID+12000+151*15+14 = BASE_ID+14279.
+# Layout (each slot = 15 IDs wide):
+#   Slots   0– 9: remaining cooked dishes (overflow from _D)
+#   Slot   10:    reserved (Clione Queen Soup, boss — no upgrades)
+#   Slots  11–17: Truffle (VIP) dishes, max level 5
+#   Slots  18–143: Base game sushi 8050xxx (~110 dishes, max level 10)
+#   Slots 144–151: Tuna Bar sushi 8052xxx (8 dishes, max level 10)
+_D2 = BASE_ID + 12000
+
+dish_upgrade_locations.update({
+    # --- Remaining cooked dishes (overflow from _D, slots 0–9 of _D2) ---
+    **_dish_upgrades("Haddock Acqua Pazza",                   10, _D2 + 0*15),   # max 10
+    **_dish_upgrades("Lobster Platter",                       10, _D2 + 1*15),   # max 10
+    **_dish_upgrades("Moonlight Bladderwrack Roll",           10, _D2 + 2*15),   # max 10
+    **_dish_upgrades("Pufferfish Dumpling Soup",              10, _D2 + 3*15),   # max 10
+    **_dish_upgrades("Seagrapes Jellyfish Sushi",             10, _D2 + 4*15),   # max 10
+    **_dish_upgrades("Seagrapes Special Sushi",               10, _D2 + 5*15),   # max 10
+    **_dish_upgrades("Sea Toad and Cucumber Gunkan Sushi",    10, _D2 + 6*15),   # max 10
+    **_dish_upgrades("Skewered Cucumber",                     10, _D2 + 7*15),   # max 10
+    **_dish_upgrades("Soy Sauce Marinated Crab",              10, _D2 + 8*15),   # max 10
+    **_dish_upgrades("Stellate Puffer Special Sushi",         10, _D2 + 9*15),   # max 10
+    # Slot 10 reserved: Clione Queen Soup (boss recipe, max 1 — no upgrades)
+    # --- Truffle (VIP) dishes — max level 5 (slots 11–17) ---
+    **_dish_upgrades("Boiled Asian Sheepshead Wrasse & Truffle", 5, _D2 + 11*15),  # max 5
+    **_dish_upgrades("Grilled Antarctic Octopus & Truffle",    5, _D2 + 12*15),   # max 5
+    **_dish_upgrades("Hyalonema Tuna Sashimi",                 5, _D2 + 13*15),   # max 5
+    **_dish_upgrades("Steamed Hyalonema Angler Fish",          5, _D2 + 14*15),   # max 5
+    **_dish_upgrades("Truffle Blue Lobster Tail Sushi",        5, _D2 + 15*15),   # max 5
+    **_dish_upgrades("Truffle Sailfish Tartare",               5, _D2 + 16*15),   # max 5
+    **_dish_upgrades("Truffle Shark Sandwich",                 5, _D2 + 17*15),   # max 5
+    # --- Base game sushi 8050xxx — max level 10 (slots 18–127) ---
+    # Skipped TIDs (not in spreadsheet, no upgrades): 8050052 (Norimaki), 8050101 (Swordfish Sushi),
+    #   8050111 (Young Anomalocaris Sushi), 8050121 (Blackfin Barracuda Sushi variant)
+    # Also skipped: 8050010 (gap), 8050028 (gap), 8050039-41 (gaps), 8050058 (gap), 8050118 (gap)
+    **_dish_upgrades("Clownfish Sushi",                        10, _D2 + 18*15),  # 8050001
+    **_dish_upgrades("Comber Sushi",                           10, _D2 + 19*15),  # 8050002
+    **_dish_upgrades("Cardinalfish Sushi",                     10, _D2 + 20*15),  # 8050003
+    **_dish_upgrades("Sea Goldie Sushi",                       10, _D2 + 21*15),  # 8050004
+    **_dish_upgrades("Pyramid Butterflyfish Sushi",            10, _D2 + 22*15),  # 8050005
+    **_dish_upgrades("Yellow Tang Sushi",                      10, _D2 + 23*15),  # 8050006
+    **_dish_upgrades("Salema Porgy Sushi",                     10, _D2 + 24*15),  # 8050007
+    **_dish_upgrades("Orbicular Batfish Fry",                  10, _D2 + 25*15),  # 8050008
+    **_dish_upgrades("Blue Tang Sushi",                        10, _D2 + 26*15),  # 8050009
+    **_dish_upgrades("Rainbow Wrasse Sushi",                   10, _D2 + 27*15),  # 8050011
+    **_dish_upgrades("Lagoon Triggerfish Sushi",               10, _D2 + 28*15),  # 8050012
+    **_dish_upgrades("Smallspotted Dart Sushi",                10, _D2 + 29*15),  # 8050013
+    **_dish_upgrades("Yellowback Fusilier Sushi",              10, _D2 + 30*15),  # 8050014
+    **_dish_upgrades("Ornate Wrasse Sushi",                    10, _D2 + 31*15),  # 8050015
+    **_dish_upgrades("Longfin Batfish Sushi",                  10, _D2 + 32*15),  # 8050016
+    **_dish_upgrades("Mediterranean Parrotfish Sushi",         10, _D2 + 33*15),  # 8050017
+    **_dish_upgrades("Redtoothed Triggerfish Sushi",           10, _D2 + 34*15),  # 8050018
+    **_dish_upgrades("B&W Snapper Sushi",                      10, _D2 + 35*15),  # 8050019
+    **_dish_upgrades("Green Humphead Parrotfish Sushi",        10, _D2 + 36*15),  # 8050020
+    **_dish_upgrades("Red Lionfish Sushi",                     10, _D2 + 37*15),  # 8050021
+    **_dish_upgrades("Bluehead Tilefish Sushi",                10, _D2 + 38*15),  # 8050022
+    **_dish_upgrades("Clown Frogfish Sushi",                   10, _D2 + 39*15),  # 8050023
+    **_dish_upgrades("Painted Comber Sushi",                   10, _D2 + 40*15),  # 8050024
+    **_dish_upgrades("Humphead Parrotfish Sushi",              10, _D2 + 41*15),  # 8050025
+    **_dish_upgrades("Bigeye Scad Sushi",                      10, _D2 + 42*15),  # 8050026
+    **_dish_upgrades("Striped Red Mullet Sushi",               10, _D2 + 43*15),  # 8050027
+    **_dish_upgrades("Harlequin Hind Sushi",                   10, _D2 + 44*15),  # 8050029
+    **_dish_upgrades("Bigeye Trevally Sushi",                  10, _D2 + 45*15),  # 8050030
+    **_dish_upgrades("Coral Trout Sushi",                      10, _D2 + 46*15),  # 8050031
+    **_dish_upgrades("Grey Triggerfish Sushi",                 10, _D2 + 47*15),  # 8050032
+    **_dish_upgrades("Atlantic Bonito Sushi",                  10, _D2 + 48*15),  # 8050033
+    **_dish_upgrades("Atlantic Mackerel Sushi",                10, _D2 + 49*15),  # 8050034
+    **_dish_upgrades("White Trevally Sushi",                   10, _D2 + 50*15),  # 8050035
+    **_dish_upgrades("Cuttlefish Sushi",                       10, _D2 + 51*15),  # 8050036
+    **_dish_upgrades("Dusky Grouper Sushi",                    10, _D2 + 52*15),  # 8050037
+    **_dish_upgrades("Narrow-barred Spanish Mackerel Sushi",   10, _D2 + 53*15),  # 8050038
+    **_dish_upgrades("Giant Trevally Sushi",                   10, _D2 + 54*15),  # 8050042
+    **_dish_upgrades("Blackfin Barracuda Sushi",               10, _D2 + 55*15),  # 8050043
+    **_dish_upgrades("Whitetip Reefshark Sushi",               10, _D2 + 56*15),  # 8050044
+    **_dish_upgrades("Tiger Shark Sushi",                      10, _D2 + 57*15),  # 8050045
+    **_dish_upgrades("Barrel Jellyfish Sushi",                 10, _D2 + 58*15),  # 8050046
+    **_dish_upgrades("Fried Egg Jellyfish Sushi",              10, _D2 + 59*15),  # 8050047
+    **_dish_upgrades("White Spotted Jellyfish Sushi",          10, _D2 + 60*15),  # 8050048
+    **_dish_upgrades("Great Barracuda Sushi",                  10, _D2 + 61*15),  # 8050049
+    **_dish_upgrades("Mackerel Scad Sushi",                    10, _D2 + 62*15),  # 8050050
+    **_dish_upgrades("Titan Triggerfish Sushi",                10, _D2 + 63*15),  # 8050051
+    **_dish_upgrades("Longnose Sawshark Sushi",                10, _D2 + 64*15),  # 8050053
+    **_dish_upgrades("Chambered Nautilus Sushi",               10, _D2 + 65*15),  # 8050054
+    **_dish_upgrades("Fangtooth Sushi",                        10, _D2 + 66*15),  # 8050055
+    **_dish_upgrades("Frilled Shark Sushi",                    10, _D2 + 67*15),  # 8050056
+    **_dish_upgrades("Bluespotted Stargazer Sushi",            10, _D2 + 68*15),  # 8050057
+    **_dish_upgrades("Rhinochimaeridae Sushi",                 10, _D2 + 69*15),  # 8050059
+    **_dish_upgrades("Spider Crab Sushi",                      10, _D2 + 70*15),  # 8050060
+    **_dish_upgrades("Megamouth Shark Sushi",                  10, _D2 + 71*15),  # 8050061
+    **_dish_upgrades("Cookiecutter Shark Sushi",               10, _D2 + 72*15),  # 8050062
+    **_dish_upgrades("Sea Toad Sushi",                         10, _D2 + 73*15),  # 8050063
+    **_dish_upgrades("Salmon Snailfish Sushi",                 10, _D2 + 74*15),  # 8050064
+    **_dish_upgrades("Pacific Fanfish Sushi",                  10, _D2 + 75*15),  # 8050065
+    **_dish_upgrades("Threetooth Puffer Sushi",                10, _D2 + 76*15),  # 8050066
+    **_dish_upgrades("Red Bream Sushi",                        10, _D2 + 77*15),  # 8050067
+    **_dish_upgrades("Atlantic Anglerfish Sushi",              10, _D2 + 78*15),  # 8050068
+    **_dish_upgrades("Comb Jelly Sushi",                       10, _D2 + 79*15),  # 8050069
+    **_dish_upgrades("Blood-belly Comb Jelly Sushi",           10, _D2 + 80*15),  # 8050070
+    **_dish_upgrades("Blacktip Reefshark Sushi",               10, _D2 + 81*15),  # 8050071
+    **_dish_upgrades("Copper Shark Sushi",                     10, _D2 + 82*15),  # 8050072
+    **_dish_upgrades("Box Jellyfish Sushi",                    10, _D2 + 83*15),  # 8050073
+    **_dish_upgrades("Moray Eel Sushi",                        10, _D2 + 84*15),  # 8050074
+    **_dish_upgrades("Sally Lightfoot Crab Sushi",             10, _D2 + 85*15),  # 8050075
+    **_dish_upgrades("Peacock Squid Sushi",                    10, _D2 + 86*15),  # 8050076
+    **_dish_upgrades("Dumbo Octopus Sushi",                    10, _D2 + 87*15),  # 8050077
+    **_dish_upgrades("Barreleye Sushi",                        10, _D2 + 88*15),  # 8050078
+    **_dish_upgrades("Blobfish Sushi",                         10, _D2 + 89*15),  # 8050079
+    **_dish_upgrades("Vampire Squid Sushi",                    10, _D2 + 90*15),  # 8050080
+    **_dish_upgrades("Arctic Cod Sushi",                       10, _D2 + 91*15),  # 8050081
+    **_dish_upgrades("Gelatinous Snailfish Sushi",             10, _D2 + 92*15),  # 8050082
+    **_dish_upgrades("Antarctic Octopus Sushi",                10, _D2 + 93*15),  # 8050083
+    **_dish_upgrades("Greenland Shark Sushi",                  10, _D2 + 94*15),  # 8050084
+    **_dish_upgrades("Polar Eelpout Sushi",                    10, _D2 + 95*15),  # 8050085
+    **_dish_upgrades("Porbeagle Shark Sushi",                  10, _D2 + 96*15),  # 8050086
+    **_dish_upgrades("Ice Fish Sushi",                         10, _D2 + 97*15),  # 8050087
+    **_dish_upgrades("Capelin Sushi",                          10, _D2 + 98*15),  # 8050088
+    **_dish_upgrades("Narwhal Sushi",                          10, _D2 + 99*15),  # 8050089
+    **_dish_upgrades("Haddock Sushi",                          10, _D2 + 100*15), # 8050090
+    **_dish_upgrades("Starry Skate Sushi",                     10, _D2 + 101*15), # 8050091
+    **_dish_upgrades("Shortfin Mako Sushi",                    10, _D2 + 102*15), # 8050092
+    **_dish_upgrades("Thresher Shark Sushi",                   10, _D2 + 103*15), # 8050093
+    **_dish_upgrades("Smooth Hammerhead Sushi",                10, _D2 + 104*15), # 8050094
+    **_dish_upgrades("Zebra Shark Sushi",                      10, _D2 + 105*15), # 8050095
+    **_dish_upgrades("Pelican Eel Sushi",                      10, _D2 + 106*15), # 8050096
+    **_dish_upgrades("White Shrimp Sushi",                     10, _D2 + 107*15), # 8050097
+    **_dish_upgrades("Humboldt Squid Sushi",                   10, _D2 + 108*15), # 8050098
+    **_dish_upgrades("Devil Scorpionfish Sushi",               10, _D2 + 109*15), # 8050099
+    **_dish_upgrades("Marlin Sushi",                           10, _D2 + 110*15), # 8050100
+    **_dish_upgrades("Sailfish Sushi",                         10, _D2 + 111*15), # 8050102
+    **_dish_upgrades("Waptia Sushi",                           10, _D2 + 112*15), # 8050103
+    **_dish_upgrades("Pikaia Sushi",                           10, _D2 + 113*15), # 8050104
+    **_dish_upgrades("Allenypterus Sushi",                     10, _D2 + 114*15), # 8050105
+    **_dish_upgrades("Qingmenodus Sushi",                      10, _D2 + 115*15), # 8050106
+    **_dish_upgrades("Falcatus Sushi",                         10, _D2 + 116*15), # 8050107
+    **_dish_upgrades("Drepanaspis Sushi",                      10, _D2 + 117*15), # 8050108
+    **_dish_upgrades("Dunkleosteus Sushi",                     10, _D2 + 118*15), # 8050109
+    **_dish_upgrades("Megalograptus Sushi",                    10, _D2 + 119*15), # 8050110
+    **_dish_upgrades("Seadragon Onigiri",                      10, _D2 + 120*15), # 8050112
+    **_dish_upgrades("Arctic Telescope Fish Sushi",            10, _D2 + 121*15), # 8050113
+    **_dish_upgrades("Alaska Pollock Sushi",                   10, _D2 + 122*15), # 8050114
+    **_dish_upgrades("Lumpfish Sushi",                         10, _D2 + 123*15), # 8050115
+    **_dish_upgrades("Snub-nosed Spiny Eel Sushi",             10, _D2 + 124*15), # 8050116
+    **_dish_upgrades("Xenacanthus Sushi",                      10, _D2 + 125*15), # 8050117
+    **_dish_upgrades("Longspine Squirrelfish Sushi",           10, _D2 + 126*15), # 8050119
+    **_dish_upgrades("Clearfin Lionfish Sushi",                10, _D2 + 127*15), # 8050120
+    **_dish_upgrades("Spear Squid Sushi",                      10, _D2 + 128*15), # 8050122
+    **_dish_upgrades("Red-banded Lobster Sushi",               10, _D2 + 129*15), # 8050123
+    **_dish_upgrades("American Lobster Sushi",                 10, _D2 + 130*15), # 8050124
+    **_dish_upgrades("Blue Lobster Sushi",                     10, _D2 + 131*15), # 8050125
+    **_dish_upgrades("California Spiny Lobster Sushi",         10, _D2 + 132*15), # 8050126
+    **_dish_upgrades("Fan Lobster Sushi",                      10, _D2 + 133*15), # 8050127
+    **_dish_upgrades("Norway Lobster Sushi",                   10, _D2 + 134*15), # 8050128
+    **_dish_upgrades("Golden King Crab Sushi",                 10, _D2 + 135*15), # 8050129
+    **_dish_upgrades("Snow Crab Sushi",                        10, _D2 + 136*15), # 8050130
+    **_dish_upgrades("Horsehair Crab Sushi",                   10, _D2 + 137*15), # 8050131
+    **_dish_upgrades("European Lobster Sushi",                 10, _D2 + 138*15), # 8050132
+    **_dish_upgrades("Tropical Rock Lobster Sushi",            10, _D2 + 139*15), # 8050133
+    **_dish_upgrades("Crystal Lobster Sushi",                  10, _D2 + 140*15), # 8050134
+    **_dish_upgrades("Eastern Rock Lobster Sushi",             10, _D2 + 141*15), # 8050135
+    **_dish_upgrades("Dollocaris Ingens Sushi",                10, _D2 + 142*15), # 8050136
+    **_dish_upgrades("Tokummia Katalepsis Sushi",              10, _D2 + 143*15), # 8050137
+    # --- Tuna Bar sushi 8052xxx — max level 10 (slots 144–154) ---
+    # Note: 8052007 (Bluefin Tuna Rice Bowl), 8052008 (Hawaiian Poke), 8052009 (Yellowfin Tuna Steak)
+    #   are already in dish_upgrade_locations under _D (slots 13, 35, 94).
+    **_dish_upgrades("Bluefin Tuna Akami Sushi",               10, _D2 + 144*15), # 8052001
+    **_dish_upgrades("Bluefin Tuna Chutoro Sushi",             10, _D2 + 145*15), # 8052002
+    **_dish_upgrades("Bluefin Tuna Ootoro Sushi",              10, _D2 + 146*15), # 8052003
+    **_dish_upgrades("Yellowfin Tuna Akami Sushi",             10, _D2 + 147*15), # 8052004
+    **_dish_upgrades("Yellowfin Tuna Chutoro Sushi",           10, _D2 + 148*15), # 8052005
+    **_dish_upgrades("Yellowfin Tuna Ootoro Sushi",            10, _D2 + 149*15), # 8052006
+    **_dish_upgrades("Raw Black Tiger Shrimp Sushi",           10, _D2 + 150*15), # 8052011
+    **_dish_upgrades("Cooked Whiteleg Shrimp Sushi",           10, _D2 + 151*15), # 8052012
+})
 
 # === RECIPE UNLOCKS ===
 recipe_unlock_locations: Dict[str, LocationData] = {
@@ -812,7 +998,7 @@ staff_training_locations: Dict[str, LocationData] = {
 # ── All-levels training (Lv1-20, for staff_training_depth=all_levels) ────────
 # ID block: BASE_ID + 3500 + staff_idx*20 + (level-1)  →  max offset = 3500+23*20+19 = 3979 (safe before jungle at 4000)
 # category "staff_all_levels" (base game) or "staff_all_levels_ichiban" (DLC)
-_SA = BASE_ID + 3500  # Staff All-levels base (dishes end ~3469, jungle starts at 4000)
+_SA = BASE_ID + 3500  # Staff All-levels base (_D block ends at ~3493, _D2 block at BASE_ID+12000+, jungle starts at 4000)
 
 _BASE_STAFF_NAMES = [
     "Billy", "Carolina", "Charlie", "Cohh", "Davina", "Drae", "El Nino",

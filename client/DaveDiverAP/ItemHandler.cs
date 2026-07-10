@@ -836,28 +836,40 @@ namespace DaveDiverAP
         private static void ApplyDishResearchLevel(string dishName, int level)
         {
             if (level <= 0) return;
-            if (!RecipeTIDs.TryGetValue(dishName, out var recipeTID))
+
+            // Resolve TID: try RecipeNameMapper first (covers all dishes including sushi),
+            // then fall back to RecipeTIDs for backward compatibility.
+            int recipeTID = Patches.RecipeNameMapper.GetTIDFromName(dishName);
+            if (recipeTID <= 0 && RecipeTIDs.TryGetValue(dishName, out var fallbackTID))
+                recipeTID = fallbackTID;
+
+            if (recipeTID <= 0)
             {
-                Log.LogWarning($"[ItemHandler] Dish TID not yet mapped for: '{dishName}' (level={level}).");
+                Log.LogWarning($"[ItemHandler] Dish TID not yet mapped for: '{dishName}' (level={level}). Upgrade stored in ModSaveData for later reapply.");
                 return;
             }
+
             try
             {
                 var saveData = Patches.FishCatchPatch.CapturedSaveData;
                 if (saveData == null)
                 {
-                    Log.LogWarning($"[ItemHandler] SaveData not yet captured — cannot apply dish research for '{dishName}'");
+                    // Game not ready yet — level is already stored in ModSaveData,
+                    // so ReapplyAllItems() will apply it when the game loads.
+                    Log.LogWarning($"[ItemHandler] SaveData not yet captured — dish research for '{dishName}' level {level} will be applied on next load.");
                     return;
                 }
 
                 // Allow this AP-driven save through our prefix block
                 Patches.RecipeUnlockPatch._allowDishSave = true;
 
-                // Check if dish already exists in save (use Update) or needs to be added (use Add)
+                // Check if dish already exists in save (use Update) or needs to be added (use Add).
+                // Note: for sushi dishes, the entry may not exist if the player hasn't caught the fish yet.
+                // AddCookingStudySaveData with a high studyLevel is safe — the game stores research level
+                // independently from whether the recipe is displayed in the menu.
                 var cookingStudy = saveData.cookingStudySave;
                 bool alreadyExists = cookingStudy != null && cookingStudy.ContainsKey(recipeTID);
 
-                // Build a CookingStudyData with the target level
                 var data = new CookingStudyData();
                 data.recipeID = recipeTID;
                 data.studyLevel = level;

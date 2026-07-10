@@ -38,11 +38,11 @@ These are needed for the randomizer to cover all game content correctly.
 
 ### Dish Upgrade Checks (Major Gap)
 
-- [ ] **Add sushi dishes to dish_upgrade_locations** — All base game sushi (8050xxx) and Tuna Bar sushi (8052xxx) are upgradeable (max level 10 confirmed from spreadsheet) but are NOT yet in `dish_upgrade_locations`. Need to add them all. See `docs/SUSHI_UPGRADE_LEVELS.md` for the full list.
+- [x] **Add sushi dishes to dish_upgrade_locations** — Done (2026-07-10). All base game sushi (8050xxx, ~110 dishes) and Tuna Bar sushi (8052xxx, 8 dishes) added to `dish_upgrade_locations` in `_D2` block (BASE_ID+12000). Corresponding `Progressive [Name]` items added to `dish_upgrade_items` in `items.py`.
 
-- [ ] **Update existing dish_upgrade_locations max levels** — The spreadsheet confirms all non-truffle, non-boss cooked dishes are max level 10. Many entries in the code have incorrect lower values (e.g. 3, 4, 6, 7, 9, 12). These should all be updated to 10. Notable cases flagged in `SUSHI_UPGRADE_LEVELS.md` Notes column.
+- [x] **Update existing dish_upgrade_locations max levels** — Done (2026-07-10). All non-boss cooked dishes updated to max level 10 per spreadsheet. Also fixed `items.py` `dish_upgrade_items` counts to match.
 
-- [ ] **Special Fried Shrimp Sushi and Vegetable Sushi** — Currently set to max level 1 in code (no upgrades). Spreadsheet says max level 10. Verify in-game and update if confirmed.
+- [x] **Special Fried Shrimp Sushi and Vegetable Sushi** — Updated to max level 10 per spreadsheet (2026-07-10). Both in `dish_upgrade_locations` and `dish_upgrade_items`.
 
 ### Jungle Grill Recipes (Major Gap)
 
