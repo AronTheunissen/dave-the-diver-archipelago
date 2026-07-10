@@ -860,57 +860,33 @@ namespace DaveDiverAP
                     return;
                 }
 
-                // Determine which save system to use based on TID range:
-                //   8050xxx / 8052xxx = sushi → cookingStudySave (AddCookingStudySaveData / UpdateCookingStudySaveData)
-                //   8051xxx / 8058xxx / etc. = cooked dishes → unlockRecipeData (UpdateUnlockRecipeSave)
-                bool isSushi = (recipeTID >= 8050000 && recipeTID < 8051000)
-                            || (recipeTID >= 8052000 && recipeTID < 8053000);
+                // ALL dishes (sushi 8050xxx/8052xxx AND cooked 8051xxx) use cookingStudySave:
+                //   - AddCookingStudySaveData → first time a dish gets a research level
+                //   - UpdateCookingStudySaveData → subsequent level increases
+                var cookingStudy = saveData.cookingStudySave;
+                bool alreadyExists = cookingStudy != null && cookingStudy.ContainsKey(recipeTID);
 
-                if (isSushi)
+                if (!alreadyExists && level <= 1)
                 {
-                    var cookingStudy = saveData.cookingStudySave;
-                    bool alreadyExists = cookingStudy != null && cookingStudy.ContainsKey(recipeTID);
-
-                    if (!alreadyExists && level <= 1)
-                    {
-                        // Level 1 = recipe unlock. For sushi not yet unlocked (fish not caught yet),
-                        // do NOT create the entry artificially — the game will create it naturally.
-                        // The check will be sent by AddCookingStudySaveData_Postfix at that point.
-                        Log.LogInfo($"[ItemHandler] Sushi '{dishName}' level 1 deferred — fish not yet caught (TID={recipeTID})");
-                        return;
-                    }
-
-                    Patches.RecipeUnlockPatch._allowDishSave = true;
-                    var data = new CookingStudyData();
-                    data.recipeID = recipeTID;
-                    data.studyLevel = level;
-                    data.isNew = false;
-                    if (alreadyExists)
-                        saveData.UpdateCookingStudySaveData(data);
-                    else
-                        saveData.AddCookingStudySaveData(data);
+                    // Level 1 = recipe unlock. For dishes not yet unlocked (e.g. sushi where
+                    // fish hasn't been caught yet, or cooked dish not yet researched), do NOT
+                    // create the entry artificially — the game will create it naturally.
+                    // The check will be sent by AddCookingStudySaveData_Postfix at that point.
+                    Log.LogInfo($"[ItemHandler] '{dishName}' level 1 deferred — not yet unlocked in game (TID={recipeTID})");
+                    return;
                 }
+
+                Patches.RecipeUnlockPatch._allowDishSave = true;
+                var studyData = new CookingStudyData();
+                studyData.recipeID = recipeTID;
+                studyData.studyLevel = level;
+                studyData.isNew = false;
+                if (alreadyExists)
+                    saveData.UpdateCookingStudySaveData(studyData);
                 else
-                {
-                    // Cooked dish: update unlockRecipeData and call UpdateUnlockRecipeSave
-                    var unlockData = saveData.unlockRecipeData;
-                    if (unlockData == null || !unlockData.ContainsKey(recipeTID))
-                    {
-                        // Dish not yet unlocked in game — defer until recipe is unlocked.
-                        // ModSaveData already stores the target level; ReapplyAllItems will retry.
-                        Log.LogInfo($"[ItemHandler] Cooked dish '{dishName}' not yet unlocked — level {level} deferred (TID={recipeTID})");
-                        return;
-                    }
-
-                    Patches.RecipeUnlockPatch._allowDishSave = true;
-                    Patches.RecipeUnlockPatch.SetUnlockRecipeLevelPublic(unlockData[recipeTID], level);
-                    saveData.UpdateUnlockRecipeSave();
-                }
+                    saveData.AddCookingStudySaveData(studyData);
 
                 Log.LogInfo($"[ItemHandler] Dish research applied: {dishName} → level {level} (recipeTID={recipeTID})");
-                // Update the recipe level snapshot so the diff in UpdateUnlockRecipeSave_Prefix
-                // doesn't incorrectly treat this AP-driven update as a vanilla upgrade.
-                Patches.RecipeUnlockPatch.UpdateSnapshotLevel(recipeTID, level);
             }
             catch (Exception ex)
             {
