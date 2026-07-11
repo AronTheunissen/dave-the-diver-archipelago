@@ -127,6 +127,29 @@ namespace DaveDiverAP.Patches
         // We only observe via postfixes to send AP checks.
         // No AP items are sent back for dish upgrades (one-way checks).
 
+        // ── Block UpdateCookingStudySaveData level=0 (recipe becoming researchable) ──────────
+        // Level 0 = game marking a dish as "researchable" in cookingStudySave.
+        // We BLOCK this so dishes don't appear as researchable without AP sending the item.
+        // Boss/story recipes and AP-driven saves pass through unblocked.
+        [HarmonyPatch(typeof(global::SaveData), "UpdateCookingStudySaveData")]
+        [HarmonyPrefix]
+        public static bool UpdateCookingStudySaveData_Prefix(CookingStudyData data)
+        {
+            if (!ArchipelagoClient.IsConnected) return true;
+            if (_allowDishSave) return true;
+            if (data == null) return true;
+
+            // Only block level 0 (researchable state) — all other levels pass through
+            if (data.studyLevel != 0) return true;
+
+            // Allow boss/story recipes through (they pass through AddUnlockRecipeSaveData too)
+            if (_bossRecipeTIDs.Contains(data.recipeID)) return true;
+
+            var dishName = RecipeNameMapper.GetDisplayName(data.recipeID);
+            Plugin.Log.LogInfo($"[Recipe] Blocked level-0 researchable state: {dishName ?? $"TID={data.recipeID}"} (AP controls this)");
+            return false; // block
+        }
+
         // ── Hook UpdateCookingStudySaveData to send AP check when dish is upgraded ──────────
         [HarmonyPatch(typeof(global::SaveData), "UpdateCookingStudySaveData")]
         [HarmonyPostfix]
