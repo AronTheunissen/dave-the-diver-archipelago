@@ -13,14 +13,16 @@ namespace DaveDiverAP.Patches
     [HarmonyPatch]
     public static class RecipeUnlockPatch
     {
-        // ── Recipe unlock (new recipe becomes available) ─────────────────────
-        // ✅ CONFIRMED via dump.cs: SaveData has AddUnlockRecipeSaveData(int id, DateTime unlockTime)
-        // Hooking AddUnlockRecipeSaveData fires exactly when a recipe is unlocked and persisted.
-        // The int id is the recipe's design sheet TID.
+        // ── Recipe becomes researchable ───────────────────────────────────────
+        // ✅ CONFIRMED: AddUnlockRecipeSaveData(int id, DateTime unlockTime) fires when a
+        // recipe becomes RESEARCHABLE (e.g. Cooksta rank up, story event) — NOT when it's
+        // actually researched. Actual research fires UpdateCookingStudySaveData(TID, level=1).
         //
-        // 🛡️ LOAD GUARD: We use ItemQueue.IsGameReady to skip calls that happen during save
-        //    loading/deserialization. IsGameReady is only true once LobbyPlayer enters a valid
-        //    game state (InBoat, Diving, etc.), so save-load replay calls are safely ignored.
+        // We do NOT send an AP check here — becoming researchable is a vanilla game event,
+        // not an AP location. The check fires when the player actually researches the dish
+        // (UpdateCookingStudySaveData_Postfix, level=1).
+        //
+        // We DO log it for debugging purposes.
         [HarmonyPatch(typeof(global::SaveData), "AddUnlockRecipeSaveData")]
         [HarmonyPostfix]
         public static void UnlockRecipe_Postfix(int id)
@@ -28,18 +30,11 @@ namespace DaveDiverAP.Patches
             try
             {
                 if (!ArchipelagoClient.IsConnected) return;
-                if (_allowDishSave) return; // AP-driven unlock — don't send duplicate check
+                if (_allowDishSave) return; // AP-driven — already handled
 
                 var recipeName = RecipeNameMapper.GetDisplayName(id);
-                if (recipeName != null)
-                {
-                    Plugin.Log.LogInfo($"[Recipe] Unlocked: {recipeName} (TID={id})");
-                    LocationTracker.OnRecipeUnlocked(recipeName);
-                }
-                else
-                {
-                    Plugin.Log.LogInfo($"[Recipe] Unknown recipe TID={id} (add to RecipeNameMapper if needed)");
-                }
+                Plugin.Log.LogInfo($"[Recipe] Became researchable: {recipeName ?? $"TID={id}"}");
+                // No AP check sent here — check fires when player actually researches (level 1)
             }
             catch (System.Exception ex)
             {

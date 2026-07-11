@@ -856,15 +856,26 @@ namespace DaveDiverAP
                 // Allow this AP-driven save through our prefix block
                 Patches.RecipeUnlockPatch._allowDishSave = true;
 
-                // Only add if not already unlocked
+                // Step 1: Make recipe researchable (AddUnlockRecipeSaveData = "available to research")
                 if (!saveData.IsUnlockRecipe(recipeTID))
-                {
                     saveData.AddUnlockRecipeSaveData(recipeTID, Il2CppSystem.DateTime.Now);
-                    Log.LogInfo($"[ItemHandler] Recipe unlocked: {recipeName} (TID={recipeTID})");
+
+                // Step 2: Fully research it to level 1 (so it appears in the restaurant immediately)
+                // This is what the player would normally do manually — AP skips that step.
+                var cookingStudy = saveData.cookingStudySave;
+                bool alreadyResearched = cookingStudy != null && cookingStudy.ContainsKey(recipeTID);
+                if (!alreadyResearched)
+                {
+                    var studyData = new CookingStudyData();
+                    studyData.recipeID = recipeTID;
+                    studyData.studyLevel = 1;
+                    studyData.isNew = false;
+                    saveData.AddCookingStudySaveData(studyData);
+                    Log.LogInfo($"[ItemHandler] Recipe researched to level 1: {recipeName} (TID={recipeTID})");
                 }
                 else
                 {
-                    Log.LogInfo($"[ItemHandler] Recipe '{recipeName}' already unlocked (TID={recipeTID}), skipping.");
+                    Log.LogInfo($"[ItemHandler] Recipe '{recipeName}' already researched (TID={recipeTID}), skipping.");
                 }
             }
             catch (Exception ex)
