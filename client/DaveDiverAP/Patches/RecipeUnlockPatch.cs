@@ -13,33 +13,58 @@ namespace DaveDiverAP.Patches
     [HarmonyPatch]
     public static class RecipeUnlockPatch
     {
-        // ── Recipe becomes researchable ───────────────────────────────────────
+        // ── Boss/story recipe TIDs — always pass through unblocked ──────────────────────────
+        // These are tied to boss defeats and story progression. They must not be blocked
+        // as they trigger critical story events (staff unlocks, chapter progression, etc.).
+        private static readonly System.Collections.Generic.HashSet<int> _bossRecipeTIDs = new()
+        {
+            8051009,  // Whole-Roasted Shark Head (unlocks staff hiring!)
+            8051101,  // Steamed Wolf Eel
+            8051102,  // Clione Queen Soup
+            8051103,  // Goblin Shark Belly Roast
+            8051104,  // Stir-Fried Hermit Crab and Seaweed
+            8051105,  // Boiled Mantis Shrimp with Soy Paste
+            8051106,  // White Shark Omelet
+            8051107,  // Phantom Jellyfish Jelly
+            8051108,  // Roasted Helicoprion Tail
+            8051109,  // Steamed Kronosaurus Tongue
+            8051110,  // Yawie Steamed Meat
+            8051111,  // Blanched Lusca Tentacle (jungle DLC boss)
+            8051112,  // Lusca Neck Tadaki (jungle DLC boss)
+        };
+
+        // ── Recipe becomes researchable — block and send AP check ────────────────────────────
         // ✅ CONFIRMED: AddUnlockRecipeSaveData(int id, DateTime unlockTime) fires when a
-        // recipe becomes RESEARCHABLE (e.g. Cooksta rank up, story event) — NOT when it's
-        // actually researched. Actual research fires UpdateCookingStudySaveData(TID, level=1).
+        // recipe becomes RESEARCHABLE (e.g. Cooksta rank up, story event).
         //
-        // We do NOT send an AP check here — becoming researchable is a vanilla game event,
-        // not an AP location. The check fires when the player actually researches the dish
-        // (UpdateCookingStudySaveData_Postfix, level=1).
+        // Design: we BLOCK this call (so recipe doesn't become researchable in vanilla),
+        // and send an AP check instead. The player receives a "Recipe: X" item from AP
+        // which calls ApplyRecipeUnlock → makes it researchable + auto-researches to level 1.
         //
-        // We DO log it for debugging purposes.
+        // Exception: boss recipes pass through unblocked (story-critical).
+        [HarmonyPatch(typeof(global::SaveData), "AddUnlockRecipeSaveData")]
+        [HarmonyPrefix]
+        public static bool UnlockRecipe_Prefix(int id)
+        {
+            if (!ArchipelagoClient.IsConnected) return true;
+            if (_allowDishSave) return true; // AP-driven — allow through
+
+            // Boss/story recipes always pass through
+            if (_bossRecipeTIDs.Contains(id)) return true;
+
+            // Block vanilla unlock and send AP check instead
+            var recipeName = RecipeNameMapper.GetDisplayName(id);
+            Plugin.Log.LogInfo($"[Recipe] Blocked vanilla researchable unlock: {recipeName ?? $"TID={id}"} — sending AP check");
+            if (recipeName != null)
+                LocationTracker.OnRecipeUnlocked(recipeName);
+            return false; // block the save
+        }
+
         [HarmonyPatch(typeof(global::SaveData), "AddUnlockRecipeSaveData")]
         [HarmonyPostfix]
         public static void UnlockRecipe_Postfix(int id)
         {
-            try
-            {
-                if (!ArchipelagoClient.IsConnected) return;
-                if (_allowDishSave) return; // AP-driven — already handled
-
-                var recipeName = RecipeNameMapper.GetDisplayName(id);
-                Plugin.Log.LogInfo($"[Recipe] Became researchable: {recipeName ?? $"TID={id}"}");
-                // No AP check sent here — check fires when player actually researches (level 1)
-            }
-            catch (System.Exception ex)
-            {
-                Plugin.Log.LogError($"[RecipeUnlockPatch] UnlockRecipe_Postfix threw: {ex}");
-            }
+            // Only fires when _allowDishSave=true (AP-driven) or boss recipe — nothing to do.
         }
 
         // ── Block auto-leveling by game (prefix) ─────────────────────────────
@@ -121,11 +146,17 @@ namespace DaveDiverAP.Patches
                 {
                     Plugin.Log.LogInfo($"[DishUpgrade] UpdateCookingStudySaveData: {dishName} → Level {level}");
                     if (level == 1)
-                        // First research of a dish (manual research in recipe book)
-                        LocationTracker.OnRecipeUnlocked(dishName);
+                    {
+                        // Level 1 via UpdateCookingStudySaveData = game setting dish as researchable
+                        // or AP auto-researching it. The AP check was already sent at
+                        // AddUnlockRecipeSaveData time (UnlockRecipe_Prefix). Do NOT send again.
+                        Plugin.Log.LogInfo($"[DishUpgrade] Level 1 via Update — AP check already sent at researchable time, skipping.");
+                    }
                     else
-                        // Subsequent upgrades in restaurant research panel
+                    {
+                        // Level 2+ = upgrade in restaurant research panel
                         LocationTracker.OnDishUpgraded(dishName, level);
+                    }
                 }
                 else
                 {
