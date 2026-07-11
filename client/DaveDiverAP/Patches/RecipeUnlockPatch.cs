@@ -76,9 +76,29 @@ namespace DaveDiverAP.Patches
         // We cancel AddCookingStudySaveData unless AP explicitly triggered it.
         internal static bool _allowDishSave = false;
 
-        // AddCookingStudySaveData_Prefix removed 2026-07-10:
-        // With Option 1 design (game tracks levels naturally), we no longer block any
-        // dish saves. The postfix below handles sending checks.
+        // ── Block AddCookingStudySaveData level=0 (recipe becoming researchable) ─────────────
+        // Level 0 = game creating a new cookingStudySave entry at "researchable" state.
+        // This fires BEFORE UpdateCookingStudySaveData(level=0) for the same event.
+        // We block it to prevent recipes appearing as researchable without AP permission.
+        // Boss/story recipes and AP-driven saves pass through unblocked.
+        [HarmonyPatch(typeof(global::SaveData), "AddCookingStudySaveData")]
+        [HarmonyPrefix]
+        public static bool AddCookingStudySaveData_Prefix(CookingStudyData data)
+        {
+            if (!ArchipelagoClient.IsConnected) return true;
+            if (_allowDishSave) return true;
+            if (data == null) return true;
+
+            // Only block level 0 (researchable state) — level 1+ passes through
+            if (data.studyLevel != 0) return true;
+
+            // Allow boss/story recipes through
+            if (_bossRecipeTIDs.Contains(data.recipeID)) return true;
+
+            var dishName = RecipeNameMapper.GetDisplayName(data.recipeID);
+            Plugin.Log.LogInfo($"[Recipe] Blocked AddCookingStudySaveData level-0: {dishName ?? $"TID={data.recipeID}"} (AP controls this)");
+            return false; // block
+        }
 
         // ── Dish unlock/upgrade (postfix for AP check sending) ───────────────
         // ✅ CONFIRMED via Unity Explorer: AddCookingStudySaveData(CookingStudyData data)
@@ -95,15 +115,20 @@ namespace DaveDiverAP.Patches
 
                 int tid = data.recipeID;
                 int level = data.studyLevel;
+
+                // Level 0 = researchable state — blocked by prefix, postfix still fires
+                // but we should NOT send a check here.
+                if (level <= 0) return;
+
                 Plugin.Log.LogInfo($"[DishUpgrade] AddCookingStudySaveData TID={tid} Level={level}");
 
                 var dishName = RecipeNameMapper.GetDisplayName(tid);
                 if (dishName != null)
                 {
                     Plugin.Log.LogInfo($"[DishUpgrade] {dishName} → Level {level}");
-                    // Level 1 = first unlock → send recipe unlock check
+                    // Level 1 = first sushi unlock (fish catch) → send recipe unlock check
                     // Level 2+ = research upgrade → send dish upgrade check
-                    if (level <= 1)
+                    if (level == 1)
                         LocationTracker.OnRecipeUnlocked(dishName);
                     else
                         LocationTracker.OnDishUpgraded(dishName, level);
