@@ -33,40 +33,41 @@ namespace DaveDiverAP.Patches
             8051112,  // Lusca Neck Tadaki (jungle DLC boss)
         };
 
-        // ── Recipe becomes researchable — allow through, send AP check ──────────────────────
+        // ── Recipe becomes researchable — BLOCK and send AP check ───────────────────────────
         // ✅ CONFIRMED: AddUnlockRecipeSaveData(int id, DateTime unlockTime) fires when a
-        // recipe becomes RESEARCHABLE (e.g. Cooksta rank up, story event).
+        // recipe becomes RESEARCHABLE (e.g. Cooksta rank up, staff level up, story event).
         //
-        // Design: we ALLOW this call through (so the research menu stays open and recipes
-        // appear as researchable). We send the AP check in the postfix.
-        // The AP item "Recipe: X" then auto-researches the dish to level 1.
+        // Design: we BLOCK this call so the recipe does NOT become researchable in vanilla.
+        // We send the AP check instead. The AP item "Recipe: X" calls ApplyRecipeUnlock
+        // which makes it researchable AND auto-researches it to level 1.
         //
-        // Note: boss recipes are excluded from check sending (story-critical).
+        // Boss/story recipes pass through unblocked (story-critical).
+        // AP-driven calls (_allowDishSave=true) pass through (used by ApplyRecipeUnlock).
+        //
+        // Note: the research menu UI may lock if unlockRecipeData is empty.
+        // TODO: Patch the research menu UI check to always show the menu open,
+        //       regardless of whether unlockRecipeData has entries.
+        [HarmonyPatch(typeof(global::SaveData), "AddUnlockRecipeSaveData")]
+        [HarmonyPrefix]
+        public static bool UnlockRecipe_Prefix(int id)
+        {
+            if (!ArchipelagoClient.IsConnected) return true;
+            if (_allowDishSave) return true; // AP-driven — allow through
+            if (_bossRecipeTIDs.Contains(id)) return true; // boss/story recipe — allow through
+
+            // Block vanilla unlock and send AP check instead
+            var recipeName = RecipeNameMapper.GetDisplayName(id);
+            Plugin.Log.LogInfo($"[Recipe] Blocked vanilla researchable: {recipeName ?? $"TID={id}"} — sending AP check");
+            if (recipeName != null)
+                LocationTracker.OnRecipeUnlocked(recipeName);
+            return false; // block the save
+        }
+
         [HarmonyPatch(typeof(global::SaveData), "AddUnlockRecipeSaveData")]
         [HarmonyPostfix]
         public static void UnlockRecipe_Postfix(int id)
         {
-            try
-            {
-                if (!ArchipelagoClient.IsConnected) return;
-                if (_allowDishSave) return; // AP-driven — don't send duplicate check
-                if (_bossRecipeTIDs.Contains(id)) return; // boss recipe — no AP check
-
-                var recipeName = RecipeNameMapper.GetDisplayName(id);
-                if (recipeName != null)
-                {
-                    Plugin.Log.LogInfo($"[Recipe] Became researchable: {recipeName} (TID={id}) — sending AP check");
-                    LocationTracker.OnRecipeUnlocked(recipeName);
-                }
-                else
-                {
-                    Plugin.Log.LogInfo($"[Recipe] Unknown researchable TID={id}");
-                }
-            }
-            catch (System.Exception ex)
-            {
-                Plugin.Log.LogError($"[RecipeUnlockPatch] UnlockRecipe_Postfix threw: {ex}");
-            }
+            // Only fires when _allowDishSave=true (AP-driven) or boss recipe — nothing to do.
         }
 
         // ── Block auto-leveling by game (prefix) ─────────────────────────────
