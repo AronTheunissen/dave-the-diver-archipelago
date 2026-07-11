@@ -782,8 +782,8 @@ namespace DaveDiverAP.Patches
             { 2010005, "First Catch: Sea Goldie" },           // SquareSpot_Anthias
             { 2010006, "First Catch: Pyramid Butterflyfish" },
             { 2010007, "First Catch: Yellow Tang" },
-            { 2010008, "First Catch: Black and White Snapper" }, // Blackspot_Seabream → actually different?
-            { 2010009, "First Catch: Longfin Batfish" },      // Juvenile_Circular_BatFish
+            { 2010008, "First Catch: Salema Porgy" },           // confirmed _tidMap: 2010008=Salema Porgy
+            { 2010009, "First Catch: Orbicular Batfish" },    // Juvenile_Circular_BatFish = juvenile Orbicular Batfish
             { 2010010, "First Catch: Blue Tang" },            // Bluetang
             { 2010011, "First Catch: Spiny Seahorse" },       // Seahorse (generic)
             { 2010012, "First Catch: Rainbow Wrasse" },       // Mediterranean_Rainbow_Wrasse
