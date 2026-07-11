@@ -225,6 +225,41 @@ namespace DaveDiverAP.Patches
         internal static void UpdateSnapshotLevel(int recipeTID, int level) { /* no-op */ }
     }
 
+    // ── Lock the Research button in the restaurant UI ─────────────────────────────────────
+    // SushiBarButton.Refresh() is called whenever the button state is updated.
+    // We hook it to force Lock=true on the Research button when AP is connected.
+    // This prevents players from manually researching recipes (AP controls recipe unlocks).
+    [HarmonyPatch(typeof(global::SushiBarButton), "Refresh")]
+    public static class SushiBarResearchButtonPatch
+    {
+        [HarmonyPostfix]
+        public static void Postfix(global::SushiBarButton __instance)
+        {
+            try
+            {
+                if (!ArchipelagoClient.IsConnected) return;
+
+                // Check if this is the Research button by its MenuType
+                // MenuType is an enum — Research type needs to be confirmed
+                // For now use the button name as fallback
+                var go = __instance.gameObject;
+                if (go == null) return;
+                if (!go.name.Contains("Research", System.StringComparison.OrdinalIgnoreCase)) return;
+
+                // Force the research button to always be locked when AP is connected
+                if (!__instance.Lock)
+                {
+                    __instance.Lock = true;
+                    Plugin.Log.LogInfo("[SushiBar] Research button locked (AP controls recipe unlocks)");
+                }
+            }
+            catch (System.Exception ex)
+            {
+                Plugin.Log.LogError($"[SushiBarResearchButtonPatch] Postfix threw: {ex.Message}");
+            }
+        }
+    }
+
     public static class RecipeNameMapper
     {
         // TODO: Fill in with real internal recipe/dish IDs from decompiled game
